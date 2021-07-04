@@ -82,13 +82,13 @@ analytics:
 author:
   name             : "Patrik Reizinger"
   avatar           : "profile.jpeg"
-  bio              : "Your biography for the left-hand sidebar"
+  bio              : "PhD student in representation learning and causality @IMPRS-IS and @ELLIS"
   location         : "Tübingen, Germany"
-  employer         : ÁUniversity of Tübingen
+  employer         : "University of Tübingen"
   pubmed           : 
   googlescholar    : "https://scholar.google.com/citations?user=zIT0fdIAAAAJ"
   email            :
-  researchgate     :  # example: "https://www.researchgate.net/profile/yourprofile"
+  researchgate     :  "https://www.researchgate.net/profile/Patrik-Reizinger"
   uri              :
   bitbucket        :
   codepen          :
@@ -96,13 +96,13 @@ author:
   flickr           :
   facebook         :
   foursquare       :
-  github           : 
+  github           : "rpatrik96"
   google_plus      :
   keybase          :
   instagram        :
   impactstory      : #"https://profiles.impactstory.org/u/xxxx-xxxx-xxxx-xxxx"
   lastfm           :
-  linkedin         :
+  linkedin         : "https://www.linkedin.com/in/patrik-reizinger/"
   orcid            : "https://orcid.org/0000-0001-9861-0293"
   pinterest        :
   soundcloud       :
