@@ -13,22 +13,43 @@ Education
 ======
 * B.Sc. in Electrical Engineering, Budapest University of Technology and Economics, 2019
 * M.Sc. in Electrical Engineering, Budapest University of Technology and Economics, 2021
-* Ph.D in MAchine Learning, University of Tübingen, 2024 (expected)
+* Ph.D in Machine Learning, University of Tübingen, 2024 (expected)
 
 
-Below - under construction
 
 Work experience
 ======
-* Summer 2015: Research Assistant
-  * Github University
-  * Duties included: Tagging issues
-  * Supervisor: Professor Git
+* February 2019-March 2021: Research Engineer
+  * C3S Electronics LLC
+  * Project: Control and estimation system develeopment for CubeSats (ADCS)
+  * Supervisor: Ferenc Vajda
+  * Topics: Kalman Filtering, Hybrid control
+  * Technologies: Python, C++14/17, Catch2, Confluence
 
-* Fall 2015: Research Assistant
-  * Github University
-  * Duties included: Merging pull requests
-  * Supervisor: Professor Hub
+* Winter 2019: Research Assistant
+  * Karlsruhe Institut for Technology
+  * Projects: Time synchronisation in FPGAs
+  * Supervisor: Vladimir Sidorenko
+  * Technologies: Python
+
+* September 2016-January 2021: Research Assistant
+  * Budapest University of Technology and Economic
+  * Projects: Multi-agent reinforcement learning, Generalization in deep learning, Embedded systems
+  * Supervisors: Bálint Gyires-Tóth, Márton Szemenyei, Ferenc Vajda
+
+* Summer 2018: Image Processing Intern
+  * Fraunhofer Institute for Factory Operation and Automation IFF
+  * Projects: Automated visual inspection tool development
+  * Supervisor: Thomas Dunker
+  * Technologies: C++11/14, Python
+
+* Summer 2017: Data Scientist Intern
+  * Gravity R&D
+  * Projects: Customer behavior analysis
+  * Supervisor: Bottyán Németh
+  * Technologies: Python
+
+  
   
 Skills
 ======
@@ -59,4 +80,5 @@ Teaching
   
 Service and leadership
 ======
-* Currently signed in to 43 different slack teams
+* Mathias Corvinus Collegium Leadership Academy
+* Formula Student East EV/DV Judge
