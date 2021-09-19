@@ -8,6 +8,8 @@ tags:
   - materials
 ---
 
+Good resources matter, a _lot_.
+
 # The need for ~~speed~~ good resources
 
 >One of the most important steps _before_ starting to study a topic is to collect some good resources, Scott H. Young argues in his 2019 book [Ultralearning](https://www.scotthyoung.com/blog/ultralearning/).
