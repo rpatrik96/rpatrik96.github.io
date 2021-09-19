@@ -1,6 +1,6 @@
 ---
 permalink: /
-title: "Causal Causality"
+title: "Casual Causality"
 excerpt: "About me"
 author_profile: true
 redirect_from: 
