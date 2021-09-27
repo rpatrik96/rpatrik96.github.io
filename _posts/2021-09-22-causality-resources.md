@@ -34,3 +34,7 @@ As I agree with Scott, I invested some time to compile a list of materials, incl
 - [Probabilistic Graphical Models Specialization](https://www.coursera.org/specializations/probabilistic-graphical-models): this three-course feast presented by the famouse Daphne Koller provides you with the basics of traditional methods in graphical models. Although not causality-specific in its entirety, it lays the foundations, so definitely worth attending-it even provides programming assigments so you can get familiar with the methods. Aaaand it's totally **free** (if you are satisfied without a Coursera certificate).
 - [Introduction to Causal Inference](https://www.bradyneal.com/causal-inference-course): a causal inference course covering the fundamental topics. As it has the lecture notes released (see [Books](#books)), you should be well-equipped to take the challenge to become a causality expert.
 
+## Flashcards
+- [Probabilistic Graphical Models 1](https://ankiweb.net/shared/info/49117877)
+
+*P.S.: if you find any error in the decks, please contact me*
