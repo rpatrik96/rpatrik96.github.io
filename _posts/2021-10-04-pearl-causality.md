@@ -1,5 +1,5 @@
 ---
-title: ''
+title: 'A post series on Pearl's Causality'
 date: 2021-10-04
 permalink: /posts/2021/10/pearl-causality/
 tags:
