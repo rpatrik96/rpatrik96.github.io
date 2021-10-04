@@ -1,5 +1,5 @@
 ---
-title: 'A post series on Pearl's Causality'
+title: 'A post series on Pearl: Causality'
 date: 2021-10-04
 permalink: /posts/2021/10/pearl-causality/
 tags:
@@ -8,7 +8,7 @@ tags:
   - Pearl
 ---
 
-There is no blog about causality without discussing Judea Pearl's [_Causality_](http://bayes.cs.ucla.edu/BOOK-2K/) book. I am paying my dept from now on.
+A causality blog cannot exist without discussing Judea Pearl's [_Causality_](http://bayes.cs.ucla.edu/BOOK-2K/) book. Thus, I am paying my dept.
 
 # A post series on Pearl's Causality
 
