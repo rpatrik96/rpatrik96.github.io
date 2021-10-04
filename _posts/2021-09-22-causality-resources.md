@@ -15,7 +15,7 @@ Good resources matter, a _lot_.
 >One of the most important steps _before_ starting to study a topic is to collect some good resources, Scott H. Young argues in his 2019 book [Ultralearning](https://www.scotthyoung.com/blog/ultralearning/).
 
 
-As a sidenote, I might—I mean, I will do this for sure—litter my posts with book references (actually, I am even planning to share the books I am reading with you in the near future).
+As a side note, I might—I mean, I will do this for sure—litter my posts with book references (actually, I am even planning to share the books I am reading with you in the near future).
 
 But let's not permit ourselves to be distracted, let's get to the business!
 
@@ -25,7 +25,7 @@ As I agree with Scott, I invested some time to compile a list of materials, incl
 
 ## Books
 - Judea Pearl and Dana Mackenzie, [_The Book of Why_](http://bayes.cs.ucla.edu/WHY/): a gentle non-technical introduction into the topic with a lot of examples; definitely worth reading!
-- Judea Pearl, [_Causality_](http://bayes.cs.ucla.edu/BOOK-2K/) (2000) : this is THE classic textbook on the topic. It is not a very easy read, but it contains a vast amount of theoretical background. Nonetheless, a lot of times it refers to other papers for proofs, etc. - I found this reasonable but inconvenient. **Spoiler:** one of the goals of this blog is to get through this book and explain the concepts to develop a better understanding.
+- Judea Pearl, [_Causality_](http://bayes.cs.ucla.edu/BOOK-2K/) (2009) : this is THE classic textbook on the topic. It is not a very easy read, but it contains a vast amount of theoretical background. Nonetheless, a lot of times it refers to other papers for proofs, etc. - I found this reasonable but inconvenient. **Spoiler:** one of the goals of this blog is to get through this book and explain the concepts to develop a better understanding.
 - Bernhard Schölkopf, Dominik Janzing, and Jonas Peters, [Elements of Causal Inference](https://library.oapen.org/bitstream/handle/20.500.12657/26040/11283.pdf?sequence=1&isAllowed=y): a recent **open-access** book that is keen on the theory of causal inference.
 - Brady Neal, [_Introduction to Causal Inference from a Machine Learning Perspective_](https://www.bradyneal.com/Introduction_to_Causal_Inference-Dec17_2020-Neal.pdf) : this is the lecture notes for the online course _Introduction to Causal Inference_ (listed in the [MOOCs and online lectures](#moocs-and-online-lectures) section). Due to being lecture notes, I find this book to be more clearly cut, more structured, but it covers less material. Unfortunately, as of today, the book is still in progress-the most interesting (and advanced) chapters are still on their way.
 
