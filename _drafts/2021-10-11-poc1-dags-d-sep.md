@@ -138,39 +138,55 @@ I would like to encourage you to listed to the podcast below made by the incredi
 <iframe allow="autoplay" width="100%" height="200" src="https://www.iheart.com/podcast/105-stuff-you-should-know-26940277/episode/research-bias-sort-it-out-science-87649867/?embed=true" frameborder="0"></iframe>
 
 ## d-separation
->Our goal is to make statements about the independence of nodes in a DAG, possibly given some evidence. d-separation will come handy for this purpose.
+>Our goal is to make statements about the conditional independence of nodes in a DAG, given some evidence. d-separation will come handy for this purpose.
 
-- d-sep vs cond ind
+For this purpose, we need to define what an **active path** is.
+> A path $p$ from $X$ to $Y$ in DAG $G$ is active if regarding all three-tuples of **adjacent** nodes
+> -  the middle node of chains and forks in $p$ is not in $Z$ **and**
+> - neither the middle node of a v-structure (hospitalization in our example), nor its descendants are in $Z$.
 
-### Properties 
-with **intuitive examples**
+I used the notion of descendants of a node in the definition, but have not defined it before: a **descendant** of a node consists of its children and the children of children etc.
 
-#### Symmetry
->$X\perp Y | Z \implies Y\perp X | Z$
+Knowing what an active path is, we can define **d-separation** as follows:
+> $X$ is **d-separated** from $Y$ given $Z$ if $Z$ block all active paths between $X$ and $Y$.
 
+Formulated in a different way: d-separation means that you cannot go from $X$ to $Y$ without _either_ going through a chain or fork whose middle node is not in $Z$ _or_ going through a v-structure whose middle node (or any of the middle node's descendants) is in $Z$.
 
+The notation for d-separation is not unique in the literature; sometimes $d-sep(X,Y|Z)$ is used, but as there is a correspondence between conditional independence and d-separation, I will use the same notation (i.e., $X\perp Y|Z$), or if I want to stress that it holds in a graph, then I will use the symbol $\perp_G$.
 
-#### Decomposition
->$X\perp YW | Z \implies X\perp Y | Z$
+_Note: Conditional independence and d-separation are **not exactly** the same - to find out more about the difference and the properties of d-separation, stay tuned for my next post!_
 
+### Parting example
+I won't leave you with the mess I probably created in your heads without an effort to clear it up, so it's time for an example!
+For this purpose, I hand-crafted a particularly random DAG that includes all kinds of structures.
 
+![Our example graph for studying d-separation](/images/_posts/d_sep_ex.svg)
 
-#### Weak union
-> $X\perp YW | Z \implies X\perp Y | ZW$
+>What d-separation statements can we read off this graph?
 
+#### When $A$ is observed
+There are three more forks in this case: by picking any two nodes from $\{B,E,F\}$, they will be d-separated given $A$.
+For example, as $E\leftarrow A\rightarrow F$ is a fork, $E\perp_G F |A$ holds. 
 
+#### When $B$ is observed
+Observing $B$ cuts the graph into two parts by severing the active path in the chain $A\rightarrow B \rightarrow H$ so any of the following is true:
+- $A \perp_G H | B$
+- $A \perp_G C | B$
+- $A \perp_G H | B$
+- $E \perp_G C | B$
+- $E \perp_G J | B$
+- $E \perp_G J | B$
+- $F \perp_G H | B$
+- $F \perp_G C | B$
+- $F \perp_G J | B$
 
+##$## When $J$ is observed
+Beware the v-structure! Athough not the middle node of the v-structure, but its child $J$ is observed, dependencies are still introduced. So:
+- $A \not\perp_G C | J$
+- $B \not\perp_G C | J$
 
-#### Contraction
->$X\perp Y | Z  \land X\perp W | ZY \implies X\perp YW | Z$
+# Summary
 
-
-
-
-#### Intersection (for strictly positive distributions)
-> $X\perp W | ZY  \land X\perp Y | ZW \implies X\perp YW | Z$
-
-
-
+This post covered the grounds and established a common vocabulary for our journey. DAGs are a powerful building block to reason about causality, but they are not the Holy Grail. I will look into their limitations, the d-separation and conditional independence difference, and the properties of d-separation in the next post.
 
 
