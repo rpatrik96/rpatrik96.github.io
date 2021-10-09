@@ -1,7 +1,7 @@
 ---
 title: 'Pearls of Causality #1: DAGs, d-separation, conditional independence'
 date: 2021-10-11
-permalink: /posts/2021/10/poc1-dags-d-sep-cond-independence/
+permalink: /posts/2021/10/poc1-dags-d-sep/
 tags:
   - causality
   - DAG
@@ -21,6 +21,9 @@ Now, as I have frightened the less motivated readers, we can get to the business
 ## The "G"
 
 Graphs seem to be the straightforward choice for our goal, as a graph $G= \{V, E\}$ is a set of vertices (nodes) $V$ and edges $E$. Vertices are the phenomena we want to express relationship in between, whereas edges are our tool of choice to express those relationships. You can think of **nodes as random variables/probability distributions**.
+
+The notion of a **path** will be important later on, so let's define it:
+> A **path** exists between $X$ and $Y$ if there are a set of directed edges that connects $X$ to $Y$.
 
 Thus, the "G" is motivated from "DAG", there is two more to come - with examples.
 
@@ -72,9 +75,7 @@ To ensure that your health won't compromise, we remove loops from causal graphs.
 # Conditional independence
 Now we have our common language to express causal relationships. It is straightforward to decide whether $X$ causes $Y$, we just need to look for a directed path $X\rightarrow Y$.
 
->Not so fast!
-
-The real world is a bit more complicated: even if we neglect the -rather general- case of not knowing the DAG. Otherwise, a lot of scientist would be unemployed: they are working on uncovering the DAGs of our world, e.g. what are the influencing factors of a disease or what happens when the economic policy changes in a particular way. 
+Not so fast! The real world is a bit more complicated: even if we neglect the -rather general- case of not knowing the DAG. Otherwise, a lot of scientist would be unemployed: they are working on uncovering the DAGs of our world, e.g. what are the influencing factors of a disease or what happens when the economic policy changes in a particular way. 
 
 We can be sure that if we investigate some phenomenon, we won't get access to every information. For this sake, we will distinguish between **observed** and **unobserved** nodes.
 
@@ -82,9 +83,24 @@ We can be sure that if we investigate some phenomenon, we won't get access to ev
 
 The **observed variables** are always on the **right of the conditioning bar**-if they would be on the left, then the probability would be always 1 as these are deterministic values. **Unobserved variables can be on both sides**, depending on the query made.
 
-Assume that $Z$ is observed and we are interested in 
+Alright, we discussed all the components to understand what conditional independence means, so let's dive into the details.
 
-- cond ind with distributions
+$X$ is conditionally independent of $Y$ given $Z$ if it fulfills any of these three equalities:
+- $P(X| Y, Z) = P(X|Z)$
+- $P(Y |X, Z) = P(Y|Z)$
+- $P(X, Y| Z) = P(X|Z)P(Y|Z)$
+
+For example, the first statement means that if we have access to $Z$ then the distribution of $X$ does not depend on $Y$; with an example: when you see the train coming (this is $Z$) then your time of departure $X$ does not depend on the train schedule $Y$. Namely, your eyes give you the information about the arrival time of the train to pick you up, so the schedule cannot provide you further information about when will you depart.
+
+>The conditional independence statement $X$ is independent of $Y$ given $Z$ is often denoted as $X\perp Y | Z$, where "$\perp$" stands for "independent of". Respectively, "$\not\perp$" means dependent of.
+
+A special case of conditional independence is **marginal independence**, where $Z=\emptyset$, i.e., there is nothing observed. An example is that the arrival time of the train is independent from the color of the train (I hope there is no study connecting the two, because then I am screwed - I searched for it in Google Scholar I promise).
+
+>"Independent" will mean "marginally independent"-when it is about conditional independence, I will state that explicitly.
+
+Now we know what conditional independence means on the level of probability distributions, but what does this imply to graphs?
+
+
 
 # d-separation
 >First, what the heck is the "d" in the name?
@@ -92,12 +108,69 @@ Assume that $Z$ is observed and we are interested in
 d stands for _directional_-as you have guessed, this notion applies to directed graphs. As we talk about DAGs, we are good to go after making this quintessential point.
 
 ## Graph structures
+First we need to define the building blocks of DAGs. Interestingly, with only three three-node graphs you can build anything what is allowed in DAGs. These three are:
+- **Chains** ($X\rightarrow Z\rightarrow Y$):, where $Z$ is called the _mediator_ node, as it "transfers" (mediates) the effect of $X$ to $Y$ via $Z$. An example for this structure is when you set $X$ to be smoking, $Z$ to the tar deposits in the lungs, and $Y$ to lung cancer.
+- **Forks** ($X\leftarrow Z \rightarrow Y$): forks represent a relationship where the $X$ and $Y$ nodes have the same parent $Z$. When you toss a coin twice, then the result of your tosses will be $X$ and $Y$, whereas $Z$ will represent the probability of the coin coming up heads 
+- **v-structures** ($X\rightarrow Z \leftarrow Y$) : spoiler alert! if I would be a v-structure at Halloween, I would _always_ opt for a trick. v-structures are the most interesting and they can cause the most problems in practice, as I will elaborate in an example right in the next section. Assume that $X$ represents a broken collarbone, $Y$ a broken leg, whereas $Z$ indicates hospitalization.
 
-- chains
-- forks
-- v-structures (Berkson's paradox, selection bias)
+## The fallacy of v-structures 
+
+v-structures are nasty things; what they do is known under the names of **explaining away/selection bias/Berkson's paradox**. The three different phrases for the same phenomenon should show how consequential v-structures are. 
+
+Going back to the broken collarbone ($X$)-broken leg ($Y$)-hospitalization ($Z$) example, think about the following: if you know that $Z=true$ hospitalized and $X=true,$ what can you say about $P(Y)?$
+
+>Formulated otherwise: how do the probabilities $P(Y|X=true, Z=true)$ and $P(Y|Z=true)$ compare?
+
+It might feel counterintuitive, but knowing that someone is hospitalized with a broken collarbone **decreases the probability* of a broken leg. As if someone broke a collarbone, then that is sufficient to be admitted to a hospital (as a broken leg also would be).
+
+>Wait a second! Does this means that v-structures can **make formerly independent random variables dependent**? Oh, yeah, this is the trick. 
+
+How does this work? Light can be shed by decoding two of the names. We can say that among hospitalized patients, a broken collarbone *explains away* the probability of a broken leg. Stated differently: if we _select_ hospitalized people, then we uncover a _dependence between two marginally independent phenomena_. Namely, in the general population, these two conditions are _marginally independent_. 
+
+_Let's not dive into the discussion of "if you had an accident, it is more probable that you broke everything" - assume for this example that different bones are broken in different situations._
+
+To summarize this example, we can say that $X$ and $Y$ are marginally independent, but they are conditionally dependent given (i.e., observing) $Z$.
+
+Similar to you, I have also found this at first very counterintuitive - the name Berkson's paradox also supports the notion how unbelievable this phenomenon seems at first. 
+
+I would like to encourage you to listed to the podcast below made by the incredible guys at Stuff You Should Know (SYSK), which discusses the different biases (including the very same selection bias) scientists-and, in my opinion, everyone-should be aware of. If you are not familiar with SYSK, it is not a technical podcast but it still can entertain and inform you about interesting topics.
+
+<iframe allow="autoplay" width="100%" height="200" src="https://www.iheart.com/podcast/105-stuff-you-should-know-26940277/episode/research-bias-sort-it-out-science-87649867/?embed=true" frameborder="0"></iframe>
+
+## d-separation
+>Our goal is to make statements about the independence of nodes in a DAG, possibly given some evidence. d-separation will come handy for this purpose.
 
 - d-sep vs cond ind
 
-- d-sep properties with **intuitive examples**
+### Properties 
+with **intuitive examples**
+
+#### Symmetry
+>$X\perp Y | Z \implies Y\perp X | Z$
+
+
+
+#### Decomposition
+>$X\perp YW | Z \implies X\perp Y | Z$
+
+
+
+#### Weak union
+> $X\perp YW | Z \implies X\perp Y | ZW$
+
+
+
+
+#### Contraction
+>$X\perp Y | Z  \land X\perp W | ZY \implies X\perp YW | Z$
+
+
+
+
+#### Intersection (for strictly positive distributions)
+> $X\perp W | ZY  \land X\perp Y | ZW \implies X\perp YW | Z$
+
+
+
+
 
