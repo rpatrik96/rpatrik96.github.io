@@ -14,16 +14,19 @@ d-separation is the bread and butter for deciding about conditional independence
 
 
 # Directed Acyclic Graphs (DAGs)
-It is great that we have developed the language to reason about cause and effect. Nonetheless, putting this behind fancy mathematics has its niche, too - okay, I need to admit that having concise notation and a formal framework is something I consider more useful.
+It is great that we have developed the language to reason about cause and effect. Nonetheless, putting this behind fancy mathematics has its niche, too - okay, I need to admit that having concise notation and a formal framework is something I consider useful.
 
 Now, as I have frightened the less motivated readers, we can get to the business: we want to express cause and effect with mathematics. First, to exploit the cool stuff of other branches of mathematics; second, to be able to write cryptic (but concise) statements.
 
 ## The "G"
 
-Graphs seem to be the straightforward choice for our goal, as a graph $G= \{V, E\}$ is a set of vertices (nodes) $V$ and edges $E$. Vertices are the phenomena we want to express relationship in between, whereas edges are our tool of choice to express those relationships. You can think of **nodes as random variables/probability distributions**.
+Graphs seem to be the straightforward choice for our goal. 
+>A graph $G= \{V, E\}$ is a set of vertices (nodes) $V$ and edges $E$.
 
-The notion of a **path** will be important later on, so let's define it:
-> A **path** exists between $X$ and $Y$ if there are a set of directed edges that connects $X$ to $Y$.
+Vertices are the phenomena we want to express relationship in between, whereas edges are our tool of choice to express those relationships. You can think of **nodes as random variables/probability distributions**.
+
+The notion of a **path** will be important later on, so let's define it too:
+> A **path** exists between $X$ and $Y$ if there are a set of  edges that connects $X$ to $Y$.
 
 Thus, the "G" is motivated from "DAG", there is two more to come - with examples.
 
@@ -40,15 +43,15 @@ We say that $A$ is a **parent** of $T$, whereas $T$ is called the **child** of *
 
 In the example, we have $$P(A,T) = P(A)P(T|A),$$
 and not $P(T)P(A|T)$. You can read this **Conditional Probability Distribution (CPD)** off the graph with the following procedure:
-1. For each node $X$, write the variable(s) -as a node might contain multiple variables-on the _left_ of the conditioning bar
+1. For each node $X$, write the variable(s)-as a node might contain multiple variables-on the _left_ of the conditioning bar
 2. Then write the variables of the _parent nodes_ (the nodes with an incoming edge into $X$) to the _right_ of the conditioning bar-if none exists, as in the case of $P(A)$ in our example, the conditioning bar can be neglected. _To see that having no parents is a special case, we can also write $P(A|\emptyset)$, where we condition on the empty set $\emptyset$.
 
 
 >Did you notice?
 
-Yes, we already cleared the "D" as well: **directed means that we put arrowhead on the edges.** _(For those interested: undirected graphs can be useful e.g. for image segmentations with nodes of pixels and edges expressing when pixels are adjacent.)_
+Yes, we already cleared the "D" as well: **directed means that we put arrowheads on the edges.** With this notion, we can define extend our definitions, e.g. _directed_ paths require that we go from $X$ to $Y$ by following arrowheads.  _(For those interested: undirected graphs can be useful e.g. for image segmentations with nodes of pixels and edges connecting adjacent pixels.)_
 
-**Note:** reading the factorization off the graph gives the causal mechanisms. If we _do not know_ $G$ then we also could have factorized in the non-causal way. So the directed edges gives us the additional information we need to establish cause-effect relationship. But this is only **qualitative**, i.e., it determines child-parent relationships, but does not describe the _(quantitative)_ equations governing them. How that is done, will be left for a future post.
+**Note:** reading the factorization off the graph gives us the causal mechanisms. If we _do not know_ $G$ then we also could have factorized in the non-causal way. So the directed edges give us the additional information we need to establish cause-effect relationships. But this is only **qualitative**, i.e., it determines child-parent relationships, but does not describe the _(quantitative)_ equations governing them. How that is done, will be left for a future post.
 
 ### Independent Causal Mechanisms (ICM)
 
@@ -58,24 +61,26 @@ The factorization above expresses the principle of **Independent Causal Mechanis
 
 The _no influence_ part implies that if you change the surface of the Earth in our example (say you want to have the biggest mountain in your backyard) then the temperature CPD $P(T|A)$ still remains the same. That is, the temperature in your backyard will change, but this is solely due to the fact of a different altitude-formulated otherwise: the temperature would be the same at a different place with the same altitude. So $P(T|A)$ **generalizes** well. 
 
-The _no information_ claim of the ICM implies that knowing the temperature will not tell anything about the altitude-clearly, global warming also does not help. This work in the other direction as well: when knowing $T$ at a given $A=a$, we will have no clue about the location. 
+The _no information_ claim of the ICM implies that knowing the temperature will not tell anything about the altitude-clearly, global warming also does not help. This works in the other direction as well: when knowing $T$ at a given $A=a$, we will have no clue about the location. 
 
 
 
 ## The "A"
 You might wonder whether I have an unorthodox taste for spelling "DAG". Unfortunately, I do not - the only reason is that the concepts build upon each other this way. Thus, spelling bees, please forgive me.
 
->Acyclicity means that within a graph you cannot come back to node $A$ by following the arrowheads. Alternatively, the graph has no loops.
+>Acyclicity means that the graph has no loops. 
+
+Alternatively, within a graph you cannot come back to node $A$ by following the edges and not using an edge twice. 
 
 Imagine what would happen with our example if there would be a second edge from $T$ to $A$. This would mean that $A$ causes $T$ causes $A$ causes $T$ causes $A$ causes $T$ causes $A$ causes $T$ causes... I am feeling dizzy now and I don't like this. 
 
-To ensure that your health won't compromise, we remove loops from causal graphs. As an additional benefit, we also cut the Gordian knot: this makes possible to distinguish cause from effect.
+To ensure that your health won't compromise, we remove loops from causal graphs. As an additional benefit, we also cut the Gordian knot: this helps to distinguish cause from effect.
 
 
 # Conditional independence
 Now we have our common language to express causal relationships. It is straightforward to decide whether $X$ causes $Y$, we just need to look for a directed path $X\rightarrow Y$.
 
-Not so fast! The real world is a bit more complicated: even if we neglect the -rather general- case of not knowing the DAG. Otherwise, a lot of scientist would be unemployed: they are working on uncovering the DAGs of our world, e.g. what are the influencing factors of a disease or what happens when the economic policy changes in a particular way. 
+Not so fast! The real world is a bit more complicated: even if we neglect the -rather general- case of not knowing the DAG. Otherwise, a lot of scientists would be unemployed: they are working on uncovering the DAGs of our world, e.g., the influencing factors of a disease or the effects of changing economic policy. 
 
 We can be sure that if we investigate some phenomenon, we won't get access to every information. For this sake, we will distinguish between **observed** and **unobserved** nodes.
 
@@ -83,18 +88,32 @@ We can be sure that if we investigate some phenomenon, we won't get access to ev
 
 The **observed variables** are always on the **right of the conditioning bar**-if they would be on the left, then the probability would be always 1 as these are deterministic values. **Unobserved variables can be on both sides**, depending on the query made.
 
-Alright, we discussed all the components to understand what conditional independence means, so let's dive into the details.
 
-$X$ is conditionally independent of $Y$ given $Z$ if it fulfills any of these three equalities:
-- $P(X| Y, Z) = P(X|Z)$
-- $P(Y |X, Z) = P(Y|Z)$
-- $P(X, Y| Z) = P(X|Z)P(Y|Z)$
+## Definition
 
-For example, the first statement means that if we have access to $Z$ then the distribution of $X$ does not depend on $Y$; with an example: when you see the train coming (this is $Z$) then your time of departure $X$ does not depend on the train schedule $Y$. Namely, your eyes give you the information about the arrival time of the train to pick you up, so the schedule cannot provide you further information about when will you depart.
+So far, we discussed all the components to understand what conditional independence means, so let's dive into the details.
+
+>$X$ is conditionally independent of $Y$ given $Z$ if it fulfills any of these three equalities:
+>- $P(X| Y, Z) = P(X|Z)$
+>- $P(Y |X, Z) = P(Y|Z)$
+>- $P(X, Y| Z) = P(X|Z)P(Y|Z)$
+
+### Example
+
+For example, the first statement means that if we have access to $Z$ then the distribution of $X$ does not depend on $Y$; with an example: when you see the train coming (this is $Z$) then the time of arrival $X$ does not depend on the train schedule $Y$. Namely, your eyes give you the information about the arrival time of the train to pick you up, so the schedule cannot provide you further information. 
+
+This does not mean that the schedule is useless, only that seeing the train gives you all information the schedule could have provided. If the weather is foggy and you neither see nor hear the train, then your only help is the schedule.
+
+### Notation
+Congratulations, you have made it so far! You are about to come across the first proof of why I like mathematics: they figure out concise ways to express concepts. Here comes how it is done with condtional independence. 
 
 >The conditional independence statement $X$ is independent of $Y$ given $Z$ is often denoted as $X\perp Y | Z$, where "$\perp$" stands for "independent of". Respectively, "$\not\perp$" means dependent of.
 
-A special case of conditional independence is **marginal independence**, where $Z=\emptyset$, i.e., there is nothing observed. An example is that the arrival time of the train is independent from the color of the train (I hope there is no study connecting the two, because then I am screwed - I searched for it in Google Scholar I promise).
+
+
+## Marginal independence
+
+A special case of conditional independence is **marginal independence**, where $Z=\emptyset$, i.e., there is nothing observed but some independencies still hold. An example is that the arrival time of the train is independent from the color of the train (I hope there is no study connecting the two, because then I am screwed - I searched for it in Google Scholar I promise).
 
 >"Independent" will mean "marginally independent"-when it is about conditional independence, I will state that explicitly.
 
@@ -103,31 +122,45 @@ Now we know what conditional independence means on the level of probability dist
 
 
 # d-separation
->First, what the heck is the "d" in the name?
+>First, what the heck means the "d" in the name?
 
-d stands for _directional_-as you have guessed, this notion applies to directed graphs. As we talk about DAGs, we are good to go after making this quintessential point.
+d stands for _directional_-as you have guessed, this notion applies to directed graphs. As we talk about DAGs, we are good to go after making this _quintessential_ point.
 
 ## Graph structures
-First we need to define the building blocks of DAGs. Interestingly, with only three three-node graphs you can build anything what is allowed in DAGs. These three are:
+First we need to define the building blocks of DAGs. Interestingly, with only three three-node graphs you can build anything that is allowed in DAGs. These three are:
 - **Chains** ($X\rightarrow Z\rightarrow Y$):, where $Z$ is called the _mediator_ node, as it "transfers" (mediates) the effect of $X$ to $Y$ via $Z$. An example for this structure is when you set $X$ to be smoking, $Z$ to the tar deposits in the lungs, and $Y$ to lung cancer.
-- **Forks** ($X\leftarrow Z \rightarrow Y$): forks represent a relationship where the $X$ and $Y$ nodes have the same parent $Z$. When you toss a coin twice, then the result of your tosses will be $X$ and $Y$, whereas $Z$ will represent the probability of the coin coming up heads 
-- **v-structures** ($X\rightarrow Z \leftarrow Y$) : spoiler alert! if I would be a v-structure at Halloween, I would _always_ opt for a trick. v-structures are the most interesting and they can cause the most problems in practice, as I will elaborate in an example right in the next section. Assume that $X$ represents a broken collarbone, $Y$ a broken leg, whereas $Z$ indicates hospitalization.
+- **Forks** ($X\leftarrow Z \rightarrow Y$): forks represent a relationship where the $X$ and $Y$ nodes have the same parent $Z$. When you toss a coin twice, then the result of your tosses will be $X$ and $Y$, whereas $Z$ will represent the probability of the coin coming up heads. 
+- **v-structures** ($X\rightarrow Z \leftarrow Y$) : spoiler alert! if I would be a v-structure at Halloween, I would _always_ opt for a trick. v-structures are the most interesting and they can cause problems in practice, as I will elaborate in an example right in the next section. An example for a v-structure is when $X$ represents a broken collarbone, $Y$ severe bronchitis whereas $Z$ indicates hospitalization, i.e., the effect has multiple causes.
 
 ## The fallacy of v-structures 
 
-v-structures are nasty things; what they do is known under the names of **explaining away/selection bias/Berkson's paradox**. The three different phrases for the same phenomenon should show how consequential v-structures are. 
+v-structures are nasty things; what they do is known under the names of **explaining away/selection bias/Berkson's paradox**. The three different phrases for the same phenomenon should imply how consequential v-structures are. 
 
-Going back to the broken collarbone ($X$)-broken leg ($Y$)-hospitalization ($Z$) example, think about the following: if you know that $Z=true$ hospitalized and $X=true,$ what can you say about $P(Y)?$
+Going back to the broken collarbone ($X$)-bronchitis ($Y$)-hospitalization ($Z$) example, think about the following: if you know that $Z=true$ (someone is hospitalized) and $X=true,$ (broken collarbone) what can you say about the conditional probabilities, horribile dictu, the independencies of the graph?
 
 >Formulated otherwise: how do the probabilities $P(Y|X=true, Z=true)$ and $P(Y|Z=true)$ compare?
 
-It might feel counterintuitive, but knowing that someone is hospitalized with a broken collarbone **decreases the probability* of a broken leg. As if someone broke a collarbone, then that is sufficient to be admitted to a hospital (as a broken leg also would be).
+It might feel counterintuitive, but knowing that someone is hospitalized with a broken collarbone **decreases the probability* of a severe bronchitis. As if someone broke a collarbone, then that is sufficient to be admitted to a hospital (as severe bronchitis also would be).
 
->Wait a second! Does this means that v-structures can **make formerly independent random variables dependent**? Oh, yeah, this is the trick. 
+>Wait a second! Does this mean that v-structures can **make formerly independent random variables dependent**? Oh, yeah, this is the trick. 
 
-How does this work? Light can be shed by decoding two of the names. We can say that among hospitalized patients, a broken collarbone *explains away* the probability of a broken leg. Stated differently: if we _select_ hospitalized people, then we uncover a _dependence between two marginally independent phenomena_. Namely, in the general population, these two conditions are _marginally independent_. 
+How does this work? Light can be shed by decoding two of the names. We can say that among hospitalized patients, a broken collarbone *explains away* the probability of severe bronchitis - as we know that some hospitalized patient broke her/his collarbone, then we can be quite certain that (s)he has no bronchitis.
 
-_Let's not dive into the discussion of "if you had an accident, it is more probable that you broke everything" - assume for this example that different bones are broken in different situations._
+You might ask: why?
+
+- $P(X=1)=0.01$
+- $P(Y=1)=0.05$
+- $P(Z=1)=0.001$
+- $P(Z=1|X=1)=0.8$
+- $P(Z=1|Y=1)=0.9$
+
+$$P(X=1|Z=1, Y=1) = \dfrac{P(Z=1|X=1, Y=1)P(X|Y=1)}{P(Z=1)}\\
+=\dfrac{P(Z=1|X=1, Y=1)P(X)}{P(Z=1)}\\
+\dfrac{P(Y=1|X=1, Z=1)P(X=1|Z=1)}{P(Y=1)}
+$$
+
+ Stated differently: if we _select_ hospitalized people, then we uncover a _dependence between two marginally independent phenomena_. The counterintuitive nature arises from these two conditions being _marginally independent_ , in the general population. 
+
 
 To summarize this example, we can say that $X$ and $Y$ are marginally independent, but they are conditionally dependent given (i.e., observing) $Z$.
 
@@ -180,8 +213,8 @@ Observing $B$ cuts the graph into two parts by severing the active path in the c
 - $F \perp_G C | B$
 - $F \perp_G J | B$
 
-##$## When $J$ is observed
-Beware the v-structure! Athough not the middle node of the v-structure, but its child $J$ is observed, dependencies are still introduced. So:
+#### When $J$ is observed
+Beware the v-structure! Although not the middle node of the v-structure, but its child $J$ is observed, dependencies are still introduced. So:
 - $A \not\perp_G C | J$
 - $B \not\perp_G C | J$
 
