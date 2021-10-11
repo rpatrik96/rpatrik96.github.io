@@ -191,7 +191,7 @@ Before substituting in the numbers, let's do two things:
 
 Coming back to the numerical example, when we calulcate the above fractions, we get:
 
-$$\begin{align*} \dfrac{P(Z=1\|X=1, Y=1)}{P(Z=1\|Y=1)}\dfrac{P(Z=1)}{P(Z=1\|X=1)} &= \dfrac{0.95}{0.5}\times \dfrac{0.01}{0.9}\\
+$$\begin{align*} \dfrac{P(Z=1|X=1, Y=1)}{P(Z=1|Y=1)}\dfrac{P(Z=1)}{P(Z=1|X=1)} &= \dfrac{0.95}{0.5}\times \dfrac{0.01}{0.9}\\
 &=1.9\times 0.0125 = \underline{0.02375}
 \end{align*}
 $$
