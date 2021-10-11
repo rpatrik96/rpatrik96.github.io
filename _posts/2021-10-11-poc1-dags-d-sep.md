@@ -235,7 +235,7 @@ _Note: Conditional independence and d-separation are **not exactly** the same - 
 I won't leave you with the mess I probably created in your heads without an effort to clear it up, so it's time for an example!
 For this purpose, I hand-crafted a particularly random DAG that includes all kind of structures.
 
-![Our example graph for studying d-separation](/images/_posts/d_sep_ex.svg)
+![Our example graph for studying d-separation](/images/posts/d_sep_ex.svg)
 
 >What d-separation statements can we read off this graph?
 
