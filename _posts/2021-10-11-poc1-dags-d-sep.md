@@ -33,7 +33,7 @@ Thus, the "G" is motivated from "DAG", there is two more to come - with examples
 ## The "D"
 If we want to express that altitude $A$ has an effect of temperature $T$ then we can construct the following graph. 
 
-![A graph of the causal relationship of altitude $A$ and temperature $T$.](/images/_posts/dag_a_t.svg)
+![A graph of the causal relationship of altitude $A$ and temperature $T$.](./images/_posts/dag_a_t.svg)
 
 The arrow in the above image expresses our knowledge that altitude causes temperature change (all other conditions being equal). 
 
@@ -41,7 +41,7 @@ We say that $A$ is a **parent** of $T$, whereas $T$ is called the **child** of *
 
 >Edge directionality implies how the joint distribution over the random variables in $V$ factorize.
 
-In the example, we have $$P(A,T) = P(A)P(T\|A),$$
+In the example, we have $P(A,T) = P(A)P(T\|A),$
 and not $P(T)P(A\|T)$. You can read this **Conditional Probability Distribution (CPD)** off the graph with the following procedure:
 1. For each node $X$, write the variable(s)-as a node might contain multiple variables-on the _left_ of the conditioning bar
 2. Then write the variables of the _parent nodes_ (the nodes with an incoming edge into $X$) to the _right_ of the conditioning bar-if none exists, as in the case of $P(A)$ in our example, the conditioning bar can be neglected. _To see that having no parents is a special case, we can also write $P(A\|\emptyset)$, where we condition on the empty set $\emptyset$.
