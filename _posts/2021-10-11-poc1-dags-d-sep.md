@@ -180,8 +180,7 @@ $$
 As we have a v-structure in the form of $X \rightarrow Z \leftarrow Y$, this implies that $P(X\|Y) = P(X)$ - although $Z$ is observed, it is not in this expression, so we don't need to worry about that. 
 
 The above expression simplifies to:
-$$\begin{align*} \dfrac{P(X=1\|Y=1, Z=1)}{P(X=1\|Z=1)} &= \dfrac{\dfrac{P(Z=1\|X=1, Y=1)\sout{P(X=1\|Y=1)}}{P(Z=1\|Y=1)}}{\dfrac{P(Z=1\|X=1)\sout{P(X=1)}}{P(Z=1)}}\\
-&= \dfrac{P(Z=1\|X=1, Y=1)}{P(Z=1\|Y=1)}\dfrac{P(Z=1)}{P(Z=1\|X=1)}
+$$\begin{align*} \dfrac{P(X=1|Y=1, Z=1)}{P(X=1|Z=1)} &= \dfrac{P(Z=1|X=1, Y=1)}{P(Z=1|Y=1)}\dfrac{P(Z=1)}{P(Z=1|X=1)}
 \end{align*}
 $$ 
 
