@@ -243,28 +243,28 @@ We need to apply the definition to figure this out, given the (set of) observed 
 
 #### When $A$ is observed
 There are three affected forks in this case: by picking any two nodes from $\{B,E,F\}$, they will be d-separated given $A$.
-For example, as $E\leftarrow A\rightarrow F$ is a fork, $E\perp_G F |A$ holds. So do
-- $B\perp_G E |A$ and
-- $B\perp_G F |A$.
+For example, as $E\leftarrow A\rightarrow F$ is a fork, $E\perp_G F \|A$ holds. So do
+- $B\perp_G E \|A$ and
+- $B\perp_G F \|A$.
 
 #### When $B$ is observed
 Observing $B$ cuts the graph into two parts by severing the active path in the chain $A\rightarrow B \rightarrow H$ so any of the following is true:
-- $A \perp_G H | B$
-- $A \perp_G C | B$
-- $A \perp_G H | B$
-- $E \perp_G C | B$
-- $E \perp_G J | B$
-- $E \perp_G J | B$
-- $F \perp_G H | B$
-- $F \perp_G C | B$
-- $F \perp_G J | B$
+- $A \perp_G H \| B$
+- $A \perp_G C \| B$
+- $A \perp_G H \| B$
+- $E \perp_G C \| B$
+- $E \perp_G J \| B$
+- $E \perp_G J \| B$
+- $F \perp_G H \| B$
+- $F \perp_G C \| B$
+- $F \perp_G J \| B$
 
 You get the idea.
 
 #### When $J$ is observed
 Beware the v-structure! Although not the middle node of the v-structure, but its child $J$ is observed, dependencies are still introduced. So:
-- $A \not\perp_G C | J$
-- $B \not\perp_G C | J$
+- $A \not\perp_G C \| J$
+- $B \not\perp_G C \| J$
 
 
 
