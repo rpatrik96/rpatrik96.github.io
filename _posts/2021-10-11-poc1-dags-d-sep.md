@@ -33,7 +33,7 @@ Thus, the "G" is motivated from "DAG", there is two more to come - with examples
 ## The "D"
 If we want to express that altitude $A$ has an effect of temperature $T$ then we can construct the following graph. 
 
-![A graph of the causal relationship of altitude $A$ and temperature $T$.](./images/_posts/dag_a_t.svg)
+![A graph of the causal relationship of altitude $A$ and temperature $T$.](/rpatrik96/images/_posts/dag_a_t.svg)
 
 The arrow in the above image expresses our knowledge that altitude causes temperature change (all other conditions being equal). 
 
@@ -227,7 +227,7 @@ Knowing what a blocked path is, we can define **d-separation** as follows:
 
 Formulated in a different way: d-separation means that you cannot go from $X$ to $Y$ without _either_ going through a chain or fork whose middle node is in $Z$ _or_ going through a v-structure whose middle node (or any of the middle node's descendants) is not in $Z$.
 
-The notation for d-separation is not unique in the literature; sometimes $d-sep(X,Y|Z)$ is used, but as there is a correspondence between conditional independence and d-separation, I will use the same notation (i.e., $X\perp Y\|Z$), or if I want to stress that it holds in a graph, then I will use the symbol $\perp_G$.
+The notation for d-separation is not unique in the literature; sometimes $d-sep(X,Y\|Z)$ is used, but as there is a correspondence between conditional independence and d-separation, I will use the same notation (i.e., $X\perp Y\|Z$), or if I want to stress that it holds in a graph, then I will use the symbol $\perp_G$.
 
 _Note: Conditional independence and d-separation are **not exactly** the same - to find out more about the difference and the properties of d-separation, stay tuned for my next post!_
 
