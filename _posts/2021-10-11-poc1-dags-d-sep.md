@@ -33,7 +33,7 @@ Thus, the "G" is motivated from "DAG", there is two more to come - with examples
 ## The "D"
 If we want to express that altitude $A$ has an effect of temperature $T$ then we can construct the following graph. 
 
-![A graph of the causal relationship of altitude $A$ and temperature $T$.](/rpatrik96/images/_posts/dag_a_t.svg)
+![A graph of the causal relationship of altitude $A$ and temperature $T$.](/images/posts/dag_a_t.svg)
 
 The arrow in the above image expresses our knowledge that altitude causes temperature change (all other conditions being equal). 
 
