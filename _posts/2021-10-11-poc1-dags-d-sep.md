@@ -41,10 +41,10 @@ We say that $A$ is a **parent** of $T$, whereas $T$ is called the **child** of *
 
 >Edge directionality implies how the joint distribution over the random variables in $V$ factorize.
 
-In the example, we have $$P(A,T) = P(A)P(T|A),$$
-and not $P(T)P(A|T)$. You can read this **Conditional Probability Distribution (CPD)** off the graph with the following procedure:
+In the example, we have $$P(A,T) = P(A)P(T\|A),$$
+and not $P(T)P(A\|T)$. You can read this **Conditional Probability Distribution (CPD)** off the graph with the following procedure:
 1. For each node $X$, write the variable(s)-as a node might contain multiple variables-on the _left_ of the conditioning bar
-2. Then write the variables of the _parent nodes_ (the nodes with an incoming edge into $X$) to the _right_ of the conditioning bar-if none exists, as in the case of $P(A)$ in our example, the conditioning bar can be neglected. _To see that having no parents is a special case, we can also write $P(A|\emptyset)$, where we condition on the empty set $\emptyset$.
+2. Then write the variables of the _parent nodes_ (the nodes with an incoming edge into $X$) to the _right_ of the conditioning bar-if none exists, as in the case of $P(A)$ in our example, the conditioning bar can be neglected. _To see that having no parents is a special case, we can also write $P(A\|\emptyset)$, where we condition on the empty set $\emptyset$.
 
 
 >Did you notice?
@@ -57,9 +57,9 @@ Yes, we already cleared the "D" as well: **directed means that we put arrowheads
 
 The factorization above expresses the principle of **Independent Causal Mechanisms (ICM)** meaning that how altitude and temperature change is described by two processes: the first gives how $A$ is distributed on Earth, and the second one how $T$ evolves given a specific altitude $A=a$.
 
->The _"independent"_ in ICM implies that the **causal processes** (in our case, $P(A)$ and $P(T|A)$) **do not influence each other** and **they cannot provide information about each other** when **conditioned on their parents**.
+>The _"independent"_ in ICM implies that the **causal processes** (in our case, $P(A)$ and $P(T\|A)$) **do not influence each other** and **they cannot provide information about each other** when **conditioned on their parents**.
 
-The _no influence_ part implies that if you change the surface of the Earth in our example (say you want to have the biggest mountain in your backyard) then the temperature CPD $P(T|A)$ still remains the same. That is, the temperature in your backyard will change, but this is solely due to the fact of a different altitude-formulated otherwise: the temperature would be the same at a different place with the same altitude. So $P(T|A)$ **generalizes** well. 
+The _no influence_ part implies that if you change the surface of the Earth in our example (say you want to have the biggest mountain in your backyard) then the temperature CPD $P(T\|A)$ still remains the same. That is, the temperature in your backyard will change, but this is solely due to the fact of a different altitude-formulated otherwise: the temperature would be the same at a different place with the same altitude. So $P(T\|A)$ **generalizes** well. 
 
 The _no information_ claim of the ICM implies that knowing the temperature will not tell anything about the altitude-clearly, global warming also does not help. This works in the other direction as well: when knowing $T$ at a given $A=a$, we will have no clue about the location. 
 
@@ -94,9 +94,9 @@ The **observed variables** are always on the **right of the conditioning bar**-i
 So far, we discussed all the components to understand what conditional independence means, so let's dive into the details.
 
 >$X$ is conditionally independent of $Y$ given $Z$ if it fulfills any of these three equalities:
->- $P(X| Y, Z) = P(X|Z)$
->- $P(Y |X, Z) = P(Y|Z)$
->- $P(X, Y| Z) = P(X|Z)P(Y|Z)$
+>- $P(X\| Y, Z) = P(X\|Z)$
+>- $P(Y \|X, Z) = P(Y\|Z)$
+>- $P(X, Y\| Z) = P(X\|Z)P(Y\|Z)$
 
 ### Example
 
@@ -107,7 +107,7 @@ This does not mean that the schedule is useless, only that seeing the train give
 ### Notation
 Congratulations, you have made it so far! You are about to come across the first proof of why I like mathematics: they figure out concise ways to express concepts. Here comes how it is done with condtional independence. 
 
->The conditional independence statement $X$ is independent of $Y$ given $Z$ is often denoted as $X\perp Y | Z$, where "$\perp$" stands for "independent of". Respectively, "$\not\perp$" means dependent of.
+>The conditional independence statement $X$ is independent of $Y$ given $Z$ is often denoted as $X\perp Y \| Z$, where "$\perp$" stands for "independent of". Respectively, "$\not\perp$" means dependent of.
 
 
 
@@ -138,7 +138,7 @@ v-structures are nasty things; what they do is known under the names of **explai
 
 Going back to the broken collarbone ($X$)-bronchitis ($Y$)-hospitalization ($Z$) example, think about the following: if you know that $Z=true$ (someone is hospitalized) and $X=true,$ (broken collarbone) what can you say about the conditional probabilities, horribile dictu, the independencies of the graph?
 
->Formulated otherwise: how do the probabilities $P(Y|X=true, Z=true)$ and $P(Y|Z=true)$ compare?
+>Formulated otherwise: how do the probabilities $P(Y\|X=true, Z=true)$ and $P(Y\|Z=true)$ compare?
 
 It might feel counterintuitive, but knowing that someone is hospitalized with a broken collarbone **decreases the probability* of a severe bronchitis. As if someone broke a collarbone, then that is sufficient to be admitted to a hospital (as severe bronchitis also would be).
 
@@ -164,34 +164,34 @@ To answer this, I will walk you through the hospitalization example numerically.
 
 Also assume that we know the marginal probability of hospitalization in the general population, $P(Z=1)=0.01$. That is, if any of $X$ or $Y$ is present, then the patient is hospitalized with an increased probability, but if none is present, then the probability of hospitalization decreases, as we would expect. 
 
-What we are interested in is the _relationship_ of the probability of a broken collarbone given a hospitalized patient and bronchitis -$P(X=1|Y=1, Z=1)$- and the probability of a broken collarbone in a hospitalized patient - $P(X=1|Z=1)$. 
+What we are interested in is the _relationship_ of the probability of a broken collarbone given a hospitalized patient and bronchitis -$P(X=1\|Y=1, Z=1)$- and the probability of a broken collarbone in a hospitalized patient - $P(X=1\|Z=1)$. 
 
 Before writing down equations, let's ask the question: 
 >What do we expect? 
 
-If we believe that v-structures work just as I mentioned above, then $P(X=1|Y=1, Z=1)$ should be smaller than $P(X=1|Z=1)$.
+If we believe that v-structures work just as I mentioned above, then $P(X=1\|Y=1, Z=1)$ should be smaller than $P(X=1\|Z=1)$.
 
 What we need is to write down their ratio and use Bayes' Rule
 
-$$\begin{align*} \dfrac{P(X=1|Y=1, Z=1)}{P(X=1|Z=1)} &= \dfrac{\dfrac{P(Z=1|X=1, Y=1)P(X=1|Y=1)}{P(Z=1|Y=1)}}{\dfrac{P(Z=1|X=1)P(X=1)}{P(Z=1)}}
+$$\begin{align*} \dfrac{P(X=1\|Y=1, Z=1)}{P(X=1\|Z=1)} &= \dfrac{\dfrac{P(Z=1\|X=1, Y=1)P(X=1\|Y=1)}{P(Z=1\|Y=1)}}{\dfrac{P(Z=1\|X=1)P(X=1)}{P(Z=1)}}
 \end{align*}
 $$
 
-As we have a v-structure in the form of $X \rightarrow Z \leftarrow Y$, this implies that $P(X|Y) = P(X)$ - although $Z$ is observed, it is not in this expression, so we don't need to worry about that. 
+As we have a v-structure in the form of $X \rightarrow Z \leftarrow Y$, this implies that $P(X\|Y) = P(X)$ - although $Z$ is observed, it is not in this expression, so we don't need to worry about that. 
 
 The above expression simplifies to:
-$$\begin{align*} \dfrac{P(X=1|Y=1, Z=1)}{P(X=1|Z=1)} &= \dfrac{\dfrac{P(Z=1|X=1, Y=1)\sout{P(X=1|Y=1)}}{P(Z=1|Y=1)}}{\dfrac{P(Z=1|X=1)\sout{P(X=1)}}{P(Z=1)}}\\
-&= \dfrac{P(Z=1|X=1, Y=1)}{P(Z=1|Y=1)}\dfrac{P(Z=1)}{P(Z=1|X=1)}
+$$\begin{align*} \dfrac{P(X=1\|Y=1, Z=1)}{P(X=1\|Z=1)} &= \dfrac{\dfrac{P(Z=1\|X=1, Y=1)\sout{P(X=1\|Y=1)}}{P(Z=1\|Y=1)}}{\dfrac{P(Z=1\|X=1)\sout{P(X=1)}}{P(Z=1)}}\\
+&= \dfrac{P(Z=1\|X=1, Y=1)}{P(Z=1\|Y=1)}\dfrac{P(Z=1)}{P(Z=1\|X=1)}
 \end{align*}
 $$ 
 
 Before substituting in the numbers, let's do two things:
 1. **Investigate both fractions:** the _first fraction_ is clearly **bigger than $1$** as if someone has _both_ bronchitis and a broken collarbone, then it is more probable that (s)he gets hospitalized than  someone with "only" bronchitis. The second fraction is **less than $1$** as the probability of hospitalization without any condition is less than the probability of hospitalization if there is a broken collarbone.
-2. **Look into the edge case:** let's assume that the healthcare system where the hospitalization of the patient is considered is extremely well-equipped, well-funded, and has the best medical staff (both professionally and personally). As they want to help everyone, if someone has any of $X$ or $Y$, then the patient will be admitted to the hospital. I.e., $Z$ becomes $X \vee Y$, meaning that if any of $X$ or $Y$ equals 1, then $Z$ occurs with probability one. For our numerical example, this means that $P(Z=1|X=1, Y=1) = P(Z=1|X=1) =P(Z=1| Y=1) =1.$ What remains is $P(Z)$ in the above fraction, which is less than 1. So even in this edge case, we have shown that $P(X=1|Y=1, Z=1)<P(X=1|Z=1)$.
+2. **Look into the edge case:** let's assume that the healthcare system where the hospitalization of the patient is considered is extremely well-equipped, well-funded, and has the best medical staff (both professionally and personally). As they want to help everyone, if someone has any of $X$ or $Y$, then the patient will be admitted to the hospital. I.e., $Z$ becomes $X \vee Y$, meaning that if any of $X$ or $Y$ equals 1, then $Z$ occurs with probability one. For our numerical example, this means that $P(Z=1\|X=1, Y=1) = P(Z=1\|X=1) =P(Z=1\| Y=1) =1.$ What remains is $P(Z)$ in the above fraction, which is less than 1. So even in this edge case, we have shown that $P(X=1\|Y=1, Z=1)<P(X=1\|Z=1)$.
 
 Coming back to the numerical example, when we calulcate the above fractions, we get:
 
-$$\begin{align*} \dfrac{P(Z=1|X=1, Y=1)}{P(Z=1|Y=1)}\dfrac{P(Z=1)}{P(Z=1|X=1)} &= \dfrac{0.95}{0.5}\times \dfrac{0.01}{0.9}\\
+$$\begin{align*} \dfrac{P(Z=1\|X=1, Y=1)}{P(Z=1\|Y=1)}\dfrac{P(Z=1)}{P(Z=1\|X=1)} &= \dfrac{0.95}{0.5}\times \dfrac{0.01}{0.9}\\
 &=1.9\times 0.0125 = \underline{0.02375}
 \end{align*}
 $$
@@ -227,7 +227,7 @@ Knowing what a blocked path is, we can define **d-separation** as follows:
 
 Formulated in a different way: d-separation means that you cannot go from $X$ to $Y$ without _either_ going through a chain or fork whose middle node is in $Z$ _or_ going through a v-structure whose middle node (or any of the middle node's descendants) is not in $Z$.
 
-The notation for d-separation is not unique in the literature; sometimes $d-sep(X,Y|Z)$ is used, but as there is a correspondence between conditional independence and d-separation, I will use the same notation (i.e., $X\perp Y|Z$), or if I want to stress that it holds in a graph, then I will use the symbol $\perp_G$.
+The notation for d-separation is not unique in the literature; sometimes $d-sep(X,Y|Z)$ is used, but as there is a correspondence between conditional independence and d-separation, I will use the same notation (i.e., $X\perp Y\|Z$), or if I want to stress that it holds in a graph, then I will use the symbol $\perp_G$.
 
 _Note: Conditional independence and d-separation are **not exactly** the same - to find out more about the difference and the properties of d-separation, stay tuned for my next post!_
 
