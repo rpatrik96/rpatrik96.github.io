@@ -14,19 +14,34 @@ d-separation is the bread and butter for deciding about conditional independence
 
 # Markov Equivalence Class
 
+- factorization of p : chain rule, DAGs
+- example of how different structures impose the same d sep (chain, fork, v-struct, no figure)
+- highlight that this is a limitation of causal inference due to equivalence
+
 # Markov Compatibility
 
+- definiotion
+- causal markov condition, ordered markov condition - compare
+
+
 ## I-maps
+- def with P and G
+- def with G1 G2
+- example for both (for P,G I can use my previous figure)
 
 ### Minimal I-maps
+- def
+- example
 
 ### Perfect I-maps
+- def example
 
 # Properties of d-separation
 
-![Our example graph for studying d-separation](/images/_posts/d_sep_ex.svg)
+![Our example graph for studying d-separation](/images/posts/d_sep_ex.svg)
 
 - d-sep vs cond ind
+- proofs for the properties?
 
 
 with **intuitive examples**
