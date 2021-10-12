@@ -36,5 +36,8 @@ As I agree with Scott, I invested some time to compile a list of materials, incl
 
 ## Flashcards
 - [Probabilistic Graphical Models 1](https://ankiweb.net/shared/info/49117877)
+- [Probabilistic Graphical Models 2](https://ankiweb.net/shared/info/1717392494)
+
+
 
 *P.S.: if you find any error in the decks, please contact me*
