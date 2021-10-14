@@ -36,19 +36,51 @@ One reason for confusion could be that in the previous post, we used probability
 
 > $P(X)$ has its right on its own, but when we "attach" a graph to it, we will be able to reason about more complex thing.
 
-Formulated otherwise: probabilities can be manipulated without considering any graph, but when you define a model with a graph and a corresponding joint distribution, you can exploit the graph structure.
+Formulated otherwise: probabilities can be manipulated without considering any graph, but when you define a graph that has a corresponding joint distribution, you can exploit the graph structure.
 
 
 ## Markov Factorization
+>How can the graph structure be exploited when factorizing probability distributions?
 
+This is the question you are probably wondering about. As we have seen in the altitude-temperature example, there is a causal factorization of the distribution, namely $P(A,T) = P(A)P(T|A)$. 
 
+>How is this factorization constructed in general?
 
+Even this example shows that we need the parent-child relationships. Particularly, the literature of causal inference defines the notion of Markovian parents.
+>Given a set of ordered variables $\{X_1, \dots, X_n\}$, the **Markovian parents** $PA_i$ of node $X_i$ are the set of nodes that make $X_i$ independent of all its _other_ non-descendants (i.e., predecessors), i.e.
+> $P(x_i\|pa_i)=P(x_i\| x_1, \dots, x_{i-1})$.
 
-# Markov Equivalence Class
+Let's dissect this definition! The mention of _ordered variables_ is important (think about this as a  Python `OrderedDict`), as this way we don't need to care about the permutation $\pi$.
+> A **set of ordered variables** $\{X_1, \dots, X_n\}$, also called **causal ordering** defines a particular sequence of the variables $X_i$ such that each $X_i$ is only dependent on $X_j : j < i$. This ordering is not necessarily unique.
 
-- factorization of p : chain rule, DAGs
-- example of how different structures impose the same d sep (chain, fork, v-struct, no figure)
-- highlight that this is a limitation of causal inference due to equivalence
+That is, we enumerate the nodes in the graph in such a way that when $A$ causes $B$, then the index of $A$ will be lower. We can do this always, as we have DAGs that include no cycles, so each parent-child relationship in unambiguous, we can decide which node is the child and which is the parent.
+
+For the definition, I used the terms _predecessors/non-descendants_. These are handy when speaking about a set of nodes. **Predecessors** of a node include its parents, the parents of parents, etc. **Non-descendants** of a nodes include all nodes except its descendants - i.e., all nodes that are not the children, children of children (grandchildren).
+
+So if we condition on the _Markovian parents_ of a node, we will get the same CPD as if we conditioned on all preceding nodes in the causal ordering. The reason is that for $X_i$, the ordered set $\{X_j\}_{j=1}^{i-1}$ includes not only the parents of $X_i$, but also the parents of the parents, and so on.
+
+Thinking in terms of _active paths_, we can interpret this definition as follows: as a node $X_i$ has only incoming edges from its Markovian parents $PA_i$, then if we condition on those, _all active paths are blocked from its predecessors_. So only $PA_i = pa_i$ stays on the right of the conditioning bar.
+
+### Example
+
+Let's apply Markov factorization in practice on our beloved experimental DAG!
+
+![Our example graph for studying d-separation](/images/posts/d_sep_ex.svg)
+
+We have the joint:
+$$
+ P(A, B, C, E,F, H, J)
+$$
+with the causal ordering $\{A, B, C, E, F, H, J\}$. Notice that we can also define the causal ordering as $\{C, A, F, E, B, H, J\}$, among others. This shows that the ordering is not necessarily unique.
+
+> You might wonder: when is the causal ordering unique? When all $X_i$ depend on all $X_j : j<i$.
+> E.g. when the graph with nodes $X_1, X_2, X_3$ has edges $X_1 \rightarrow X_2, X_1 \rightarrow X_3, X_2 \rightarrow X_3$.
+
+From the structure, we can decompose it by conditioning each node on its Markovian parents. 
+
+$$
+P(A, B, C, E,F, H, J) = P(A)P(B|A)P(C)P(E|A)P(F|A)P(H|B,C)P(J|H).
+$$
 
 
 
@@ -69,4 +101,11 @@ Formulated otherwise: probabilities can be manipulated without considering any g
 
 ### Perfect I-maps
 - def example
+
+# Markov Equivalence Class
+
+- factorization of p : chain rule, DAGs
+- example of how different structures impose the same d sep (chain, fork, v-struct, no figure)
+- highlight that this is a limitation of causal inference due to equivalence
+- observational equivalence
 
