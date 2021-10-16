@@ -118,37 +118,50 @@ Actually, Markov compatibility is a necessary and sufficient condition for the a
 
 
 ## I-maps
-- def with P and G
-- def with G1 G2
 - example for both (for P,G I can use my previous figure)
 
 > An **I-map** is defined as a set of independence statements that hold in DAG $G$, i.e.:
->$$I(G)=\{(X\perp_ Y | Z) : (X\perp_G Y | Z)\}$$
+>$$I(G)=\{(X\perp_P Y | Z) : (X\perp_G Y | Z)\}$$
 >If $P\vDash I(G),$ then $G$ is an I-map of $P.$
 
 Here $X\perp_G Y \| Z$ means the d-separation of $X$ and $Y$ given $Z$ in $G$, and $\vDash$ reads as "satisfies".
 
 This definition means that $P$ and $G$ are compatible, if **all** d-separation relations we can find in $G$ imply the conditional independence of the corresponding variables in $P$.
 
-## Review this part and integrate
+Formulated otherwise, if $X$ and $Y$ are d-separated by $Z$ in a DAG $G$, then $X$ is independent of $Y$ given $Z$ in **every** distribution compatible with $G$. 
 
-If sets $X$ and $Y$ are d-separated by $Z$ in a DAG $G$, then $X$ is independent of $Y$ given $Z$ in every distribution compatible with $G$. 
+If they are not d-separated, then they are dependent given $Z$ in **at least one** (almost all, as generating independence requires the careful tuning of parameters) distribution compatible with $G$.
 
-If they are not d-separated, then they are dependent given $Z$ in at least one (almost all, as generating independence requires the careful tuning of parameters) distribution compatible with $G$.
+So the relationship between d-separation and conditional independence can be summarized as follows:
 
-Notation
-Probabilistic notion of conditional independence: $X\perp_P Y |Z$
-Graphical notion of d-separation: $X\perp_G Y |Z$
-Reformulating the above: for disjoints node sets $X,Y,Z$ in DAG $G$ and for all probability functions $P$
-$X\perp_G Y |Z \implies X\perp_P Y |Z $ if $G$ and $P$ are compatible.
-If $X\perp_P Y |Z$  holds in all distributions compatible with $G$ $\implies X\perp_G Y |Z$ 
+>For disjoints node sets $X,Y,Z$ in DAG $G$ and $\forall P$:
+>- $X\perp_G Y \|Z \implies X\perp_P Y \|Z $ if $G$ and $P$ are compatible.
+> - If $X\perp_P Y \|Z$  holds $\forall P$ compatible with $G$ $\implies X\perp_G Y \|Z$ 
+>
+>So a d-separation relation only translates to conditional independence if $G$ is able to represent $P$, whereas a conditional independence is reflected in a graph if it is present in **all** distributions $G$ is able to represent.
+
+Before going to visit the different species of the I-map family, let's make a detour and apply the definition for graphs $G_1, G_2$ - this is a useful way to compare the expressive power of different DAGs. Plus, it will help to put minimal and perfect I-maps into context.
+
+>Let $I(G)$ be the set of independencies in $G$. Then
+$G_1$ is an I-map of $G_2$ if $I(G_1) \subseteq I(G_2).$
+
+The above means that $G_1$ has a _smaller_ set of independencies -i.e., more edges- than $G_2$. How can then $G_1$ still represent $G_2$? Remember, 
+>$X \not\perp_G Y \| Z$ is a statement about the graph, but not the assigned $P$. The functional relationship (i.e., edge weights in the simplest case) can be still manipulated to induce $X \not\perp_P Y \| Z$.
+
+_If you wonder what those functional relations are: I will write about them in a future post discussing Structural Equation Models (SEMs). For now, it is enough to know that they are equations describing how a parent influences its child. In our altitude-temperature example, this would be the relation that adding $200m$ to the altitude reduces the temperature by $1^\circ C$ on average._
 
 ### Minimal I-maps
-- def
 - example
+> The minimal I-map is an I-map without redundant edges, but it may not capture $I(P).$ The minimal I-map is not unique.
+
+Formulated otherwise, a minimal I-map is a graph $G$ no edge can be removed from without introducing (conditional) independencies that _do not hold_ in $P$.
 
 ### Perfect I-maps
-- def example
+- example
+
+> The perfect I-map is an I-map satisfying $I(G)=I(P)$. A perfect I-map does not necessarily exist.
+
+This definition means that a perfect I-map is a graph $G$ that represents all (conditional) independencies, derived solely from its edges. That is, irrespective of the functions assigned to the edges - so if an independence statement holds, then it is true for all quantitative relationships.
 
 # Markov Equivalence Class
 
