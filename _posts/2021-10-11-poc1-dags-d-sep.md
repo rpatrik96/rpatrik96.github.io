@@ -269,6 +269,6 @@ Beware the v-structure! Although not the middle node of the v-structure, but its
 
 # Summary
 
-This post covered the grounds and established a common vocabulary for our journey. DAGs are a powerful building block to reason about causality, but they are not the Holy Grail. I will look into their limitations and the properties of d-separation in the next post. As I promised, I will also highlight the difference between d-separation and conditional independence.
+This post covered the grounds and established a common vocabulary for our journey. DAGs are a powerful building block to reason about causality, but they are not the Holy Grail. I will look into their limitations and the properties of d-separation in the next posts. As I promised, I will also highlight the difference between d-separation and conditional independence.
 
 

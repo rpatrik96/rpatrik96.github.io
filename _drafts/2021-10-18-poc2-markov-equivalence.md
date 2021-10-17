@@ -118,7 +118,6 @@ Actually, Markov compatibility is a necessary and sufficient condition for the a
 
 
 ## I-maps
-- example for both (for P,G I can use my previous figure)
 
 > An **I-map** is defined as a set of independence statements that hold in DAG $G$, i.e.:
 >$$I(G)=\{(X\perp_P Y | Z) : (X\perp_G Y | Z)\}$$
@@ -150,23 +149,59 @@ The above means that $G_1$ has a _smaller_ set of independencies -i.e., more edg
 
 _If you wonder what those functional relations are: I will write about them in a future post discussing Structural Equation Models (SEMs). For now, it is enough to know that they are equations describing how a parent influences its child. In our altitude-temperature example, this would be the relation that adding $200m$ to the altitude reduces the temperature by $1^\circ C$ on average._
 
+#### Example
+Let's assume that we have a joint distribution $P(X,Y)$, where:
+- $X$ - Number of films Nicolas Cage appeared in
+- $Y$ - Number of people who drowned falling into a pool
+
+If you wonder, the example is from [Tyler Vigen](https://www.tylervigen.com/spurious-correlations). As these events are independent, we know that $P$ factorizes as $P(X,Y) = P(X)P(Y)$.
+
+However, if we want to find the corresponding I-map, we will face a surprise: besides a graph $G_0$ with unconnected $X$ and $Y$ nodes, $G_1 : X\rightarrow Y$ and $G_2 : X \leftarrow Y$ are also I-maps of $P$. 
+
+To investigate this, let's write down the sets of independencies:
+- $I(P) = \{X\perp Y\}$
+- $I(G_0) = \{X\perp Y\}$
+- $I(G_1) = \emptyset$
+- $I(G_2) = \emptyset$
+
+As per definition the only precondition for $I(G_i)$ is that it must not contain an independency that does not hold in $P$ - it can contain less. Clearly, in this example $\forall i : I(G_i)\subseteq I(P)$; thus, they are all I-maps of $P$. 
+
 ### Minimal I-maps
-- example
 > The minimal I-map is an I-map without redundant edges, but it may not capture $I(P).$ The minimal I-map is not unique.
 
 Formulated otherwise, a minimal I-map is a graph $G$ no edge can be removed from without introducing (conditional) independencies that _do not hold_ in $P$.
 
+In the above example $G_0$ is a minimal I-map of $P$, as we cannot remove any edge from it (it does not contain any) - in this case, $I(G_0) = I(P)$, so it is a perfect I-map. For $G_1, G_2$ - although they are also I-maps-, we can remove the edge without introducing independencies that do not hold in $P$.
+
+On the other hand, in our temperature-altitude example, the minimal I-maps are the graphs $A\leftarrow T$ and $A\rightarrow T$, as removing the edge would mean that $A$ and $T$ are independent, although we know that they are dependent. This example also illustrates that the minimal I-map may not be unique.
+
+I made the claim that the minimal I-map may not capture $I(P)$, but I have not provided an example - yet. I will use one from Daphne Koller's [PGM1](https://www.coursera.org/learn/probabilistic-graphical-models/lecture/dJYD6/i-maps-and-perfect-maps) course. Assume that $P$ has the independencies described by a v-structure $X\rightarrow Z \leftarrow Y$. What happens if we change the graph to contain the edges $E'=\{X\rightarrow Z , Z\rightarrow Y, X\rightarrow Y  \}$? This new graph $G'$ is still an I-map, as 
+- $I(P) = \{X\perp Y\}$ 
+- $I(G) = \{X\perp Y\}$ 
+- $I(G') = \emptyset$.
+
+But we cannot remove any edge, namely:
+- Removing $X\rightarrow Z$ would mean that $X\perp Z$ 
+- Removing $Z\rightarrow Y$ would mean that $Z\perp Y$
+- Removing $X\rightarrow Y$ would mean that $X\perp Y$.
+And none of these are in $I(P)$.
+
+
 ### Perfect I-maps
-- example
 
 > The perfect I-map is an I-map satisfying $I(G)=I(P)$. A perfect I-map does not necessarily exist.
 
 This definition means that a perfect I-map is a graph $G$ that represents all (conditional) independencies, derived solely from its edges. That is, irrespective of the functions assigned to the edges - so if an independence statement holds, then it is true for all quantitative relationships.
 
+In the case of the $A,T$ example or Nicolas Cage, we were able to construct perfect I-maps, but sometimes it is not possible.
+
+I will illustrate this using an example again from Daphne Koller's [PGM1](https://www.coursera.org/learn/probabilistic-graphical-models/lecture/dJYD6/i-maps-and-perfect-maps) course. Assume that $P$ needs to satisfy $\{(A\perp C \| B,D), (B \perp D | A, C)\}$. If we want to draw a DAG representing only these independencies, we are doomed to fail (with an undirected graph, it is possible, we just need to create a circle of the nodes). As soon as we direct the edges, we will encounter a problem. Namely, if we want to not introduce more independencies, we cannot have an isolated node. But this way, either the edges (due to their directionality) will introduce independencies, or we will have a v-structure that screws everything up.
+
 # Markov Equivalence Class
 
-- factorization of p : chain rule, DAGs
 - example of how different structures impose the same d sep (chain, fork, v-struct, no figure)
 - highlight that this is a limitation of causal inference due to equivalence
 - observational equivalence
+
+> A Markov equivalence class is a set of DAGs that encode the same set of conditional independencies.
 
