@@ -12,6 +12,9 @@ tags:
 
 d-separation is the bread and butter for deciding about conditional independence in DAGs. What is a DAG, anyway?
 
+### PoC Post Series
+- ➡️ [PoC #1: DAGs, d-separation, conditional independence](/posts/2021/10/poc1-dags-d-sep/)
+- [PoC #2: Markov Factorization, Compatibility, and Equivalence](/posts/2021/10/poc2-markov/)
 
 # Directed Acyclic Graphs (DAGs)
 It is great that we have developed the language to reason about cause and effect. Nonetheless, putting this behind fancy mathematics has its niche, too - okay, I need to admit that having concise notation and a formal framework is something I consider useful.
