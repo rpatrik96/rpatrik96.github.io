@@ -70,7 +70,7 @@ In our beloved graph, symmetry means that $E\perp F \| A \implies F\perp E \| A$
 
 Decomposition means that if a variable $X$ is conditionally independent of a _set of variables_ $Y$ and $W$, then it is independent of each (note that in the expression above, the roles of $Y$ and $W$ are interchangeable - as it has no meaning which node we call $Y$ or $W$).
 
-That is, applying decomposition gives us a _more general_ statement.
+That is, applying decomposition gives us a _more general_ statement. Pearl describes this as if $Y$ and $W$ are together irrelevant w.r.t. $X$, then each of them (separately) is also irrelevant.
 
 ### Proof
 $$
@@ -85,13 +85,28 @@ $$
 
 This proof is slightly more tricky: namely, we are interested in the relationship between $X,Y$ and $Z$, but the original statement also includes $W$. What can we do? We can introduce $W$ and _marginalize_. Thus, the expression means the same, but has a much nicer (i.e., temporarily more complicated) form. Remember Macchiavelli: the ends justify the means.
 
-By introducing $W$, we can exploit the $LHS$ after applying the chain rule of probability. As $P(X\|Z)$ does not depend on $W$, we can take it out of the sum. As a last step, we sum out $W$ and get the $RHS$ of the property, i.e.  $X\perp Y \| Z$.
+By introducing $W$, we can exploit the $LHS$ after applying the chain rule of probability. Then we can notice that $P(X\|Z)$ does not depend on $W$; thus, we can take it out of the sum. As a last step, we sum out $W$ and get the $RHS$ of the property, i.e.  $X\perp Y \| Z$.
 
 ### Example
+The example network gives rise to the following decomposition: we can split $E \perp FB \|A$ into $E \perp B \|A$ and $E \perp F \|A$.
 
 
 ## Weak union
 > $X\perp YW \| Z \implies X\perp Y \| ZW$
+
+Weak union means that a variable can be moved to the right of the conditioning bar. Or as Pearl puts it: learning irrelevant (i.e., independent) information $W$ cannot make the irrelevant information $Y$ relevant to $X$. You might wonder whether _any_ variable can be introduced as evidence. Well, the problem is again the presence of v-structures.
+
+>When an arbitrary variable is conditioned on, it may introduce additional dependencies - and weak union should hold for _all_ variables.
+
+More precisely, if for a set of variables $X,Y, Z, W$ the relation $X\perp YW \| Z$ holds, then $X\perp Y \| ZW$ should be _always_ true. So there will be combinations where $X\not\perp YW \| Z$ - then we can say nothing about $X\perp Y \| ZW$.
+
+How does weak union circumvent the above issue? Because $W$ is moved from the left of the conditioning bar to the right of the conditioning bar, it requires to be independent of $X$ given $Z$.
+Namely, using decomposition, we can rewrite the original expression as $X\perp W \| Z$.
+
+This statement excludes v-structures. Let's prove this by contradiction. _From now on, I will use nodes from our example._ Assume that $W=H$, i.e.,  middle node in a v-structure, whereas $X=B$ is the left/right node (let's pick the left one). Then, they should be dependent conditioned on _any_ variable (as there is an edge between them). So $B\not\perp H \| Z : \forall Z$ (although for using this property, we only need to find a single $Z$); thus, we have a contradiction. As a result, we cannot exploit weak union.
+
+What happens if $W=K$ is a descendant of the middle node of a v-structure? Then $B\not\perp K \| Z$ still holds. If $Z$ is also a descendant of the v-structure node but a parent of $W$ (i.e., $Z=J$), then $B\not\perp Y \| J$ if $Y=C$, i.e. when it is also a node in the v-structure.
+
 
 ### Proof
 $$
@@ -99,8 +114,10 @@ $$
 LHS: P(X|Y,W, Z) &= P(X|Z) \\
 RHS: P(X,Y| W, Z) &= P(X|Y,W,Z)P(Y|W, Z) \\
                &=_{LHS} P(X|Z) P(Y|W, Z)\\
+               &=_{Decomposition} P(X|W, Z) P(Y|W, Z)\\
 \end{align*}
 $$
+The proof uses again the chain rule of probability to extract the $LHS$ from the $RHS$. Then we can apply the $LHS$. In the last step, we apply decomposition. Namely, $X\perp YW \| Z$ implies $X\perp W \| Z$, i.e. $P(X|Z)=P(X|W, Z)$.
 
 ### Example
 
