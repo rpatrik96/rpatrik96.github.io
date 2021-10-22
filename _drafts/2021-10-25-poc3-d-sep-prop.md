@@ -120,12 +120,41 @@ $$
 The proof uses again the chain rule of probability to extract the $LHS$ from the $RHS$. Then we can apply the $LHS$. In the last step, we apply decomposition. Namely, $X\perp YW \| Z$ implies $X\perp W \| Z$, i.e. $P(X|Z)=P(X|W, Z)$.
 
 ### Example
+Weak union can also be demonstrated on our example graph. For example $A \perp CK | B$ implies that $A \perp C|BK$ and $A \perp K|BC$. In the former consequence, the $B\rightarrow H \leftarrow C$ v-structure becomes activated, but $B$ screens off the path from $A$ to $K$.
 
 ## Contraction
 >$X\perp Y \| Z  \land X\perp W \| ZY \implies X\perp YW \| Z$
 
+- what Pearl says
+
+Contraction is the **reverse of weak union with some extras.** Namely, according to weak union,  $X\perp YW \| Z$ implies $ X\perp W \| ZY$. But as we can see, the **reverse direction needs more information**, namely $X\perp Y \| Z$. 
+
+
+I think about contraction as something similar to the chain rule of probabilities. Namely, when we factorize a joint $P(X,Y) = P(X)P(Y\|X)$, then variables are on the right-hand side of the conditioning bar in some factors, whereas they also need to be on the left-hand side in some factors - remember: $P(X) = P(X\|\emptyset)$.
+
+Writing contraction in terms of probabilities, we can observe a similar, but not the same, behavior: $P(X,Y\|Z)P(X, W\|Y, Z) \propto P(X,Y,W\|Z)$.
 
 ### Proof
+
+#### "Similarity" to the chain rule of probabilities
+$$
+\begin{align*}
+LHS: P(X,Y|Z) &= P(X|Z) P(Y|Z) \ \ \ \qquad\qquad (1) \\
+P(X, W|Y, Z) &= P(X|Y,Z) P(W|Y,Z) \qquad (2)\\
+&=_{LHS_1} P(X|Z)P(W|Y,Z)\\
+RHS: P(X,Y,W|Z) &= P(X|Z) P(Y,W|Z)
+ \\
+ \\
+P(X,Y|Z)P(X, W|Y, Z) &=  P(X|Z) P(Y|Z)P(X|Y,Z) P(W|Y,Z)\\
+&= P(W|Y,Z)P(Y|Z)P(X|Z)P(X|Y,Z)\\
+&=_{CR} P(Y,W|Z) P(X|Z)P(X|Y,Z)\\
+&=_{LHS_1} P(Y,W|Z) P(X|Z)P(X|Z) \\
+&\propto RHS \\
+\end{align*}
+$$
+
+The first "proof" tries to shed light on this similarity. It starts with the product of the two expressions on the $LHS$, then uses the chain rule $(CR)$ and $LHS_1$ to produce factors present on the $RHS$. Indeed, the resulting expression has the same factors as the $RHS$ - note that as the product of the $LHS$ expressions is not the same, one factor is  included twice. 
+
 $$
 \begin{align*}
 LHS: P(X|Y, Z) &= P(X|Z) \ \qquad (1) \\
@@ -137,6 +166,8 @@ RHS: P(X,Y, W| Z) &= P(X|Y, W, Z)P(Y,W|Z) \\
 $$
 
 ### Example
+
+To show an example why the extra information is required to "reverse the weak union property", let's consider $F\perp C\|BH$. It is clear to see that $not\perp BC|H$ as $B$ is now not blocking the active path, plus the v-structure is activated. By checking $F\perp B\|H$ and $F\perp H\|B$ shows that $F\not\perp B\|H$, so we cannot apply the contraction property to $\{B,C,F,H\}$
 
 ## Intersection (for strictly positive distributions)
 > $X\perp W \| ZY  \land X\perp Y \| ZW \implies X\perp YW \| Z$
