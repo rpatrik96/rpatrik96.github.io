@@ -125,9 +125,11 @@ Weak union can also be demonstrated on our example graph. For example $A \perp C
 ## Contraction
 >$X\perp Y \| Z  \land X\perp W \| ZY \implies X\perp YW \| Z$
 
-- what Pearl says
+To put the meaning of contraction into words (as of Pearl says): when $W$ is irrelevant to $X$ after learning the also irrelevant $Y$, then it should be irrelevant even before learning $Y$. Note that applying decomposition makes the last part of the sentence more clear, for $X\perp YW \| Z \implies X\perp W \| Z$. 
 
-Contraction is the **reverse of weak union with some extras.** Namely, according to weak union,  $X\perp YW \| Z$ implies $ X\perp W \| ZY$. But as we can see, the **reverse direction needs more information**, namely $X\perp Y \| Z$. 
+>Thus, we can say that _weak union and contraction together_ express that learning irrelevant information is does not alter the relevance of any other variable.
+
+Contraction can be thought of as the **reverse of weak union with some extras.** Namely, according to weak union,  $X\perp YW \| Z$ implies $ X\perp W \| ZY$. But as we can see, the **reverse direction needs more information**, namely $X\perp Y \| Z$. 
 
 
 I think about contraction as something similar to the chain rule of probabilities. Namely, when we factorize a joint $P(X,Y) = P(X)P(Y\|X)$, then variables are on the right-hand side of the conditioning bar in some factors, whereas they also need to be on the left-hand side in some factors - remember: $P(X) = P(X\|\emptyset)$.
@@ -167,10 +169,24 @@ $$
 
 ### Example
 
-To show an example why the extra information is required to "reverse the weak union property", let's consider $F\perp C\|BH$. It is clear to see that $not\perp BC|H$ as $B$ is now not blocking the active path, plus the v-structure is activated. By checking $F\perp B\|H$ and $F\perp H\|B$ shows that $F\not\perp B\|H$, so we cannot apply the contraction property to $\{B,C,F,H\}$
+To show an example why the extra information is required to "reverse the weak union property", let's consider $F\perp C\|BH$. It is clear to see that $F\not\perp BC|H$ as $B$ is now not blocking the active path, plus the v-structure is activated. By checking $F\perp B\|H$ and $F\perp H\|B$ shows that $F\perp H\|B$ holds, but $F\not\perp B\|H$, so we can only apply the contraction property as $F \perp H\|B \land F\perp C\|BH \implies F \perp CH \|B$.
 
 ## Intersection (for strictly positive distributions)
 > $X\perp W \| ZY  \land X\perp Y \| ZW \implies X\perp YW \| Z$
+
+If we are not vigilant enough, we might mistakenly think that intersection is the same as contraction. Well, they are related for sure. 
+
+>But which one is more general: intersection or contraction?
+
+ Looking into the formulas, we might conclude that intersection is less general than contraction, as we require additional observations on the right of the conditioning bar: instead of $X\perp Y \| Z$, we have $X\perp Y \| ZW$. Not so fast - I hope you did not forget the black sheep of graphs? It's v-structures again.
+
+1. We should not forget that intersection only applies for positive probability distributions, i.e., when $\forall v\in V : P(v)>0$. From now on, we focus on discussing generality in the case of strictly positive distributions. As otherwise, contraction is more general, as it applies also to distributions where $P(v)=0$ is allowed.
+2. In the case of intersection, extra evidence is required for $Y$ to be independent of $X$.
+3. This extra evidence can be **less general** if $W$ blocks a chain or a fork on the path between $X$ and $Y$. I.e., without conditioning on $W$, $X$ would be dependent on $Y$. This case is less general as we _need_ $W$ to induce the independence of $X$ and $Y$.
+4. But $W$ can be also **more general** if it opens up a v-structure, meaning that dropping $W$ would make the independence "more strong" (what I mean here is that the $X-Y$ path would be blocked at more nodes, including at $W$). This case is more general as the independence of $X$ and $Y$ holds _despite_ conditioning on $W$.
+
+So neither intersection nor contraction is more general for strictly positive distributions. They are different.
+
 
 ### Proof
 $$
