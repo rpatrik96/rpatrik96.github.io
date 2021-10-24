@@ -180,12 +180,16 @@ If we are not vigilant enough, we might mistakenly think that intersection is th
 
  Looking into the formulas, we might conclude that intersection is less general than contraction, as we require additional observations on the right of the conditioning bar: instead of $X\perp Y \| Z$, we have $X\perp Y \| ZW$. Not so fast - I hope you did not forget the black sheep of graphs? It's v-structures again.
 
-1. We should not forget that intersection only applies for positive probability distributions, i.e., when $\forall v\in V : P(v)>0$. From now on, we focus on discussing generality in the case of strictly positive distributions. As otherwise, contraction is more general, as it applies also to distributions where $P(v)=0$ is allowed.
+1. We should not forget that **intersection only applies for positive probability distributions**, i.e., when $\forall v\in V : P(v)>0$. From now on, we focus on discussing generality in the case of strictly positive distributions. As otherwise, contraction is more general, as it applies also to distributions where $P(v)=0$ is allowed.
 2. In the case of intersection, extra evidence is required for $Y$ to be independent of $X$.
 3. This extra evidence can be **less general** if $W$ blocks a chain or a fork on the path between $X$ and $Y$. I.e., without conditioning on $W$, $X$ would be dependent on $Y$. This case is less general as we _need_ $W$ to induce the independence of $X$ and $Y$.
 4. But $W$ can be also **more general** if it opens up a v-structure, meaning that dropping $W$ would make the independence "more strong" (what I mean here is that the $X-Y$ path would be blocked at more nodes, including at $W$). This case is more general as the independence of $X$ and $Y$ holds _despite_ conditioning on $W$.
 
-So neither intersection nor contraction is more general for strictly positive distributions. They are different.
+So neither intersection nor contraction is more general for strictly positive distributions. They are different. 
+
+>The first crucial difference is that intersection requires positive distributions. You might wonder, why?
+
+I have spent some time pondering about the same question; I tried to dig up an answer in textbooks, but I could not find any. Nevertheless, I am believed that for understanding this property, this is very important. In the following, I will try to justify this requirement during the proof.
 
 
 ### Proof
@@ -205,8 +209,30 @@ RHS: P(X,Y, W| Z) &= P(X|Y, W, Z)P(Y,W|Z) \\
 \end{align*}
 $$
 
+The last proof of this post is a bit different from the above. This boils down to the special nature of intersection, namely, the requirement of strictly positive distributions.
+
+We start from the $RHS$ and apply the $LHS$ - up to this point, everything is business as usual. First, we utilize Bayes's rule - after that, things follow their distinct way.
+
+The first observation we should make is that the two statements on the $LHS$ involve the same variables; hence, their starting expression (I hope not to confuse you by saying: "the $LHS$ of  $LHS_1$ and $LHS_2$" - i.e., $P(X|Y, W, Z)$) is identical.
+
+This fact predicts that there will be two cases to investigate, as both $LHS_1$ and $LHS_2$ can be applied in the same situation.. The second step in the proof investigates exactly these two cases. The implication here is that as we had a single expression - $P(X,Y, W| Z)$-, then produced two equivalent expressions - $P(X|Y, Z) P(Y,W|Z)$ and $P(X|W, Z) P(Y,W|Z)$, we can proceed by looking into the equality of both cases.
+
+After canceling the identical $P(Y,W|Z)$, what is left is the equality of $P(X|Y, Z)$ and $ P(X|W, Z)$.
+
+> **When simplifying, we rely on the assumption that $P(Y,W|Z)>0$.** Otherwise, it could happen that $P(X|Y, Z)$ and $P(X|W, Z)$ are not equal, but both cases still evaluate to the same value as $P(Y,W|Z)=0$ renders them $0$.
+
+The strict positive assumption should hold for all values of the variables; otherwise, we could not write $P(X|Y, Z)= P(X|W, Z)$ - this also holds for all value combinations. Thus, **we can drop $W$ and $Y$**. The reason for this is that for $X=x, Z=z$, $P(X=x|Y, Z=z)= P(X=x|W, Z=z)$ still holds for all $Y, W$. If this is true, then it remains true even if we drop $Y$ and $W$. 
+
+>Why can we drop these variables? 
+
+Because if the equality holds for all value combinations, then they are irrelevant, they do not change anything. Again, having the strict positivity assumption is an important safeguard as if for _some_ values $X=x$ or $Z=z$ would have $0$ probability, that would "screen off" any effect of $Y$ and $W$. Of course, as the result would evaluate to $0$, the values of $Y$ and $W$ would be still irrelevant. But when $X=x$ and $Z=z$ are not impossible (note that having a distribution that is $0$ everywhere make no sense), the effect of $Y$ and $W$ would cause problems.
+
+Hopefully I convinced you that we can drop $Y$ and $W$; what remains is $P(X|Z)$. Substituting this back into the $RHS$, we get $P(X,Y, W| Z) = P(X|Z)P(Y,W|Z)$; thus, concluding the proof.
+
 ### Example
+In our example graph, we can apply intersection to $\{B,C,F,H\}$, namely $F\perp C\|BH$ and $F\perp H\|BC$ hold, and so does $F\perp HC\|B$.
 
 
-
+# Summary
+If you are reading this, then you should be proud of yourself for staying with me until the end. This was a rather technical post - and I hope, also an "enlightening" one. I have tried to do my best to provide intuition, a formal proof, and a few examples for each property of d-separation. By synthesizing this knowledge, you will be able to manipulate probabilities to the desired form - and this will turn out to be an invaluable skill in the future.
 
