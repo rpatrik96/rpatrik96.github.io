@@ -233,7 +233,7 @@ This fact predicts that there will be two cases to investigate, as both $LHS_1$ 
 
 After canceling the identical $P(Y,W\|Z)$, what is left is the equality of $P(X\|Y, Z)$ and $ P(X\|W, Z)$.
 
-> **When simplifying, we rely on the assumption that $P(Y,W|Z)>0$.** Otherwise, it could happen that $P(X|Y, Z)$ and $P(X|W, Z)$ are not equal, but both cases still evaluate to the same value as $P(Y,W\|Z)=0$ renders them $0$ - in this case, we could not drop $P(Y,W\|Z)$.
+> **When simplifying, we rely on the assumption that $P(Y,W\|Z)>0$.** Otherwise, it could happen that $P(X\|Y, Z)$ and $P(X\|W, Z)$ are not equal, but both cases still evaluate to the same value as $P(Y,W\|Z)=0$ renders them $0$ - in this case, we could not drop $P(Y,W\|Z)$.
 
 The strict positive assumption should hold for all values of the variables; otherwise, we could not write $P(X\|Y, Z)= P(X\|W, Z)$ Thus, **we can drop $W$ and $Y$**. The reason for this is that for $X=x, Z=z$, $P(X=x\|Y, Z=z)= P(X=x\|W, Z=z)$ still holds for all $Y, W$. If this is true, then it remains true even if we drop $Y$ and $W$. 
 
