@@ -71,31 +71,46 @@ I will use the following notation in the definition:
 - $P(v)$: the probability distribution over $V$
 - $P^*(v) = P(v \|do(X = x) )$: the set of all interventional distributions, including the no intervention, i.e., $P(v)$
 
+The following section discusses the definition in its full technical glory, as those subtleties really make a difference. If you are interested only in the intuitive definition of CBNs (I won't blame you, I promise), use your flux capacitor to jump into the wormhole leading to the [second next section](#definition-intuitive).
 
-#### Definition
+
+#### Definition (Technical)
 >A DAG $G$ is a Causal Bayesian Network (CBN) compatible with $P^*$ if and only if the following three conditions hold for every $P(v \|do(X = x) ) \in P^*$:
 >1.  $P(v \|do(X = x))$ is compatible with $G$
 >2. $P(v_i \|do(X = x) )=1 , \forall V_i \in X$ whenever $v_i$ is consistent with $X = x$ 
 >3. $P(v_i \|do(X = x), pa_i )=P(v_i \| pa_i ) , \forall V_i \not\in X$, whenever $pa_i$ is consistent with $X = x$; i.e., each $P(v_i \| pa_i )$ is invariant to interventions not involving $V_i$.
 
 Now let's make sense of the definition. 
-1. The first condition means that even after the intervention, $G$ is able to represent $P$.
+1. The first condition means that even after the intervention, $G$ is able to represent $P$. With all the incoming edges into $X$ removed, we will have new independencies in the graph. The reason why this still does not hurt Markov compatibility is that we establish only such independencies that are added to $P(v)$ by the intervention $do(X=x)$. Without changing the distriburtion, there is no guarantee, as by definition $I(G) \subseteq I(P)$ should hold. And increasing only $I(G)$ by adding new independencies could hurt the relationship, but changing both in the same way cannot. 
 2. The second condition means that intervening on the _same_ variable as on the left on the conditioning bar (this is the $V_i \in X$ part) collapses it to a point mass. Consistency of $v_i$ and $x$ means that you only get a probability of $1$, when $v_i=x$, i.e., if you set $T=25^\circ C$, then 
 $$P(T=t| do(T=25^\circ C)) =  \begin{cases}1, t=25^\circ C\\
 0, t\neq 25^\circ C \end{cases}$$
-3.
+3. The third condition is the most interesting one. It states that when the node $V_i$ is conditioned on its parents $Pa_i$, then **interventions have no effect on the CPD**. The conditions formalize that the intervention cannot be on $V_i$ (in that case the parent cannot screen off the effect). The consistency requirement of the assignments $X=x$ and $Pa_i = pa_i$ ensure that the scenario is admitted by $P$. That is, the condition only holds for such $x, pa_i$ combinations that have nonzero probability. 
 
+#### Definition (Intuitive)
+> A DAG $G$ is a Causal Bayesian Network (CBN) compatible with $P^*$ if and only if the following three conditions hold for all distributions $\in P^*$:
+> 1. Each $P \in P^*$ is compatible with $G$
+> 2. Intervening on variable $X$ with $do(X=x)$ makes that event certain, i.e., $P(X=x \|do(X=x)) = 1$
+> 3. When conditioning on the parents of a node $X$, interventions (not on $X$) have no effect on the CPD $P(X | Pa_X)$.
 
 
 #### Consequences
-This enforces constraints on the space $P^*$.
-$$P(v_i \|do(X = x)) = \prod_{i : V_i \not\in X} P(v_i \|pa_i )$$
- , for all $v$ consistent with $x$.
+Although the definition does a great job hiding its goodies, we cannot be stopped uncovering them!
 
-If $G$ is a causal Bayes network, two properties hold:
-$P(v_i \|pa_i) = P(v_i \|do(X = pa_i)) $ - every parent set $pa_i$ is exogenous to its child $V_i$ (the conditional probability equals the effect of setting $PA_i=pa_i$ by control).
-$P(v_i \|pa_i, s) = P(v_i \|do(X = pa_i)) $ - invariance: controling direct causes $PA_i,$ no other interventions affect $V_i.$
+Namely, after making an intervention, we will have access to a nice, _truncated_ factorization of $\forall P \in P^*$, i.e.:
 
+$$P(v \|do(X = x)) = \prod_{i : V_i \not\in X} P(v_i \|pa_i ).$$
+Again, for $v$ should be consistent with $x$ (only such $v,x$ pairs can occur that have nonzero probability). 
+
+This is particularly pleasing, you might wonder... Actually, it is: this factorization drops (thus the adjective "truncated") all factors from the original distribution that included nodes that are intervened on (i.e., $V_i \in X$). So what remains are $V_i \not\in X$ - remember, as of condition two, when you intervene on $X$, it will be collapsed to a point mass. Multiplying by 1 will not change the product, so those factors can be dropped. As a result, we get a simpler distribution with less parameters.
+
+Although Christmas is quite far away, but CBNs do not suffer from supply chain issues of container ships, so we got shipped two additional properties (disclaimer: these are valid not just during Christmas holidays):
+
+
+SPLIT PROPERTIES AND EXPLANANTIONS
+
+>1. $P(v_i \|pa_i) = P(v_i \|do(Pa_i = pa_i)) $ - conditioning and intervening on the parents $Pa_i$ of node $V_i$ has the same effect. This is because  ?????
+>2. $P(v_i \|do(Pa_i = pa_i, S=s)) = P(v_i \|do(Pa_i = pa_i))$ - intervening on the parents $Pa_i$ of node $V_i$ makes the CPD invariant to interventions on other nodes $S$ (as $Pa_i$ screen off every possible effect of $do(S=s)$ if $S$ belongs to the non-descendants of $V_i$; if $S$ belongs to the descendants, they cannot have any effect, even without intervening on $Pa_i$). If 
 
 
 
