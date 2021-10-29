@@ -106,16 +106,48 @@ This is particularly pleasing, you might wonder... Actually, it is: this factori
 
 Although Christmas is quite far away, but CBNs do not suffer from supply chain issues of container ships, so we got shipped two additional properties (disclaimer: these are valid not just during Christmas holidays):
 
+>1. $P(v_i \|pa_i) = P(v_i \|do(Pa_i = pa_i)) $ 
+>2. $P(v_i \|do(Pa_i = pa_i, S=s)) = P(v_i \|do(Pa_i = pa_i))$ 
 
-SPLIT PROPERTIES AND EXPLANANTIONS
+The _first property_ tells us that **conditioning and intervening on the parents $Pa_i$ of node $V_i$ yield identical distributions**. This happens because in both cases $Pa_i = pa_i$, and those are the only variables influencing $V_i$.
 
->1. $P(v_i \|pa_i) = P(v_i \|do(Pa_i = pa_i)) $ - conditioning and intervening on the parents $Pa_i$ of node $V_i$ has the same effect. This is because  ?????
->2. $P(v_i \|do(Pa_i = pa_i, S=s)) = P(v_i \|do(Pa_i = pa_i))$ - intervening on the parents $Pa_i$ of node $V_i$ makes the CPD invariant to interventions on other nodes $S$ (as $Pa_i$ screen off every possible effect of $do(S=s)$ if $S$ belongs to the non-descendants of $V_i$; if $S$ belongs to the descendants, they cannot have any effect, even without intervening on $Pa_i$). If 
+The _second property_ expresses that **intervening on $Pa_i$  makes the CPD invariant to interventions on $S\neq Pa_i$**. It does not matter whether $S$ is a non-descendant or a descendant of $V_i$: in the former case, $do(Pa_i=pa_i)$ removes any effect of $S$ by deleting the edges from $S$ to $Pa_i$; whereas in the latter case, as only paths in the form of $V_i\rightarrow \dots \rightarrow S$ exist, $S$ cannot have any effect on $V_i$.
 
+#### Why should we care about CBNs?
+Even after this long section, you might feel that CBNs are only a formalism with no special purpose. I ensure you that having a common denominator is practical to talk about interventional queries.
 
+> When interested in $P(v_i | do(X=x)),$ Causal Bayesian Networks are the tool describing how to get the interventional distribution from the joint, what the intervened DAG will look like, and they also describe simplifications.
+
+Similar to the properties of d-separation in the [previous post](/posts/2021/10/poc3-d-sep-prop/), CBNs extend our toolbox and increase our self-confidence for handling concepts such as the back-door adjustment, which will be the topic of a future post.
+
+Still, CBNs are not the Holy Grail: they only inform us about the child-parent relationships in a graph. This is sufficient in many cases, but not for counterfactuals.
 
 
 ### Counterfactual Queries
+
+First and foremost: what is a counterfactual?
+> A counterfactual is a hypothetical query about an event that has not happened, given that the conditions are the same.
+
+Such questions are crucial in medical settings, such as drug trials. Let's assume that after administering a new medication the patient gets healthy. To uncover the _potential_ causal relationship between treatment and healing, clinical investigators are interested in answering the following question: 
+>Would the patient be healthy - everything else being equal -  without getting the medication?
+
+The most robust empirical tool, the (possibly double-blind, placebo-controlled) Randomized Control Trial (RCT), is developed to answer counterfactuals. 
+But RCTs expensive, enourmously expensive: 
+- You need a **control group and a treatment group** (with identical participants in both), 
+- You need to engineer a **clever placebo** (a substance without real effect - such as a sugar pill when investigating a medication; this is really hard if you want to investigate e.g. real foods - what tastes, looks, and smells like carrots _without_ being a carrot?)
+- You need to be **double-blind** (thus, the placebo), meaning that neither the investigators nor the participants should know who got the treatment and who the placebo (i.e., there is an independent group of researchers, who do not carry out the experiments, but they know the treatment-participant assignment)
+
+Such questions arise several fields, this year's highlight being unequivocally the [Nobel Prize in Economics](https://www.nobelprize.org/prizes/economic-sciences/2021/press-release/). Namely, half of the prize went to _Joshua D. Angrist_ and _Guido W. Imbens_ for _“for their methodological contributions to the analysis of causal relationships”_. Just imagine how hard it is to create an RCT in economics: what is the placebo for a new education/tax policy?
+
+>Counterfactuals provide an alternative to RCTs, but they require to know the **quantitative** relationship between the nodes in the DAG.
+
+To stress the requirement for quantitative relationships, consider the following counterfactual questions:
+- How much would the savings rate of households change if the state decreased the capital tax on stock-based personal savings accounts?
+- How much would the blood pressure of patients decrease with seven hours of weekly exercise?
+
+CBNs are qualitative models; thus, insufficient: we need **equations.** This is where Structural Equation Models (SEMs) come into play.
+
+
 
 ### Structural Equation Models (SEMs)
 - SCMs
