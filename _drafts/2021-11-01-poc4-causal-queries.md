@@ -19,7 +19,7 @@ A top-secret guide to d-separation. We will go deep, ready?
 
 # Causal Queries
 
-> Why are doing this thing called "causal inference"?
+> Why are we doing this thing called "causal inference"?
 
 The obvious answer is that it's fun _(half of the readers now closed the browser tab)_. To set aside joking: because we want to do causal queries, i.e., extract information about the cause-effect relationships between different mechanisms. 
 
@@ -36,7 +36,7 @@ In the following, we will dive into the different models used for causal stateme
 
 ## Observational Queries
 
-> Observational queries are in terms of the joint distribution.
+> **Observational queries** are in terms of the joint distribution.
 
 Making observational queries not even requires causal inference; we can do it based on samples from the joint distribution. That sounds great, but as you might have guessed, there is no free lunch.
 
@@ -49,7 +49,7 @@ When we want to extract more information than the joint, we need a new tool, i.e
 
 ### Interventions
 
-> An intervention means that the value of a (set of) nodes $X$ is set to a specific value $x$, denoted by $do(X=x)$ - this is called _the $do$-notation_.
+> An **intervention** means that the value of a (set of) nodes $X$ is set to a specific value $x$, denoted by $do(X=x)$ - this is called _the $do$-notation_.
 
 Importantly, we **need the DAG** to carry out interventions, as it changes the edge structure.
 
@@ -75,7 +75,7 @@ The following section discusses the definition in its full technical glory, as t
 
 
 #### Definition (Technical)
->A DAG $G$ is a Causal Bayesian Network (CBN) compatible with $P^*$ if and only if the following three conditions hold for every $P(v \|do(X = x) ) \in P^*$:
+>A DAG $G$ is a **Causal Bayesian Network (CBN)** compatible with $P^*$ if and only if the following three conditions hold for every $P(v \|do(X = x) ) \in P^*$:
 >1.  $P(v \|do(X = x))$ is compatible with $G$
 >2. $P(v_i \|do(X = x) )=1 , \forall V_i \in X$ whenever $v_i$ is consistent with $X = x$ 
 >3. $P(v_i \|do(X = x), pa_i )=P(v_i \| pa_i ) , \forall V_i \not\in X$, whenever $pa_i$ is consistent with $X = x$; i.e., each $P(v_i \| pa_i )$ is invariant to interventions not involving $V_i$.
@@ -88,7 +88,7 @@ $$P(T=t| do(T=25^\circ C)) =  \begin{cases}1, t=25^\circ C\\
 3. The third condition is the most interesting one. It states that when the node $V_i$ is conditioned on its parents $Pa_i$, then **interventions have no effect on the CPD**. The conditions formalize that the intervention cannot be on $V_i$ (in that case the parent cannot screen off the effect). The consistency requirement of the assignments $X=x$ and $Pa_i = pa_i$ ensure that the scenario is admitted by $P$. That is, the condition only holds for such $x, pa_i$ combinations that have nonzero probability. 
 
 #### Definition (Intuitive)
-> A DAG $G$ is a Causal Bayesian Network (CBN) compatible with $P^*$ if and only if the following three conditions hold for all distributions $\in P^*$:
+> A DAG $G$ is a **Causal Bayesian Network (CBN)** compatible with $P^*$ if and only if the following three conditions hold for all distributions $\in P^*$:
 > 1. Each $P \in P^*$ is compatible with $G$
 > 2. Intervening on variable $X$ with $do(X=x)$ makes that event certain, i.e., $P(X=x \|do(X=x)) = 1$
 > 3. When conditioning on the parents of a node $X$, interventions (not on $X$) have no effect on the CPD $P(X | Pa_X)$.
@@ -126,7 +126,7 @@ Still, CBNs are not the Holy Grail: they only inform us about the child-parent r
 ### Counterfactual Queries
 
 First and foremost: what is a counterfactual?
-> A counterfactual is a hypothetical query about an event that has not happened, given that the conditions are the same.
+> A **counterfactual** is a hypothetical query about an event that has not happened, given that the conditions are the same.
 
 Such questions are crucial in medical settings, such as drug trials. Let's assume that after administering a new medication the patient gets healthy. To uncover the _potential_ causal relationship between treatment and healing, clinical investigators are interested in answering the following question: 
 >Would the patient be healthy - everything else being equal -  without getting the medication?
@@ -150,9 +150,43 @@ CBNs are qualitative models; thus, insufficient: we need **equations.** This is 
 
 
 ### Structural Equation Models (SEMs)
-- SCMs
+- FIGURE SHOWING NOISE AND X VARIABLES
+
+So we need equations? Here they are:
+
+> A **Structural Equation Model (SEM)** is a set of equations describing the **qualitative relationship** between nodes $X_i$ and their parents $Pa_i$ in the form of:
+> $$ x_i = f_i(pa_i, u_i)\qquad  \forall i, $$
+> where $u_i$ are the _noise_ variables.
+
+Before looking into $U_i$, let me draw your attention to a key point: a SEM  is a **deterministic** function from the product space of the parents and the exogenous variables to the values of the node.  This is the same idea of representing stochasticity as in VAEs with the [reparametrization trick](https://arxiv.org/abs/1312.6114).
+
+To give you a flavour of what comes next, I might just drop the fact that SEMs are also called **Structural Causal Models (SCMs)**.
+
+#### The zoo of variable names
+
+The _beauty_ of science is that scientists are creative people: they like to give names to concepts, _a lot of names_. We will now discuss them _all_. Hopefully, we won't get lost in the jungle of causal terminology. I am believed that we will get away with some practical insights, so here we go.
+
+The variables $U_i$ have several names: they are called _exogenous, independent, causal, latent, or noise variables_. They are
+- **Exogenous:** as they are determined "by nature", i.e. they come "from outside" of the model 
+- **Independent:** as they have no parents in the graph - their values are only determined by the (noise) distribution they are sampled from
+- **Causal:** as they are the variables that are the cause of the _dependent_ variable $X_i$
+- **Latent:** as they are unobserved
+- **Noise/disturbance:** as they are usually parametrized as some noise distribution (e.g. Gaussian, Laplacian) - again, recall VAEs and the reparametrization trick.
 
 
+You guessed it correctly, $X_i$ also have several names: _endogenous, dependent, and observed variables_. They are
+- **Endogenous:** as they are determined by the model (the $f_i$ functions), i.e. they are "from inside" of the model
+- **Dependent:** as they have parents in the graph - their values are determined by the values of their parents
+- **Observed**: as they are the ones we can observe
+
+**Note:** when $X_i$ causes $X_j$, then $X_i$ is also called a "causal variable". So pay attention to the _intent_ of the respective author. _(By the way, did I just ask you to be a mind-reader?)_
+
+#### Assumptions
+
+- MArkovian semi-markovian
+
+- Causal Strcture
+- Causal Model
 
 ![Our example graph for studying d-separation](/images/posts/d_sep_ex.svg)
 
