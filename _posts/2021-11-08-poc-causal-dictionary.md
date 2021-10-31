@@ -23,11 +23,12 @@ The model zoo of Markovian conditions is ~~fascinating~~ confusing. Let there be
 |  Concept | Names  |  Reference| 
 |---|---|---|
 | DAG-distribution correspondence  |  Markov compatibility<br>I-map |   [PoC#2](/posts/2021/10/poc2-markov/) |   
-| Qualitative child-node relationships  |  <ul><li>Structural Equation Model (SEM)</li><li>Structural Causal Model (SCM)</li><li>Functional Causal Model (FCM)</li><li>Causal  Model</li></ul> |   [PoC #4](/posts/2021/11/poc4-causal-queries/) |  
-| Causal source (determined by the environment)  |  <ul><li>Exogenous variable</li><li>Noise/Disturbance/Error variable</li><li>Independent variable</li><li>Causal variable</li></ul> |   [PoC #4](/posts/2021/11/poc4-causal-queries/) |   
-| Causal observation (determined by the model)  |  <ul><li>Endogenous variable</li><li>Dependent variable</li><li>Observed variable</li></ul> |   [PoC #4](/posts/2021/11/poc4-causal-queries/) |   
-| Graph induced by structural equations  |  <ul><li>Causal structure</li><li>Causal diagram</li></ul> |   [PoC #4](/posts/2021/11/poc4-causal-queries/) |   
-| Stability  |  <ul><li>Stability</li><li>Faithfulness</li></ul> |   A future post |
+| Qualitative child-node relationships  |  Structural Equation Model (SEM)<br>Structural Causal Model (SCM)<br>Functional Causal Model (FCM)<br>Causal  Model|   [PoC #4](/posts/2021/11/poc4-causal-queries/) |  
+| Causal source (determined by the environment)  |  Exogenous variable<br>Noise/Disturbance/Error variable<br>Independent variable<br>Causal variable|   [PoC #4](/posts/2021/11/poc4-causal-queries/) |   
+| Causal observation (determined by the model)  |  Endogenous variable<br>Dependent variable<br>Observed variable|   [PoC #4](/posts/2021/11/poc4-causal-queries/) |   
+| Graph induced by structural equations  |  Causal structure<br>Causal diagram|   [PoC #4](/posts/2021/11/poc4-causal-queries/) |   
+| Stability  |  Stability<br>Faithfulness|   A future post |
 
 
 
+<ul><li>Markov compatibility</li><li>I-map</li></ul> 
