@@ -22,6 +22,8 @@ The model zoo of Markovian conditions is ~~fascinating~~ confusing. Let there be
 ## Ordered Markov Condition
 
 ## Parental Markov Condition
+The importance of Markovian models is the connection it makes between causation and probabilities via the _Parental Markov Condition_, which will be discussed in the next post in detail.
+- from poc4
 
 ## Causal Markov Condition
 

@@ -1,12 +1,13 @@
 ---
 title: 'Pearls of Causality #4: Causal Queries'
 date: 2021-11-01
-permalink: /posts/2021/11/poc4-sem/
+permalink: /posts/2021/11/poc4-causal-queries/
 tags:
   - causality
   - DAG
   - SEM
   - SCM
+  - FCM
   - BN
   - Pearl
 ---
@@ -160,33 +161,63 @@ So we need equations? Here they are:
 
 Before looking into $U_i$, let me draw your attention to a key point: a SEM  is a **deterministic** function from the product space of the parents and the exogenous variables to the values of the node.  This is the same idea of representing stochasticity as in VAEs with the [reparametrization trick](https://arxiv.org/abs/1312.6114).
 
-To give you a flavour of what comes next, I might just drop the fact that SEMs are also called **Structural Causal Models (SCMs)**.
+>A SEM is not an _equality_ but an _assignment_ in a mathematical sense. So the more precise notation would be $x_i := f_i(pa_i, u_i)$ - but no one uses this. Think about it as a line of code; in Python, you use  the equality `x_i = f_i(pa_i, u_i)` to assign a value to $x_i$. That is, you **cannot reorder** the left and right hand.
 
-#### The zoo of variable names
+So if we have a linear SEM of $x_i = a + b_i pa_i + c_i u_i$, we cannot reorder it e.g. $u_i = (x_i-a-b_i pa_i)/c_i$ as this would mean that $u_i$ is caused by $x_i$ and $pa_i$.
+
+To give you a flavor of what comes next, I might just drop the fact that SEMs are also called **Structural Causal Models (SCMs)** or **Functional Causal Models (FCMs)**.
+
+#### The zoo of causal taxonomy
 
 The _beauty_ of science is that scientists are creative people: they like to give names to concepts, _a lot of names_. We will now discuss them _all_. Hopefully, we won't get lost in the jungle of causal terminology. I am believed that we will get away with some practical insights, so here we go.
+
+Nonetheless, the only thing I can promise is ["Blood, toil, sweat, and tears."](https://en.wikipedia.org/wiki/Blood,_toil,_tears_and_sweat)
+
+##### $f_i$
+The functional relationships $x_i = f_i(pa_i, u_i)$ are called **Functional Causal Models (FCMs)** as they describe a _functional_  -i.e., qualitative- relationship between cause and effect. Recall, this is the requirement to answer counterfactual queries.
+
+I think FCM is the most descriptive name, as it stresses the qualitative property, but usually SEM or SCM is used. In both cases, _structural_ refers to the fact that from these equations we can build up the graph (for we have the parent-child relationships).
+
+In this context, the equation itself  is called a **causal model** and the resulting graph the **causal structure/causal diagram** - the latter implies the SCM name.
+
+>To formalize, a **causal model** is a pair $M = <D, \theta_D>$ consisting of a _causal structure_ $D$ and a set of parameters $\theta_D$ compatible with $D$. The parameters $\theta_D$  assign a $f_i$ to  $X_i$ and the noise distributions to $U_i$.
+
+For example, $\theta_D = \{a_i, b_i, c_i\}_{i=1}^n$ in the above example
+
+##### $U_i$
 
 The variables $U_i$ have several names: they are called _exogenous, independent, causal, latent, or noise variables_. They are
 - **Exogenous:** as they are determined "by nature", i.e. they come "from outside" of the model 
 - **Independent:** as they have no parents in the graph - their values are only determined by the (noise) distribution they are sampled from
 - **Causal:** as they are the variables that are the cause of the _dependent_ variable $X_i$
 - **Latent:** as they are unobserved
-- **Noise/disturbance:** as they are usually parametrized as some noise distribution (e.g. Gaussian, Laplacian) - again, recall VAEs and the reparametrization trick.
+- **Noise/disturbance/error:** as they are usually parametrized as some noise distribution (e.g. Gaussian, Laplacian) - again, recall VAEs and the reparametrization trick.
 
+##### $X_i$
 
 You guessed it correctly, $X_i$ also have several names: _endogenous, dependent, and observed variables_. They are
 - **Endogenous:** as they are determined by the model (the $f_i$ functions), i.e. they are "from inside" of the model
 - **Dependent:** as they have parents in the graph - their values are determined by the values of their parents
 - **Observed**: as they are the ones we can observe
 
-**Note:** when $X_i$ causes $X_j$, then $X_i$ is also called a "causal variable". So pay attention to the _intent_ of the respective author. _(By the way, did I just ask you to be a mind-reader?)_
+**Note:** when $X_i$ causes $X_j$, then $X_i$ is also called a "causal variable". So for ensuring your mental health, please pay attention to the _intent_ of the respective author. _(By the way, did I just ask you to be a mind-reader?)_
+
+
+> If you came to this point, I tip my hypothetical hat. This was a mess, a huge mess. Although I really think that some polish helps to get an insight into what different causal concepts mean, this is an exaggeration. To ease the situation, **I am preparing a "Causal Dictionary,"** ~~also called as the "Holy Grail of The Students of Causal Taxonomy~~, to systematize causal concepts and their names. It will expand with future posts, its current version can be found [here]()
 
 #### Assumptions
 
-- MArkovian semi-markovian
+>How do SEMs thick? What are the assumptions laboring in the background?
 
-- Causal Strcture
-- Causal Model
+SEMs usually come pre-packaged with assumptions on the **noise variables**.
+
+Hitting rewind: even before we start talking about the noise variables, we need to talk about the **causal structure**. In the heat of the naming frenzy, scientists, _of course_, gave a name to the case when the graph induced by the structural equations is **acyclic** (this is not necessarily the case, but we restrict our discussions to DAGs), then the model is  **semi-Markovian**.
+
+If the noise variables are independent from each other, then the model is **Markovian**. The importance of Markovian models is the connection it makes between causation and probabilities via the _Parental Markov Condition_, which will be discussed in the next post in detail.
+
+
+
+
 
 ![Our example graph for studying d-separation](/images/posts/d_sep_ex.svg)
 
