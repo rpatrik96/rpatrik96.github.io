@@ -203,7 +203,7 @@ You guessed it correctly, $X_i$ also have several names: _endogenous, dependent,
 **Note:** when $X_i$ causes $X_j$, then $X_i$ is also called a "causal variable". So for ensuring your mental health, please pay attention to the _intent_ of the respective author. _(By the way, did I just ask you to be a mind-reader?)_
 
 
-> If you came to this point, I tip my hypothetical hat. This was a mess, a huge mess. Although I really think that some polish helps to get an insight into what different causal concepts mean, this is an exaggeration. To ease the situation, **I am preparing a "Causal Dictionary,"** ~~also called as the "Holy Grail of The Students of Causal Taxonomy~~, to systematize causal concepts and their names. It will expand with future posts, its current version can be found [here]()
+> If you came to this point, I tip my hypothetical hat. This was a mess, a huge mess. Although I really think that some polish helps to get an insight into what different causal concepts mean, this is an exaggeration. To ease the situation, **I am preparing a "Causal Dictionary,"** ~~also called as the "Holy Grail of The Students of Causal Taxonomy~~, to systematize causal concepts and their names. It will expand with future posts, its current version can be found [here](/posts/2021/10/poc-causal-dictionary/).
 
 #### Assumptions
 

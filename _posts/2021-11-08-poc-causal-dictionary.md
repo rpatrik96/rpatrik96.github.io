@@ -1,7 +1,7 @@
 ---
 title: 'Pearls of Causality: The Causal Dictionary'
-date: 2021-11-01
-permalink: /posts/2021/11/poc-causal-dictionary/
+date: 2021-10-31
+permalink: /posts/2021/10/poc-causal-dictionary/
 tags:
   - causality
   - DAG
