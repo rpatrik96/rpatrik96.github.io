@@ -9,7 +9,7 @@ tags:
  
 ---
 
-The model zoo of Markovian conditions is ~~fascinating~~ confusing. Let there be light!
+No one told me that I need a dictionary for learning causal inference. Indeed, there was none before. Now there is.
 
 ### PoC Post Series
 - [PoC #1: DAGs, d-separation, conditional independence](/posts/2021/10/poc1-dags-d-sep/)
