@@ -29,3 +29,13 @@ The model zoo of Markovian conditions is ~~fascinating~~ confusing. Let there be
 | Graph induced by structural equations  |  <ul><li>Causal structure</li><li>Causal diagram</li></ul> |   [PoC #4](/posts/2021/11/poc4-causal-queries/) |   
 | Stability  |  <ul><li>Stability</li><li>Faithfulness</li></ul> |   A future post |
 
++---------------+---------------+--------------------+
+| Fruit         | Price         | Advantages         |
++===============+===============+====================+
+| Bananas       | $1.34         | - built-in wrapper |
+|               |               | - bright color     |
++---------------+---------------+--------------------+
+| Oranges       | $2.10         | - cures scurvy     |
+|               |               | - tasty            |
++---------------+---------------+--------------------+
+
