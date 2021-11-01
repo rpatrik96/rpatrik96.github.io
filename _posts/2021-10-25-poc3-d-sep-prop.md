@@ -1,6 +1,6 @@
 ---
 title: 'Pearls of Causality #3: The properties of d-separation'
-date: 2021-10-18
+date: 2021-10-25
 permalink: /posts/2021/10/poc3-d-sep-prop/
 tags:
   - causality
@@ -12,9 +12,9 @@ tags:
 A top-secret guide to d-separation. We will go deep, ready?
 
 ### PoC Post Series
--  [PoC #1: DAGs, d-separation, conditional independence](/posts/2021/10/poc1-dags-d-sep/)
 - [PoC #2: Markov Factorization, Compatibility, and Equivalence](/posts/2021/10/poc2-markov/)
 - ➡️ [PoC #3: The properties of d-separation](/posts/2021/10/poc3-d-sep-prop/)
+- [PoC #4: Causal Queries](/posts/2021/11/poc4-causal-queries/)
 
 # Properties of d-separation
 
@@ -26,7 +26,7 @@ This is why we need to get familiar with the properties of d-separation (as you 
 
 This post will guide you through the five properties of d-separation. For each property, I will provide an explanation, a proof, and an example. 
 
->Why the proof?
+>Why the proofs?
 
 I am believed that just dropping the property won't provide the insight. Besides, seeing the proof will hopefully convince you that I am talking no non-sense. Shall we begin?
 
