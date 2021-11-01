@@ -80,7 +80,7 @@ The following section discusses the definition in its full technical glory, as t
 
 
 #### Definition (Technical)
->A DAG $G$ is a **Causal Bayesian Network (CBN)** compatible with $P^*$ if and only if the following three conditions hold for every $P(v \|do(X = x) ) \in P^*$:
+>A DAG $G$ is a **Causal Bayesian Network (CBN)** compatible with $P^{*}$ if and only if the following three conditions hold for every $P(v \|do(X = x) ) \in P^*$:
 >1.  $P(v \|do(X = x))$ is compatible with $G$
 >2. $P(v_i \|do(X = x) )=1 , \forall V_i \in X$ whenever $v_i$ is consistent with $X = x$ 
 >3. $P(v_i \|do(X = x), pa_i )=P(v_i \| pa_i ) , \forall V_i \not\in X$, whenever $pa_i$ is consistent with $X = x$; i.e., each $P(v_i \| pa_i )$ is invariant to interventions not involving $V_i$.
