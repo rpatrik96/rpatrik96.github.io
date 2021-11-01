@@ -189,7 +189,7 @@ In this context, the equation itself is called a **causal model** and the result
 
 >To formalize, a **causal model** is a pair $M = <D, \theta_D>$ consisting of a _causal structure_ $D$ and a set of parameters $\theta_D$ compatible with $D$. The parameters $\theta_D$  assigns $f_i$ to  $X_i$ and the noise distributions to $U_i$.
 
-For example, $\theta_D = \{{a_i, b_i, c_i\}}_{i=1}^n$ in the above example
+For example, $\theta_D = \{\{a_i, b_i, c_i\}\}_{i=1}^n$ in the above example
 
 ##### $U_i$
 
