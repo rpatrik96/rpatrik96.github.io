@@ -74,13 +74,13 @@ I will use the following notation in the definition:
 - $V$: a set of nodes (vertices, thus, the $V$)
 - $X$ : a set of nodes in $V$ (i.e., $X \subset V$) - note that $X\neq V$, as we need a variable on the left of the conditioning bar
 - $P(v)$: the probability distribution over $V$
-- $P^*(v) = \{P(v \|do(X = x) )\}$: the set of all interventional distributions, including the no intervention, i.e., $P(v)$
+- $\mathcal{P}(v) = \{P(v \|do(X = x) )\}$: the set of all interventional distributions, including the no intervention, i.e., $P(v)$
 
 The following section discusses the definition in its full technical glory, as those subtleties really make a difference. If you are interested only in the intuitive definition of CBNs (I won't blame you, I promise), use your flux capacitor to jump into the wormhole leading to the [second next section](#definition-intuitive).
 
 
 #### Definition (Technical)
->A DAG $G$ is a **Causal Bayesian Network (CBN)** compatible with $P^{*}$ if and only if the following three conditions hold for every $P(v \|do(X = x) ) \in P^*$:
+>A DAG $G$ is a **Causal Bayesian Network (CBN)** compatible with $\mathcal{P}$ if and only if the following three conditions hold for every $P(v \|do(X = x) ) \in \mathcal{P}$:
 >1.  $P(v \|do(X = x))$ is compatible with $G$
 >2. $P(v_i \|do(X = x) )=1 , \forall V_i \in X$ whenever $v_i$ is consistent with $X = x$ 
 >3. $P(v_i \|do(X = x), pa_i )=P(v_i \| pa_i ) , \forall V_i \not\in X$, whenever $pa_i$ is consistent with $X = x$; i.e., each $P(v_i \| pa_i )$ is invariant to interventions not involving $V_i$.
@@ -93,18 +93,20 @@ $$P(T=t| do(T=25^\circ C)) =  \begin{cases}1, t=25^\circ C\\
 3. The third condition is the most interesting one. It states that when the node $V_i$ is conditioned on its parents $Pa_i$, then **interventions have no effect on the CPD**. The conditions formalize that the intervention cannot be on $V_i$ (in that case the parents cannot screen off the effect). The consistency requirement of  $X=x$ and $Pa_i = pa_i$ ensure that the scenario is admitted by $P$. That is, the condition only holds for such $x, pa_i$ combinations that have nonzero probability. 
 
 #### Definition (Intuitive)
-> A DAG $G$ is a **Causal Bayesian Network (CBN)** compatible with $P^*$ if and only if the following three conditions hold for all distributions $\in P^*$:
-> 1. Each $P \in P^*$ is compatible with $G$
+> A DAG $G$ is a **Causal Bayesian Network (CBN)** compatible with $\mathcal{P}$ if and only if the following three conditions hold for all distributions $\in \mathcal{P}$:
+> 1. Each $P \in \mathcal{P}$ is compatible with $G$
 > 2. Intervening on variable $X$ with $do(X=x)$ makes that event certain, i.e., $P(X=x \|do(X=x)) = 1$
-> 3. When conditioning on the parents of a node $X$, interventions (not on $X$) have no effect on the CPD $P(X | Pa_X)$.
+> 3. When conditioning on the parents of a node $X$, interventions (not on $X$) have no effect on the CPD $P(X \| Pa_X)$.
 
 
 #### Consequences
 Although the definition does a great job hiding its goodies, we cannot be stopped uncovering them!
 
-Namely, after making an intervention, we will have access to a nice, _truncated_ factorization of $\forall P \in P^*$, i.e.:
+Namely, after making an intervention, we will have access to a nice, _truncated_ factorization of $\forall P \in \mathcal{P}$, i.e.:
 
-$$P(v \|do(X = x)) = \prod_{i : V_i \not\in X} P(v_i \|pa_i ).$$
+$$
+P(v |do(X = x)) = \prod_{i : V_i \not\in X} P(v_i |pa_i ).$$
+
 Again, $v$ should be consistent with $x$ (only such $v,x$ pairs can occur that have nonzero probability). 
 
 This is particularly pleasing, you might wonder... Actually, it is: this factorization drops (thus the adjective "truncated") all factors from the original distribution that included nodes that are intervened on (i.e., $V_i \in X$). So what remains are $V_i \not\in X$ - remember, as of condition two, when you intervene on $X$, its CPD will be collapsed to a point mass. Multiplying by 1 will not change the product, so those factors can be dropped. As a result, we get a simpler distribution with less parameters.
@@ -121,7 +123,7 @@ The _second property_ expresses that **intervening on $Pa_i$  makes the CPD inva
 #### Why should we care about CBNs?
 Even after this long section, you might feel that CBNs are only a formalism with no special purpose. I ensure you that having a common denominator is practical to talk about interventional queries.
 
-> When interested in $P(v_i | do(X=x)),$ Causal Bayesian Networks are the tool describing how to get the interventional distribution from the joint, what the intervened DAG will look like, and they also describe simplifications.
+> When interested in $P(v_i \| do(X=x)),$ Causal Bayesian Networks are the tool describing how to get the interventional distribution from the joint, what the intervened DAG will look like, and they also describe simplifications.
 
 Similar to the properties of d-separation in the [previous post](/posts/2021/10/poc3-d-sep-prop/), CBNs extend our toolbox and increase our self-confidence for handling concepts such as the back-door adjustment, which will be the topic of a future post.
 
