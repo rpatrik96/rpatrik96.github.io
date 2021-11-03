@@ -220,7 +220,7 @@ SEMs usually come pre-packaged with assumptions on the **noise variables**.
 
 Hitting rewind: even before we start talking about the noise variables, we need to talk about the **causal structure**. In the heat of the naming frenzy, scientists, _of course_, gave a name to the case when the graph induced by the structural equations is **acyclic** (this is not necessarily the case, but we restrict our discussions to DAGs). Such models are called  **semi-Markovian**.
 
-If the noise variables are independent from each other, then the model is **Markovian**. The importance of Markovian models, as Pearl points out, is the connection it makes between causation and probabilities via the _Parental Markov Condition_ - I will try to make sense of this statement in the next post.
+If the noise variables are independent from each other, then the model is **Markovian**. The importance of Markovian models, as Pearl points out, is the connection they makes between causation and probabilities via the _Parental Markov Condition_ - I will try to make sense of this statement in the next post.
 
 >What does this mean in practice?
 
