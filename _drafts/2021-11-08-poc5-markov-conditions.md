@@ -81,18 +81,22 @@ By the way, the PMC is also called the Local Markov Condition - as we only need 
 
 ## Causal Markov Condition (CMC)
 
-I paraphrased Pearl in [PoC #4](/posts/2021/11/poc4-causal-queries/) and said that _"The importance of Markovian models is the connection they make between causation and probabilities via the Parental Markov Condition."_
+I paraphrased Pearl in [PoC #4](/posts/2021/11/poc4-causal-queries/) and said that _"The importance of Markovian models is the connection they make between causation and probabilities via the Parental Markov Condition."_ This is formalized via the Causal Markov Condition (CMC).
 
 Let's figure out what Pearl meant.
 
->Every Markovian causal model $M$ induces a distribution $P(x_1 , \dots , x_n )$ that satisfies the
-parental Markov condition relative the causal diagram $G$ associated with $M$; that is, each variable $X_i$ is independent on all its nondescendants, given its parents $PA_i$ in $G$.
+Remember, Markovian in this context means that we have a DAG with independent noise variables. 
 
+>Every Markovian causal model $M= <G, \theta_G>$ induces a distribution $P(x_1 , \dots , x_n )$ that satisfies the
+Parental Markov Condition relative to $G$; that is, each  $X_i$ is independent on all its nondescendants, given its parents $Pa_i$.
 
+We can see that the **CMC is the Parental Markov Condition applied to Markovian models**. This ensures that by constructing a Markovian SEM, we will get a distribution that is Markov relative to the DAG. Thus, the connection is made.
 
-![Our example graph for studying d-separation](/images/posts/d_sep_ex.svg)
+> That is, **the CMC defines a blueprint how to create a distribution that is Markov relative to a DAG**.
 
-
-
+In contrast, both the OMC and the PMC only define the boundary conditions to check whether $P$ is compatible with $G$ - they are not constructive.
 
 # Summary
+In this post, we investigated three different Markov Conditions. The takeaway is that t**he Ordered and Parental Markov Conditions enable checking Markov compatibility** in a slightly different way, but they are interchangeable. With any of them, we can check Markov compatibility, but **we do not know how to construct such a $P$.**
+
+The **Causal Markov Condition** takes a step further and gives us an **instruction manual about how to get a compatible pair of $G$ and $P$**.
