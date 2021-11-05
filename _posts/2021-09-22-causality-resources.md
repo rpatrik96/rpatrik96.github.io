@@ -33,11 +33,13 @@ As I agree with Scott, I invested some time to compile a list of materials, incl
 ## MOOCs and online lectures
 - [Probabilistic Graphical Models Specialization](https://www.coursera.org/specializations/probabilistic-graphical-models): this three-course feast presented by the famouse Daphne Koller provides you with the basics of traditional methods in graphical models. Although not causality-specific in its entirety, it lays the foundations, so definitely worth attending-it even provides programming assigments so you can get familiar with the methods. Aaaand it's totally **free** (if you are satisfied without a Coursera certificate).
 - [Introduction to Causal Inference](https://www.bradyneal.com/causal-inference-course): a causal inference course covering the fundamental topics. As it has the lecture notes released (see [Books](#books)), you should be well-equipped to take the challenge to become a causality expert.
+- [Bayesian Statistics: From Concept to Data Analysis](https://www.coursera.org/learn/bayesian-statistics): an introductory course into Bayesian statistics. Besides covering the base (such as Bayes' theorem, Bayesian inference), it also discusses more advances topics as uninformative and Jeffreys priors. As a bonus, we get some insight how to apply the concepts in R.
 
 ## Flashcards
 - [Probabilistic Graphical Models 1](https://ankiweb.net/shared/info/49117877)
 - [Probabilistic Graphical Models 2](https://ankiweb.net/shared/info/1717392494)
 - [Probabilistic Graphical Models 3](https://ankiweb.net/shared/info/1251522498)
+- [Bayesian Statistics: From Concept to Data Analysis](https://ankiweb.net/shared/info/1326813205)
 
 
 
