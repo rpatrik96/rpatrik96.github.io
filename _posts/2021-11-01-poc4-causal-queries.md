@@ -72,7 +72,7 @@ The notion of intervention brings about some changes in the properties of DAGs, 
 #### Notation
 I will use the following notation in the definition:
 - $V$: a set of nodes (vertices, thus, the $V$)
-- $X$ : a set of nodes in $V$ (i.e., $X \subset V$) - note that $X\neq V$, as we need a variable on the left of the conditioning bar
+- $X$: a set of nodes in $V$ (i.e., $X \subset V$) - note that $X\neq V$, as we need a variable on the left of the conditioning bar
 - $P(v)$: the probability distribution over $V$
 - $\mathcal{P}(v) = \{P(v \|do(X = x) )\}$: the set of all interventional distributions, including the no intervention, i.e., $P(v)$
 

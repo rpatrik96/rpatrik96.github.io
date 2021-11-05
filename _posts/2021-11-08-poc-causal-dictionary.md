@@ -28,4 +28,5 @@ No one told me that I need a dictionary for learning causal inference. Indeed, t
 | Causal observation (determined by the model)  |  - Endogenous variable<br>- Dependent variable<br>- Observed variable|   [PoC #4](/posts/2021/11/poc4-causal-queries/) |   
 | Graph induced by structural equations  |  - Causal structure<br>- Causal diagram|   [PoC #4](/posts/2021/11/poc4-causal-queries/) |   
 | Stability  |  - Stability<br>- Faithfulness<br>- DAG-isomorphism<br>- Perfect-mapness|   A future post |
+| Unobserved common cause  |  - Confounder<br>- Unobserved common cause |   A future post |
 
