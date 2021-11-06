@@ -1,6 +1,6 @@
 ---
 title: 'Bayesian Statistics - From Concept to Data Analysis flashcards'
-date: 2021-11-15
+date: 2021-11-05
 permalink: /posts/2021/11/bayes-stats1-deck/
 tags:
   - statistics

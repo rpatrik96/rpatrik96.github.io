@@ -8,7 +8,7 @@ tags:
   - Pearl
 ---
 
-
+What you won't be able to find in this post are  unconditional claims of superiority of causal inference.
 
 ### PoC Post Series
 - [PoC #4: Causal Queries](/posts/2021/11/poc4-causal-queries/)
