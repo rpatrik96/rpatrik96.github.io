@@ -17,6 +17,7 @@ Asking a causal question is _not casual_.
 ### PoC Post Series
 - [PoC #3: The properties of d-separation](/posts/2021/10/poc3-d-sep-prop/)
 - ➡️ [PoC #4: Causal Queries](/posts/2021/11/poc4-causal-queries/)
+- [PoC #5: Statistical vs Causal Inference](/posts/2021/11/stats-vs-causality/)
 
 # Causal Queries
 
