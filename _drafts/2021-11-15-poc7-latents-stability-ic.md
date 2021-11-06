@@ -1,7 +1,7 @@
 ---
-title: 'Pearls of Causality #6: Latent Structures, Stability, and Inferred Causation'
+title: 'Pearls of Causality #7: Latent Structures, Stability, and Inferred Causation'
 date: 2021-11-15
-permalink: /posts/2021/11/poc6-latents-stability-ic/
+permalink: /posts/2021/11/poc7-latents-stability-ic/
 tags:
   - causality
   - DAG
@@ -14,8 +14,8 @@ tags:
 DAGs like to play hide-and-seek. But we are more clever.
 
 ### PoC Post Series
-- [PoC #5: Markov Conditions](/posts/2021/11/poc5-markov-conditions/)
-- [PoC #6: Latents and Inferred Causation](/posts/2021/11/poc6-latents-stability-ic/)
+- [PoC #6: Markov Conditions](/posts/2021/11/poc6-markov-conditions/)
+- ➡️ [PoC #7: Latents and Inferred Causation](/posts/2021/11/poc6-latents-stability-ic/)
 
 # Latent Structures
 
