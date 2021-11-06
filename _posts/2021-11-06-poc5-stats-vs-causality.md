@@ -145,7 +145,7 @@ Thus, we need less parameters.
 Namely, if we have a joint with $n$ binary random variables, then it would have $2^n-1$ _independent_ parameters (the last one is determined to make the sum equal to $1$). If we have $k$ factors with $n/k$ variables each, then we would have $k(2^{(n/k)}-1)$ _independent_ parameters. For $n=20, k=4$ the numbers are $1,048,576$ vs $124$. I guess you are convinced for now.
 
 
-Second, the Independent Mechanism Principle ensures that the mechanisms (factors) do not influence each other. So in the case of a distributional shift (think about global warming and our temperature-altitude example), only a few mechanisms need to be retrained-in the example only $P(T|A)$. 
+Second, the Independent Mechanism Principle ensures that the mechanisms (factors) do not influence each other. So in the case of a distributional shift (think about global warming and our temperature-altitude example), only a few mechanisms need to be retrained-in the example only $P(T\|A)$. 
 
 
 
