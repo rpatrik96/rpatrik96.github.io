@@ -27,20 +27,55 @@ They are known unknowns as we know-or at least, suspect- that there is a mechani
 
 >An **unobserved common cause** of $X,Y$ is $Z$ when $X\leftarrow Z\rightarrow Y$ and $Z$ is not observed. $Z$ is also called a **confounder**.
 
-Before jumping into latent structures, let's sumamrize the notation:
+Before jumping into latent structures, let's summarize the notation:
 - $G$: a DAG
 - $V$: a set of nodes (vertices, thus, the $V$)
 - $O$: the _observable_ subset of nodes in $V$ (i.e., $O\subseteq V$) 
+- $P_{[O]}$: observational distribution over $O$
+- $\mathcal{P}_{[O]}$: set of observational distributions over $O$
 - $\theta_G$: parameters of $G$ in the causal model (these describe the SEM)
+- $\mathcal{L}$: a class of latent structures 
 
->A latent structure is a pair $L = <G, O >$ , where $G$ is a causal structure over $V$ and where
-$O\subseteq V$ is a set of observed variables.
+>A **latent structure** is a pair $L = <G, O>$ with DAG $G$  over nodes $V$ and where $O\subseteq V$ is a set of observed variables.
+
+So $L$ is a DAG where we attach labels to the nodes that are observed. So far so good. 
+
+>Why do we need latent structures?
+
+Because they can represent our hypotheses about the world. Imagine ourselves in 20th century. We are physicists looking for the secrets of the universe. Some of us might still think that Newtonian physics is the way to go, some of us is a supporter of Einstein's theory of relativity, whereas others believe in [string theory](https://en.wikipedia.org/wiki/String_theory). Each of us can observe the same, but our mental model is different. I.e., we have a class of latent structures.
+
+>How can we compare latent structures? Which one is better?
+
+
 
 ## Latent Structure Preference
->One latent structure $L = <G, O>$ is preferred to another $L' = <G', O>$ (written $L  \preceq L'$)
-if and only if $G'$ can mimic $G$ over $O$ - that is, if and only if for every $\theta_G$ there exists a $\theta'_{G'}$, such that $P_{[O]} (<G', \theta'_{G'}>) = P_{[O]} (<G, \theta_G>)$. Two latent structures are equivalent written $L' \equiv L$ , if and only if $L \preceq L'$ and $L \succeq L'$.
+This question leads us to the notion of **latent structure preference**.
 
-Preference is in terms of expressive power of a structure, not by its syntactic description. $L_1$ may invoke many more parameters than $L_2$ and still be preferred if $L_2$ can accommodate a richer set of probability distributions over the observables.
+
+>Latent structure $L = <G, O>$ is preferred to another $L' = <G', O>$ (written $L  \preceq L'$) if and only if 
+$G'$ can represent _at least_ the same observational distributions as $G$. 
+> $$ \mathcal{P}_{[O]}(<G, \theta_G>) \subseteq \mathcal{P}_{[O]}(<G', \theta'_{G'}>) $$
+
+
+That is, for each  $\theta_G,$ there is a $\theta'_{G'}$ such that $$P_{[O]} (<G', \theta'_{G'}>) = P_{[O]} (<G, \theta_G>).$$
+
+But there can be a $\theta'_{G'}$ so that $L$ is not able to express the same observational distribution.
+
+>The order of $L$ and $L'$ is crucial in the definition.
+
+Namely, we impose the constraint on $L'$ that it should represent _all observational distributions_ of $L$, but it can be _more expressive_.
+
+>Preference is the [Occam's razor](https://en.wikipedia.org/wiki/Occam%27s_razor) of latent structures.
+
+That is, it prefers the simplest $L$. Note that **simplicity is meant in terms of expressive power** (i.e., how big the class of distributions that can be represented), **not in parameters number**.
+
+We can still prefer $L$ to $L'$ - even if $L$ has more parameters - if $L'$ is more expressive than $L$.
+
+The edge case is when both latent structures represent the same  $\mathcal{P}_{[O]}$, i.e., they are **equivalent**. In terms of preference: both is preferred to the other, i.e.:
+$$L' \equiv L \Leftrightarrow L \preceq L' \wedge L \succeq L'$$
+
+
+
 
 ## Minimality of Latent Structures
 >A latent structure $L$ is minimal with respect to a class $\mathcal{L}$ of latent structures if and only if there is no member of $\mathcal{L}$: that is strictly preferred to $L$ -that is, if and only if for every $L' \in \mathcal{L}$: we have $L \equiv L'$ whenever $L' \preceq L$ .
@@ -58,7 +93,8 @@ A Theorem:
 > Any latent structure has at least one projection.
 
 
-# Stable Gistributions
+# Stable Distributions
+- Faithfulness
 > Let $I(P)$ denote the set of all conditional independence relationships embodied in $P$. A causal model $M = <G, \theta_G>$ generates a stable distribution if and only if $P(<G, \theta_G>)$ contains no extraneous independences-that is, if and only if $I[P(<G, \theta_G>)]\subseteq I[P(<G, \theta'_G>)]$ for any set of parameters $\theta'_G$.
 
 # Inferred Causation
