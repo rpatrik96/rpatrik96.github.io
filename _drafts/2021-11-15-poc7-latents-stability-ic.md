@@ -34,6 +34,8 @@ Before jumping into latent structures, let's summarize the notation:
 - $P_{[O]}$: observational distribution over $O$
 - $\mathcal{P}_{[O]}$: set of observational distributions over $O$
 - $\theta_G$: parameters of $G$ in the causal model (these describe the SEM)
+- $<G, \theta_G>$: a causal model - I use this notation instead of $M$ to indicate that we have a graph and a set of parameters (and to be consistent with Pearl's book)
+- $L$: a latent structure
 - $\mathcal{L}$: a class of latent structures 
 
 >A **latent structure** is a pair $L = <G, O>$ with DAG $G$  over nodes $V$ and where $O\subseteq V$ is a set of observed variables.
@@ -74,15 +76,25 @@ We can still prefer $L$ to $L'$ - even if $L$ has more parameters - if $L'$ is m
 The edge case is when both latent structures represent the same  $\mathcal{P}_{[O]}$, i.e., they are **equivalent**. In terms of preference: both is preferred to the other, i.e.:
 $$L' \equiv L \Leftrightarrow L \preceq L' \wedge L \succeq L'$$
 
-
+Similar to inequalities, we will use the symbol $\prec$ for strict preference-i.e., excluding equivalence.
 
 
 ## Minimality of Latent Structures
->A latent structure $L$ is minimal with respect to a class $\mathcal{L}$ of latent structures if and only if there is no member of $\mathcal{L}$: that is strictly preferred to $L$ -that is, if and only if for every $L' \in \mathcal{L}$: we have $L \equiv L'$ whenever $L' \preceq L$ .
+
+Latent structures cannot escape our desire to look for the best. Minimality is the concept that quantifies this greatness.
+
+>A latent structure $L$ is **minimal** in a class of latent structures $\mathcal{L}$ if and only if there is no member of $\mathcal{L}$ that is strictly preferred to $L$.
+> $$ \not\exists L' \in \mathcal{L} : L \prec L' $$
+
+
+The definition implies that if we find an $L' : L' \preceq L \implies L \equiv L'.$ This is because by the definition $L \not\prec L'$; thus $L \preceq L'$ holds. As new now have both $L \preceq L'$  and $L' \preceq L$, we get $L' \equiv L$ by definition.
+
+
 
 ## Consistency of Latent Structures
 
->A latent structure $L = <G, O>$ is consistent with a distribution $\hat{P}$ over $O$ if $G$ can accommodate some model that generates $\hat{P}$ - that is, if there exists a parameterization $\theta_G : P_{[O]}(<G, \theta_G>)=\hat{P}$.
+>A latent structure $L = <G, O>$ is **consistent** with a distribution $\hat{P}$ over $O$ if there are parameters $\theta_G$ such that $G$ represents $\hat{P}$.
+>$$\exists \theta_G : P_{[O]}(<G, \theta_G>)=\hat{P}$$
 
 ## Projection of Latent Structures
 >A latent structure $L_{[O]} = (G_{[O]}, O)$ is a projection of another latent structure $L$ if and only if:
