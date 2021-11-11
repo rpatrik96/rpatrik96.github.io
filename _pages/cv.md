@@ -11,55 +11,82 @@ redirect_from:
 
 Education
 ======
-* PhD in Machine Learning, University of Tübingen, 2024 (expected)
-* MSc in Electrical Engineering, Budapest University of Technology and Economics, 2021
-* BSc in Electrical Engineering, Budapest University of Technology and Economics, 2019
+## PhD in Machine Learning, University of Tübingen
+### _2021-2024 (expected)_
+- **Affiliations**: IMPRS-IS, ELLIS
+- **Research** interests: causal representation learning, Independent Component Analysis, identifiability
+- **Supervisors**: Wieland Brendel, Ferenc Huszár, Matthias Bethge, Bernhard Schölkopf
 
+
+## MSc in Electrical Engineering, Budapest University of Technology and Economics
+### _2019-2021_
+- **GPA**: 5.0/5.0
+- **Thesis**: Development of an Attitude Determination and Control System for CubeSats on LEO orbits
+- **Supervisors**: Ferenc Vajda, Márton Szemenyei
+
+## BSc in Electrical Engineering,  Budapest University of Technology and Economics
+### _2015-2019_
+- **GPA**: 5.0/5.0
+- **Thesis**: Development of a 3D input device for virtual working environments
+- **Supervisors**: Ferenc Vajda, Márton Szemenyei
+- **Exchange semester**: Karlsruhe Institute of Technology, Germany
+- **Affiliations**: German language program, Integrated MSc-BSc program (IMSc)
 
 
 
 Work experience
 ======
-* February 2019-March 2021: Research Engineer
-  * C3S Electronics LLC
-  * Project: Control and estimation system develeopment for CubeSats (ADCS)
-  * Supervisor: Ferenc Vajda
-  * Topics: Kalman Filtering, Hybrid control
-  * Technologies: Python, C++14/17, Catch2, Confluence
 
-* Winter 2019: Research Assistant
-  * Karlsruhe Institut for Technology
-  * Projects: Time synchronisation in FPGAs
-  * Supervisor: Vladimir Sidorenko
-  * Technologies: Python
+## C3S Electronics LLC 
+### _February 2019-March 2021_
+* **Role**: Research Engineer
+* **Project**: Control and estimation system develeopment for CubeSats (ADCS)
+* **Supervisor**: Ferenc Vajda
+* **Topics**: Kalman Filtering, Hybrid control
+* **Technologies**: Python, C++14/17, Catch2, Confluence
 
-* September 2016-January 2021: Research Assistant
-  * Budapest University of Technology and Economic
-  * Projects: Multi-agent reinforcement learning, Generalization in deep learning, Embedded systems
-  * Supervisors: Bálint Gyires-Tóth, Márton Szemenyei, Ferenc Vajda
-
-* Summer 2018: Image Processing Intern
-  * Fraunhofer Institute for Factory Operation and Automation IFF
-  * Projects: Automated visual inspection tool development
-  * Supervisor: Thomas Dunker
-  * Technologies: C++11/14, Python
-
-* Summer 2017: Data Scientist Intern
-  * Gravity R&D
-  * Projects: Customer behavior analysis
-  * Supervisor: Bottyán Németh
-  * Technologies: Python
+## Karlsruhe Institut for Technology
+### _Winter 2019_
+* **Role**: Research Assistant
+* **Project**s: Time synchronisation in FPGAs
+* **Supervisor**: Vladimir Sidorenko
+* **Technologies**: Python
+## Budapest University of Technology and Economics
+### _September 2016-January 2021_
+* **Role**: Research Assistant
+* **Project**s: Multi-agent reinforcement learning, Generalization in deep learning, Embedded systems
+* **Supervisor**s: Bálint Gyires-Tóth, Márton Szemenyei, Ferenc Vajda
+## Fraunhofer Institute for Factory Operation and Automation IFF
+### _Summer 2018_
+* **Role**: Image Processing Intern
+* **Project**s: Automated visual inspection tool development
+* **Supervisor**: Thomas Dunker
+* **Technologies**: C++11/14, Python
+## Gravity R&D LLC 
+### _Summer 2017_
+* **Role**: Data Scientist Intern
+* **Project**s: Customer behavior analysis
+* **Supervisor**: Bottyán Németh
+* **Technologies**: Python
 
   
   
 Skills
 ======
-* Skill 1
-* Skill 2
-  * Sub-skill 2.1
-  * Sub-skill 2.2
-  * Sub-skill 2.3
-* Skill 3
+## Programming
+- Python
+- C++11/14
+- PyTorch
+- Weights and Biases
+- Git, GitHub
+## Research Management
+- Confluence
+- Jira
+- Notion
+- Overleaf/LaTeX
+- Zotero
+- ResearchRabbit
+
 
 Publications
 ======
