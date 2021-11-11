@@ -106,7 +106,7 @@ author:
   orcid            : "https://orcid.org/0000-0001-9861-0293"
   pinterest        :
   soundcloud       :
-  stackoverflow    : # http://stackoverflow.com/users/123456/username
+  stackoverflow    : https://stackexchange.com/users/22751953/casualcausality
   steam            :
   tumblr           :
   twitter          : "rpatrik96"
@@ -182,7 +182,7 @@ collections:
     output: true
     permalink: /:collection/:path/
   portfolio:
-    output: true
+    output: false
     permalink: /:collection/:path/
   talks:
     output: true
