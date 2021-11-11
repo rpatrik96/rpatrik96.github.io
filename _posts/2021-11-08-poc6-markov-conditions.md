@@ -14,6 +14,7 @@ The model zoo of Markovian conditions is ~~fascinating~~ confusing. Let there be
 ### PoC Post Series
 - [PoC #5: Statistical vs Causal Inference](/posts/2021/11/stats-vs-causality/)
 - ➡️ [PoC #6: Markov Conditions](/posts/2021/11/poc6-markov-conditions/)
+- [PoC #7: Latents and Inferred Causation](/posts/2021/11/poc6-latents-stability-ic/)
 
 # Markov Conditions
 
