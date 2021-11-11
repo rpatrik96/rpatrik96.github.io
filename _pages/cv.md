@@ -9,13 +9,18 @@ redirect_from:
 
 {% include base_path %}
 
+# Short biography
+Patrik Reizinger is a PhD student at the University of Tübingen, supervised by Wieland Brendel, Ferenc Huszár, Matthias Bethge, and Bernhard Schölkopf. He is part of the ELLIS and IMPRS-IS programs. His main research interests include causal inference and representation learning. He has done both his MSc and BSc at the Budapest University of Technology in electrical engineering and specialized in control engineering and intelligent systems.
+
+
+
 Education
 ======
 ## PhD in Machine Learning, University of Tübingen
 ### _2021-2024 (expected)_
 - **Affiliations**: IMPRS-IS, ELLIS
 - **Research** interests: causal representation learning, Independent Component Analysis, identifiability
-- **Supervisors**: Wieland Brendel, Ferenc Huszár, Matthias Bethge, Bernhard Schölkopf
+- **Supervisors**: Wieland Brendel, Ferenc Huszár, Matthias Bethge, and Bernhard Schölkopf
 
 
 ## MSc in Electrical Engineering, Budapest University of Technology and Economics
