@@ -53,24 +53,24 @@ Work experience
 ## Karlsruhe Institut for Technology
 ### _Winter 2019_
 * **Role**: Research Assistant
-* **Project**s: Time synchronisation in FPGAs
+* **Project**: Time synchronisation in FPGAs
 * **Supervisor**: Vladimir Sidorenko
 * **Technologies**: Python
 ## Budapest University of Technology and Economics
 ### _September 2016-January 2021_
 * **Role**: Research Assistant
-* **Project**s: Multi-agent reinforcement learning, Generalization in deep learning, Embedded systems
+* **Project**: Multi-agent reinforcement learning, Generalization in deep learning, Embedded systems
 * **Supervisor**s: Bálint Gyires-Tóth, Márton Szemenyei, Ferenc Vajda
 ## Fraunhofer Institute for Factory Operation and Automation IFF
 ### _Summer 2018_
 * **Role**: Image Processing Intern
-* **Project**s: Automated visual inspection tool development
+* **Project**: Automated visual inspection tool development
 * **Supervisor**: Thomas Dunker
 * **Technologies**: C++11/14, Python
 ## Gravity R&D LLC 
 ### _Summer 2017_
 * **Role**: Data Scientist Intern
-* **Project**s: Customer behavior analysis
+* **Project**: Customer behavior analysis
 * **Supervisor**: Bottyán Németh
 * **Technologies**: Python
 
