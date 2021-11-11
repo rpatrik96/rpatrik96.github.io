@@ -11,9 +11,10 @@ redirect_from:
 
 Education
 ======
-* B.Sc. in Electrical Engineering, Budapest University of Technology and Economics, 2019
-* M.Sc. in Electrical Engineering, Budapest University of Technology and Economics, 2021
-* Ph.D in Machine Learning, University of Tübingen, 2024 (expected)
+* PhD in Machine Learning, University of Tübingen, 2024 (expected)
+* MSc in Electrical Engineering, Budapest University of Technology and Economics, 2021
+* BSc in Electrical Engineering, Budapest University of Technology and Economics, 2019
+
 
 
 
