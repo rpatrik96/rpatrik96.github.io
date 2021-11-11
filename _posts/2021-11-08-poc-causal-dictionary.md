@@ -16,6 +16,9 @@ No one told me that I need a dictionary for learning causal inference. Indeed, t
 - [PoC #2: Markov Factorization, Compatibility, and Equivalence](/posts/2021/10/poc2-markov/)
 - [PoC #3: The properties of d-separation](/posts/2021/10/poc3-d-sep-prop/)
 - [PoC #4: Causal Queries](/posts/2021/11/poc4-causal-queries/)
+- [PoC #5: Statistical vs Causal Inference](/posts/2021/11/stats-vs-causality/)
+- [PoC #6: Markov Conditions](/posts/2021/11/poc6-markov-conditions/)
+- [PoC #7: Latents and Inferred Causation](/posts/2021/11/poc6-latents-stability-ic/)
 
 
 # The Causal Dictionary
@@ -27,6 +30,6 @@ No one told me that I need a dictionary for learning causal inference. Indeed, t
 | Causal source (determined by the environment)  |  - Exogenous variable<br>- Noise/Disturbance/Error variable<br>- Independent variable<br>- Causal variable|   [PoC #4](/posts/2021/11/poc4-causal-queries/) |   
 | Causal observation (determined by the model)  |  - Endogenous variable<br>- Dependent variable<br>- Observed variable|   [PoC #4](/posts/2021/11/poc4-causal-queries/) |   
 | Graph induced by structural equations  |  - Causal structure<br>- Causal diagram|   [PoC #4](/posts/2021/11/poc4-causal-queries/) |   
-| Stability  |  - Stability<br>- Faithfulness<br>- DAG-isomorphism<br>- Perfect-mapness|   A future post |
+| Relation of independencies between the $G$ and $P$ belonging to a causal model  |  - Stability<br>- Faithfulness<br>- DAG-isomorphism<br>- Perfect-mapness|   [PoC #7](/posts/2021/11/poc6-latents-stability-ic/) |
 | Unobserved common cause  |  - Confounder<br>- Unobserved common cause |   A future post |
 
