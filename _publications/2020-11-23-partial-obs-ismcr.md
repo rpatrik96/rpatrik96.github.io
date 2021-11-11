@@ -1,5 +1,5 @@
 ---
-title: "Paper Title Number 1"
+title: "Learning to Play Robot Soccer from Partial Observations"
 collection: publications
 permalink: /publication/2020-11-23-partial-obs-ismcr
 excerpt: 'This paper investigates how to improve scene reconstruction in multi-agent Deep Reinforcement Learning'
