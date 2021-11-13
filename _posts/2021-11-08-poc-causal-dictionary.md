@@ -9,6 +9,7 @@ tags:
  
 ---
 
+
 No one told me that I need a dictionary for learning causal inference. Indeed, there was none before. Now there is.
 
 ### PoC Post Series
@@ -22,14 +23,15 @@ No one told me that I need a dictionary for learning causal inference. Indeed, t
 
 
 # The Causal Dictionary
+<!-- Maybe make the most descriptive name bold? -->
 
 |  Concept | Names  |  Reference| 
 |---|---|---|
-| DAG-distribution correspondence  |  - Markov compatibility<br>-  I-map |   [PoC#2](/posts/2021/10/poc2-markov/) |   
+| DAG-distribution correspondence  |  - Markov compatibility<br>-  I-map |   [PoC #2](/posts/2021/10/poc2-markov/) |   
 | Qualitative child-node relationships  |  - Structural Equation Model (SEM)<br>- Structural Causal Model (SCM)<br>- Functional Causal Model (FCM)<br>- Causal  Model|   [PoC #4](/posts/2021/11/poc4-causal-queries/) |  
 | Causal source (determined by the environment)  |  - Exogenous variable<br>- Noise/Disturbance/Error variable<br>- Independent variable<br>- Causal variable|   [PoC #4](/posts/2021/11/poc4-causal-queries/) |   
 | Causal observation (determined by the model)  |  - Endogenous variable<br>- Dependent variable<br>- Observed variable|   [PoC #4](/posts/2021/11/poc4-causal-queries/) |   
 | Graph induced by structural equations  |  - Causal structure<br>- Causal diagram|   [PoC #4](/posts/2021/11/poc4-causal-queries/) |   
-| Relation of independencies between the $G$ and $P$ belonging to a causal model  |  - Stability<br>- Faithfulness<br>- DAG-isomorphism<br>- Perfect-mapness|   [PoC #7](/posts/2021/11/poc6-latents-stability-ic/) |
+| Relation of independencies between the $G$ and $P$ belonging to a causal model  |  - Stability<br>- Faithfulness<br>- DAG-isomorphism<br>- Perfect-mapness|   [PoC #7](/posts/2021/11/poc6-latents-stability/) |
 | Unobserved common cause  |  - Confounder<br>- Unobserved common cause |   A future post |
 
