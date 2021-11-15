@@ -1,5 +1,5 @@
 ---
-title: 'Pearls of Causality #7: Latent Structures, Stability, and Inferred Causation'
+title: 'Pearls of Causality #7: Latent Structures and Stability'
 date: 2021-11-15
 permalink: /posts/2021/11/poc7-latents-stability/
 tags:
