@@ -5,10 +5,10 @@ permalink: /posts/2021/11/poc7-latents-stability/
 tags:
   - causality
   - DAG
-  - Latents
+  - latents
   - Pearl
-  - Stability
-  - Faithfulness
+  - stability
+  - faithfulness
 ---
 
 DAGs like to play hide-and-seek. But we are more clever.
