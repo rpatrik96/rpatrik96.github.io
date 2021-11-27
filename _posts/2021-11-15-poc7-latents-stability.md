@@ -15,7 +15,7 @@ DAGs like to play hide-and-seek. But we are more clever.
 
 ### PoC Post Series
 - [PoC #6: Markov Conditions](/posts/2021/11/poc6-markov-conditions/)
-- ➡️ [PoC #7: Latents and Inferred Causation](/posts/2021/11/poc6-latents-stability/)
+- ➡️ [PoC #7: Latents and Inferred Causation](/posts/2021/11/poc7-latents-stability/)
 
 # Stable Distributions (Faithfulness)
 
