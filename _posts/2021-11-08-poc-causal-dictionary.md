@@ -20,6 +20,8 @@ No one told me that I need a dictionary for learning causal inference. Indeed, t
 - [PoC #5: Statistical vs Causal Inference](/posts/2021/11/stats-vs-causality/)
 - [PoC #6: Markov Conditions](/posts/2021/11/poc6-markov-conditions/)
 - [PoC #7: Latents and Inferred Causation](/posts/2021/11/poc6-latents-stability-ic/)
+- [PoC #8: Inferred Causation, $IC$, and ${IC}^*$](/posts/2021/11/poc8-ic-ic-ic)
+- [PoC #9: Potential, Genuine, Temporal Causes and Spurious Association](/posts/2021/11/poc9-causes/)
 
 
 # The Causal Dictionary
