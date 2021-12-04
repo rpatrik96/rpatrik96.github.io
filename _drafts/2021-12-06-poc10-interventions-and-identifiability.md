@@ -27,7 +27,7 @@ First, let's define a causal effect with do-calculus.
 
 > Given disjoint sets of variables, $X$ and $Y$, the **causal effect** of $X$ on $Y$ is denoted by $P(y \| do(X=x))$. It gives the probability of $Y = y, \forall x$ in the SEM with all incoming edges and the equation $x = f(pa_x, u_x)$ deleted and setting $X = x$ in the remaining equations.
 
-This definition contains nothing new to us, it uses the do-notation to express the probability of $Y$ when we intervene on $X$. There are multiple ways to calculate and to conceptualize this causal effect, as we will see in the next sections.
+This definition contains nothing new to us, it uses the $do$-notation to express the probability of $Y$ when we intervene on $X$. There are multiple ways to calculate and to conceptualize this causal effect, as we will see in the next sections.
 
 ## Interventions as Variables
 
@@ -37,9 +37,9 @@ To be able to do this, we augment the DAG network with an additional parent $F_i
 
 The intervention is encoded via the added edge $F_i \rightarrow X_i$, yielding the conditional
 
-$$P\left(x_i | pa_i'\right) = \begin{cases}P(x_i | pa_i), F_i =idle \\
-0, F_i = do(X_i = x_i') \wedge x_i \neq x_i' \\
-1, F_i = do(X_i = x_i') \wedge x_i = x_i'
+$$P\left(x_i | pa_i'\right) = \begin{cases}P(x_i | pa_i), \ \ \qquad\quad \mathrm{if} \ \ F_i =idle \\
+0, \qquad\qquad\qquad\quad \mathrm{if} \ \ F_i = do(X_i = x_i') \wedge x_i \neq x_i' \\
+1, \qquad\qquad\qquad\quad \mathrm{if} \ \ F_i = do(X_i = x_i') \wedge x_i = x_i'
 \end{cases}$$
 
 The reason why we need to differentiate between $x_i \neq x_i'$ and $x_i = x_i'$ in the case of the intervention is to remain consistent (as if we set $X_i$ to $x_i'$ then all $x_i\neq x_i'$ has 0 probability).
@@ -47,41 +47,69 @@ The reason why we need to differentiate between $x_i \neq x_i'$ and $x_i = x_i'$
 ## Interventions as Truncated Factorization
 Having discussed the effect of an intervention, we can now express the joint distribution in the case of the intervention $do(X_i = x_i')$. The straightforward way is to start from the Markov factorization $\prod_{j} P(x_j\|pa_j)$ and leave out the factor $P(x_i \| pa_i)$.
 
-$$P\left(x_1, \dots, x_n | do(X_i=x'_i)\right) = \begin{cases}\prod_{j\neq i} P(x_j|pa_j), x_i = x_i' \\
-0, x_i \neq x'_i
+$$P\left(x_1, \dots, x_n | do(X_i=x'_i)\right) = \begin{cases}\prod_{j\neq i} P(x_j|pa_j), \quad \mathrm{if} \ \ x_i = x_i' \\
+0,  \qquad\qquad\qquad\quad \mathrm{if} \ \  x_i \neq x'_i
 \end{cases}$$
 
 > This expression shows the [ICM Pinciple](/posts/2021/10/poc1-dags-d-sep/) at work: only the mechanisms intervened on changes, everything else remains the same.
 
+### Compound Interventions
+
+This notation can also handle **compond interventions**, where we intervene on multiple variables at the same time. If we denote the set of variables we intervene on with $S$, then we can write
+
+$$P\left(x_1, \dots, x_n | do(S=s)\right) = \begin{cases}\prod_{i : X_i \not\in S}P(x_i|pa_i), \qquad\quad \mathrm{if} \ \ X \mathrm{\ consistent\ with\ } S\\
+0, \qquad\quad \ \ \mathrm{otherwise}
+\end{cases}$$
+
+
 
 ## Interventions and the Preinterventional Distribution
-It's also interesting to figure out the relationship between the interventional and the original (preinterventional) distribution. The expression follows from the truncated factorization by extending the expression with $\frac{P(x_i'\|pa_i)}{P(x_i'\|pa_i)}$. The nominator will be the joint distribution before the intervention $P\left(x_1, \dots, x_n\right), x_i = x_i'$- thus the name _preinterventional_ distribution. The denominator will be factor $P(x_i'\|pa_i)$. Note that we need to tie $x_i = x_i'$, as otherwise the expression would be inconsistent with $do(X_i = x_i'$).
+It's also interesting to figure out the relationship between the interventional and the original (preinterventional) distribution. The expression follows from the truncated factorization by extending the expression with $\frac{P(x_i'\|pa_i)}{P(x_i'\|pa_i)}$ and then noticing that we have all factors of the joint in the nominator. The nominator will be the joint distribution before the intervention $P\left(x_1, \dots, x_n\right), x_i = x_i'$- thus the name _preinterventional_ distribution. The denominator will be factor $P(x_i'\|pa_i)$. Note that we need to tie $x_i = x_i'$, as otherwise the expression would be inconsistent with $do(X_i = x_i'$).
 
-$$P\left(x_1, \dots, x_n | do(X_i=x'_i)\right) = \begin{cases}\dfrac{P\left(x_1, \dots, x_n\right)}{P(x_i'|pa_i)}, x_i = x_i' \\
-0, x_i \neq x'_i
+$$P\left(x_1, \dots, x_n | do(X_i=x'_i)\right) = \begin{cases}\dfrac{P\left(x_1, \dots, x_n\right)}{P(x_i'|pa_i)}, \ \qquad\quad \mathrm{if} \ \ x_i = x_i' \\
+0, \qquad\qquad\qquad\qquad\quad \mathrm{if} \ \ x_i \neq x'_i
 \end{cases}$$
 
->Besides satisfying our intrinsic strive for mathematical diversity and beauty, this expression makes the difference clear between interventions and conditioning (except when intervening on leaf nodes - i.e., when $Pa_i = \emptyset$ -, where $P(x_i'\|pa_i=\emptyset) = P(x_i\|pa_i=\emptyset, do(X_i = x_i')=P(x_i'))$ -, when both are the same).
+>Besides satisfying our intrinsic strive for mathematical diversity and beauty, this expression makes the difference clear between interventions and conditioning. Except when intervening on leaf nodes - i.e., when $Pa_i = \emptyset$ -, where $P(x_i'\|pa_i=\emptyset) = P(x_i\|pa_i=\emptyset, do(X_i = x_i')=P(x_i'))$ -, when both are the same (cf. Causal Bayesian Networks in [PoC #4](/posts/2021/11/poc4-causal-queries/)).
 
 ---
-An example would be great here
+- An example would be great here
 ----
-In standard Bayes conditionalization, each excluded point $(x_i \neq x'_i)$ transfers its mass to the entire set of preserved points through renormalization. 
-In the interventional case, each excluded point transfers its mass to a select set of points that share the same value of $pa_i$ .
+
+When conditioning on $X_i = x_i'$, then what we do can be thought as a two-step process:
+1. **Reduction** of the probability distribution (dropping the entries in the joint inconsistent with $X_i \neq x'_i$).
+2. **Renormalization** of the probabilities to get a distribution.
+
+> This means that conditioning distributes the probability mass over **all remaining values** (i.e., where in the joint we have $X_i = x_i'$). 
+
+
+**In the interventional case, each excluded point transfers its mass to a select set of points that share the same value of $pa_i$ .**
 
 ## Interventions as Conditioning
-$$P\left(x_1, \dots, x_n | do(X_i=x'_i)\right) = \begin{cases}P\left(x_1, \dots, x_n|x_i',pa_i\right)P(pa_i), x_i = x_i' \\
-0, x_i \neq x'_i
+Although generally intervening on $X_i$ is different from conditioning on $X_i$, we can use conditioning to express the intervention as well.
+
+We start from the joint distribution, then by using the chain rule of Bayesian networks, we "extract" $P(x_i'|pa_i)$ and $P(pa_i$). As the intervention makes $P(x_i'|pa_i) =1$, we can simplify the expression:
+$$
+\begin{align*}
+P\left(x_1, \dots, x_n | do(X_i=x'_i)\right) &= P\left(x_1, \dots, x_n|x_i',pa_i\right)P(x_i'|pa_i)P(pa_i) \\
+&= P\left(x_1, \dots, x_n|x_i',pa_i\right)P(pa_i)
+\end{align*}
+$$
+
+Our manipulation requires that $x_i = x_i'$, so the resulting expression includes two cases:
+$$P\left(x_1, \dots, x_n | do(X_i=x'_i)\right) = \begin{cases}P\left(x_1, \dots, x_n|x_i',pa_i\right)P(pa_i), \ \ \quad \mathrm{if} \ \ x_i = x_i' \\
+0, \qquad\qquad\qquad\qquad\qquad\qquad\quad \mathrm{if} \ \ x_i \neq x'_i
 \end{cases}$$
 
 
-## Compound Interventions
+> If you now focus on the formulas we came up in this section, you will realize that they express intervenions **without** using any interventional distribution. This means that in specific cases, we are able to **calculate the effect of an interventions from observational distributions**.
 
-$$P\left(x_1, \dots, x_n | do(S=s)\right) = \begin{cases}\prod_{i : X_i \not\in S}P(x_i|pa_i), X \mathrm{\ consistent\ with\ } S\\
-0, \mathrm{otherwise}
-\end{cases}$$
+
+
 
 # Adjustment for Direct Causes
+- mention Jonas Peters; video tutorial with the MUTE (most usefule tautology ever)
+
 > Let $PA_i$ the set of direct causes (parents) of $X_i$ , and $Y$ be any set, disjoint of $\{X_i \bigcup PA_i\}$. The effect of the intervention $do(X_i = x_i') $ on $Y$ is
 
 $$P\left(y | do(X_i=x'_i)\right) = \sum_{pa_i}P(y|x_i',pa_i)P(pa_i)$$
