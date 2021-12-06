@@ -35,7 +35,7 @@ This definition contains nothing new, it uses the $do$-notation to express the p
 
 ## Interventions as Variables
 
-We can think of interventions $do(X_i = x_i')$ in a DAG with variables $X_1, \dots, X_n$ as if we flipped a switch to make $X_i := x_i'$. That is, there are two mechanisms to determine the value of $X_i$: the conditional $P(x_i|pa_i)$ and the intervention $do(Xi = x_i')$. Of course, the ther-are-two-mechanisms-view has the same effect, it only differs in interpretation. The main advantage being that we can explicitly **incorporate the intervention in a single DAG**; i.e., no need to mess around with deleting edges.
+We can think of interventions $do(X_i = x_i')$ in a DAG with variables $X_1, \dots, X_n$ as if we flipped a switch to make $X_i := x_i'$. That is, there are two mechanisms to determine the value of $X_i$: the conditional $P(x_i\|pa_i)$ and the intervention $do(Xi = x_i')$. Of course, the ther-are-two-mechanisms-view has the same effect, it only differs in interpretation. The main advantage being that we can explicitly **incorporate the intervention in a single DAG**; i.e., no need to mess around with deleting edges.
 
 To do this, we augment node $X_i$ in the DAG with an additional parent $F_i$, yielding  $Pa_i' = Pa \bigcup \{F_i\}$, where $F_i \in \{do(X_i = x_i'), idle\}$ - meaning that $F_i$ is the "switch between the two mechanisms" determining $X_i$.
 
@@ -95,7 +95,7 @@ Assume that we have a graph $X\rightarrow Y\rightarrow Z$ with all variables bei
 | $0$ | $0.6$   |
 | $1$ | $0.4$   |
 
-The second ingredient is the conditional for $Y$ ensuring $P(Y|X) = P(Y|X,Z)$:
+The second ingredient is the conditional for $Y$ ensuring $P(Y\|X) = P(Y\|X,Z)$:
 
 | $X$ | $Y$ | $P(Y\|X)$ |
 |-----|-----|---------|
@@ -104,7 +104,7 @@ The second ingredient is the conditional for $Y$ ensuring $P(Y|X) = P(Y|X,Z)$:
 | $1$ | $0$ | $0.5$     |
 | $1$ | $1$ | $0.5$     |
 
-And the third one is the conditional for $Z$ ensuring $P(Z|Y) = P(Z|X,Y)$:
+And the third one is the conditional for $Z$ ensuring $P(Z\|Y) = P(Z\|X,Y)$:
 
 | $Y$ | $Z$ | $P(Z\|Y)$ |
 |-----|-----|---------|
