@@ -256,7 +256,7 @@ Observing $B$ cuts the graph into two parts by severing the active path in the c
 - $A \perp_G H \| B$
 - $E \perp_G C \| B$
 - $E \perp_G J \| B$
-- $E \perp_G J \| B$
+
 - $F \perp_G H \| B$
 - $F \perp_G C \| B$
 - $F \perp_G J \| B$

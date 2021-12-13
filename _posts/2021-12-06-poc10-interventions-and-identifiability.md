@@ -1,7 +1,7 @@
 ---
 title: 'Pearls of Causality #10: Interventions and Identifiability'
 date: 2021-12-06
-permalink: /posts/2021/11/2021-12-06-poc10-interventions-and-identifiability.html
+permalink: /posts/2021/12/2021-12-06-poc10-interventions-and-identifiability.html
 tags:
   - causality
   - Pearl

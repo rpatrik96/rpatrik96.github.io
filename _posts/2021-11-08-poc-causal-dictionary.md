@@ -17,7 +17,7 @@ No one told me that I need a dictionary for learning causal inference. Indeed, t
 - [PoC #2: Markov Factorization, Compatibility, and Equivalence](/posts/2021/10/poc2-markov/)
 - [PoC #3: The properties of d-separation](/posts/2021/10/poc3-d-sep-prop/)
 - [PoC #4: Causal Queries](/posts/2021/11/poc4-causal-queries/)
-- [PoC #5: Statistical vs Causal Inference](/posts/2021/11/stats-vs-causality/)
+- [PoC #5: Statistical vs Causal Inference](/posts/2021/11/poc5-stats-vs-causality/)
 - [PoC #6: Markov Conditions](/posts/2021/11/poc6-markov-conditions/)
 - [PoC #7: Latents and Inferred Causation](/posts/2021/11/poc6-latents-stability-ic/)
 - [PoC #8: Inferred Causation, $IC$, and ${IC}^*$](/posts/2021/11/poc8-ic-ic-ic)

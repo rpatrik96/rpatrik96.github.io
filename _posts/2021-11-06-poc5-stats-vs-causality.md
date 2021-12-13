@@ -12,7 +12,7 @@ What you won't be able to find in this post are  unconditional claims of superio
 
 ### PoC Post Series
 - [PoC #4: Causal Queries](/posts/2021/11/poc4-causal-queries/)
-- ➡️ [PoC #5: Statistical vs Causal Inference](/posts/2021/11/stats-vs-causality/)
+- ➡️ [PoC #5: Statistical vs Causal Inference](/posts/2021/11/poc5-stats-vs-causality/)
 - [PoC #6: Markov Conditions](/posts/2021/11/poc6-markov-conditions/)
 
 # Statistical vs Causal Inference
