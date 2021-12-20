@@ -1,6 +1,6 @@
 ---
 title: 'Bayesian Statistics - Techniques and Models flashcards'
-date: 2021-12-05
+date: 2021-12-20
 permalink: /posts/2021/12/bayes-stats2-deck/
 tags:
   - statistics
