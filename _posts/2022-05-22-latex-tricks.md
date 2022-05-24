@@ -171,7 +171,7 @@ This is what you need to include:
 }
 ```
 
-For referencing the the above entries, the same `\gls{}` command is used as for acronyms. The list of notation can be included by invoking the `\printglossary[type=abbrev, style=tree]` command (this will use a hierarchical style).
+For referencing the the above entries, the same `\gls{}` command is used as for acronyms. The list of notation can be included by invoking the `\printglossary[type=abbrev, style=tree]` command (this will use a hierarchical style). When including `\setglossarysection{subsection}` then both glossary and acronyms will be at the subsection level.
 
 The resulting structure will be:
 ```
