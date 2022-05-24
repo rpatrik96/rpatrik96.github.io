@@ -162,7 +162,18 @@ Nomenclature
     - q variational posterior
 ````
 
-
+### Fixing `hyperref` warnings
+When using `\gls{}, \glspl{}, \acrshort{}, \acrlong{}, \acrfull{}` in a caption, `hyperref` will warn about `Token not allowed in a PDF string`. To fix this, we can redefine these commands as 
+```latex
+\pdfstringdefDisableCommands{%
+  \def\gls#1{<#1>}%
+  \def\glspl#1{<#1>}%
+  \def\acrshort#1{<#1>}%
+  \def\acrlong#1{<#1>}%
+  \def\acrfull#1{<#1>}%
+}
+```
+to get rid of the warning and have more meaningful bookmarks in the pdf.
 
 # Acknowledgements
 I learned lot of the tricks in this post from [Luigi Gresele](https://twitter.com/luigigres) and [Julius von Kügelgen](https://twitter.com/JKugelgen).
