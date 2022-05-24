@@ -39,6 +39,26 @@ Both the `enumerate` and `itemize` environments waste a lot of space between lin
 \end{itemize}
 ```
 
+## Appendix-only table of contents
+Conference submissions practically do not allow the inclusion of a table of contents due to the page limit, but it can be helpful for the appendix. This can be done in the following way:
+
+```latex
+% ----------------------
+%% include in preamble
+\usepackage[toc,page,header]{appendix}
+\usepackage{minitoc}
+
+% akes the "Part I" text invisible
+\renewcommand \thepart{}
+\renewcommand \partname{}
+
+% ----------------------
+%% include in the appendix
+\addcontentsline{toc}{section}{Appendix} % Add the appendix text to the document TOC
+\part{Appendix} % Start the appendix part
+\parttoc % Insert the appendix TOC
+```
+
 # References
 LaTeX has commands such as `\eqref{}, \autoref{}, \ref{}` that work fine, though what I started to like recently is the `cleveref` package with its `\cref{}` command. This will put the paragraph symbol "§" when referring to sections, saving a lot of space (and making it easier for the reader to find the cross-references in the paper).
 
