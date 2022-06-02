@@ -88,11 +88,11 @@ This enables us to express certain symmetries. Take rotations of objects for exa
 Normal subgroups can be used to define another group, called **factor or quotient group**, denoted by $G/S$. The name "quotient" comes from an analogy to division: as quotient groups are sets of cosets of $S$, this means that a quotient describes a "clustering" of $G$ according to $S$. Namely:
 - $S$ has its cosets w.r.t $G$ that cover $G$ with non-overlapping subgroups
 - $G/S$ collects all such subgroups together an present the different categories.
-- the implication is that the order of the quotient group, $|G/S|$ is the number of cosets of $S$
+- the implication is that the order of the quotient group, $\|G/S\|$ is the number of cosets of $S$
 
 The last point illustrates the additional information conveyed by quotient groups compared to plain old division: division only gives the order (i.e., the quotient), but quotient groups provide the elements too. An example is taking the positive integers as $G$ with addition as the group operation and defining the normal subgroup as the numbers that are the multiple of e.g. $7$. This means that $G/S$ will give the integers modulo $7$, i.e., it divides all positive integers into $7$ clusters, those with the remainder $0,1,2,3,4,5,6$ w.r.t. division by $7$.
 
-Regarding technical details, the group structure follows from the properties of normal subgroups, namely, that the left and right cosets are the same. For $S*g = g*S$, we can rewrite this as $S=g^{-1}*S*g$. From the equivalence of left and right cosets follows that $S$ is the unit element of the factor group, since $S*(g*S)=S*(S*g)$ and $S*S=S$; thus $S*(g*S)=S*(S*g)=S*g$. By left-multiplying with $S$, we can notice that $S*S=g^{-1}*S*g=S,$ so we have an inverse too. 
+Regarding technical details, the group structure follows from the properties of normal subgroups, namely, that the left and right cosets are the same. For $S*g = g*S $, we can rewrite this as $S=g^{-1}*S*g$. From the equivalence of left and right cosets follows that $S$ is the unit element of the factor group, since $S*(g*S)=S*(S*g)$ and $S*S=S$; thus $S*(g*S)=S*(S*g)=S*g$. By left-multiplying with $S$, we can notice that $S*S=g^{-1}*S*g=S,$ so we have an inverse too. 
 
 From a machine learning perspective, we can see the merit of factor groups, as they can express how different elements in a (data) set are groupe together, e.g., this is what we want when clustering data.
 
@@ -100,7 +100,7 @@ From a machine learning perspective, we can see the merit of factor groups, as t
 
 We can describe the same group with different representations. If we have an image, it does not change its meaning if we select the top left or the bottom right pixel as the origin of our coordinate system. For we can find a bijective mapping that transforms the coordinates from one frame to the other. This notion, which we call **isomorphism**, is important as it reduces the number of different sets (as we only need to take care of those that are not isomorphic to each other, e.g., we don't need to have all coordinate systems for our images).
 
-> Formally, two groups $G_1, G_2$ are **isomorphic** if there is a _bijective_ mapping $\phi: G_1 \to G_2$ such that $\forall x,y \in G_1 : \phi(x)*\phi(y) = \phi(x*y)$, where * is the group operation.
+> Formally, two groups $G_1, G_2$ are **isomorphic** if there is a _bijective_ mapping $\phi: G_1 \to G_2$ such that $ \forall x,y \in G_1 : \phi(x)*\phi(y) = \phi(x*y)$, where * is the group operation.
 
 The definition says that if we apply the group operation to two elements in $G_1$, then map the resulting group element to $G_2$, we get the same result as applying the group operation of $G_2$ to the elements that are mapped to $G_2$. Going back to our representation learning example, let's assume that the operator in $G_1$ (the latent space) "combines the features" (similar to + for numbers, e.g., if $x$ describes a red triangle and $y$ a blue triangle, then $x*y$ is a purple triangle); and the operator of $G_2$ does the same for the images (in this example, we can think of adding the matrices representing the images). Translating the definition to this example means that if we combine the features "red triangle" and "blue triangle" (e.g., both are vectors with two elements, indicating RGB color and shape) and mapping this feature vector to an image is equivalent to combining the _images_ of a blue and a red triangle. 
 
@@ -108,9 +108,9 @@ The definition says that if we apply the group operation to two elements in $G_1
 
 ## Homomorphism
 We already have defined _isomorphisms_ that map between two groups with a bijective mapping, but this is a strong constraint as it requires that each element of $G_1$ is mapped to a single distinct element of $G_2$. **Homomorphisms** generalize these mappings by omitting the bijectivity constraint, leading to the definition:
-> The mapping between  two groups $G_1, G_2$ is a **homomorphisms** if there is a mapping $\phi: G_1 \to G_2$ defined for each $x\in G_1$ such that $\forall x,y \in G_1 : \phi(x)*\phi(y) = \phi(x*y)$, where * is the group operation.
+> The mapping between  two groups $G_1, G_2$ is a **homomorphisms** if there is a mapping $\phi: G_1 \to G_2$ defined for each $x\in G_1$ such that $ \forall x,y \in G_1 : \phi(x)*\phi(y) = \phi(x*y)$, where * is the group operation.
 
-Although we cannot invert a homomorphism generally the property $\phi(x)*\phi(y) = \phi(x*y)$ still means that we preserve the group structure. In representation learning, we come across a similar concept when using Latent Variable Models (LVMs), where a small-dimensional latent vector describes high-dimensional observations (such as in the example above with factors such as color and shape as latents and the image as the high-dimensional observation).
+Although we cannot invert a homomorphism generally the property $ \phi(x) * \phi(y) = \phi(x*y) $ still means that we preserve the group structure. In representation learning, we come across a similar concept when using Latent Variable Models (LVMs), where a small-dimensional latent vector describes high-dimensional observations (such as in the example above with factors such as color and shape as latents and the image as the high-dimensional observation).
 
 When training Variational AutoEncoders (VAEs), it can happen that we experience **posterior collapse**, i.e., some elements in the latent space do not capture useful information, they are white noise. Intuitively, this relates to the concept of **kernel** (not the Linux one though):
 > The kernel of a homomorphism $\phi: G_1 \to G_2$ is the set of elements in $G_1$ that map to the unit element in $G_2$ and is denoted by $Ker(\phi)$.
