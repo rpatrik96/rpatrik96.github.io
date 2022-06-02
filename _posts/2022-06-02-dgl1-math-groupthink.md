@@ -116,7 +116,7 @@ When training Variational AutoEncoders (VAEs), it can happen that we experience 
 > The kernel of a homomorphism $\phi: G_1 \to G_2$ is the set of elements in $G_1$ that map to the unit element in $G_2$ and is denoted by $Ker(\phi)$.
 
 We might think of the collapsed latents in VAEs as the kernel of the mapping to the observation space, since they do not contain information so they get mapped to a blurry image (whether that can be called a unit element is not trivial, but I am reasoning only on an intuitive level). 
->The **image** of $\phi$ is the set of elements in $G_2$ that can be produced by mapping elements of $G_1$ via the homomorphism $\phi(g_1) : g_1 \in G_1$ and is denoted by $IM(\phi)$. 
+>The **image** of $\phi$ is the set of elements in $G_2$ that can be produced by mapping elements of $G_1$ via the homomorphism $\phi(g_1) : g_1 \in G_1$ and is denoted by $Im(\phi)$. 
 
 In VAE language, these are the images you can generate.
 
