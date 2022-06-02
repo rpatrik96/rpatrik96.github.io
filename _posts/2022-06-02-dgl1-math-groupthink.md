@@ -60,7 +60,7 @@ Having defined an algebraic structure, we can interpret what we mean by the oper
 
 If we demand that the $S$ contains a unit element (identity) w.r.t. the operator *, then we call $S$ a **monoid**. It is important that we speak about "identity _w.r.t._ the operator *", as we will see that more complex algebraic structures can have multiple operators and so multiple identity elements. An example is the identity matrix $I_n$ for the set of $n\times n$ matrices and the matrix multiplication *. In this case, we can call $I_n$ a _multiplicative unit element_ to differentiate it from other possible unit elements.
 
-> A set $S$ is a **group** with the operator * if: 
+> A set $S$ is a **group** with the operator \* if: 
 > - \* is associative
 > - has an identity element $i$ s.t. $\forall x \in S : x*i = i*x = x$
 > - the inverse of each element is unique and is also in $S$, i.e., $\forall x\in S \implies y \in S : x*y=y*x=i$
@@ -69,7 +69,7 @@ The leap from monoids to groups is the existence of the inverse element. Though 
 
 ## Grouping groups
 
-When we have images with different shapes, positions, and colors it is useful to build categories like triangles, circles, and squares. These are **subgroups** of the original group. That is, if our group $G$ contains vectors with elements $[x; y; angle; shape, color]$ and the operator * combines the features (e.g., translates the object) then a subgroup is a set of elements where some coordinates of the feature vector are fixed. Triangles are elements where $[x; y; angle;shape=triangle, color]$ and so on.
+When we have images with different shapes, positions, and colors it is useful to build categories like triangles, circles, and squares. These are **subgroups** of the original group. That is, if our group $G$ contains vectors with elements $[x; y; angle; shape, color]$ and the operator \* combines the features (e.g., translates the object) then a subgroup is a set of elements where some coordinates of the feature vector are fixed. Triangles are elements where $[x; y; angle;shape=triangle, color]$ and so on.
 
 > So a subgroup is a subset $S$ of the elements with the same operator as the group $G$. This is like a specific 2D plane in 3D space.
 
@@ -79,7 +79,7 @@ Subgroups are useful as they correspond to how we would categorize objects. We t
 
 >**Cosets** describe a set of subgroups $S$ that cover the original group $G$.
 
-For 2D planes parallel to the $x-y$ plane of the Cartesian coordinate system, this means having all translations along the $z$ axis. This idea is generalized by taking an element of $g\in G$ and applying the group operator * on $g$ and _all_ $s\in S$. That is, we shift all points of the plane ($S$) with $g$. The concept is captured mathematically as $S*g,$ where this means that we take _all_ $s\in S$ and apply * with a _single_ $g\in G$ (this is a single 2D plane); then you repeat it for _every_ $g$ (to cover the whole 3D space). We can generate subgroups both as $s*g$ (right coset) and $g*s$ (left coset), but we will only focus on cases when both are the same, which we will call **normal subgroups**. An intuitive way to think about this is to compare this property to commutativity. 
+For 2D planes parallel to the $x-y$ plane of the Cartesian coordinate system, this means having all translations along the $z$ axis. This idea is generalized by taking an element of $g\in G$ and applying the group operator \* on $g$ and _all_ $s\in S$. That is, we shift all points of the plane ($S$) with $g$. The concept is captured mathematically as $S*g,$ where this means that we take _all_ $s\in S$ and apply \* with a _single_ $g\in G$ (this is a single 2D plane); then you repeat it for _every_ $g$ (to cover the whole 3D space). We can generate subgroups both as $s*g$ (right coset) and $g*s$ (left coset), but we will only focus on cases when both are the same, which we will call **normal subgroups**. An intuitive way to think about this is to compare this property to commutativity. 
 
 >How do we benefit from dividing groups into smaller entities besides having a more intuitive description?
 
