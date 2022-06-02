@@ -1,14 +1,14 @@
 ---
-title: 'Mathematical groupthink for Geometric Deep Learning'
+title: 'Mathematical foundations for Geometric Deep Learning'
 date: 2022-06-02
-permalink: /posts/2022/06/poc1-dags-d-sep/
+permalink: /posts/2022/06/dgl1-foundations/
 tags:
   - algebra
   - geometry
   - group
 ---
 
-This happens when mathematicians groupthink.
+Yes, abstract algebra is actually useful for machine learning.
 
 # Introduction
 Machine learning operates on images, text, speech and much more. We intuitively understand that they include structure, but for most of us, this is where our knowledge stops. With  the emergence of geometric deep learning, there is an increased need to understand the invariances, symmetries in the data.
