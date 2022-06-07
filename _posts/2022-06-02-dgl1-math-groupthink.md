@@ -38,8 +38,8 @@ def add(x:int, y:int)->int:
 
 and as one, it can have different properties. These properties are the instructions how we can apply the operators (functions), and have a role in what symmetries are present in $S$.
 
-- **Associativity:** the binary operator * is associative if it admits the rearrangement of parenthesis (i.e., the order of carrying out the operations). Thus, $a\*(b\*c)=(a\*b)\*c$.
-- **Commutativity:** the binary operator * is commutative if its arguments are exchangeable (i.e., if they can switch place). Thus, $a*b=b*a$.
+- **Associativity:** the binary operator \* is associative if it admits the rearrangement of parenthesis (i.e., the order of carrying out the operations). Thus, $a\*(b\*c)=(a\*b)\*c$.
+- **Commutativity:** the binary operator \* is commutative if its arguments are exchangeable (i.e., if they can switch place). Thus, $a\*b=b\*a$.
 
 
 > \* is used as a symbol for an arbitrary operator, it does not necessarily mean multiplication.
