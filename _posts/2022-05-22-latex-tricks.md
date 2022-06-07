@@ -196,8 +196,7 @@ Nomenclature
 ### Fixing `hyperref` warnings
 When using `\gls{}, \glspl{}, \acrshort{}, \acrlong{}, \acrfull{}` in a caption, `hyperref` will warn about `Token not allowed in a PDF string`. To fix this, we can redefine these commands as 
 ```latex
-\pdfstringdefDisableCommands{%
-  \def\gls#1{<#1>}%
+\pdfstringdefDisableCommands{\def\gls#1{<#1>}%
   \def\glspl#1{<#1>}%
   \def\acrshort#1{<#1>}%
   \def\acrlong#1{<#1>}%
