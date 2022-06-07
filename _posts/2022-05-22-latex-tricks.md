@@ -69,7 +69,7 @@ All you need is include this script.
 \crefname{section}{Section}{Sections}
 ```
 
-## Backlinks for references for simpler naviagtion
+## Backlinks for references for simpler navigation
 It can be annoying when clicking on a reference means that somehow we need to navigate back to the same spot. Loading `hyperref` as `\usepackage[backref=page]{hyperref}` will show the page numbers for each reference they were cited at. For they are active links, going back to the original line cannot be more straightforward.
 
 ## Restating theorems
