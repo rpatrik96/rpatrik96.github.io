@@ -69,11 +69,14 @@ All you need is include this script.
 \crefname{section}{Section}{Sections}
 ```
 
+## Backlinks for references for simpler naviagtion
+It can be annoying when clicking on a reference means that somehow we need to navigate back to the same spot. Loading `hyperref` as `\usepackage[backref=page]{hyperref}` will show the page numbers for each reference they were cited at. For they are active links, going back to the original line cannot be more straightforward.
+
 ## Restating theorems
 When using environments for theorems, remarks, and co, it can be useful to restate them in the appendix to avoid the back-and-forth to the main text. Simply copy-pasting is not a good solution as that way a different number will be assigned to the second appearance of the same claim. With the `thmtools` package, there is a solution for this:
 
 ```latex
-\usepackage{amsthm} % to have theorem environments in teh first place
+\usepackage{amsthm} % to have theorem environments in the first place
 \usepackage{thmtools,thm-restate}
 
 
