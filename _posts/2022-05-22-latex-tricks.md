@@ -60,33 +60,53 @@ Conference submissions practically do not allow the inclusion of a table of cont
 ```
 
 # References
-LaTeX has commands such as `\eqref{}, \autoref{}, \ref{}` that work fine, though what I started to like recently is the `cleveref` package with its `\cref{}` command. This will put the paragraph symbol "§" when referring to sections, saving a lot of space (and making it easier for the reader to find the cross-references in the paper).
+LaTeX has commands such as `\eqref{}, \autoref{}, \ref{}` that work fine, though what I started to like recently is the `cleveref` package with its `\cref{}` command, as it enables redefining the name Latex uses when referencing a table, figure, or section. For example, if you would like to change referencing sections to print out "section" with an upper-case "S", then then use the following command (the third set of curly braces is used to define the plural). 
 
 All you need is include this script.
 ```latex
 \usepackage{cleveref}
 
-\crefname{section}{\S}{\S\S}
-\crefname{subsection}{\S}{\S\S}
-\crefname{subsubsection}{\S}{\S\S}
-\crefname{figure}{Fig.}{Figs.}
-\crefname{prop}{Prop.}{Props.}
-\crefname{appendix}{Appx.}{Appxs.}
-\crefname{theorem}{Thm.}{Thms.}
-\crefname{equation}{Eq.}{Eqs.}
-\crefname{figure}{Fig.}{Figs.}
-\crefname{definition}{Defn.}{Defns.}
-\crefname{corollary}{Corollary}{Corollaries}
-\crefname{proposition}{Prop.}{Props.}
-\crefname{theorem}{Thm.}{Thms.}
-\crefname{remark}{Remark}{Remarks}
-\crefname{principle}{Principle}{Principles}
-\crefname{lemma}{Lemma}{Lemmas}
-\crefname{claim}{Claim}{Claims}
-\crefname{table}{Table}{Tabs.}
-\crefname{assumption}{Assumption}{Assumptions}
-\crefname{appendix}{Appendix}{Appendices}
-\crefname{example}{Ex.}{Exs.}
+\crefname{section}{Section}{Sections}
+```
+
+## Restating theorems
+When using environments for theorems, remarks, and co, it can be useful to restate them in the appendix to avoid the back-and-forth to the main text. Simply copy-pasting is not a good solution as that way a different number will be assigned to the second appearance of the same claim. With the `thmtools` package, there is a solution for this:
+
+```latex
+\usepackage{amsthm} % to have theorem environments in teh first place
+\usepackage{thmtools,thm-restate}
+
+
+\newtheorem{thm}{Theorem}
+
+\begin{restatable}{thm}{nameofthm}
+This is true.
+\end{restatable}
+
+
+\nameofthm* % this will repeat the theorem with the same number
+
+```
+
+
+## Referencing items in a list
+If you need to reference an item in a list (a common use-case is referring to e.g. claims of a theorem), the `enumitem` package can help you:
+
+```latex
+\usepackage{enumitem}
+\usepackage{cleveref}
+
+\newlist{nameofenumeration}{enumerate}{2} % define enumeration type
+\setlist[nameofenumeration]{label={\normalfont(\roman*)},ref=\thetheorem(\roman*)} % setup the label, it will include the number of theh theorem
+\crefname{nameofenumerationi}{property}{properties} % cleverref config
+
+\begin{theorem}
+  Theorem comes here with claims:
+  \begin{nameofenumeration}
+    \item property one \label{prop:1}
+    \item property two \label{prop:2}
+  \end{nameofenumeration}
+\end{theorem}
 ```
 
 # Figure placement
@@ -116,16 +136,14 @@ I have a separate `.tex` file for all my abbreviations including concepts such a
 3. The abbreviation written out.
 
 ```latex
-\newacronym{kld}{KL}{Kullback-Leibler Divergence}
-\newacronym{elbo}{{\text{\upshape ELBO}}}{evidence lower bound}
-\newacronym{pca}{PCA}{Principal Component Analysis}
+\newacronym{ml}{ML}{Machine Learning}
 ```
 
-From this point on, `\gls{pca}` will print out Principal Component Analysis(PCA) for the first use, then only PCA. 
-- If you need the plural, use `\glspl{pca}`,
-- For forcing the short version `\acrshort{pca}`,
-- For forcing the long version `\acrlong{pca}`,
-- For forcing the full (i.e., both the name spelled out and the abbreviation) version `\acrfull{pca}`.
+From this point on, `\gls{ml}` will print out Principal Component Analysis(PCA) for the first use, then only PCA. 
+- If you need the plural, use `\glspl{ml}`,
+- For forcing the short version `\acrshort{ml}`,
+- For forcing the long version `\acrlong{ml}`,
+- For forcing the full (i.e., both the name spelled out and the abbreviation) version `\acrfull{ml}`.
 
 Besides enforcing consistency, a list of acronyms can be created with the `\printacronyms` command---as a bonus, the acronyms will be cross-referenced, sop clicking on them will lead you to the list of acronyms. Handy, isn't it?
 
@@ -145,29 +163,23 @@ This is what you need to include:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Top-level glossary entries
-\newglossaryentry{obs}{
-    name        = \ensuremath{\boldsymbol{x}} ,
-    description = {observation vector} ,
-    type        = abbrev,
-}
-
-\newglossaryentry{latent}{
-    name        = \ensuremath{\boldsymbol{z}} ,
-    description = {latent vector} ,
+\newglossaryentry{lr}{
+    name        = \ensuremath{\alpha} ,
+    description = {learning rate} ,
     type        = abbrev,
 }
 
 
-% A separate category for VAEs, this will render all related notation 
-% under a VAE header
-\newglossaryentry{vaes}{type=abbrev,name=\acrlong{vae},description={\nopostdesc}}
+% A separate category for mathematics, this will render all related notation 
+% under a "Maths"" header
+\newglossaryentry{math}{type=abbrev,name=Maths,description={\nopostdesc}}
 
 
-\newglossaryentry{q}{
-    name        = \ensuremath{q(\gls{latent}|\gls{obs})} ,
-    description = {variational posterior of the VAE, mapping $\gls{obs}\mapsto\gls{latent}$ parametrized by ${\phi}$} ,
+\newglossaryentry{cov}{
+    name        = \ensuremath{\Sigma} ,
+    description = {covariance matrix} ,
     type        = abbrev,
-    parent      = vaes,
+    parent      = math,
 }
 ```
 
@@ -176,10 +188,9 @@ For referencing the the above entries, the same `\gls{}` command is used as for 
 The resulting structure will be:
 ```
 Nomenclature
-  - x observations
-  - z latents
-  VAEs
-    - q variational posterior
+  - $\alpha$ learning rate
+  Maths
+    - $\Sigma$ covariance matrix
 ````
 
 ### Fixing `hyperref` warnings
