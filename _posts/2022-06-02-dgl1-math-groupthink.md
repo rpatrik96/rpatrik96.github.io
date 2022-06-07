@@ -51,6 +51,7 @@ Abstract algebraic structures are defined by the set $S$, an operator/operators 
 Complexity has its price. Thinking in terms of neural networks, a larger model is more powerful, but is harder to train, whereas the smaller one is faster, but less expressive. A convolutional network is invariant to translations, which is useful for images, but could be useless or harmful in other contexts. As we would not choose a huge model for MNIST (we would risk overfitting), we select the simplest algebraic structure that admits the properties we want. In the following, we describe our choices.
 
 # Groups
+Groups are already special, they have specific prperties (see below). To provide some perspective, we start with a very simple structure comprising of a set and a simple associative operation. It is not much, though it deserves its own name:
 
 > A set $S$ is an **associative semigroup** if it has an associative operator \*. If \* is also commutative, we call it a **commutative (or abelian) semigroup**.
 
@@ -79,22 +80,22 @@ Subgroups are useful as they correspond to how we would categorize objects. We t
 
 >**Cosets** describe a set of subgroups $S$ that cover the original group $G$.
 
-For 2D planes parallel to the $x-y$ plane of the Cartesian coordinate system, this means having all translations along the $z$ axis. This idea is generalized by taking an element of $g\in G$ and applying the group operator \* on $g$ and _all_ $s\in S$. That is, we shift all points of the plane ($S$) with $g$. The concept is captured mathematically as $S\*g,$ where this means that we take _all_ $s\in S$ and apply \* with a _single_ $g\in G$ (this is a single 2D plane); then you repeat it for _every_ $g$ (to cover the whole 3D space). We can generate subgroups both as $s*g$ (right coset) and $g\*s$ (left coset), but we will only focus on cases when both are the same, which we will call **normal subgroups**. An intuitive way to think about this is to compare this property to commutativity. 
+For 2D planes parallel to the $x-y$ plane of the Cartesian coordinate system, this means having all translations along the $z$ axis. This idea is generalized by taking an element of $g\in G$ and applying the group operator \* on $g$ and _all_ $s\in S$. That is, we shift all points of the plane ($S$) with $g$. The concept is captured mathematically as $S\*g,$ where this means that we take _all_ $s\in S$ and apply \* with a _single_ $g\in G$ (this yields a single 2D plane, shifted by the vector $g$ for all $s\in S$); then you repeat it for _every_ $g$ (to cover the whole 3D space). We can generate subgroups both as $s\*g$ (right coset) and $g\*s$ (left coset), but we will only focus on cases when both are the same, which we will call **normal subgroups**. An intuitive way to think about this is to compare this property to commutativity. 
 
 >How do we benefit from dividing groups into smaller entities besides having a more intuitive description?
 
-This enables us to express certain symmetries. Take rotations of objects for example. They are a describe a subset of objects with different orientation. So we write a function to to render objects with all rotations. As our computational power is finite, we need to define a step size for the angle. Make it to $1^\circ$. In this case, the rotation element $R_1$ ("rotate by $1^\circ$") _generates a subgroup_ (as our group contains other features such as position, shape, etc.) containing $R_1, R_2, \dots, R_{359}, R_{360}$. You need all 360 elements, otherwise the group operator (multiplying the rotation matrices) would create elements not in the subgroup. Moreover, this subgroup is **cyclic**. When we apply $R_1$ consecutively, will we not get an infinite amount of different elements as $R_{360}=R_0$ (the identity). We will call the smallest number of applying the _generating element_ $R_1$ and getting back the identity as the **order** of the subgroup.
+This enables us to express certain symmetries. Take rotations of objects for example. They are a describe a subset of objects with different orientation. So we write a function to to render objects with all rotations. As our computational power is finite, we need to define a step size for the angle. Make it to $1^\circ$. In this case, the rotation element $R_1$ ("rotate by $1^\circ$") _generates a subgroup_ (as our group contains other features such as position, shape, etc.) containing $R_1, R_2, \dots, R_{359}, R_{360}$. You need all 360 elements, otherwise the group operator (multiplying the rotation matrices) would create elements not in the subgroup. Moreover, this subgroup is **cyclic**. When we apply $R_1$ consecutively, we will not get an infinite amount of different elements as $R_{360}=R_0$ (the identity). We call the smallest number of applying the _generating element_ $R_1$ and getting back the identity as the **order** of the subgroup.
 
 Normal subgroups can be used to define another group, called **factor or quotient group**, denoted by $G/S$. The name "quotient" comes from an analogy to division: as quotient groups are sets of cosets of $S$, this means that a quotient describes a "clustering" of $G$ according to $S$. Namely:
-- $S$ has its cosets w.r.t $G$ that cover $G$ with non-overlapping subgroups
-- $G/S$ collects all such subgroups together an present the different categories.
-- the implication is that the order of the quotient group, $\|G/S\|$ is the number of cosets of $S$
+- $S$ has its cosets w.r.t $G$ that cover $G$ with non-overlapping subgroups;
+- $G/S$ collects all such subgroups together;
+- the implication is that the order of the quotient group, $\|G/S\|$ is the number of cosets of $S$.
 
 The last point illustrates the additional information conveyed by quotient groups compared to plain old division: division only gives the order (i.e., the quotient), but quotient groups provide the elements too. An example is taking the positive integers as $G$ with addition as the group operation and defining the normal subgroup as the numbers that are the multiple of e.g. $7$. This means that $G/S$ will give the integers modulo $7$, i.e., it divides all positive integers into $7$ clusters, those with the remainder $0,1,2,3,4,5,6$ w.r.t. division by $7$.
 
 Regarding technical details, the group structure follows from the properties of normal subgroups, namely, that the left and right cosets are the same. For $S\*g = g\*S $, we can rewrite this as $S=g^{-1}\*S\*g$. From the equivalence of left and right cosets follows that $S$ is the unit element of the factor group, since $S\*(g\*S)=S\*(S\*g)$ and $S\*S=S$; thus $S\*(g\*S)=S\*(S\*g)=S\*g$. By left-multiplying with $S$, we can notice that $S\*S=g^{-1}\*S\*g=S,$ so we have an inverse too. 
 
-From a machine learning perspective, we can see the merit of factor groups, as they can express how different elements in a (data) set are groupe together, e.g., this is what we want when clustering data.
+From a machine learning perspective, we can see the merit of factor groups, as they can express how different elements in a (data) set are grouped together, e.g., this is what we want when clustering data.
 
 ## Expressing group equivalence (isomorphism)
 
