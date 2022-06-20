@@ -59,7 +59,7 @@ $g$ has the following properties ($e$ is the identity element)
 -  $eu=u$
 
 ### Example
-An example is planar motion in $R^2$, where $g$ is described by a rotation angle $\theta$, and two translation coordinates $t_x, t_y$. Then applying $g$ on a point $u=(x,y)$ can be characterized by the mapping $((\theta, t_x, t_y), (x,y))\mapsto [R; T](x,y,1)$, where $[R;T]$ is a shorthand for the transformation matrix that rotates $u$ by $\theta$ and translates it by $(t_x,t_y)$---the third coordinate is needed to describe this affine transformation with a single matrix.
+An example is planar motion in $R^2$, where $g$ is described by a rotation angle $\theta$, and two translation coordinates $t_x, t_y$. Then applying $g$ on a point $u=(x,y)$ can be characterized by the mapping $((\theta, t_x, t_y), (x,y))\mapsto [R; T] (x,y,1)$, where $[R;T]$ is a shorthand for the transformation matrix that rotates $u$ by $\theta$ and translates it by $(t_x,t_y)$---the third coordinate is needed to describe this affine transformation with a single matrix.
 
 ## How can we describe all symmetries?
 It needed a lot of effort, but now we can make sense of it to describe groups:
