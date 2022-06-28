@@ -1,6 +1,6 @@
 ---
 title: 'Where is the nature of the relationship expressed in causal models?'
-date: 2021-11-29
+date: 2022-06-28
 permalink: /posts/2022/06/2022-06-28-sem-nature-of-relationships
 tags:
   - causality
