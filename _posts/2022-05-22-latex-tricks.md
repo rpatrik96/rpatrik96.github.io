@@ -196,6 +196,8 @@ Nomenclature
     - $\Sigma$ covariance matrix
 ````
 
+> If the glossaries are not showing up (especially if you are on Overleaf), check whether the files are in a folder (common when uploading a `.zip`). If yes, move everything out of the folder.
+
 ### Fixing `hyperref` warnings
 When using `\gls{}, \glspl{}, \acrshort{}, \acrlong{}, \acrfull{}` in a caption, `hyperref` will warn about `Token not allowed in a PDF string`. To fix this, we can redefine these commands as 
 ```latex
