@@ -208,5 +208,12 @@ When using `\gls{}, \glspl{}, \acrshort{}, \acrlong{}, \acrfull{}` in a caption,
 ```
 to get rid of the warning and have more meaningful bookmarks in the pdf.
 
+# Speeding up compilation time
+Working on a large project with lot of files and figure can result in you sitting in front of your monitor and reading War and Peace before you can start handling the error messages. `\includeonly` comes for the rescue, as it restricts the files processed by the compiler only to the specified ones(no leading or trailing spaces allowed).
+
+```latex
+\includeonly{a.tex,b.tex}
+```
+
 # Acknowledgements
 I learned lot of the tricks in this post from [Luigi Gresele](https://twitter.com/luigigres) and [Julius von Kügelgen](https://twitter.com/JKugelgen).
