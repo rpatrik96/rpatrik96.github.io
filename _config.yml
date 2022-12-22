@@ -10,7 +10,7 @@ locale                   : "en-US"
 title                    : "Casual Causality"
 title_separator          : "-"
 name                     : &name "Patrik Reizinger"
-description              : &description "PhD student in representation learning and causality @IMPRS-IS and @ELLIS"
+description              : &description "PhD student in causal representation learning @IMPRS-IS and @ELLIS"
 url                      : https://rpatrik96.github.io # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "rpatrik96/rpatrik06.github.io"
@@ -82,7 +82,7 @@ analytics:
 author:
   name             : "Patrik Reizinger"
   avatar           : "profile.jpeg"
-  bio              : "PhD student in representation learning and causality @IMPRS-IS and @ELLIS"
+  bio              : "PhD student in causal representation learning @IMPRS-IS and @ELLIS"
   location         : "Tübingen, Germany"
   employer         : "University of Tübingen"
   pubmed           : 
