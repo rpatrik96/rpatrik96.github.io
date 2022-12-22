@@ -14,12 +14,17 @@ main:
         
   - title: "Blog Posts"
     url: /year-archive/
+
+  - title: "The Path to PhD Newsletter"
+    url: https://path2phd.substack.com/
     
   - title: "CV"
     url: /CV/cv.pdf
 
   - title: "About"
     url: /about/
+
+
 
 
 
