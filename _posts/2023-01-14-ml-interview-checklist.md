@@ -35,7 +35,7 @@ When we talk about matrices, decompositions such as Singular Value Decomposition
 
 
 This figure from the MML book can be very helpful to comprehend all things matrix philogeny:
-![[mml_matrix_philogeny.png]]
+![Matrix philogeny (source: Mathematics for Machine Learning book)](images/posts/mml_matrix_philogeny.png)
 
 #### Checklist
 - [ ] matrix operations
