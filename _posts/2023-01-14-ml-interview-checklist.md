@@ -8,8 +8,6 @@ tags:
 
 Cover your bases.
 
-
-Get a good base.
 # The Machine Learning Interview checklist
 
 
