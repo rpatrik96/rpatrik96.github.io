@@ -1,5 +1,5 @@
 ---
-title: 'The Machine Learning Interview checklist'
+title: 'The Machine Learning Interview Checklist'
 date: 2023-01-14
 permalink: /posts/2023/01/ml-interview-checklist/
 tags:
@@ -8,7 +8,7 @@ tags:
 
 Cover your bases.
 
-# The Machine Learning Interview checklist
+# The Machine Learning Interview Checklist
 
 
 Generally speaking, interviews for Ph.D. positions, internships in machine learning are generally structured into three parts:
