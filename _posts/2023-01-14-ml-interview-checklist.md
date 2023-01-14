@@ -280,4 +280,4 @@ For Python, [realpython.com](https://realpython.com/) is my go-to resource, you 
 # Your two cents
 Let it be research or programming, be honest and show your commitment and enthusiasm. If you have fields, you are interested in, say so. If you have a relevant project (plan), definitely talk about it. 
 
-[Remember](https://path2phd.substack.com/p/p2p-no-4-state-your-business), think with the head of the interviewer
+[Remember](https://path2phd.substack.com/p/p2p-no-4-state-your-business), think with the head of the interviewer.
