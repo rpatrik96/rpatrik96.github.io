@@ -8,7 +8,7 @@ redirect_from:
   - /about.html
 ---
 
-I am a PhD student at the University of Tübingen, supervised by Wieland Brendel, Ferenc Huszár, Matthias Bethge, and Bernhard Schölkopf. He is part of the ELLIS and IMPRS-IS programs. His main research interests include causal representation learning and identifiability. He has done both his MSc and BSc at the Budapest University of Technology in electrical engineering and specialized in control engineering and intelligent systems.
+I am a Ph.D. student at the University of Tübingen, supervised by Wieland Brendel, Ferenc Huszár, Matthias Bethge, and Bernhard Schölkopf. I am part of the [ELLIS](https://ellis.eu/phd-postdoc) and [IMPRS-IS](http://imprs.is.mpg.de/) programs. My main research interests include causal representation learning and identifiability. I have done both my M.Sc. and B.Sc. at the Budapest University of Technology in electrical engineering and specialized in control engineering and intelligent systems. In my free time, I enjoy being outdoors and often bring my [camera](https://500px.com/p/rpatrik96) with me.
 
 {% include base_path %}
 {% capture written_year %}'None'{% endcapture %}
