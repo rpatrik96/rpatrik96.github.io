@@ -21,6 +21,6 @@ The score function for a probability distribution is defined as the gradient of 
    = \dfrac{\partial}{\partial f(z)}\dfrac{\partial f(z)}{\partial z}  \left(-\frac{1}{2}(x- f(z))^T\Sigma^{-1}(x- f(z))\right) \\
    = -\dfrac{\partial f}{\partial z}^\top\Sigma^{-1}(x- f(z)). $$
 
-   At the optimum (maximizing the score) the reconstruction error vector $\varepsilon = x - f(z)$ needs to be orthogonal to the Jacobian w.r.t the weighted norm with $\Sigma$. If, as is the general case, $\Sigma$ is diagonal, then $\varepsilon \perp J_f$.
+   At the optimum (maximizing the score) the reconstruction error vector $\varepsilon = x - f(z)$ needs to be orthogonal to the Jacobian columns ($\forall i : [J_f]_{:, i}$) w.r.t the weighted norm with $\Sigma$. If, as is the general case, $\Sigma$ is diagonal, then $\forall i: \varepsilon \perp [J_f]_{:, i}$.
 
    This is similar to the notion of principal manifolds in (Cunningham et al., 2022), where is the noiseless limit, the Jacobian of the generative model describes the principal directions of the manifold. Of course, this depends on the density; nonetheless, it might be interesting the implications of this observation.
