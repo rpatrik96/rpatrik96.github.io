@@ -17,7 +17,7 @@ The score function for a probability distribution is defined as the gradient of 
   where $d$ is the dimension of $x$. Let a neural network decode the latent $z$ to $\hat{x}$:
   $$ \mu = f(z), $$
   where $f$ is a differentiable function. The score function is then given by
-  $$ \nabla_{z} \log p(\hat{x}|x) \propto \nabla_{z} \left(-\frac{1}{2}(x- f(z))^\top\Sigma^{-1}(x- f(z))\right) 
+  $$ \nabla_{z} \log p(x) \propto \nabla_{z} \left(-\frac{1}{2}(x- f(z))^\top\Sigma^{-1}(x- f(z))\right) 
    = \dfrac{\partial}{\partial f(z)}\dfrac{\partial f(z)}{\partial z}  \left(-\frac{1}{2}(x- f(z))^\top\Sigma^{-1}(x- f(z))\right) \\
    = -\dfrac{\partial f}{\partial z}^\top\Sigma^{-1}(x- f(z)). $$
 
