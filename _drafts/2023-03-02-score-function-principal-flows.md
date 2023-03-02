@@ -3,7 +3,7 @@ title: 'Score functions and principal flows'
 date: 2023-03-02
 permalink: /posts/2023/03/2023-03-02-score-function-principal-flows
 tags:
-  - causality
+  - flows
 ---
 
 # Score functions and principal flows
