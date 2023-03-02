@@ -13,12 +13,12 @@ The score function for a probability distribution is defined as the gradient of 
  which for a generative model requires us to deploy the chain rule to calculate it. In the case of  a Gaussian, this gives rise to interesting geometricl properties in the optimum.
 
  Assume a Gaussian density centered around the reconstructed sample as mean $\mu$ and covariance $\Sigma$:
-  $$ p(x) = \frac{1}{(2\pi)^{d/2}|\Sigma|^{1/2}} \exp\left(-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)\right),$$
+  $$ p(x) = \frac{1}{(2\pi)^{d/2}|\Sigma|^{1/2}} \exp\left(-\frac{1}{2}(x-\mu)^\top\Sigma^{-1}(x-\mu)\right),$$
   where $d$ is the dimension of $x$. Let a neural network decode the latent $z$ to $\hat{x}$:
   $$ \mu = f(z), $$
   where $f$ is a differentiable function. The score function is then given by
-  $$ \nabla_{z} \log p(\hat{x}|x) \propto \nabla_{z} \left(-\frac{1}{2}(x- f(z))^T\Sigma^{-1}(x- f(z))\right) 
-   = \dfrac{\partial}{\partial f(z)}\dfrac{\partial f(z)}{\partial z}  \left(-\frac{1}{2}(x- f(z))^T\Sigma^{-1}(x- f(z))\right) \\
+  $$ \nabla_{z} \log p(\hat{x}|x) \propto \nabla_{z} \left(-\frac{1}{2}(x- f(z))^\top\Sigma^{-1}(x- f(z))\right) 
+   = \dfrac{\partial}{\partial f(z)}\dfrac{\partial f(z)}{\partial z}  \left(-\frac{1}{2}(x- f(z))^\top\Sigma^{-1}(x- f(z))\right) \\
    = -\dfrac{\partial f}{\partial z}^\top\Sigma^{-1}(x- f(z)). $$
 
    At the optimum (maximizing the score) the reconstruction error vector $\varepsilon = x - f(z)$ needs to be orthogonal to the Jacobian columns ($\forall i : [J_f]_{:, i}$) w.r.t the weighted norm with $\Sigma$. If, as is the general case, $\Sigma$ is diagonal, then $\forall i: \varepsilon \perp [J_f]_{:, i}$.
