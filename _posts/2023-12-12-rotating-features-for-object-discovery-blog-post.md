@@ -8,7 +8,9 @@ tags:
   - object-centric
 ---
 
-#Rotating Features For Object Discovery
+Structure is a useful but underleveraged inductive bias for representation learning. 
+
+# Rotating Features For Object Discovery
 
 I came across the [Rotating Features](http://arxiv.org/abs/2306.00600) paper (oral at NeurIPS 2023) at the [ELLIS Doctoral Symposium in Helsinki](https://path2phd.substack.com/p/p2p-no-39-what-industry-can-tell). The paper proposes a structured latent space for object-centric learning. In the past months, I have thought about the role of structure in representation learning, and now I am sharing my thoughts.
 
