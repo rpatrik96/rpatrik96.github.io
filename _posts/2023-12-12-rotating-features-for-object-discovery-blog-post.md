@@ -1,6 +1,6 @@
 ---
 title: 'Rotating Features For Object Discovery'
-date: 2021-10-04
+date: 2023-12-12
 permalink: /posts/2023/12/rotating-features/
 tags:
   - topology
