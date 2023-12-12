@@ -35,7 +35,6 @@ Rotating Features use a hypersphere instead, generalizing the CAE. Intuitively, 
 
 It would be interesting whether performance improves with different inductive biases. Namely, the network uses a so-called binding mechanism that ensures that similar features are processed together. As the authors have shown, the binding mechanism is sensitive to angular distance. That is, it benefits from a higher-dimensional hypersphere, where vectors can be distributed further apart.
 
-[I think of the binding mechanism analogously to the attraction-repulsion forces in contrastive learning.]
 
 Experimental results show clear improvements, but I will focus on the main message:
 
