@@ -19,7 +19,7 @@ main:
     url: https://path2phd.substack.com/
     
   - title: "CV"
-    url: /CV/cv.pdf
+    url: /CV/github_artifacts/cv.pdf
 
   # - title: "About"
   #   url: /about/
