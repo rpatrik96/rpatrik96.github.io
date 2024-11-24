@@ -1,5 +1,4 @@
 ---
-permalink: /
 title: "Casual Causality"
 excerpt: "Working with me"
 author_profile: true
