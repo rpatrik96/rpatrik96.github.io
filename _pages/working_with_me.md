@@ -23,7 +23,7 @@ Thanks for being curious about how to work with me! Before jumping into means ho
 - I like things reasonably organized, but aim to avoid unnecessary overhead
 - Meetings I participate in should be on time, have an agenda, and lead by someone in the team
 - I am neither the best theoretician nor the best programmer, I deal in ideas - though I have a fairly theoretical approach with a no-nonsense mentality
-- I am a good high-level, interdisciplinary thinker, my main contribution is usually connecting the dots
+- I am a good high-level, interdisciplinary thinker, my main contribution is connecting the dots between (seemingly) separate fields
 - My goal is to help everyone succeed. The pie needs to grow
 - I seek feedback (negative included); I am here to learn from my mistakes
 - I prefer transparent communication
