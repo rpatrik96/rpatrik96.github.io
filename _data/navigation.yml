@@ -21,7 +21,7 @@ main:
   - title: "CV"
     url: /CV/github_artifacts/cv.pdf
 
-    - title: "Working with me"
+  - title: "Working with me"
     url: /working_with_me/
 
   # - title: "About"
