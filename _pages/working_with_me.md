@@ -26,7 +26,7 @@ Thanks for being curious about how to work with me! Before jumping into means ho
 - My goal is to help everyone succeed. The pie needs to grow
 - I seek feedback (negative included); I am here to learn from my mistakes
 - I prefer transparent communication
-- I will strive to learn about your goals and motivation and you fulfill them
+- I will strive to learn about your goals and motivation and help you fulfill them
 
 ## How can you work with me?
 I always have too many ideas and enjoy working with interesting people.
