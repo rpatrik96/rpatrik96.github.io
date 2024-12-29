@@ -32,4 +32,4 @@ Thanks for being curious about how to work with me! Before jumping into means ho
 I always have too many ideas and enjoy working with interesting people.
 
 - If you are a **researcher/Ph.D. student**, feel free to reach out via email (and in all other configurations when we can freely start working together, i.e., without the need for a formal agreement such as thesis supervison)
-- If you are looking for a **B.Sc./M.Sc. thesis or an internship/lab rotation,** please visit the [Robust Machine Learning group's website](https://robustml.is.mpg.de/pages/application) to apply - and feel free to mention my name
+- If you are looking for a **B.Sc./M.Sc. thesis or an internship/lab rotation,** please visit the [Robust Machine Learning group's website](https://robustml.is.mpg.de/pages/application) or the [ELLIS Institute Tübingen's website](https://institute-tue.ellis.eu/en/jobs/internship-students) to apply - and feel free to mention my name
