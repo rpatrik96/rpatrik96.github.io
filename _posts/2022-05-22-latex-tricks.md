@@ -128,6 +128,15 @@ A single figure will waste a lot of placed if put into e.g. a `figure` environme
 
 ```
 
+## Removing whitespace below figure caption
+
+```latex
+\begin{figure}[tb]
+  \caption{}
+  \vspace{-1.25\baselineskip}               
+\end{figure}
+```
+
 # Notation, glossary
 It's good practice to organize notation and abbreviation into a system. So if you need to change how you denote the input, you only need to do it at a central place.
 
