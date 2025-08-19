@@ -84,7 +84,7 @@ author:
   avatar           : "profile.png"
   bio              : "PhD student in causal representation learning @IMPRS-IS and @ELLIS"
   location         : "Tübingen, Germany"
-  employer         : "University of Tübingen"
+  employer         : "MPI-IS and ELLIS Institute Tübingen"
   pubmed           : 
   googlescholar    : "https://scholar.google.com/citations?user=zIT0fdIAAAAJ"
   email            :
@@ -104,7 +104,7 @@ author:
   lastfm           :
   linkedin         : "patrik-reizinger"
   orcid            : "https://orcid.org/0000-0001-9861-0293"
-  paypal           : "rpatrik17"
+  # paypal           : "rpatrik17"
   pinterest        :
   soundcloud       :
   stackoverflow    : 16912032/casualcausality
