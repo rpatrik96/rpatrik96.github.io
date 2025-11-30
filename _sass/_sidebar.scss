@@ -65,11 +65,11 @@
   width: 80px;
 
   @include breakpoint($large) {
-    display: block;
-    width: auto;
+    display: flex;
+    justify-content: center;
+    width: 100%;
     height: auto;
     margin-bottom: $spacing-lg;
-    text-align: center;
   }
 
   img {
@@ -78,9 +78,11 @@
     box-shadow: $box-shadow-md;
     border: 3px solid $primary-color;
     transition: all $transition-base;
+    display: block;
 
     @include breakpoint($large) {
       max-width: 180px;
+      margin: 0 auto;
     }
 
     &:hover {
