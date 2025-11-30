@@ -1,0 +1,34 @@
+{% if site.data.scholar_papers.papers.size > 0 %}
+<div class="recent-papers">
+  <h2>Recent Publications</h2>
+  <ul class="paper-list">
+    {% for paper in site.data.scholar_papers.papers %}
+    <li class="paper-item">
+      <div class="paper-title">
+        {% if paper.paper_url %}
+          <a href="{{ paper.paper_url }}" target="_blank" rel="noopener">{{ paper.title }}</a>
+        {% elsif paper.url %}
+          <a href="{{ paper.url }}" target="_blank" rel="noopener">{{ paper.title }}</a>
+        {% else %}
+          {{ paper.title }}
+        {% endif %}
+      </div>
+      <div class="paper-meta">
+        {% if paper.venue and paper.venue != '' %}
+          <span class="paper-venue">{{ paper.venue }}</span>
+          {% if paper.year and paper.year != '' %}<span class="paper-year">({{ paper.year }})</span>{% endif %}
+        {% elsif paper.year and paper.year != '' %}
+          <span class="paper-year">{{ paper.year }}</span>
+        {% endif %}
+        {% if paper.citations and paper.citations > 0 %}
+          <span class="paper-citations">{{ paper.citations }} citations</span>
+        {% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  <p class="paper-link">
+    <a href="{{ site.author.googlescholar }}" target="_blank" rel="noopener">View all publications on Google Scholar</a>
+  </p>
+</div>
+{% endif %}
