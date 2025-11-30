@@ -131,42 +131,24 @@ def fetch_author_publications(author_id: str, num_papers: int = 5) -> list:
     recent_pubs = publications[:num_papers]
 
     papers = []
-    for i, pub in enumerate(recent_pubs):
-        # Fill in detailed publication info to get authors, venue, etc.
-        print(f"  Fetching details for paper {i+1}/{len(recent_pubs)}...")
+    for pub in recent_pubs:
+        # Fill the publication to get detailed info (authors, venue, etc.)
         try:
             filled_pub = scholarly.fill(pub)
             bib = filled_pub.get('bib', {})
-
-            # Add small delay to avoid rate limiting
-            if i < len(recent_pubs) - 1:
-                time.sleep(1)
         except Exception as e:
-            print(f"    Warning: Could not fetch details: {e}")
+            print(f"  Warning: Could not fill publication details: {e}")
             bib = pub.get('bib', {})
             filled_pub = pub
 
-        # Extract authors - can be string or list
-        authors = bib.get('author', '')
-        if isinstance(authors, list):
-            authors = ', '.join(authors)
-
-        # Extract venue from various possible fields
-        venue = (bib.get('venue', '') or
-                 bib.get('journal', '') or
-                 bib.get('conference', '') or
-                 bib.get('booktitle', '') or
-                 bib.get('publisher', ''))
-
-        # Parse publication date
-        pub_date = parse_publication_date(bib)
-
         # Extract relevant fields
+        # Get venue from multiple possible fields
+        venue = bib.get('venue', '') or bib.get('journal', '') or bib.get('conference', '') or bib.get('booktitle', '')
+
         paper = {
             'title': bib.get('title', 'Untitled'),
             'authors': authors,
             'year': bib.get('pub_year', ''),
-            'pub_date': pub_date,  # YYYY/MM format
             'venue': venue,
             'citations': filled_pub.get('num_citations', 0),
             'url': f"https://scholar.google.com/citations?view_op=view_citation&hl=en&user={author_id}&citation_for_view={author_id}:{pub.get('author_pub_id', '').split(':')[-1] if pub.get('author_pub_id') else ''}",
@@ -175,15 +157,9 @@ def fetch_author_publications(author_id: str, num_papers: int = 5) -> list:
         # Try to get the actual paper URL if available
         if filled_pub.get('pub_url'):
             paper['paper_url'] = filled_pub.get('pub_url')
-        elif filled_pub.get('eprint_url'):
-            paper['paper_url'] = filled_pub.get('eprint_url')
 
         papers.append(paper)
-        print(f"    - {paper['title']} ({paper['pub_date'] or paper['year']})")
-        if paper['authors']:
-            print(f"      Authors: {paper['authors'][:80]}{'...' if len(paper['authors']) > 80 else ''}")
-        if paper['venue']:
-            print(f"      Venue: {paper['venue']}")
+        print(f"  - {paper['title']} ({paper['year']}) - {venue or 'No venue'}")
 
     return papers
 

@@ -2,7 +2,8 @@
 <div class="recent-papers">
   <h2>Recent Publications</h2>
   <ul class="paper-list">
-    {% for paper in site.data.scholar_papers.papers %}
+    {% assign sorted_papers = site.data.scholar_papers.papers | sort: "year" | reverse %}
+    {% for paper in sorted_papers %}
     <li class="paper-item">
       <div class="paper-title">
         {% if paper.paper_url %}
@@ -15,7 +16,15 @@
       </div>
       {% if paper.authors and paper.authors != '' %}
       <div class="paper-authors">
-        {{ paper.authors }}
+        {% assign author_parts = paper.authors | split: " and " %}
+        {% for author in author_parts %}
+          {% assign author_trimmed = author | strip %}
+          {% if author_trimmed contains "Reizinger" or author_trimmed contains "P Reizinger" or author_trimmed contains "Patrik Reizinger" %}
+            <span class="paper-author paper-author--me">{{ author_trimmed }}</span>{% unless forloop.last %}, {% endunless %}
+          {% else %}
+            <span class="paper-author">{{ author_trimmed }}</span>{% unless forloop.last %}, {% endunless %}
+          {% endif %}
+        {% endfor %}
       </div>
       {% endif %}
       <div class="paper-meta">

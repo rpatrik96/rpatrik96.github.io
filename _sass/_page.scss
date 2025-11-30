@@ -544,9 +544,19 @@
   }
 
   .paper-authors {
+    margin-bottom: $spacing-sm;
     font-size: $type-size-6;
     color: $text-muted;
-    margin-bottom: $spacing-xs;
+    line-height: $line-height-base;
+
+    .paper-author {
+      /* Regular author styling */
+    }
+
+    .paper-author--me {
+      font-weight: 700;
+      color: $primary-color;
+    }
   }
 
   .paper-meta {
