@@ -1,47 +1,39 @@
 /* ==========================================================================
-   FOOTER
+   FOOTER - Modern Minimal Theme
    ========================================================================== */
 
 .page__footer {
-  @include clearfix;
-  float: left;
-  margin-left: 0;
-  margin-right: 0;
   width: 100%;
   clear: both;
-  /* sticky footer fix start */
+  /* sticky footer fix */
   position: absolute;
-  bottom: 0em;
+  bottom: 0;
   height: auto;
-  /* sticky footer fix end */
-  margin-top: 3em;
-  color: mix(#fff, $gray, 25%);
-  -webkit-animation: intro 0.3s both;
-          animation: intro 0.3s both;
-  -webkit-animation-delay: 0.45s;
-          animation-delay: 0.45s;
-  background-color: $lighter-gray;
-  border-top: 1px solid $light-gray;
+  margin-top: $spacing-3xl;
+  padding: $spacing-2xl 0;
+  color: $text-muted;
+  background-color: $gray-50;
+  border-top: 1px solid $border-color;
+  animation: fadeIn 0.3s ease-out;
+  animation-delay: 0.2s;
 
   footer {
-    @include clearfix;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 2em;
-    max-width: 100%;
-    padding: 0 1em 2em;
+    max-width: $x-large;
+    margin: 0 auto;
+    padding: 0 $spacing-lg;
 
-    @include breakpoint($x-large) {
-      max-width: $x-large;
+    @include breakpoint($large) {
+      padding: 0 $spacing-xl;
     }
   }
 
   a {
     color: inherit;
     text-decoration: none;
+    transition: color $transition-fast;
 
     &:hover {
-      text-decoration: underline;
+      color: $primary-color;
     }
   }
 
@@ -49,44 +41,59 @@
   .fab,
   .far,
   .fal {
-    color: mix(#fff, $gray, 25%);
+    color: $gray-400;
+    transition: color $transition-fast;
+  }
+
+  a:hover .fas,
+  a:hover .fab,
+  a:hover .far,
+  a:hover .fal {
+    color: $primary-color;
   }
 }
 
 .page__footer-copyright {
   font-family: $global-font-family;
   font-size: $type-size-7;
+  color: $gray-400;
 }
 
 .page__footer-follow {
   ul {
-    margin: 0;
+    margin: 0 0 $spacing-md;
     padding: 0;
     list-style-type: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
   }
 
   li {
-    display: inline-block;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    font-family: $sans-serif-narrow;
+    display: inline-flex;
+    align-items: center;
+    font-family: $sans-serif;
     font-size: $type-size-6;
-    text-transform: uppercase;
-  }
-
-  li + li:before {
-    content: "";
-    padding-right: 5px;
   }
 
   a {
-    padding-right: 10px;
-    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-xs $spacing-sm;
+    font-weight: 500;
+    color: $text-muted;
+    background: $background-color;
+    border-radius: $border-radius-sm;
+    transition: all $transition-fast;
+
+    &:hover {
+      color: $primary-color;
+      background: rgba($primary-color, 0.1);
+    }
   }
 
-  .social-icons {
-    a {
-      white-space: nowrap;
-    }
+  .social-icons a {
+    white-space: nowrap;
   }
 }

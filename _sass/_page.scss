@@ -1,42 +1,37 @@
 /* ==========================================================================
-   SINGLE PAGE/POST
+   SINGLE PAGE/POST - Modern Minimal Theme
    ========================================================================== */
 
 #main {
-  @include container;
-  @include clearfix;
-  margin-top: 2em;
-  padding-left: 1em;
-  padding-right: 1em;
-  animation: intro 0.3s both;
-  animation-delay: 0.35s;
+  max-width: $x-large;
+  margin: 0 auto;
+  padding: $spacing-xl $spacing-lg;
+  animation: fadeIn 0.4s ease-out;
 
-  @include breakpoint($x-large) {
-    max-width: $x-large;
+  @include breakpoint($large) {
+    padding: $spacing-3xl $spacing-xl;
   }
 }
 
 .page {
   @include breakpoint($large) {
-    @include span(10 of 12 last);
-    @include prefix(0.5 of 12);
-    @include suffix(2 of 12);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-xl;
   }
 
   .page__inner-wrap {
-    @include full();
-
-    .page__content,
-    .page__meta,
-    .page__share {
-      @include full();
-    }
+    max-width: 65ch;
   }
 }
 
 .page__title {
   margin-top: 0;
-  line-height: 1;
+  margin-bottom: $spacing-md;
+  line-height: $line-height-heading;
+  font-size: $type-size-2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 
   & + .page__meta {
     margin-top: -0.5em;
@@ -46,24 +41,29 @@
 .page__lead {
   font-family: $global-font-family;
   font-size: $type-size-4;
+  color: $text-muted;
+  line-height: $line-height-base;
 }
 
 .page__content {
-
   h2 {
-    padding-bottom: 0.5em;
+    margin-top: $spacing-2xl;
+    padding-bottom: $spacing-sm;
     border-bottom: 1px solid $border-color;
   }
 
-  p, li, dl {
-    font-size: 1em;
+  h3 {
+    margin-top: $spacing-xl;
   }
 
-  /* paragraph indents */
-  p {
-    margin: 0 0 $indent-var;
+  p, li, dl {
+    font-size: 1rem;
+    line-height: $line-height-base;
+  }
 
-    /* sibling indentation*/
+  p {
+    margin: 0 0 $spacing-lg;
+
     @if $paragraph-indent == true {
       & + p {
         text-indent: $indent-var;
@@ -74,12 +74,14 @@
 
   a {
     text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba($primary-color, 0.4);
 
     &:hover {
-      text-decoration: underline;
+      text-decoration-color: $primary-color;
 
       img {
-        box-shadow: 0 0 10px rgba(#000, 0.25);
+        box-shadow: $box-shadow-lg;
       }
     }
   }
@@ -87,20 +89,20 @@
   dt {
     margin-top: 1em;
     font-family: $sans-serif;
-    font-weight: bold;
+    font-weight: 600;
   }
 
   dd {
     margin-left: 1em;
     font-family: $sans-serif;
     font-size: $type-size-6;
+    color: $text-muted;
   }
 
   .small {
     font-size: $type-size-6;
   }
 
-  /* blockquote citations */
   blockquote + .small {
     margin-top: -1.5em;
     padding-left: 1.25rem;
@@ -109,29 +111,24 @@
 
 .page__hero {
   position: relative;
-  margin-bottom: 2em;
-  @include clearfix;
-  animation: intro 0.3s both;
-  animation-delay: 0.25s;
+  margin-bottom: $spacing-xl;
+  animation: fadeIn 0.3s ease-out;
 
   &--overlay {
     position: relative;
-    margin-bottom: 2em;
-    padding: 3em 0;
-    @include clearfix;
+    margin-bottom: $spacing-xl;
+    padding: $spacing-3xl 0;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    animation: intro 0.3s both;
-    animation-delay: 0.25s;
+    border-radius: $border-radius-lg;
 
     a {
       color: #fff;
     }
 
     .wrapper {
-      padding-left: 1em;
-      padding-right: 1em;
+      padding: 0 $spacing-lg;
 
       @include breakpoint($x-large) {
         max-width: $x-large;
@@ -143,7 +140,7 @@
     .page__lead,
     .btn {
       color: #fff;
-      text-shadow: 1px 1px 4px rgba(#000, 0.5);
+      text-shadow: 0 2px 4px rgba(#000, 0.3);
     }
 
     .page__lead {
@@ -163,27 +160,20 @@
 .page__hero-image {
   width: 100%;
   height: auto;
-  -ms-interpolation-mode: bicubic;
+  border-radius: $border-radius-lg;
 }
 
 .page__hero-caption {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  margin: 0 auto;
-  padding: 2px 5px;
+  bottom: $spacing-sm;
+  right: $spacing-sm;
+  padding: $spacing-xs $spacing-sm;
   color: #fff;
   font-family: $caption-font-family;
-  font-size: $type-size-7;
-  background: #000;
-  text-align: right;
-  z-index: 5;
-  opacity: 0.5;
-  border-radius: $border-radius 0 $border-radius 0;
-
-  @include breakpoint($large) {
-    padding: 5px 10px;
-  }
+  font-size: $type-size-8;
+  background: rgba(#000, 0.6);
+  backdrop-filter: blur(4px);
+  border-radius: $border-radius-sm;
 
   a {
     color: #fff;
@@ -196,8 +186,8 @@
    ========================================================================== */
 
 .page__share {
-  margin-top: 2em;
-  padding-top: 1em;
+  margin-top: $spacing-2xl;
+  padding-top: $spacing-lg;
   border-top: 1px solid $border-color;
 
   @include breakpoint(max-width $small) {
@@ -215,19 +205,21 @@
 }
 
 .page__share-title {
-  margin-bottom: 10px;
-  font-size: $type-size-6;
+  margin-bottom: $spacing-sm;
+  font-size: $type-size-7;
+  font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: $text-muted;
 }
-
 
 /*
    Page meta
    ========================================================================== */
 
 .page__meta {
-  margin-top: 2em;
-  color: mix(#fff, $gray, 25%);
+  margin-top: $spacing-xl;
+  color: $text-muted;
   font-family: $sans-serif;
   font-size: $type-size-6;
 
@@ -237,15 +229,20 @@
 
   a {
     color: inherit;
+
+    &:hover {
+      color: $primary-color;
+    }
   }
 }
 
 .page__meta-title {
-  margin-bottom: 10px;
-  font-size: $type-size-6;
+  margin-bottom: $spacing-sm;
+  font-size: $type-size-7;
+  font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
-
 
 /*
    Page taxonomy
@@ -257,46 +254,53 @@
   }
 
   strong {
-    margin-right: 10px;
+    margin-right: $spacing-sm;
   }
 }
 
 .page__taxonomy-item {
   display: inline-block;
-  margin-right: 5px;
-  margin-bottom: 8px;
-  padding: 5px 10px;
+  margin-right: $spacing-xs;
+  margin-bottom: $spacing-sm;
+  padding: $spacing-xs $spacing-sm;
+  font-size: $type-size-7;
   text-decoration: none;
-  border: 1px solid $light-gray;
-  border-radius: $border-radius;
+  color: $text-muted;
+  background: $gray-100;
+  border-radius: $border-radius-full;
+  transition: $global-transition;
 
   &:hover {
     text-decoration: none;
-    color: $link-color-hover;
+    color: $primary-color;
+    background: rgba($primary-color, 0.1);
   }
 }
-
 
 /*
    Comments
    ========================================================================== */
 
 .page__comments {
-  @include full();
+  margin-top: $spacing-2xl;
 }
 
 .page__comments-title {
-  margin-top: 2rem;
-  margin-bottom: 10px;
-  padding-top: 2rem;
-  font-size: $type-size-6;
+  margin-top: $spacing-xl;
+  margin-bottom: $spacing-md;
+  padding-top: $spacing-xl;
+  font-size: $type-size-7;
+  font-weight: 600;
   border-top: 1px solid $border-color;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: $text-muted;
 }
 
 .page__comments-form {
-  padding: 1em;
-  background: $lighter-gray;
+  padding: $spacing-lg;
+  background: $gray-50;
+  border-radius: $border-radius;
   transition: $global-transition;
 
   &.disabled {
@@ -306,16 +310,14 @@
     label {
       pointer-events: none;
       cursor: not-allowed;
-      filter: alpha(opacity=65);
-      box-shadow: none;
-      opacity: 0.65;
+      opacity: 0.5;
     }
   }
 }
 
 .comment {
-  @include clearfix();
-  margin: 1em 0;
+  margin: $spacing-lg 0;
+  padding-bottom: $spacing-lg;
 
   &:not(:last-child) {
     border-bottom: 1px solid $border-color;
@@ -324,39 +326,37 @@
 
 .comment__avatar-wrapper {
   float: left;
-  width: 60px;
-  height: 60px;
+  width: 48px;
+  height: 48px;
 
   @include breakpoint($large) {
-    width: 100px;
-    height: 100px;
+    width: 64px;
+    height: 64px;
   }
 }
 
 .comment__avatar {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: $border-radius-full;
 
   @include breakpoint($large) {
-    width: 80px;
-    height: 80px;
-    padding: 5px;
-    border: 1px solid $border-color;
+    width: 56px;
+    height: 56px;
   }
 }
 
 .comment__content-wrapper {
-  float: right;
-  width: calc(100% - 60px);
+  margin-left: 60px;
 
   @include breakpoint($large) {
-    width: calc(100% - 100px);
+    margin-left: 80px;
   }
 }
 
 .comment__author {
   margin: 0;
+  font-weight: 600;
 
   a {
     text-decoration: none;
@@ -372,46 +372,49 @@
   }
 }
 
-
 /*
    Related
    ========================================================================== */
 
 .page__related {
-  margin-top: 2em;
-  padding-top: 1em;
+  margin-top: $spacing-2xl;
+  padding-top: $spacing-lg;
   border-top: 1px solid $border-color;
-  @include clearfix();
-  float: left;
-
-  @include breakpoint($large) {
-    @include pre(2.5 of 12);
-  }
 
   a {
     color: inherit;
     text-decoration: none;
+
+    &:hover {
+      color: $primary-color;
+    }
   }
 }
 
 .page__related-title {
-  margin-bottom: 10px;
-  font-size: $type-size-6;
+  margin-bottom: $spacing-md;
+  font-size: $type-size-7;
+  font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: $text-muted;
 }
-
 
 /*
    Recent Papers (Google Scholar)
    ========================================================================== */
 
 .recent-papers {
-  margin-top: 2em;
-  padding-top: 1em;
+  margin-top: $spacing-2xl;
+  padding-top: $spacing-lg;
   border-top: 1px solid $border-color;
 
   h2 {
-    margin-bottom: 1em;
+    margin-top: 0;
+    margin-bottom: $spacing-lg;
+    font-size: $type-size-4;
+    border-bottom: none;
+    padding-bottom: 0;
   }
 
   .paper-list {
@@ -421,9 +424,9 @@
   }
 
   .paper-item {
-    margin-bottom: 1em;
-    padding-bottom: 1em;
-    border-bottom: 1px solid lighten($border-color, 10%);
+    margin-bottom: $spacing-lg;
+    padding-bottom: $spacing-lg;
+    border-bottom: 1px solid $gray-100;
 
     &:last-child {
       border-bottom: none;
@@ -433,42 +436,69 @@
   }
 
   .paper-title {
-    font-weight: bold;
-    margin-bottom: 0.25em;
+    font-weight: 600;
+    margin-bottom: $spacing-xs;
+    line-height: $line-height-heading;
 
     a {
       text-decoration: none;
 
       &:hover {
         text-decoration: underline;
+        text-underline-offset: 3px;
       }
     }
   }
 
   .paper-meta {
     font-size: $type-size-6;
-    color: mix(#fff, $gray, 25%);
+    color: $text-muted;
 
     .paper-venue {
       font-style: italic;
     }
 
     .paper-year {
-      margin-left: 0.25em;
+      margin-left: $spacing-xs;
     }
 
     .paper-citations {
-      margin-left: 0.5em;
+      margin-left: $spacing-sm;
 
       &::before {
         content: "·";
-        margin-right: 0.5em;
+        margin-right: $spacing-sm;
       }
     }
   }
 
   .paper-link {
-    margin-top: 1em;
+    margin-top: $spacing-lg;
     font-size: $type-size-6;
+
+    a {
+      color: $primary-color;
+      text-decoration: none;
+      font-weight: 500;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+/*
+   Animations
+   ========================================================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
