@@ -450,6 +450,12 @@
     }
   }
 
+  .paper-authors {
+    font-size: $type-size-6;
+    color: $text-muted;
+    margin-bottom: $spacing-xs;
+  }
+
   .paper-meta {
     font-size: $type-size-6;
     color: $text-muted;
@@ -458,7 +464,8 @@
       font-style: italic;
     }
 
-    .paper-year {
+    .paper-year,
+    .paper-date {
       margin-left: $spacing-xs;
     }
 

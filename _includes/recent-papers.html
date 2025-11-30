@@ -13,12 +13,19 @@
           {{ paper.title }}
         {% endif %}
       </div>
+      {% if paper.authors and paper.authors != '' %}
+      <div class="paper-authors">
+        {{ paper.authors }}
+      </div>
+      {% endif %}
       <div class="paper-meta">
         {% if paper.venue and paper.venue != '' %}
           <span class="paper-venue">{{ paper.venue }}</span>
-          {% if paper.year and paper.year != '' %}<span class="paper-year">({{ paper.year }})</span>{% endif %}
+        {% endif %}
+        {% if paper.pub_date and paper.pub_date != '' %}
+          <span class="paper-date">({{ paper.pub_date }})</span>
         {% elsif paper.year and paper.year != '' %}
-          <span class="paper-year">{{ paper.year }}</span>
+          <span class="paper-year">({{ paper.year }})</span>
         {% endif %}
         {% if paper.citations and paper.citations > 0 %}
           <span class="paper-citations">{{ paper.citations }} citations</span>
