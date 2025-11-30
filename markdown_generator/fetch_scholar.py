@@ -71,24 +71,34 @@ def fetch_author_publications(author_id: str, num_papers: int = 5) -> list:
 
     papers = []
     for pub in recent_pubs:
-        bib = pub.get('bib', {})
+        # Fill the publication to get detailed info (authors, venue, etc.)
+        try:
+            filled_pub = scholarly.fill(pub)
+            bib = filled_pub.get('bib', {})
+        except Exception as e:
+            print(f"  Warning: Could not fill publication details: {e}")
+            bib = pub.get('bib', {})
+            filled_pub = pub
 
         # Extract relevant fields
+        # Get venue from multiple possible fields
+        venue = bib.get('venue', '') or bib.get('journal', '') or bib.get('conference', '') or bib.get('booktitle', '')
+
         paper = {
             'title': bib.get('title', 'Untitled'),
             'authors': bib.get('author', ''),
             'year': bib.get('pub_year', ''),
-            'venue': bib.get('venue', bib.get('journal', bib.get('conference', ''))),
-            'citations': pub.get('num_citations', 0),
+            'venue': venue,
+            'citations': filled_pub.get('num_citations', 0),
             'url': f"https://scholar.google.com/citations?view_op=view_citation&hl=en&user={author_id}&citation_for_view={author_id}:{pub.get('author_pub_id', '').split(':')[-1] if pub.get('author_pub_id') else ''}",
         }
 
         # Try to get the actual paper URL if available
-        if pub.get('pub_url'):
-            paper['paper_url'] = pub.get('pub_url')
+        if filled_pub.get('pub_url'):
+            paper['paper_url'] = filled_pub.get('pub_url')
 
         papers.append(paper)
-        print(f"  - {paper['title']} ({paper['year']})")
+        print(f"  - {paper['title']} ({paper['year']}) - {venue or 'No venue'}")
 
     return papers
 
