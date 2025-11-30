@@ -22,11 +22,11 @@ $global-font-family         : $sans-serif;
 $header-font-family         : $sans-serif;
 $caption-font-family        : $sans-serif;
 
-/* Fluid type scale using clamp() */
-$type-size-1                : clamp(2rem, 1.5rem + 2vw, 2.75rem);     // ~44px max
-$type-size-2                : clamp(1.75rem, 1.25rem + 1.5vw, 2.25rem); // ~36px max
-$type-size-3                : clamp(1.375rem, 1.125rem + 1vw, 1.75rem); // ~28px max
-$type-size-4                : clamp(1.125rem, 1rem + 0.5vw, 1.375rem);  // ~22px max
+/* Type scale - fixed values for GitHub Pages Sass compatibility */
+$type-size-1                : 2.5em;    // ~40px
+$type-size-2                : 2em;      // ~32px
+$type-size-3                : 1.75em;   // ~28px
+$type-size-4                : 1.25em;   // ~20px
 $type-size-5                : 1rem;      // 16px base
 $type-size-6                : 0.875rem;  // 14px
 $type-size-7                : 0.8125rem; // 13px
