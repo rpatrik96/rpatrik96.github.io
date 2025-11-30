@@ -1,37 +1,42 @@
 /* ==========================================================================
-   SINGLE PAGE/POST - Modern Minimal Theme
+   SINGLE PAGE/POST
    ========================================================================== */
 
 #main {
-  max-width: $x-large;
-  margin: 0 auto;
-  padding: $spacing-xl $spacing-lg;
-  animation: fadeIn 0.4s ease-out;
+  @include container;
+  @include clearfix;
+  margin-top: 2em;
+  padding-left: 1em;
+  padding-right: 1em;
+  animation: intro 0.3s both;
+  animation-delay: 0.35s;
 
-  @include breakpoint($large) {
-    padding: $spacing-3xl $spacing-xl;
+  @include breakpoint($x-large) {
+    max-width: $x-large;
   }
 }
 
 .page {
   @include breakpoint($large) {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: $spacing-xl;
+    @include span(10 of 12 last);
+    @include prefix(0.5 of 12);
+    @include suffix(2 of 12);
   }
 
   .page__inner-wrap {
-    max-width: 65ch;
+    @include full();
+
+    .page__content,
+    .page__meta,
+    .page__share {
+      @include full();
+    }
   }
 }
 
 .page__title {
   margin-top: 0;
-  margin-bottom: $spacing-md;
-  line-height: $line-height-heading;
-  font-size: $type-size-2;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  line-height: 1;
 
   & + .page__meta {
     margin-top: -0.5em;
@@ -41,29 +46,24 @@
 .page__lead {
   font-family: $global-font-family;
   font-size: $type-size-4;
-  color: $text-muted;
-  line-height: $line-height-base;
 }
 
 .page__content {
+
   h2 {
-    margin-top: $spacing-2xl;
-    padding-bottom: $spacing-sm;
+    padding-bottom: 0.5em;
     border-bottom: 1px solid $border-color;
   }
 
-  h3 {
-    margin-top: $spacing-xl;
-  }
-
   p, li, dl {
-    font-size: 1rem;
-    line-height: $line-height-base;
+    font-size: 1em;
   }
 
+  /* paragraph indents */
   p {
-    margin: 0 0 $spacing-lg;
+    margin: 0 0 $indent-var;
 
+    /* sibling indentation*/
     @if $paragraph-indent == true {
       & + p {
         text-indent: $indent-var;
@@ -74,14 +74,12 @@
 
   a {
     text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-color: rgba($primary-color, 0.4);
 
     &:hover {
-      text-decoration-color: $primary-color;
+      text-decoration: underline;
 
       img {
-        box-shadow: $box-shadow-lg;
+        box-shadow: 0 0 10px rgba(#000, 0.25);
       }
     }
   }
@@ -89,20 +87,20 @@
   dt {
     margin-top: 1em;
     font-family: $sans-serif;
-    font-weight: 600;
+    font-weight: bold;
   }
 
   dd {
     margin-left: 1em;
     font-family: $sans-serif;
     font-size: $type-size-6;
-    color: $text-muted;
   }
 
   .small {
     font-size: $type-size-6;
   }
 
+  /* blockquote citations */
   blockquote + .small {
     margin-top: -1.5em;
     padding-left: 1.25rem;
@@ -111,24 +109,29 @@
 
 .page__hero {
   position: relative;
-  margin-bottom: $spacing-xl;
-  animation: fadeIn 0.3s ease-out;
+  margin-bottom: 2em;
+  @include clearfix;
+  animation: intro 0.3s both;
+  animation-delay: 0.25s;
 
   &--overlay {
     position: relative;
-    margin-bottom: $spacing-xl;
-    padding: $spacing-3xl 0;
+    margin-bottom: 2em;
+    padding: 3em 0;
+    @include clearfix;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    border-radius: $border-radius-lg;
+    animation: intro 0.3s both;
+    animation-delay: 0.25s;
 
     a {
       color: #fff;
     }
 
     .wrapper {
-      padding: 0 $spacing-lg;
+      padding-left: 1em;
+      padding-right: 1em;
 
       @include breakpoint($x-large) {
         max-width: $x-large;
@@ -140,7 +143,7 @@
     .page__lead,
     .btn {
       color: #fff;
-      text-shadow: 0 2px 4px rgba(#000, 0.3);
+      text-shadow: 1px 1px 4px rgba(#000, 0.5);
     }
 
     .page__lead {
@@ -160,20 +163,27 @@
 .page__hero-image {
   width: 100%;
   height: auto;
-  border-radius: $border-radius-lg;
+  -ms-interpolation-mode: bicubic;
 }
 
 .page__hero-caption {
   position: absolute;
-  bottom: $spacing-sm;
-  right: $spacing-sm;
-  padding: $spacing-xs $spacing-sm;
+  bottom: 0;
+  right: 0;
+  margin: 0 auto;
+  padding: 2px 5px;
   color: #fff;
   font-family: $caption-font-family;
-  font-size: $type-size-8;
-  background: rgba(#000, 0.6);
-  backdrop-filter: blur(4px);
-  border-radius: $border-radius-sm;
+  font-size: $type-size-7;
+  background: #000;
+  text-align: right;
+  z-index: 5;
+  opacity: 0.5;
+  border-radius: $border-radius 0 $border-radius 0;
+
+  @include breakpoint($large) {
+    padding: 5px 10px;
+  }
 
   a {
     color: #fff;
@@ -186,8 +196,8 @@
    ========================================================================== */
 
 .page__share {
-  margin-top: $spacing-2xl;
-  padding-top: $spacing-lg;
+  margin-top: 2em;
+  padding-top: 1em;
   border-top: 1px solid $border-color;
 
   @include breakpoint(max-width $small) {
@@ -205,21 +215,19 @@
 }
 
 .page__share-title {
-  margin-bottom: $spacing-sm;
-  font-size: $type-size-7;
-  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: $type-size-6;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: $text-muted;
 }
+
 
 /*
    Page meta
    ========================================================================== */
 
 .page__meta {
-  margin-top: $spacing-xl;
-  color: $text-muted;
+  margin-top: 2em;
+  color: mix(#fff, $gray, 25%);
   font-family: $sans-serif;
   font-size: $type-size-6;
 
@@ -229,20 +237,15 @@
 
   a {
     color: inherit;
-
-    &:hover {
-      color: $primary-color;
-    }
   }
 }
 
 .page__meta-title {
-  margin-bottom: $spacing-sm;
-  font-size: $type-size-7;
-  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: $type-size-6;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
+
 
 /*
    Page taxonomy
@@ -254,53 +257,46 @@
   }
 
   strong {
-    margin-right: $spacing-sm;
+    margin-right: 10px;
   }
 }
 
 .page__taxonomy-item {
   display: inline-block;
-  margin-right: $spacing-xs;
-  margin-bottom: $spacing-sm;
-  padding: $spacing-xs $spacing-sm;
-  font-size: $type-size-7;
+  margin-right: 5px;
+  margin-bottom: 8px;
+  padding: 5px 10px;
   text-decoration: none;
-  color: $text-muted;
-  background: $gray-100;
-  border-radius: $border-radius-full;
-  transition: $global-transition;
+  border: 1px solid $light-gray;
+  border-radius: $border-radius;
 
   &:hover {
     text-decoration: none;
-    color: $primary-color;
-    background: rgba($primary-color, 0.1);
+    color: $link-color-hover;
   }
 }
+
 
 /*
    Comments
    ========================================================================== */
 
 .page__comments {
-  margin-top: $spacing-2xl;
+  @include full();
 }
 
 .page__comments-title {
-  margin-top: $spacing-xl;
-  margin-bottom: $spacing-md;
-  padding-top: $spacing-xl;
-  font-size: $type-size-7;
-  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 10px;
+  padding-top: 2rem;
+  font-size: $type-size-6;
   border-top: 1px solid $border-color;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: $text-muted;
 }
 
 .page__comments-form {
-  padding: $spacing-lg;
-  background: $gray-50;
-  border-radius: $border-radius;
+  padding: 1em;
+  background: $lighter-gray;
   transition: $global-transition;
 
   &.disabled {
@@ -310,14 +306,16 @@
     label {
       pointer-events: none;
       cursor: not-allowed;
-      opacity: 0.5;
+      filter: alpha(opacity=65);
+      box-shadow: none;
+      opacity: 0.65;
     }
   }
 }
 
 .comment {
-  margin: $spacing-lg 0;
-  padding-bottom: $spacing-lg;
+  @include clearfix();
+  margin: 1em 0;
 
   &:not(:last-child) {
     border-bottom: 1px solid $border-color;
@@ -326,37 +324,39 @@
 
 .comment__avatar-wrapper {
   float: left;
-  width: 48px;
-  height: 48px;
+  width: 60px;
+  height: 60px;
 
   @include breakpoint($large) {
-    width: 64px;
-    height: 64px;
+    width: 100px;
+    height: 100px;
   }
 }
 
 .comment__avatar {
   width: 40px;
   height: 40px;
-  border-radius: $border-radius-full;
+  border-radius: 50%;
 
   @include breakpoint($large) {
-    width: 56px;
-    height: 56px;
+    width: 80px;
+    height: 80px;
+    padding: 5px;
+    border: 1px solid $border-color;
   }
 }
 
 .comment__content-wrapper {
-  margin-left: 60px;
+  float: right;
+  width: calc(100% - 60px);
 
   @include breakpoint($large) {
-    margin-left: 80px;
+    width: calc(100% - 100px);
   }
 }
 
 .comment__author {
   margin: 0;
-  font-weight: 600;
 
   a {
     text-decoration: none;
@@ -372,49 +372,46 @@
   }
 }
 
+
 /*
    Related
    ========================================================================== */
 
 .page__related {
-  margin-top: $spacing-2xl;
-  padding-top: $spacing-lg;
+  margin-top: 2em;
+  padding-top: 1em;
   border-top: 1px solid $border-color;
+  @include clearfix();
+  float: left;
+
+  @include breakpoint($large) {
+    @include pre(2.5 of 12);
+  }
 
   a {
     color: inherit;
     text-decoration: none;
-
-    &:hover {
-      color: $primary-color;
-    }
   }
 }
 
 .page__related-title {
-  margin-bottom: $spacing-md;
-  font-size: $type-size-7;
-  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: $type-size-6;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: $text-muted;
 }
+
 
 /*
    Recent Papers (Google Scholar)
    ========================================================================== */
 
 .recent-papers {
-  margin-top: $spacing-2xl;
-  padding-top: $spacing-lg;
+  margin-top: 2em;
+  padding-top: 1em;
   border-top: 1px solid $border-color;
 
   h2 {
-    margin-top: 0;
-    margin-bottom: $spacing-lg;
-    font-size: $type-size-4;
-    border-bottom: none;
-    padding-bottom: 0;
+    margin-bottom: 1em;
   }
 
   .paper-list {
@@ -424,9 +421,9 @@
   }
 
   .paper-item {
-    margin-bottom: $spacing-lg;
-    padding-bottom: $spacing-lg;
-    border-bottom: 1px solid $gray-100;
+    margin-bottom: 1em;
+    padding-bottom: 1em;
+    border-bottom: 1px solid lighten($border-color, 10%);
 
     &:last-child {
       border-bottom: none;
@@ -436,69 +433,42 @@
   }
 
   .paper-title {
-    font-weight: 600;
-    margin-bottom: $spacing-xs;
-    line-height: $line-height-heading;
+    font-weight: bold;
+    margin-bottom: 0.25em;
 
     a {
       text-decoration: none;
 
       &:hover {
         text-decoration: underline;
-        text-underline-offset: 3px;
       }
     }
   }
 
   .paper-meta {
     font-size: $type-size-6;
-    color: $text-muted;
+    color: mix(#fff, $gray, 25%);
 
     .paper-venue {
       font-style: italic;
     }
 
     .paper-year {
-      margin-left: $spacing-xs;
+      margin-left: 0.25em;
     }
 
     .paper-citations {
-      margin-left: $spacing-sm;
+      margin-left: 0.5em;
 
       &::before {
         content: "·";
-        margin-right: $spacing-sm;
+        margin-right: 0.5em;
       }
     }
   }
 
   .paper-link {
-    margin-top: $spacing-lg;
+    margin-top: 1em;
     font-size: $type-size-6;
-
-    a {
-      color: $primary-color;
-      text-decoration: none;
-      font-weight: 500;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-  }
-}
-
-/*
-   Animations
-   ========================================================================== */
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }

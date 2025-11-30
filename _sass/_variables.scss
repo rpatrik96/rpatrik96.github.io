@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Variables - Modern Minimal Theme
+   Variables
    ========================================================================== */
 
 /*
@@ -9,105 +9,92 @@
 $doc-font-size              : 16;
 
 /* paragraph indention */
-$paragraph-indent           : false;
-$indent-var                 : 1.5em;
+$paragraph-indent           : false; // true, false (default)
+$indent-var                 : 1.3em;
 
-/* Modern system font stacks */
-$sans-serif                 : system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-$serif                      : Georgia, "Times New Roman", serif;
-$monospace                  : ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+/* system typefaces */
+$serif                      : Georgia, Times, serif;
+$sans-serif                 : -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", Arial, sans-serif;
+$monospace                  : Monaco, Consolas, "Lucida Console", monospace;
 
-/* Font family assignments */
+/* sans serif typefaces */
+$sans-serif-narrow          : $sans-serif;
+$helvetica                  : Helvetica, "Helvetica Neue", Arial, sans-serif;
+
+/* serif typefaces */
+$georgia                    : Georgia, serif;
+$times                      : Times, serif;
+$bodoni                     : "Bodoni MT", serif;
+$calisto                    : "Calisto MT", serif;
+$garamond                   : Garamond, serif;
+
 $global-font-family         : $sans-serif;
 $header-font-family         : $sans-serif;
-$caption-font-family        : $sans-serif;
+$caption-font-family        : $serif;
 
-/* Fluid type scale using clamp() */
-$type-size-1                : clamp(2rem, 1.5rem + 2vw, 2.75rem);     // ~44px max
-$type-size-2                : clamp(1.75rem, 1.25rem + 1.5vw, 2.25rem); // ~36px max
-$type-size-3                : clamp(1.375rem, 1.125rem + 1vw, 1.75rem); // ~28px max
-$type-size-4                : clamp(1.125rem, 1rem + 0.5vw, 1.375rem);  // ~22px max
-$type-size-5                : 1rem;      // 16px base
-$type-size-6                : 0.875rem;  // 14px
-$type-size-7                : 0.8125rem; // 13px
-$type-size-8                : 0.75rem;   // 12px
-
-/* Line heights */
-$line-height-base           : 1.6;
-$line-height-heading        : 1.25;
+/* type scale */
+$type-size-1                : 2.441em;  // ~39.056px
+$type-size-2                : 1.953em;  // ~31.248px
+$type-size-3                : 1.563em;  // ~25.008px
+$type-size-4                : 1.25em;   // ~20px
+$type-size-5                : 1em;      // ~16px
+$type-size-6                : 0.75em;   // ~12px
+$type-size-7                : 0.6875em; // ~11px
+$type-size-8                : 0.625em;  // ~10px
 
 
 /*
-   Colors - Modern Minimal Palette
+   Colors
    ========================================================================== */
 
-/* Primary accent - Professional Blue */
-$primary-color              : #4A8FE3;
-$primary-light              : #6BA3E8;
-$primary-dark               : #3A7BD0;
+$gray                       : #7a8288;
+$dark-gray                  : mix(#000, $gray, 40%);
+$darker-gray                : mix(#000, $gray, 60%);
+$light-gray                 : mix(#fff, $gray, 50%);
+$lighter-gray               : mix(#fff, $gray, 90%);
 
-/* Neutral gray scale */
-$gray-50                    : #FAFAFA;
-$gray-100                   : #F5F5F5;
-$gray-200                   : #E5E5E5;
-$gray-300                   : #D4D4D4;
-$gray-400                   : #A3A3A3;
-$gray-500                   : #737373;
-$gray-600                   : #525252;
-$gray-700                   : #404040;
-$gray-800                   : #262626;
-$gray-900                   : #171717;
-
-/* Legacy gray mappings (for compatibility) */
-$gray                       : $gray-500;
-$dark-gray                  : $gray-700;
-$darker-gray                : $gray-800;
-$light-gray                 : $gray-300;
-$lighter-gray               : $gray-100;
-
-/* Semantic colors */
 $body-color                 : #fff;
 $background-color           : #fff;
-$text-color                 : $gray-800;
-$text-muted                 : $gray-500;
-$border-color               : $gray-200;
-$code-background-color      : $gray-100;
-$code-background-color-dark : $gray-900;
+$code-background-color      : #fafafa;
+$code-background-color-dark : $light-gray;
+$text-color                 : $dark-gray;
+$border-color               : $lighter-gray;
 
-/* Status colors */
-$success-color              : #22C55E;
-$warning-color              : #F59E0B;
-$danger-color               : #EF4444;
-$info-color                 : $primary-color;
+$primary-color              : #7a8288;
+$success-color              : #62c462;
+$warning-color              : #f89406;
+$danger-color               : #ee5f5b;
+$info-color                 : #52adc8;
 
-/* Brand colors */
+/* brands */
 $behance-color              : #1769FF;
 $dribbble-color             : #ea4c89;
-$facebook-color             : #1877F2;
+$facebook-color             : #3b5998;
 $flickr-color               : #ff0084;
 $foursquare-color           : #0072b1;
-$github-color               : #181717;
+$github-color               : #171516;
 $google-plus-color          : #dd4b39;
-$instagram-color            : #E4405F;
+$instagram-color            : #517fa4;
 $lastfm-color               : #d51007;
-$linkedin-color             : #0A66C2;
-$pinterest-color            : #BD081C;
-$rss-color                  : #FFA500;
+$linkedin-color             : #007bb6;
+$pinterest-color            : #cb2027;
+$rss-color                  : #fa9b39;
 $soundcloud-color           : #ff3300;
-$stackoverflow-color        : #F58025;
-$tumblr-color               : #36465D;
-$twitter-color              : #1DA1F2;
+$stackoverflow-color        : #fe7a15;
+$tumblr-color               : #32506d;
+$twitter-color              : #55acee;
 $vimeo-color                : #1ab7ea;
 $vine-color                 : #00bf8f;
-$youtube-color              : #FF0000;
+$youtube-color              : #bb0000;
 $xing-color                 : #006567;
 
-/* Links */
-$link-color                 : $primary-color;
-$link-color-hover           : $primary-dark;
-$link-color-visited         : $primary-color;
-$masthead-link-color        : $gray-700;
-$masthead-link-color-hover  : $primary-color;
+
+/* links */
+$link-color                 : $info-color;
+$link-color-hover           : mix(#000, $link-color, 25%);
+$link-color-visited         : mix(#fff, $link-color, 25%);
+$masthead-link-color        : $primary-color;
+$masthead-link-color-hover  : mix(#000, $primary-color, 25%);
 
 
 /*
@@ -115,13 +102,19 @@ $masthead-link-color-hover  : $primary-color;
    ========================================================================== */
 
 @include breakpoint-set("to ems", true);
+/*
+$small                      : 400px;
+$medium                     : 500px;
+$medium-wide                : 550px;
+$large                      : 1200px;
+$x-large                    : 1800px;
+*/
 
-$small                      : 640px !default;
+$small                      : 600px !default;
 $medium                     : 768px !default;
 $medium-wide                : 900px !default;
-$large                      : 1024px !default;
+$large                      : 925px !default;
 $x-large                    : 1280px !default;
-
 
 /*
    Grid
@@ -131,7 +124,6 @@ $right-sidebar-width-narrow : 0px;
 $right-sidebar-width        : 0px;
 $right-sidebar-width-wide   : 0px;
 
-/* Legacy Susy grid (kept for compatibility, will override with CSS Grid) */
 $susy: (
   columns: 12,
   column-width: 120px,
@@ -141,41 +133,21 @@ $susy: (
   gutter-position: after,
   container: $large,
   global-box-sizing: border-box,
+  // debug: (
+  //   image: show,
+  //   color: blue,
+  //   output: overlay,
+  //   toggle: top right,
+  // ),
 );
-
-
-/*
-   Spacing
-   ========================================================================== */
-
-$spacing-unit               : 1rem;
-$spacing-xs                 : 0.25rem;
-$spacing-sm                 : 0.5rem;
-$spacing-md                 : 1rem;
-$spacing-lg                 : 1.5rem;
-$spacing-xl                 : 2rem;
-$spacing-2xl                : 3rem;
-$spacing-3xl                : 4rem;
 
 
 /*
    Other
    ========================================================================== */
 
-$border-radius              : 8px;
-$border-radius-sm           : 4px;
-$border-radius-lg           : 12px;
-$border-radius-full         : 9999px;
-
-$box-shadow                 : 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-$box-shadow-md              : 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
-$box-shadow-lg              : 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
-
+$border-radius              : 4px;
+$box-shadow                 : 0 1px 1px rgba(0, 0, 0, 0.125);
 $navicon-width              : 28px;
 $navicon-height             : 4px;
-
-/* Transitions */
-$transition-fast            : 0.15s ease;
-$transition-base            : 0.2s ease;
-$transition-slow            : 0.3s ease;
-$global-transition          : all $transition-base;
+$global-transition          : all 0.2s ease-in-out;
