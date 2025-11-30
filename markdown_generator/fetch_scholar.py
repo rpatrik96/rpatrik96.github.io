@@ -12,12 +12,14 @@ Usage:
 The script will:
 1. Fetch the author profile from Google Scholar
 2. Get the most recent publications (default: 5)
-3. Save them to ../_data/scholar_papers.yml for Jekyll to use
+3. Fill in detailed information for each publication (authors, venue, date)
+4. Save them to ../_data/scholar_papers.yml for Jekyll to use
 """
 
 import yaml
 import os
 import sys
+import time
 from datetime import datetime
 
 try:
@@ -32,10 +34,69 @@ SCHOLAR_AUTHOR_ID = "zIT0fdIAAAAJ"  # Your Google Scholar author ID
 NUM_PAPERS = 5  # Number of recent papers to display
 OUTPUT_FILE = "../_data/scholar_papers.yml"
 
+# Month name to number mapping
+MONTH_MAP = {
+    'january': '01', 'jan': '01',
+    'february': '02', 'feb': '02',
+    'march': '03', 'mar': '03',
+    'april': '04', 'apr': '04',
+    'may': '05',
+    'june': '06', 'jun': '06',
+    'july': '07', 'jul': '07',
+    'august': '08', 'aug': '08',
+    'september': '09', 'sep': '09', 'sept': '09',
+    'october': '10', 'oct': '10',
+    'november': '11', 'nov': '11',
+    'december': '12', 'dec': '12',
+}
+
+
+def parse_publication_date(bib: dict) -> str:
+    """
+    Parse publication date from bib entry and return in YYYY/MM format.
+    Falls back to YYYY if month is not available.
+
+    Args:
+        bib: Bibliography dictionary from scholarly
+
+    Returns:
+        Date string in YYYY/MM or YYYY format
+    """
+    year = bib.get('pub_year', '')
+
+    if not year:
+        return ''
+
+    # Try to get month from various possible fields
+    month = None
+
+    # Check for explicit month field
+    if 'month' in bib:
+        month_str = str(bib['month']).lower().strip()
+        # Try to map month name to number
+        if month_str in MONTH_MAP:
+            month = MONTH_MAP[month_str]
+        # Check if it's already a number
+        elif month_str.isdigit() and 1 <= int(month_str) <= 12:
+            month = month_str.zfill(2)
+
+    # Try to extract from publication date string if present
+    if not month and 'publication_date' in bib:
+        pub_date = str(bib['publication_date']).lower()
+        for month_name, month_num in MONTH_MAP.items():
+            if month_name in pub_date:
+                month = month_num
+                break
+
+    if month:
+        return f"{year}/{month}"
+    return str(year)
+
 
 def fetch_author_publications(author_id: str, num_papers: int = 5) -> list:
     """
     Fetch publications from Google Scholar for a given author ID.
+    Fills in detailed information for each publication.
 
     Args:
         author_id: Google Scholar author ID
@@ -86,7 +147,7 @@ def fetch_author_publications(author_id: str, num_papers: int = 5) -> list:
 
         paper = {
             'title': bib.get('title', 'Untitled'),
-            'authors': bib.get('author', ''),
+            'authors': authors,
             'year': bib.get('pub_year', ''),
             'venue': venue,
             'citations': filled_pub.get('num_citations', 0),
