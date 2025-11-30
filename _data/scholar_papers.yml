@@ -1,35 +1,47 @@
-last_updated: '2025-11-30 09:22:28'
+last_updated: '2025-11-30 19:21:24'
 papers:
 - title: 'From superposition to sparse codes: interpretable representations in neural
     networks'
-  authors: ''
-  year: '2025'
-  venue: ''
+  authors: David Klindt and Charles O'Neill and Patrik Reizinger and Harald Maurer
+    and Nina Miolane
+  year: 2025
+  pub_date: '2025'
+  venue: arXiv preprint arXiv:2503.01824
   citations: 6
   url: https://scholar.google.com/citations?view_op=view_citation&hl=en&user=zIT0fdIAAAAJ&citation_for_view=zIT0fdIAAAAJ:qxL8FJ1GzNcC
+  paper_url: https://arxiv.org/abs/2503.01824
 - title: 'Position: An Empirically Grounded Identifiability Theory Will Accelerate
     Self-Supervised Learning Research'
-  authors: ''
-  year: '2025'
-  venue: ''
+  authors: Patrik Reizinger and Randall Balestriero and David Klindt and Wieland Brendel
+  year: 2025
+  pub_date: '2025'
+  venue: arXiv preprint arXiv:2504.13101
   citations: 2
   url: https://scholar.google.com/citations?view_op=view_citation&hl=en&user=zIT0fdIAAAAJ&citation_for_view=zIT0fdIAAAAJ:mVmsd5A6BfQC
+  paper_url: https://arxiv.org/abs/2504.13101
 - title: Skill learning via policy diversity yields identifiable representations for
     reinforcement learning
-  authors: ''
-  year: '2025'
-  venue: ''
+  authors: Patrik Reizinger and Bálint Mucsányi and Siyuan Guo and Benjamin Eysenbach
+    and Bernhard Schölkopf and Wieland Brendel
+  year: 2025
+  pub_date: '2025'
+  venue: arXiv preprint arXiv:2507.14748
   citations: 1
   url: https://scholar.google.com/citations?view_op=view_citation&hl=en&user=zIT0fdIAAAAJ&citation_for_view=zIT0fdIAAAAJ:9ZlFYXVOiuMC
+  paper_url: https://arxiv.org/abs/2507.14748
 - title: Out-of-distribution Tests Reveal Compositionality in Chess Transformers
-  authors: ''
-  year: '2025'
-  venue: ''
+  authors: Anna Mészáros and Patrik Reizinger and Ferenc Huszár
+  year: 2025
+  pub_date: '2025'
+  venue: arXiv preprint arXiv:2510.20783
   citations: 0
   url: https://scholar.google.com/citations?view_op=view_citation&hl=en&user=zIT0fdIAAAAJ&citation_for_view=zIT0fdIAAAAJ:dhFuZR0502QC
+  paper_url: https://arxiv.org/abs/2510.20783
 - title: Estimating Treatment Effects with Independent Component Analysis
-  authors: ''
-  year: '2025'
-  venue: ''
+  authors: Patrik Reizinger and Lester Mackey and Wieland Brendel and Rahul Krishnan
+  year: 2025
+  pub_date: '2025'
+  venue: arXiv preprint arXiv:2507.16467
   citations: 0
   url: https://scholar.google.com/citations?view_op=view_citation&hl=en&user=zIT0fdIAAAAJ&citation_for_view=zIT0fdIAAAAJ:QIV2ME_5wuYC
+  paper_url: https://arxiv.org/abs/2507.16467
