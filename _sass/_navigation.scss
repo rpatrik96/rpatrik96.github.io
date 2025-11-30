@@ -174,6 +174,8 @@
 
 .greedy-nav {
   position: relative;
+  display: flex;
+  align-items: center;
   min-width: 250px;
   background: transparent;
 
@@ -197,6 +199,7 @@
 
   button {
     position: relative;
+    flex-shrink: 0;
     height: 100%;
     padding: 0.5rem 0.75rem;
     border: 0;
@@ -211,16 +214,25 @@
     &:hover {
       background-color: rgba(#fff, 0.3);
     }
+
+    &.hidden {
+      display: none;
+    }
   }
 
   .visible-links {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 
     li {
       display: inline-block;
       vertical-align: middle;
+      flex-shrink: 0;
 
       &:first-child {
         font-weight: bold;
