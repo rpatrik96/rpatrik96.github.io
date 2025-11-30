@@ -8,12 +8,14 @@
 
 .sidebar {
   margin-bottom: $spacing-xl;
+  overflow: hidden;
 
   @include breakpoint($large) {
     position: sticky;
     top: 100px;
     /* Remove float - using CSS Grid in #main instead */
     width: 100%;
+    max-width: 100%;
     padding-right: 0;
     transition: opacity $transition-base;
   }
@@ -232,7 +234,9 @@
   }
 
   li {
-    white-space: nowrap;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 
   a {
