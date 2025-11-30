@@ -5,10 +5,10 @@
 .masthead {
   position: sticky;
   top: 0;
-  background: rgba($background-color, 0.9);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid $border-color;
+  background: rgba($background-color, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba($primary-color, 0.1);
   z-index: 20;
   animation: fadeIn 0.3s ease-out;
 
@@ -42,15 +42,16 @@
 }
 
 .site-title {
-  font-size: $type-size-5;
-  font-weight: 600;
+  font-size: $type-size-4;
+  font-weight: 700;
   letter-spacing: -0.02em;
 
   a {
-    color: $gray-900;
+    color: $primary-color;
+    position: relative;
 
     &:hover {
-      color: $primary-color;
+      color: $primary-dark;
     }
   }
 }
@@ -60,8 +61,12 @@
     margin: 0;
     padding: 0;
     display: flex;
-    gap: $spacing-lg;
+    gap: $spacing-md;
     list-style-type: none;
+
+    @include breakpoint($medium) {
+      gap: $spacing-lg;
+    }
   }
 }
 
@@ -72,27 +77,47 @@
   a {
     font-size: $type-size-6;
     font-weight: 500;
-    padding: $spacing-xs 0;
+    padding: $spacing-sm $spacing-md;
     position: relative;
+    border-radius: $border-radius;
+    transition: all $transition-fast;
+
+    &:hover {
+      background: rgba($primary-color, 0.1);
+      color: $primary-color;
+    }
 
     &::after {
       content: '';
       position: absolute;
       bottom: 0;
-      left: 0;
+      left: 50%;
+      transform: translateX(-50%);
       width: 0;
       height: 2px;
       background: $primary-color;
       transition: width $transition-base;
+      border-radius: 1px;
     }
 
     &:hover::after {
-      width: 100%;
+      width: calc(100% - #{$spacing-md * 2});
     }
   }
 
   &--lg {
     padding-right: $spacing-lg;
     font-weight: 700;
+  }
+}
+
+/* Active state for current page */
+.masthead__menu-item a.active,
+.masthead__menu-item a[aria-current="page"] {
+  color: $primary-color;
+  background: rgba($primary-color, 0.1);
+
+  &::after {
+    width: calc(100% - #{$spacing-md * 2});
   }
 }

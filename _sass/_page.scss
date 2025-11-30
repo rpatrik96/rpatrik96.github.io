@@ -9,19 +9,19 @@
   animation: fadeIn 0.4s ease-out;
 
   @include breakpoint($large) {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: $spacing-3xl;
     padding: $spacing-3xl $spacing-xl;
+    align-items: start;
   }
 }
 
 .page {
-  @include breakpoint($large) {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: $spacing-xl;
-  }
+  min-width: 0; /* Prevent grid blowout */
 
   .page__inner-wrap {
-    max-width: 65ch;
+    max-width: 75ch;
   }
 }
 
@@ -29,12 +29,26 @@
   margin-top: 0;
   margin-bottom: $spacing-md;
   line-height: $line-height-heading;
-  font-size: $type-size-2;
+  font-size: $type-size-1;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  color: $gray-900;
+
+  /* Blue accent underline */
+  display: inline-block;
+
+  &::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, $primary-color, $primary-light);
+    border-radius: 2px;
+    margin-top: $spacing-sm;
+  }
 
   & + .page__meta {
-    margin-top: -0.5em;
+    margin-top: $spacing-md;
   }
 }
 
@@ -43,22 +57,34 @@
   font-size: $type-size-4;
   color: $text-muted;
   line-height: $line-height-base;
+  margin-bottom: $spacing-xl;
 }
 
 .page__content {
   h2 {
-    margin-top: $spacing-2xl;
+    margin-top: $spacing-3xl;
+    margin-bottom: $spacing-lg;
     padding-bottom: $spacing-sm;
-    border-bottom: 1px solid $border-color;
+    font-size: $type-size-3;
+    color: $gray-900;
+    border-bottom: 2px solid $primary-color;
   }
 
   h3 {
+    margin-top: $spacing-2xl;
+    margin-bottom: $spacing-md;
+    font-size: $type-size-4;
+    color: $primary-dark;
+  }
+
+  h4 {
     margin-top: $spacing-xl;
+    color: $gray-800;
   }
 
   p, li, dl {
-    font-size: 1rem;
-    line-height: $line-height-base;
+    font-size: 1.0625rem;
+    line-height: 1.7;
   }
 
   p {
@@ -73,12 +99,15 @@
   }
 
   a {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-color: rgba($primary-color, 0.4);
+    color: $primary-color;
+    text-decoration: none;
+    border-bottom: 1px solid rgba($primary-color, 0.3);
+    transition: all $transition-fast;
 
     &:hover {
-      text-decoration-color: $primary-color;
+      color: $primary-dark;
+      border-bottom-color: $primary-color;
+      background: rgba($primary-color, 0.05);
 
       img {
         box-shadow: $box-shadow-lg;
@@ -87,13 +116,14 @@
   }
 
   dt {
-    margin-top: 1em;
+    margin-top: 1.5em;
     font-family: $sans-serif;
     font-weight: 600;
+    color: $primary-dark;
   }
 
   dd {
-    margin-left: 1em;
+    margin-left: 1.5em;
     font-family: $sans-serif;
     font-size: $type-size-6;
     color: $text-muted;
@@ -106,6 +136,25 @@
   blockquote + .small {
     margin-top: -1.5em;
     padding-left: 1.25rem;
+  }
+
+  /* Enhance lists */
+  ul {
+    li {
+      position: relative;
+      padding-left: 0.5em;
+
+      &::marker {
+        color: $primary-color;
+      }
+    }
+  }
+
+  ol {
+    li::marker {
+      color: $primary-color;
+      font-weight: 600;
+    }
   }
 }
 
@@ -153,6 +202,10 @@
       @include breakpoint($small) {
         font-size: $type-size-1;
       }
+
+      &::after {
+        background: #fff;
+      }
     }
   }
 }
@@ -178,6 +231,7 @@
   a {
     color: #fff;
     text-decoration: none;
+    border-bottom: none;
   }
 }
 
@@ -186,9 +240,9 @@
    ========================================================================== */
 
 .page__share {
-  margin-top: $spacing-2xl;
-  padding-top: $spacing-lg;
-  border-top: 1px solid $border-color;
+  margin-top: $spacing-3xl;
+  padding-top: $spacing-xl;
+  border-top: 2px solid $gray-100;
 
   @include breakpoint(max-width $small) {
     .btn span {
@@ -205,12 +259,12 @@
 }
 
 .page__share-title {
-  margin-bottom: $spacing-sm;
-  font-size: $type-size-7;
+  margin-bottom: $spacing-md;
+  font-size: $type-size-6;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: $text-muted;
+  letter-spacing: 0.1em;
+  color: $primary-color;
 }
 
 /*
@@ -218,20 +272,25 @@
    ========================================================================== */
 
 .page__meta {
-  margin-top: $spacing-xl;
+  margin-top: $spacing-lg;
+  padding: $spacing-md $spacing-lg;
   color: $text-muted;
   font-family: $sans-serif;
   font-size: $type-size-6;
+  background: $gray-50;
+  border-radius: $border-radius;
+  border-left: 3px solid $primary-color;
 
   p {
     margin: 0;
   }
 
   a {
-    color: inherit;
+    color: $primary-color;
+    border-bottom: none;
 
     &:hover {
-      color: $primary-color;
+      color: $primary-dark;
     }
   }
 }
@@ -241,7 +300,8 @@
   font-size: $type-size-7;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
+  color: $primary-color;
 }
 
 /*
@@ -255,6 +315,7 @@
 
   strong {
     margin-right: $spacing-sm;
+    color: $text-muted;
   }
 }
 
@@ -262,18 +323,22 @@
   display: inline-block;
   margin-right: $spacing-xs;
   margin-bottom: $spacing-sm;
-  padding: $spacing-xs $spacing-sm;
+  padding: $spacing-xs $spacing-md;
   font-size: $type-size-7;
+  font-weight: 500;
   text-decoration: none;
-  color: $text-muted;
-  background: $gray-100;
+  color: $primary-color;
+  background: rgba($primary-color, 0.1);
+  border: 1px solid rgba($primary-color, 0.2);
   border-radius: $border-radius-full;
   transition: $global-transition;
 
   &:hover {
     text-decoration: none;
-    color: $primary-color;
-    background: rgba($primary-color, 0.1);
+    color: #fff;
+    background: $primary-color;
+    border-color: $primary-color;
+    transform: translateY(-1px);
   }
 }
 
@@ -282,25 +347,26 @@
    ========================================================================== */
 
 .page__comments {
-  margin-top: $spacing-2xl;
+  margin-top: $spacing-3xl;
 }
 
 .page__comments-title {
   margin-top: $spacing-xl;
   margin-bottom: $spacing-md;
   padding-top: $spacing-xl;
-  font-size: $type-size-7;
+  font-size: $type-size-6;
   font-weight: 600;
-  border-top: 1px solid $border-color;
+  border-top: 2px solid $gray-100;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: $text-muted;
+  letter-spacing: 0.1em;
+  color: $primary-color;
 }
 
 .page__comments-form {
-  padding: $spacing-lg;
+  padding: $spacing-xl;
   background: $gray-50;
-  border-radius: $border-radius;
+  border-radius: $border-radius-lg;
+  border: 1px solid $gray-100;
   transition: $global-transition;
 
   &.disabled {
@@ -317,10 +383,13 @@
 
 .comment {
   margin: $spacing-lg 0;
-  padding-bottom: $spacing-lg;
+  padding: $spacing-lg;
+  background: #fff;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
 
   &:not(:last-child) {
-    border-bottom: 1px solid $border-color;
+    margin-bottom: $spacing-md;
   }
 }
 
@@ -339,6 +408,7 @@
   width: 40px;
   height: 40px;
   border-radius: $border-radius-full;
+  border: 2px solid $primary-light;
 
   @include breakpoint($large) {
     width: 56px;
@@ -357,15 +427,21 @@
 .comment__author {
   margin: 0;
   font-weight: 600;
+  color: $gray-900;
 
   a {
     text-decoration: none;
+    color: $primary-color;
+    border-bottom: none;
   }
 }
 
 .comment__date {
   @extend .page__meta;
   margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
 
   a {
     text-decoration: none;
@@ -377,13 +453,14 @@
    ========================================================================== */
 
 .page__related {
-  margin-top: $spacing-2xl;
-  padding-top: $spacing-lg;
-  border-top: 1px solid $border-color;
+  margin-top: $spacing-3xl;
+  padding-top: $spacing-xl;
+  border-top: 2px solid $gray-100;
 
   a {
-    color: inherit;
+    color: $gray-800;
     text-decoration: none;
+    border-bottom: none;
 
     &:hover {
       color: $primary-color;
@@ -392,12 +469,12 @@
 }
 
 .page__related-title {
-  margin-bottom: $spacing-md;
-  font-size: $type-size-7;
+  margin-bottom: $spacing-lg;
+  font-size: $type-size-6;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: $text-muted;
+  letter-spacing: 0.1em;
+  color: $primary-color;
 }
 
 /*
@@ -405,16 +482,23 @@
    ========================================================================== */
 
 .recent-papers {
-  margin-top: $spacing-2xl;
-  padding-top: $spacing-lg;
-  border-top: 1px solid $border-color;
+  margin-top: $spacing-3xl;
+  padding: $spacing-xl;
+  background: linear-gradient(135deg, rgba($primary-color, 0.03) 0%, rgba($primary-light, 0.05) 100%);
+  border-radius: $border-radius-lg;
+  border: 1px solid rgba($primary-color, 0.1);
 
   h2 {
     margin-top: 0;
     margin-bottom: $spacing-lg;
     font-size: $type-size-4;
+    color: $primary-dark;
     border-bottom: none;
     padding-bottom: 0;
+
+    &::before {
+      content: '📚 ';
+    }
   }
 
   .paper-list {
@@ -425,27 +509,35 @@
 
   .paper-item {
     margin-bottom: $spacing-lg;
-    padding-bottom: $spacing-lg;
-    border-bottom: 1px solid $gray-100;
+    padding: $spacing-lg;
+    background: #fff;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    transition: all $transition-base;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: $box-shadow-md;
+    }
 
     &:last-child {
-      border-bottom: none;
       margin-bottom: 0;
-      padding-bottom: 0;
     }
   }
 
   .paper-title {
     font-weight: 600;
-    margin-bottom: $spacing-xs;
+    margin-bottom: $spacing-sm;
     line-height: $line-height-heading;
+    color: $gray-900;
 
     a {
+      color: inherit;
       text-decoration: none;
+      border-bottom: none;
 
       &:hover {
-        text-decoration: underline;
-        text-underline-offset: 3px;
+        color: $primary-color;
       }
     }
   }
@@ -456,33 +548,49 @@
 
     .paper-venue {
       font-style: italic;
+      color: $primary-color;
     }
 
     .paper-year {
       margin-left: $spacing-xs;
+      font-weight: 500;
     }
 
     .paper-citations {
       margin-left: $spacing-sm;
+      color: $gray-400;
 
       &::before {
-        content: "·";
+        content: "•";
         margin-right: $spacing-sm;
       }
     }
   }
 
   .paper-link {
-    margin-top: $spacing-lg;
+    margin-top: $spacing-md;
     font-size: $type-size-6;
 
     a {
+      display: inline-flex;
+      align-items: center;
+      gap: $spacing-xs;
       color: $primary-color;
       text-decoration: none;
-      font-weight: 500;
+      font-weight: 600;
+      border-bottom: none;
+      padding: $spacing-xs $spacing-sm;
+      background: rgba($primary-color, 0.1);
+      border-radius: $border-radius-sm;
+      transition: all $transition-fast;
 
       &:hover {
-        text-decoration: underline;
+        background: $primary-color;
+        color: #fff;
+      }
+
+      &::after {
+        content: '→';
       }
     }
   }
