@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SIDEBAR - Modern Minimal Theme
+   SIDEBAR
    ========================================================================== */
 
 /*
@@ -7,24 +7,31 @@
    ========================================================================== */
 
 .sidebar {
-  margin-bottom: $spacing-xl;
+  -webkit-transform: translate3d(0, 0 , 0);
+          transform: translate3d(0, 0 , 0);
+
+  @include clearfix();
+  margin-bottom: 1em;
 
   @include breakpoint($large) {
-    position: sticky;
-    top: 100px;
-    float: left;
-    width: 200px;
-    padding-right: $spacing-xl;
-    transition: opacity $transition-base;
+    @include span(2 of 12);
+    opacity: 1;
+    -webkit-transition: opacity 0.2s ease-in-out;
+            transition: opacity 0.2s ease-in-out;
+
+    &:hover {
+      opacity: 1;
+    }
   }
 
+
   @include breakpoint($x-large) {
-    width: 250px;
+    padding-right: 0;
   }
 
   h2, h3, h4, h5, h6 {
-    margin-bottom: $spacing-sm;
-    font-family: $sans-serif;
+    margin-bottom: 0;
+    font-family: $sans-serif-narrow;
   }
 
   h3, h4 {
@@ -34,7 +41,7 @@
   p, li {
     font-family: $sans-serif;
     font-size: $type-size-6;
-    line-height: $line-height-base;
+    line-height: 1.5;
   }
 
   img {
@@ -43,13 +50,13 @@
 }
 
 .sidebar__right {
-  margin-bottom: $spacing-lg;
+  margin-bottom: 1em;
 
   @include breakpoint($large) {
     position: relative;
     float: right;
     width: $right-sidebar-width-narrow;
-    margin-left: $spacing-xl;
+    margin-left: span(0.5 of 12);
     z-index: 10;
   }
 
@@ -65,22 +72,23 @@
 .author__avatar {
   display: table-cell;
   vertical-align: top;
-  width: 48px;
+  width: 36px;
+  // set width only, for non-square avatars
+  // height: 36px;
 
   @include breakpoint($large) {
     display: block;
     width: auto;
     height: auto;
-    margin-bottom: $spacing-lg;
   }
 
   img {
-    max-width: 150px;
-    border-radius: $border-radius-full;
-    box-shadow: $box-shadow;
+    max-width: 175px;
+    border-radius: 50%;
 
     @include breakpoint($large) {
-      max-width: 180px;
+      padding: 5px;
+      border: 1px solid $border-color;
     }
   }
 }
@@ -88,9 +96,9 @@
 .author__content {
   display: table-cell;
   vertical-align: top;
-  padding-left: $spacing-md;
-  padding-right: $spacing-lg;
-  line-height: $line-height-heading;
+  padding-left: 15px;
+  padding-right: 25px;
+  line-height: 1;
 
   @include breakpoint($large) {
     display: block;
@@ -101,17 +109,13 @@
 }
 
 .author__name {
-  margin: 0 0 $spacing-xs;
-  font-size: $type-size-5;
-  font-weight: 600;
-  color: $gray-900;
+  margin: 0;
 
   @include breakpoint($large) {
-    margin-top: $spacing-sm;
-    margin-bottom: $spacing-sm;
+    margin-top: 10px;
+    margin-bottom: 10px;
   }
 }
-
 .sidebar .author__name {
   font-family: $sans-serif;
   font-size: $type-size-5;
@@ -119,13 +123,10 @@
 
 .author__bio {
   margin: 0;
-  font-size: $type-size-6;
-  color: $text-muted;
-  line-height: $line-height-base;
 
   @include breakpoint($large) {
-    margin-top: $spacing-sm;
-    margin-bottom: $spacing-lg;
+    margin-top: 10px;
+    margin-bottom: 20px;
   }
 }
 
@@ -135,10 +136,13 @@
   vertical-align: middle;
   font-family: $sans-serif;
   z-index: 10;
+  position: relative;
   cursor: pointer;
 
-  li:last-child a {
-    margin-bottom: 0;
+  li:last-child {
+    a {
+      margin-bottom: 0;
+    }
   }
 
   @include breakpoint($large) {
@@ -158,14 +162,14 @@
   display: none;
   position: absolute;
   right: 0;
-  margin-top: $spacing-md;
-  padding: $spacing-md;
+  margin-top: 15px;
+  padding: 10px;
   list-style-type: none;
   border: 1px solid $border-color;
   border-radius: $border-radius;
   background: #fff;
   z-index: -1;
-  box-shadow: $box-shadow-lg;
+  box-shadow: 0 0 10px rgba(#000, 0.25);
   cursor: default;
 
   @include breakpoint($large) {
@@ -217,32 +221,17 @@
   }
 
   a {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-    margin-bottom: $spacing-xs;
-    padding: $spacing-xs 0;
-    color: $text-muted;
-    font-size: $type-size-6;
+    display: block;
+    margin-bottom: 5px;
+    padding-right: 5px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    color: inherit;
+    font-size: $type-size-5;
     text-decoration: none;
-    transition: color $transition-fast;
 
     &:hover {
-      color: $primary-color;
-    }
-
-    .fa, .fab, .fas, .far {
-      width: 1.25em;
-      text-align: center;
-      color: $gray-400;
-      transition: color $transition-fast;
-    }
-
-    &:hover .fa,
-    &:hover .fab,
-    &:hover .fas,
-    &:hover .far {
-      color: $primary-color;
+      text-decoration: underline;
     }
   }
 }
