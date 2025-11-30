@@ -1,5 +1,5 @@
 /* ==========================================================================
-   BUTTONS
+   BUTTONS - Modern Minimal Theme
    ========================================================================== */
 
 /*
@@ -7,147 +7,158 @@
    ========================================================================== */
 
 .btn {
-  /* default button */
-  display: inline-block;
-  margin-bottom: 0.25em;
-  padding: 0.5em 1em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-xs;
+  padding: 0.75em 1.5em;
   color: #fff !important;
   font-family: $sans-serif;
   font-size: $type-size-6;
-  font-weight: bold;
+  font-weight: 500;
   text-align: center;
   text-decoration: none;
   background-color: $primary-color;
   border: 0 !important;
   border-radius: $border-radius;
   cursor: pointer;
+  transition: all $transition-base;
 
   &:hover {
-    background-color: mix(white, #000, 20%);
+    background-color: $primary-dark;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
   }
 
   .icon {
-    margin-right: 0.5em;
+    margin-right: $spacing-xs;
   }
 
   .icon + .hidden {
-    margin-left: -0.5em; /* override for hidden text*/
+    margin-left: -$spacing-sm;
   }
 
   /* fills width of parent container */
-
   &--block {
-    display: block;
+    display: flex;
     width: 100%;
 
     + .btn--block {
-      margin-top: 0.25em;
+      margin-top: $spacing-xs;
     }
   }
 
-  /* for dark backgrounds */
-
+  /* outline/ghost style */
   &--inverse {
-    color: $gray !important;
-    border: 1px solid $light-gray !important; /* override*/
-    background-color: #fff;
+    color: $gray-700 !important;
+    border: 1px solid $border-color !important;
+    background-color: transparent;
 
     &:hover {
-      color: #fff !important;
-      border-color: $gray;
+      color: $primary-color !important;
+      border-color: $primary-color !important;
+      background-color: rgba($primary-color, 0.05);
+      box-shadow: none;
     }
   }
 
-  /* light outline */
-
+  /* light outline for dark backgrounds */
   &--light-outline {
-    border: 1px solid #fff !important; /* override*/
+    border: 1px solid rgba(#fff, 0.5) !important;
     background-color: transparent;
+
+    &:hover {
+      border-color: #fff !important;
+      background-color: rgba(#fff, 0.1);
+    }
   }
 
   /* information */
-
   &--info {
     background-color: $info-color;
 
     &:hover {
-      background-color: mix(#000, $info-color, 20%);
+      background-color: darken($info-color, 10%);
+      box-shadow: 0 4px 12px rgba($info-color, 0.3);
     }
   }
 
   /* warning */
-
   &--warning {
     background-color: $warning-color;
 
     &:hover {
-      background-color: mix(#000, $warning-color, 20%);
+      background-color: darken($warning-color, 10%);
+      box-shadow: 0 4px 12px rgba($warning-color, 0.3);
     }
   }
 
   /* success */
-
   &--success {
     background-color: $success-color;
 
     &:hover {
-      background-color: mix(#000, $success-color, 20%);
+      background-color: darken($success-color, 10%);
+      box-shadow: 0 4px 12px rgba($success-color, 0.3);
     }
   }
 
   /* danger */
-
   &--danger {
     background-color: $danger-color;
 
     &:hover {
-      background-color: mix(#000, $danger-color, 20%);
+      background-color: darken($danger-color, 10%);
+      box-shadow: 0 4px 12px rgba($danger-color, 0.3);
     }
   }
 
   /* disabled */
-
   &--disabled {
     pointer-events: none;
     cursor: not-allowed;
-    filter: alpha(opacity=65);
-    box-shadow: none;
-    opacity: 0.65;
+    opacity: 0.5;
   }
 
   /* social buttons */
-
   $social:
-  (facebook, $facebook-color),
-  (twitter, $twitter-color),
-  (google-plus, $google-plus-color),
-  (linkedin, $linkedin-color);
+    (facebook, $facebook-color),
+    (twitter, $twitter-color),
+    (google-plus, $google-plus-color),
+    (linkedin, $linkedin-color);
 
   @each $socialnetwork, $color in $social {
     &--#{$socialnetwork} {
       background-color: $color;
 
       &:hover {
-        background-color: mix(#000, $color, 20%);
+        background-color: darken($color, 10%);
+        box-shadow: 0 4px 12px rgba($color, 0.3);
       }
     }
   }
 
   /* extra large button */
-
   &--x-large {
+    padding: 1em 2em;
     font-size: $type-size-4;
   }
 
   /* large button */
-
   &--large {
+    padding: 0.875em 1.75em;
     font-size: $type-size-5;
   }
 
   /* small button */
-
   &--small {
+    padding: 0.5em 1em;
     font-size: $type-size-7;
   }
 }
