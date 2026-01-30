@@ -23,7 +23,7 @@ Thanks for being curious about how to work with me! Before jumping into means ho
 - I am loyal to the team I am part of; it's not an option to let anyone fail
 - My goal is to help everyone succeed. The pie needs to grow
 - I will strive to learn about your goals and motivation and help you fulfill them
-- I seek feedback (negative included); I am here to learn from my mistakes
+- I seek feedback (negative included); I am here to learn from my mistakes. You might think you have harsh feedback for me. I think you have _extremely useful_ feedback.
 
 ### Work and Skills
 - I do my best technical work alone, or in front of a whiteboard with a team member
@@ -38,6 +38,8 @@ Thanks for being curious about how to work with me! Before jumping into means ho
 - I prefer a written (i.e., asynchronous) message with the details of your question/problem _before_ scheduling a meeting
 - Meetings I participate in should be on time, have an agenda, and lead by someone in the team
 - I prefer transparent communication - if me or you cannot keep a promise, it's OK, but both of us needs to be clear about it
+- I prefer emails with a subject line that tells me what to expect in the body
+- I prefer separating different topics into different threads (e.g., different email threads compared to instant messages)
 
 
 

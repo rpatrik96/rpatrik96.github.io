@@ -25,3 +25,7 @@ I have done both my M.Sc. and B.Sc. at the Budapest University of Technology in 
 
 {% include recent-papers.html %}
 
+{% include recent-github.html %}
+
+{% include twitter-feed.html %}
+
