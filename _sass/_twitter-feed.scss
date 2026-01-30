@@ -1,0 +1,41 @@
+/* ==========================================================================
+   Twitter/X Feed Section
+   ========================================================================== */
+
+.twitter-feed {
+  margin: 2em 0;
+
+  h2 {
+    margin-bottom: 1em;
+    font-size: 1.25em;
+  }
+
+  // Container for the Twitter widget
+  .twitter-timeline {
+    display: block;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+}
+
+.twitter-link {
+  margin-top: 1em;
+  font-size: 0.9em;
+
+  a {
+    color: #1da1f2;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .twitter-feed .twitter-timeline {
+    border-color: #30363d;
+  }
+}

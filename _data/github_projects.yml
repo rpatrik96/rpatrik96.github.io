@@ -1,0 +1,70 @@
+last_updated: '2026-01-30 10:26:42'
+github_url: https://github.com/rpatrik96
+repos:
+- name: bibtexupdater
+  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
+    to published versions and filter to only cited references.'
+  url: https://github.com/rpatrik96/bibtexupdater
+  stars: 59
+  forks: 4
+  language: Python
+  updated_at: '2026-01-30'
+  topics:
+  - bibtex
+  - bibtex-references
+  - bibtexparser
+  - latex
+- name: ica_causal_effect
+  description: ''
+  url: https://github.com/rpatrik96/ica_causal_effect
+  stars: 0
+  forks: 0
+  language: Python
+  updated_at: '2026-01-15'
+  topics: []
+- name: nl-causal-representations
+  description: This is the code for the paper Jacobian-based Causal Discovery with
+    Nonlinear ICA, demonstrating how identifiable representations (particularly, with
+    Nonlinear ICA) can be used to extract the causal graph from an underlying structural
+    equation model (SEM).
+  url: https://github.com/rpatrik96/nl-causal-representations
+  stars: 22
+  forks: 2
+  language: Python
+  updated_at: '2026-01-07'
+  topics:
+  - causal-discovery
+  - causal-discovery-methods
+  - causal-inference
+  - causality
+  - deep-learning
+  - deep-neural-networks
+  - deeplearning
+  - ica
+  - independent-component-analysis
+  - machine-learning
+  - structural-causal-model
+- name: running-analyzer
+  description: ''
+  url: https://github.com/rpatrik96/running-analyzer
+  stars: 0
+  forks: 0
+  language: TypeScript
+  updated_at: '2026-01-06'
+  topics: []
+- name: CV
+  description: ''
+  url: https://github.com/rpatrik96/CV
+  stars: 0
+  forks: 0
+  language: TeX
+  updated_at: '2025-12-31'
+  topics: []
+- name: rpatrik96.github.io
+  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
+  url: https://github.com/rpatrik96/rpatrik96.github.io
+  stars: 0
+  forks: 1
+  language: JavaScript
+  updated_at: '2025-11-30'
+  topics: []

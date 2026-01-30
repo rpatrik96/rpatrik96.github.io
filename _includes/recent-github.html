@@ -1,0 +1,34 @@
+{% if site.data.github_projects.repos.size > 0 %}
+<div class="recent-github">
+  <h2>Recent Projects</h2>
+  <div class="github-grid">
+    {% for repo in site.data.github_projects.repos %}
+    <div class="github-repo">
+      <div class="repo-header">
+        <a href="{{ repo.url }}" target="_blank" rel="noopener" class="repo-name">
+          <i class="fab fa-github"></i> {{ repo.name }}
+        </a>
+        {% if repo.language and repo.language != '' %}
+        <span class="repo-language" data-language="{{ repo.language | downcase }}">{{ repo.language }}</span>
+        {% endif %}
+      </div>
+      {% if repo.description and repo.description != '' %}
+      <p class="repo-description">{{ repo.description }}</p>
+      {% endif %}
+      <div class="repo-meta">
+        {% if repo.stars > 0 %}
+        <span class="repo-stars"><i class="fas fa-star"></i> {{ repo.stars }}</span>
+        {% endif %}
+        {% if repo.forks > 0 %}
+        <span class="repo-forks"><i class="fas fa-code-branch"></i> {{ repo.forks }}</span>
+        {% endif %}
+        <span class="repo-updated">Updated {{ repo.updated_at }}</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="github-link">
+    <a href="{{ site.data.github_projects.github_url }}" target="_blank" rel="noopener">View all repositories on GitHub</a>
+  </p>
+</div>
+{% endif %}
