@@ -1,19 +1,56 @@
-last_updated: '2026-01-30 10:26:42'
+last_updated: '2026-02-02 06:52:04'
 github_url: https://github.com/rpatrik96
 repos:
+- name: AttA2C
+  description: Attention-based Curiosity-driven Exploration in Deep Reinforcement
+    Learning
+  url: https://github.com/rpatrik96/AttA2C
+  stars: 29
+  forks: 6
+  language: Jupyter Notebook
+  updated_at: '2026-02-02'
+  topics:
+  - a2c
+  - atta2c
+  - attention
+  - attention-mechanism
+  - curiosity
+  - curiosity-driven
+  - curiosity-rl
+  - exploration-strategy
+  - icm
+  - intrinsic-curiosity-module
+  - intrinsic-reward
+  - openai-gym
+  - pytorch
+  - pytorch-implementation
+  - pytorch-rl
+  - rational-curiosity
+  - rcm
+  - reinforcement-learning
+  - reinforcement-learning-algorithms
+  - stable-baselines
 - name: bibtexupdater
   description: 'Tools for managing BibTeX bibliographies: automatically update preprints
     to published versions and filter to only cited references.'
   url: https://github.com/rpatrik96/bibtexupdater
-  stars: 59
+  stars: 60
   forks: 4
   language: Python
-  updated_at: '2026-01-30'
+  updated_at: '2026-02-01'
   topics:
   - bibtex
   - bibtex-references
   - bibtexparser
   - latex
+- name: rpatrik96.github.io
+  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
+  url: https://github.com/rpatrik96/rpatrik96.github.io
+  stars: 0
+  forks: 1
+  language: JavaScript
+  updated_at: '2026-01-30'
+  topics: []
 - name: ica_causal_effect
   description: ''
   url: https://github.com/rpatrik96/ica_causal_effect
@@ -51,20 +88,4 @@ repos:
   forks: 0
   language: TypeScript
   updated_at: '2026-01-06'
-  topics: []
-- name: CV
-  description: ''
-  url: https://github.com/rpatrik96/CV
-  stars: 0
-  forks: 0
-  language: TeX
-  updated_at: '2025-12-31'
-  topics: []
-- name: rpatrik96.github.io
-  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
-  url: https://github.com/rpatrik96/rpatrik96.github.io
-  stars: 0
-  forks: 1
-  language: JavaScript
-  updated_at: '2025-11-30'
   topics: []
