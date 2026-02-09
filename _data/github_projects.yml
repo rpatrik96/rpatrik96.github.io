@@ -1,6 +1,35 @@
-last_updated: '2026-02-02 06:52:04'
+last_updated: '2026-02-09 06:54:15'
 github_url: https://github.com/rpatrik96
 repos:
+- name: bibtexupdater
+  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
+    to published versions and filter to only cited references.'
+  url: https://github.com/rpatrik96/bibtexupdater
+  stars: 61
+  forks: 4
+  language: Python
+  updated_at: '2026-02-08'
+  topics:
+  - bibtex
+  - bibtex-references
+  - bibtexparser
+  - latex
+- name: ica_causal_effect
+  description: ''
+  url: https://github.com/rpatrik96/ica_causal_effect
+  stars: 0
+  forks: 0
+  language: Python
+  updated_at: '2026-02-04'
+  topics: []
+- name: rpatrik96.github.io
+  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
+  url: https://github.com/rpatrik96/rpatrik96.github.io
+  stars: 0
+  forks: 1
+  language: JavaScript
+  updated_at: '2026-02-02'
+  topics: []
 - name: AttA2C
   description: Attention-based Curiosity-driven Exploration in Deep Reinforcement
     Learning
@@ -30,35 +59,6 @@ repos:
   - reinforcement-learning
   - reinforcement-learning-algorithms
   - stable-baselines
-- name: bibtexupdater
-  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
-    to published versions and filter to only cited references.'
-  url: https://github.com/rpatrik96/bibtexupdater
-  stars: 60
-  forks: 4
-  language: Python
-  updated_at: '2026-02-01'
-  topics:
-  - bibtex
-  - bibtex-references
-  - bibtexparser
-  - latex
-- name: rpatrik96.github.io
-  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
-  url: https://github.com/rpatrik96/rpatrik96.github.io
-  stars: 0
-  forks: 1
-  language: JavaScript
-  updated_at: '2026-01-30'
-  topics: []
-- name: ica_causal_effect
-  description: ''
-  url: https://github.com/rpatrik96/ica_causal_effect
-  stars: 0
-  forks: 0
-  language: Python
-  updated_at: '2026-01-15'
-  topics: []
 - name: nl-causal-representations
   description: This is the code for the paper Jacobian-based Causal Discovery with
     Nonlinear ICA, demonstrating how identifiable representations (particularly, with
