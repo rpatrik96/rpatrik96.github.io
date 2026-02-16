@@ -1,34 +1,42 @@
-last_updated: '2026-02-09 06:54:15'
+last_updated: '2026-02-16 06:52:28'
 github_url: https://github.com/rpatrik96
 repos:
-- name: bibtexupdater
-  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
-    to published versions and filter to only cited references.'
-  url: https://github.com/rpatrik96/bibtexupdater
-  stars: 61
-  forks: 4
-  language: Python
-  updated_at: '2026-02-08'
-  topics:
-  - bibtex
-  - bibtex-references
-  - bibtexparser
-  - latex
 - name: ica_causal_effect
   description: ''
   url: https://github.com/rpatrik96/ica_causal_effect
   stars: 0
   forks: 0
   language: Python
-  updated_at: '2026-02-04'
+  updated_at: '2026-02-15'
   topics: []
+- name: hallmark
+  description: A benchmark for evaluating citation hallucination detection tools
+  url: https://github.com/rpatrik96/hallmark
+  stars: 0
+  forks: 0
+  language: Python
+  updated_at: '2026-02-14'
+  topics: []
+- name: bibtexupdater
+  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
+    to published versions and filter to only cited references.'
+  url: https://github.com/rpatrik96/bibtexupdater
+  stars: 68
+  forks: 4
+  language: Python
+  updated_at: '2026-02-14'
+  topics:
+  - bibtex
+  - bibtex-references
+  - bibtexparser
+  - latex
 - name: rpatrik96.github.io
   description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
   url: https://github.com/rpatrik96/rpatrik96.github.io
   stars: 0
   forks: 1
   language: JavaScript
-  updated_at: '2026-02-02'
+  updated_at: '2026-02-09'
   topics: []
 - name: AttA2C
   description: Attention-based Curiosity-driven Exploration in Deep Reinforcement
@@ -81,11 +89,3 @@ repos:
   - independent-component-analysis
   - machine-learning
   - structural-causal-model
-- name: running-analyzer
-  description: ''
-  url: https://github.com/rpatrik96/running-analyzer
-  stars: 0
-  forks: 0
-  language: TypeScript
-  updated_at: '2026-01-06'
-  topics: []
