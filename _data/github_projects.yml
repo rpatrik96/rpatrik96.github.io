@@ -1,28 +1,45 @@
-last_updated: '2026-02-16 06:52:28'
+last_updated: '2026-02-23 06:53:14'
 github_url: https://github.com/rpatrik96
 repos:
-- name: ica_causal_effect
-  description: ''
-  url: https://github.com/rpatrik96/ica_causal_effect
-  stars: 0
-  forks: 0
-  language: Python
-  updated_at: '2026-02-15'
-  topics: []
 - name: hallmark
   description: A benchmark for evaluating citation hallucination detection tools
   url: https://github.com/rpatrik96/hallmark
   stars: 0
   forks: 0
   language: Python
-  updated_at: '2026-02-14'
+  updated_at: '2026-02-22'
+  topics: []
+- name: mech-interp-claim-calibration
+  description: Multi-LLM claim calibration pipeline for mechanistic interpretability
+    papers
+  url: https://github.com/rpatrik96/mech-interp-claim-calibration
+  stars: 0
+  forks: 0
+  language: Python
+  updated_at: '2026-02-19'
+  topics: []
+- name: ica_causal_effect
+  description: ''
+  url: https://github.com/rpatrik96/ica_causal_effect
+  stars: 0
+  forks: 0
+  language: Python
+  updated_at: '2026-02-19'
+  topics: []
+- name: rpatrik96.github.io
+  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
+  url: https://github.com/rpatrik96/rpatrik96.github.io
+  stars: 0
+  forks: 1
+  language: JavaScript
+  updated_at: '2026-02-16'
   topics: []
 - name: bibtexupdater
   description: 'Tools for managing BibTeX bibliographies: automatically update preprints
     to published versions and filter to only cited references.'
   url: https://github.com/rpatrik96/bibtexupdater
   stars: 68
-  forks: 4
+  forks: 3
   language: Python
   updated_at: '2026-02-14'
   topics:
@@ -30,14 +47,6 @@ repos:
   - bibtex-references
   - bibtexparser
   - latex
-- name: rpatrik96.github.io
-  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
-  url: https://github.com/rpatrik96/rpatrik96.github.io
-  stars: 0
-  forks: 1
-  language: JavaScript
-  updated_at: '2026-02-09'
-  topics: []
 - name: AttA2C
   description: Attention-based Curiosity-driven Exploration in Deep Reinforcement
     Learning
@@ -67,25 +76,3 @@ repos:
   - reinforcement-learning
   - reinforcement-learning-algorithms
   - stable-baselines
-- name: nl-causal-representations
-  description: This is the code for the paper Jacobian-based Causal Discovery with
-    Nonlinear ICA, demonstrating how identifiable representations (particularly, with
-    Nonlinear ICA) can be used to extract the causal graph from an underlying structural
-    equation model (SEM).
-  url: https://github.com/rpatrik96/nl-causal-representations
-  stars: 22
-  forks: 2
-  language: Python
-  updated_at: '2026-01-07'
-  topics:
-  - causal-discovery
-  - causal-discovery-methods
-  - causal-inference
-  - causality
-  - deep-learning
-  - deep-neural-networks
-  - deeplearning
-  - ica
-  - independent-component-analysis
-  - machine-learning
-  - structural-causal-model
