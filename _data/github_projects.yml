@@ -1,6 +1,35 @@
-last_updated: '2026-02-23 06:53:14'
+last_updated: '2026-03-02 06:43:29'
 github_url: https://github.com/rpatrik96
 repos:
+- name: bibtexupdater
+  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
+    to published versions and filter to only cited references.'
+  url: https://github.com/rpatrik96/bibtexupdater
+  stars: 69
+  forks: 3
+  language: Python
+  updated_at: '2026-03-01'
+  topics:
+  - bibtex
+  - bibtex-references
+  - bibtexparser
+  - latex
+- name: ica_causal_effect
+  description: ''
+  url: https://github.com/rpatrik96/ica_causal_effect
+  stars: 0
+  forks: 0
+  language: Python
+  updated_at: '2026-02-26'
+  topics: []
+- name: rpatrik96.github.io
+  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
+  url: https://github.com/rpatrik96/rpatrik96.github.io
+  stars: 0
+  forks: 1
+  language: JavaScript
+  updated_at: '2026-02-23'
+  topics: []
 - name: hallmark
   description: A benchmark for evaluating citation hallucination detection tools
   url: https://github.com/rpatrik96/hallmark
@@ -18,35 +47,6 @@ repos:
   language: Python
   updated_at: '2026-02-19'
   topics: []
-- name: ica_causal_effect
-  description: ''
-  url: https://github.com/rpatrik96/ica_causal_effect
-  stars: 0
-  forks: 0
-  language: Python
-  updated_at: '2026-02-19'
-  topics: []
-- name: rpatrik96.github.io
-  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
-  url: https://github.com/rpatrik96/rpatrik96.github.io
-  stars: 0
-  forks: 1
-  language: JavaScript
-  updated_at: '2026-02-16'
-  topics: []
-- name: bibtexupdater
-  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
-    to published versions and filter to only cited references.'
-  url: https://github.com/rpatrik96/bibtexupdater
-  stars: 68
-  forks: 3
-  language: Python
-  updated_at: '2026-02-14'
-  topics:
-  - bibtex
-  - bibtex-references
-  - bibtexparser
-  - latex
 - name: AttA2C
   description: Attention-based Curiosity-driven Exploration in Deep Reinforcement
     Learning
