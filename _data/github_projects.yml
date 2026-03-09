@@ -1,34 +1,47 @@
-last_updated: '2026-03-02 06:43:29'
+last_updated: '2026-03-09 06:49:20'
 github_url: https://github.com/rpatrik96
 repos:
 - name: bibtexupdater
   description: 'Tools for managing BibTeX bibliographies: automatically update preprints
     to published versions and filter to only cited references.'
   url: https://github.com/rpatrik96/bibtexupdater
-  stars: 69
+  stars: 75
   forks: 3
   language: Python
-  updated_at: '2026-03-01'
+  updated_at: '2026-03-08'
   topics:
   - bibtex
   - bibtex-references
   - bibtexparser
   - latex
 - name: ica_causal_effect
-  description: ''
+  description: Code for 'Estimating Treatment Effects with Independent Component Analysis'
+    (arXiv:2507.16467)
   url: https://github.com/rpatrik96/ica_causal_effect
   stars: 0
   forks: 0
   language: Python
-  updated_at: '2026-02-26'
-  topics: []
+  updated_at: '2026-03-03'
+  topics:
+  - causal-inference
+  - debiased-machine-learning
+  - double-machine-learning
+  - econometrics
+  - fastica
+  - ica
+  - independent-component-analysis
+  - monte-carlo-simulation
+  - orthogonal-machine-learning
+  - partially-linear-model
+  - semiparametric-estimation
+  - treatment-effect-estimation
 - name: rpatrik96.github.io
   description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
   url: https://github.com/rpatrik96/rpatrik96.github.io
   stars: 0
   forks: 1
   language: JavaScript
-  updated_at: '2026-02-23'
+  updated_at: '2026-03-02'
   topics: []
 - name: hallmark
   description: A benchmark for evaluating citation hallucination detection tools
