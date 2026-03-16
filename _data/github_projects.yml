@@ -1,19 +1,65 @@
-last_updated: '2026-03-09 06:49:20'
+last_updated: '2026-03-16 07:04:29'
 github_url: https://github.com/rpatrik96
 repos:
+- name: hallmark
+  description: A benchmark for evaluating citation hallucination detection tools
+  url: https://github.com/rpatrik96/hallmark
+  stars: 0
+  forks: 0
+  language: Python
+  updated_at: '2026-03-15'
+  topics: []
 - name: bibtexupdater
   description: 'Tools for managing BibTeX bibliographies: automatically update preprints
     to published versions and filter to only cited references.'
   url: https://github.com/rpatrik96/bibtexupdater
-  stars: 75
+  stars: 80
   forks: 3
   language: Python
-  updated_at: '2026-03-08'
+  updated_at: '2026-03-15'
   topics:
   - bibtex
   - bibtex-references
   - bibtexparser
   - latex
+- name: research-agora
+  description: 'A community-driven skills marketplace for AI-assisted research. 74
+    modular AI workflows for ML research: paper writing, citation verification, adversarial
+    review, proof auditing, and more. Claude Code plugin with cross-platform support.'
+  url: https://github.com/rpatrik96/research-agora
+  stars: 0
+  forks: 0
+  language: Python
+  updated_at: '2026-03-15'
+  topics:
+  - academic-writing
+  - agentic-ai
+  - ai-agents
+  - ai-assisted-research
+  - citation-verification
+  - claude-code
+  - icml
+  - latex
+  - llm-tools
+  - machine-learning
+  - ml-research
+  - neurips
+  - paper-writing
+  - peer-review
+  - plugin-marketplace
+  - reproducibility
+  - research-tools
+  - research-workflow
+  - scientific-writing
+  - test-driven-research
+- name: rpatrik96.github.io
+  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
+  url: https://github.com/rpatrik96/rpatrik96.github.io
+  stars: 0
+  forks: 1
+  language: JavaScript
+  updated_at: '2026-03-09'
+  topics: []
 - name: ica_causal_effect
   description: Code for 'Estimating Treatment Effects with Independent Component Analysis'
     (arXiv:2507.16467)
@@ -35,22 +81,6 @@ repos:
   - partially-linear-model
   - semiparametric-estimation
   - treatment-effect-estimation
-- name: rpatrik96.github.io
-  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
-  url: https://github.com/rpatrik96/rpatrik96.github.io
-  stars: 0
-  forks: 1
-  language: JavaScript
-  updated_at: '2026-03-02'
-  topics: []
-- name: hallmark
-  description: A benchmark for evaluating citation hallucination detection tools
-  url: https://github.com/rpatrik96/hallmark
-  stars: 0
-  forks: 0
-  language: Python
-  updated_at: '2026-02-22'
-  topics: []
 - name: mech-interp-claim-calibration
   description: Multi-LLM claim calibration pipeline for mechanistic interpretability
     papers
@@ -60,32 +90,3 @@ repos:
   language: Python
   updated_at: '2026-02-19'
   topics: []
-- name: AttA2C
-  description: Attention-based Curiosity-driven Exploration in Deep Reinforcement
-    Learning
-  url: https://github.com/rpatrik96/AttA2C
-  stars: 29
-  forks: 6
-  language: Jupyter Notebook
-  updated_at: '2026-02-02'
-  topics:
-  - a2c
-  - atta2c
-  - attention
-  - attention-mechanism
-  - curiosity
-  - curiosity-driven
-  - curiosity-rl
-  - exploration-strategy
-  - icm
-  - intrinsic-curiosity-module
-  - intrinsic-reward
-  - openai-gym
-  - pytorch
-  - pytorch-implementation
-  - pytorch-rl
-  - rational-curiosity
-  - rcm
-  - reinforcement-learning
-  - reinforcement-learning-algorithms
-  - stable-baselines
