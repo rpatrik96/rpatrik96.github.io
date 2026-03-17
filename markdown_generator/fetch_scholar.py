@@ -6,7 +6,7 @@ This script uses the scholarly library to scrape Google Scholar data.
 Run this before building the Jekyll site to update the papers list.
 
 Usage:
-    pip install scholarly pyyaml
+    pip install scholarly pyyaml free-proxy
     python fetch_scholar.py
 
 The script will:
@@ -19,6 +19,7 @@ The script will:
 import os
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, TimeoutError
 from datetime import datetime
 
 import yaml
@@ -36,6 +37,8 @@ NUM_PAPERS = 5  # Number of recent papers to display
 OUTPUT_FILE = "../_data/scholar_papers.yml"
 MAX_RETRIES = 3
 RETRY_DELAY = 5  # seconds
+PROXY_TIMEOUT = 30  # seconds to wait for proxy setup
+FETCH_TIMEOUT = 120  # seconds per fetch attempt
 
 # Month name to number mapping
 MONTH_MAP = {
@@ -54,18 +57,30 @@ MONTH_MAP = {
 }
 
 
+def _do_proxy_setup():
+    """Run proxy setup in a thread (can hang indefinitely)."""
+    pg = ProxyGenerator()
+    success = pg.FreeProxies()
+    if success:
+        scholarly.use_proxy(pg)
+    return success
+
+
 def setup_proxy():
-    """Configure scholarly to use a free proxy to avoid rate limiting."""
+    """Configure scholarly to use a free proxy, with a timeout."""
     try:
-        pg = ProxyGenerator()
-        success = pg.FreeProxies()
-        if success:
-            scholarly.use_proxy(pg)
-            print("Proxy configured successfully.")
-            return True
-        else:
-            print("Warning: Could not set up proxy, proceeding without one.")
-            return False
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(_do_proxy_setup)
+            success = future.result(timeout=PROXY_TIMEOUT)
+            if success:
+                print("Proxy configured successfully.")
+                return True
+            else:
+                print("Warning: Could not find a working proxy, proceeding without one.")
+                return False
+    except TimeoutError:
+        print(f"Warning: Proxy setup timed out after {PROXY_TIMEOUT}s, proceeding without one.")
+        return False
     except Exception as e:
         print(f"Warning: Proxy setup failed ({e}), proceeding without one.")
         return False
@@ -102,13 +117,8 @@ def parse_publication_date(bib: dict) -> str:
     return str(year)
 
 
-def fetch_author_publications(author_id: str, num_papers: int = 5) -> list:
-    """
-    Fetch publications from Google Scholar for a given author ID.
-    Fills in detailed information for each publication.
-    """
-    print(f"Fetching author profile for ID: {author_id}")
-
+def _do_fetch(author_id: str, num_papers: int) -> list:
+    """Fetch publications (runs in a thread for timeout support)."""
     author = scholarly.search_author_id(author_id)
 
     if author is None:
@@ -149,7 +159,6 @@ def fetch_author_publications(author_id: str, num_papers: int = 5) -> list:
             or bib.get('booktitle', '')
         )
 
-        # Extract authors from bib entry
         authors = bib.get('author', '')
 
         paper = {
@@ -173,6 +182,15 @@ def fetch_author_publications(author_id: str, num_papers: int = 5) -> list:
         print(f"  - {paper['title']} ({paper['year']}) - {venue or 'No venue'}")
 
     return papers
+
+
+def fetch_author_publications(author_id: str, num_papers: int = 5) -> list:
+    """Fetch publications with a timeout to prevent hanging."""
+    print(f"Fetching author profile for ID: {author_id}")
+
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(_do_fetch, author_id, num_papers)
+        return future.result(timeout=FETCH_TIMEOUT)
 
 
 def save_to_yaml(papers: list, output_path: str):
@@ -212,6 +230,11 @@ def main():
                 print("No publications found.")
                 return 0
 
+        except TimeoutError:
+            print(f"Attempt {attempt}/{MAX_RETRIES} timed out after {FETCH_TIMEOUT}s")
+            if attempt < MAX_RETRIES:
+                print(f"Retrying in {RETRY_DELAY}s...")
+                time.sleep(RETRY_DELAY)
         except Exception as e:
             print(f"Attempt {attempt}/{MAX_RETRIES} failed: {e}")
             if attempt < MAX_RETRIES:
