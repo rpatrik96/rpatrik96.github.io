@@ -21,6 +21,7 @@ jobs:
 
       - name: Fetch Google Scholar papers
         run: python markdown_generator/fetch_scholar.py
+        timeout-minutes: 5
 
       - name: Commit and push if changed
         run: |

@@ -16,10 +16,10 @@ The script will:
 4. Save them to ../_data/scholar_papers.yml for Jekyll to use
 """
 
+import multiprocessing
 import os
 import sys
 import time
-from concurrent.futures import ThreadPoolExecutor, TimeoutError
 from datetime import datetime
 
 import yaml
@@ -35,10 +35,9 @@ except ImportError:
 SCHOLAR_AUTHOR_ID = "zIT0fdIAAAAJ"  # Your Google Scholar author ID
 NUM_PAPERS = 5  # Number of recent papers to display
 OUTPUT_FILE = "../_data/scholar_papers.yml"
-MAX_RETRIES = 3
+MAX_RETRIES = 2
 RETRY_DELAY = 5  # seconds
-PROXY_TIMEOUT = 30  # seconds to wait for proxy setup
-FETCH_TIMEOUT = 120  # seconds per fetch attempt
+FETCH_TIMEOUT = 90  # seconds per attempt (proxy setup + fetch combined)
 
 # Month name to number mapping
 MONTH_MAP = {
@@ -57,143 +56,117 @@ MONTH_MAP = {
 }
 
 
-def _do_proxy_setup():
-    """Run proxy setup in a thread (can hang indefinitely)."""
-    pg = ProxyGenerator()
-    success = pg.FreeProxies()
-    if success:
-        scholarly.use_proxy(pg)
-    return success
-
-
-def setup_proxy():
-    """Configure scholarly to use a free proxy, with a timeout."""
+def _worker(author_id, num_papers, use_proxy, result_queue):
+    """Run in a subprocess so it can be killed on timeout."""
     try:
-        with ThreadPoolExecutor(max_workers=1) as executor:
-            future = executor.submit(_do_proxy_setup)
-            success = future.result(timeout=PROXY_TIMEOUT)
-            if success:
-                print("Proxy configured successfully.")
-                return True
-            else:
-                print("Warning: Could not find a working proxy, proceeding without one.")
-                return False
-    except TimeoutError:
-        print(f"Warning: Proxy setup timed out after {PROXY_TIMEOUT}s, proceeding without one.")
-        return False
-    except Exception as e:
-        print(f"Warning: Proxy setup failed ({e}), proceeding without one.")
-        return False
+        if use_proxy:
+            try:
+                pg = ProxyGenerator()
+                success = pg.FreeProxies()
+                if success:
+                    scholarly.use_proxy(pg)
+                    print("  Proxy configured.")
+                else:
+                    print("  No proxy found, trying direct.")
+            except Exception as e:
+                print(f"  Proxy setup failed ({e}), trying direct.")
 
+        author = scholarly.search_author_id(author_id)
+        if author is None:
+            result_queue.put({"error": "Scholar returned no author data (rate-limited)"})
+            return
 
-def parse_publication_date(bib: dict) -> str:
-    """
-    Parse publication date from bib entry and return in YYYY/MM format.
-    Falls back to YYYY if month is not available.
-    """
-    year = bib.get('pub_year', '')
+        author = scholarly.fill(author, sections=['publications'])
+        if author is None:
+            result_queue.put({"error": "Scholar returned no data filling profile"})
+            return
 
-    if not year:
-        return ''
+        publications = author.get('publications', [])
 
-    month = None
-
-    if 'month' in bib:
-        month_str = str(bib['month']).lower().strip()
-        if month_str in MONTH_MAP:
-            month = MONTH_MAP[month_str]
-        elif month_str.isdigit() and 1 <= int(month_str) <= 12:
-            month = month_str.zfill(2)
-
-    if not month and 'publication_date' in bib:
-        pub_date = str(bib['publication_date']).lower()
-        for month_name, month_num in MONTH_MAP.items():
-            if month_name in pub_date:
-                month = month_num
-                break
-
-    if month:
-        return f"{year}/{month}"
-    return str(year)
-
-
-def _do_fetch(author_id: str, num_papers: int) -> list:
-    """Fetch publications (runs in a thread for timeout support)."""
-    author = scholarly.search_author_id(author_id)
-
-    if author is None:
-        raise RuntimeError("Google Scholar returned no author data (likely rate-limited)")
-
-    author = scholarly.fill(author, sections=['publications'])
-
-    if author is None:
-        raise RuntimeError("Google Scholar returned no data when filling author profile")
-
-    publications = author.get('publications', [])
-
-    def get_year(pub):
-        bib = pub.get('bib', {})
-        year = bib.get('pub_year', '0')
-        try:
-            return int(year)
-        except (ValueError, TypeError):
-            return 0
-
-    publications = sorted(publications, key=get_year, reverse=True)
-    recent_pubs = publications[:num_papers]
-
-    papers = []
-    for pub in recent_pubs:
-        try:
-            filled_pub = scholarly.fill(pub)
-            bib = filled_pub.get('bib', {})
-        except Exception as e:
-            print(f"  Warning: Could not fill publication details: {e}")
+        def get_year(pub):
             bib = pub.get('bib', {})
-            filled_pub = pub
+            year = bib.get('pub_year', '0')
+            try:
+                return int(year)
+            except (ValueError, TypeError):
+                return 0
 
-        venue = (
-            bib.get('venue', '')
-            or bib.get('journal', '')
-            or bib.get('conference', '')
-            or bib.get('booktitle', '')
-        )
+        publications = sorted(publications, key=get_year, reverse=True)
+        recent_pubs = publications[:num_papers]
 
-        authors = bib.get('author', '')
+        papers = []
+        for pub in recent_pubs:
+            try:
+                filled_pub = scholarly.fill(pub)
+                bib = filled_pub.get('bib', {})
+            except Exception as e:
+                print(f"  Warning: Could not fill publication details: {e}")
+                bib = pub.get('bib', {})
+                filled_pub = pub
 
-        paper = {
-            'title': bib.get('title', 'Untitled'),
-            'authors': authors,
-            'year': bib.get('pub_year', ''),
-            'venue': venue,
-            'citations': filled_pub.get('num_citations', 0),
-            'url': (
-                f"https://scholar.google.com/citations?view_op=view_citation"
-                f"&hl=en&user={author_id}"
-                f"&citation_for_view={author_id}:"
-                f"{pub.get('author_pub_id', '').split(':')[-1] if pub.get('author_pub_id') else ''}"
-            ),
-        }
+            venue = (
+                bib.get('venue', '')
+                or bib.get('journal', '')
+                or bib.get('conference', '')
+                or bib.get('booktitle', '')
+            )
 
-        if filled_pub.get('pub_url'):
-            paper['paper_url'] = filled_pub.get('pub_url')
+            authors = bib.get('author', '')
 
-        papers.append(paper)
-        print(f"  - {paper['title']} ({paper['year']}) - {venue or 'No venue'}")
+            paper = {
+                'title': bib.get('title', 'Untitled'),
+                'authors': authors,
+                'year': bib.get('pub_year', ''),
+                'venue': venue,
+                'citations': filled_pub.get('num_citations', 0),
+                'url': (
+                    f"https://scholar.google.com/citations?view_op=view_citation"
+                    f"&hl=en&user={author_id}"
+                    f"&citation_for_view={author_id}:"
+                    f"{pub.get('author_pub_id', '').split(':')[-1] if pub.get('author_pub_id') else ''}"
+                ),
+            }
 
-    return papers
+            if filled_pub.get('pub_url'):
+                paper['paper_url'] = filled_pub.get('pub_url')
+
+            papers.append(paper)
+            print(f"  - {paper['title']} ({paper['year']}) - {venue or 'No venue'}")
+
+        result_queue.put({"papers": papers})
+
+    except Exception as e:
+        result_queue.put({"error": str(e)})
 
 
-def fetch_author_publications(author_id: str, num_papers: int = 5) -> list:
-    """Fetch publications with a timeout to prevent hanging."""
-    print(f"Fetching author profile for ID: {author_id}")
+def fetch_with_timeout(author_id, num_papers, use_proxy, timeout):
+    """Fetch publications in a subprocess with a hard timeout."""
+    result_queue = multiprocessing.Queue()
+    proc = multiprocessing.Process(
+        target=_worker,
+        args=(author_id, num_papers, use_proxy, result_queue),
+    )
+    proc.start()
+    proc.join(timeout=timeout)
 
-    with ThreadPoolExecutor(max_workers=1) as executor:
-        future = executor.submit(_do_fetch, author_id, num_papers)
-        return future.result(timeout=FETCH_TIMEOUT)
+    if proc.is_alive():
+        proc.terminate()
+        proc.join(timeout=5)
+        if proc.is_alive():
+            proc.kill()
+            proc.join()
+        raise TimeoutError(f"Fetch timed out after {timeout}s")
+
+    if result_queue.empty():
+        raise RuntimeError("Worker process exited without producing results")
+
+    result = result_queue.get_nowait()
+    if "error" in result:
+        raise RuntimeError(result["error"])
+    return result["papers"]
 
 
-def save_to_yaml(papers: list, output_path: str):
+def save_to_yaml(papers, output_path):
     """Save papers list to YAML file."""
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
@@ -213,39 +186,40 @@ def main():
     print("Google Scholar Publication Fetcher")
     print("=" * 60)
 
-    # Set up proxy to avoid Google Scholar rate limiting in CI
-    setup_proxy()
+    # Attempt 1: with proxy, Attempt 2: without proxy
+    strategies = [
+        ("with proxy", True),
+        ("without proxy", False),
+    ]
 
-    for attempt in range(1, MAX_RETRIES + 1):
+    for attempt, (desc, use_proxy) in enumerate(strategies, 1):
         try:
-            papers = fetch_author_publications(SCHOLAR_AUTHOR_ID, NUM_PAPERS)
+            print(f"\nAttempt {attempt}/{len(strategies)} ({desc})...")
+            papers = fetch_with_timeout(
+                SCHOLAR_AUTHOR_ID, NUM_PAPERS, use_proxy, FETCH_TIMEOUT
+            )
 
             if papers:
                 script_dir = os.path.dirname(os.path.abspath(__file__))
                 output_path = os.path.join(script_dir, OUTPUT_FILE)
                 save_to_yaml(papers, output_path)
-                print("\nDone! Now rebuild your Jekyll site to see the changes.")
+                print("\nDone!")
                 return 0
             else:
                 print("No publications found.")
                 return 0
 
-        except TimeoutError:
-            print(f"Attempt {attempt}/{MAX_RETRIES} timed out after {FETCH_TIMEOUT}s")
-            if attempt < MAX_RETRIES:
-                print(f"Retrying in {RETRY_DELAY}s...")
-                time.sleep(RETRY_DELAY)
-        except Exception as e:
-            print(f"Attempt {attempt}/{MAX_RETRIES} failed: {e}")
-            if attempt < MAX_RETRIES:
-                print(f"Retrying in {RETRY_DELAY}s...")
+        except (TimeoutError, RuntimeError) as e:
+            print(f"  Failed: {e}")
+            if attempt < len(strategies):
+                print(f"  Retrying in {RETRY_DELAY}s...")
                 time.sleep(RETRY_DELAY)
 
     print("\nAll attempts failed. Google Scholar may be rate-limiting this IP.")
     print("The existing data file will remain unchanged.")
-    # Exit 0 so CI stays green — the data file is just unchanged
     return 0
 
 
 if __name__ == "__main__":
+    multiprocessing.set_start_method("spawn", force=True)
     sys.exit(main())
