@@ -17,11 +17,10 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install scholarly pyyaml
+        run: pip install scholarly pyyaml free-proxy
 
       - name: Fetch Google Scholar papers
         run: python markdown_generator/fetch_scholar.py
-        continue-on-error: true  # Don't fail workflow on rate limiting
 
       - name: Commit and push if changed
         run: |
