@@ -12,6 +12,9 @@ main:
   # - title: "Portfolio"
   #   url: /portfolio/
         
+  - title: "AI for Research"
+    url: https://rpatrik96.github.io/research-agora
+
   - title: "Blog Posts"
     url: /year-archive/
 

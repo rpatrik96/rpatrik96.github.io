@@ -8,9 +8,7 @@ redirect_from:
   - /about.html
 ---
 
-I am a final-year Ph.D. student in the Robust Machine Learning group at the Max Planck Institute of Intelligent Systems in Tübingen, supervised by Wieland Brendel, Ferenc Huszár, Matthias Bethge, and Bernhard Schölkopf. I am part of the [ELLIS](https://ellis.eu/phd-postdoc) and [IMPRS-IS](http://imprs.is.mpg.de/) programs. I have also spent time at the [Vector Institute](https://x.com/VectorInst/status/1859689575288860992) and at the University of Cambridge.
-
-**I am actively looking for postdoctoral and junior group leader positions, starting in early 2026.**
+I am a final-year Ph.D. student in the Robust Machine Learning group at the Max Planck Institute of Intelligent Systems in Tübingen, supervised by Wieland Brendel, Ferenc Huszár, Matthias Bethge, and Bernhard Schölkopf. I am part of the [ELLIS](https://ellis.eu/phd-postdoc) and [IMPRS-IS](http://imprs.is.mpg.de/) programs. I have also spent time at [Mila](https://mila.quebec/), the [Vector Institute](https://x.com/VectorInst/status/1859689575288860992), and at the University of Cambridge.
 
 The main motivation for my research is to advance our **understanding of how and why deep learning models work**. 
 My research toolkit currently focuses around _identifiable causal and self-supervised representation learning_ and _out-of-distribution (OOD) generalization,_ with a focus on _compositionality in language models_. During my Ph.D., I [realized](https://openreview.net/forum?id=pVyOchWUBa) that current machine learning theory is insufficient to explain especially the interesting and useful properties of deep neural networks. 
@@ -20,6 +18,7 @@ I aim to help close this gap, by focusing on:
 - extending our understanding of out-of-distribution and compositional generalization
 - uncovering overarching patterns across different fields in machine learning
 
+I am also passionate about **AI for research**: I believe AI can fundamentally transform how we do science. I outlined this vision in a [position paper](https://openreview.net/forum?id=svFHXBd2wq) at the P-AGI Workshop @ ICLR 2026 and built the [Research Agora](https://rpatrik96.github.io/research-agora), an open-source skills marketplace for AI-assisted research.
 
 I have done both my M.Sc. and B.Sc. at the Budapest University of Technology in electrical engineering and specialized in control engineering and intelligent systems. In my free time, I enjoy being outdoors and often bring my [camera](https://500px.com/p/rpatrik96) with me.
 
