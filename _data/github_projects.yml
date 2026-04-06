@@ -1,34 +1,28 @@
-last_updated: '2026-03-30 07:14:47'
+last_updated: '2026-04-06 07:16:40'
 github_url: https://github.com/rpatrik96
 repos:
-- name: research-agora
-  description: 'Research Agora: Claude Code skills, benchmarks & tools for ML researchers
-    — paper writing, citation verification, experiment tracking, LaTeX automation'
-  url: https://github.com/rpatrik96/research-agora
-  stars: 0
-  forks: 0
+- name: bibtexupdater
+  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
+    to published versions and filter to only cited references.'
+  url: https://github.com/rpatrik96/bibtexupdater
+  stars: 82
+  forks: 4
   language: Python
-  updated_at: '2026-03-26'
+  updated_at: '2026-04-05'
   topics:
-  - academic-writing
-  - benchmarks
-  - citation-verification
-  - claude-code
+  - bibtex
+  - bibtex-references
+  - bibtexparser
   - latex
-  - machine-learning
-  - ml-research
-  - paper-writing
-  - research-tools
-  - skills
 - name: hallmark
   description: 'HALLMARK: Citation hallucination detection benchmark for ML papers
     — 2,525 entries, 14 hallucination types, 3 difficulty tiers, 10 baselines including
     LLMs and verification tools'
   url: https://github.com/rpatrik96/hallmark
-  stars: 0
+  stars: 1
   forks: 0
   language: Python
-  updated_at: '2026-03-24'
+  updated_at: '2026-04-02'
   topics:
   - academic-integrity
   - benchmark
@@ -40,27 +34,54 @@ repos:
   - machine-learning
   - nlp
   - reproducibility
-- name: bibtexupdater
-  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
-    to published versions and filter to only cited references.'
-  url: https://github.com/rpatrik96/bibtexupdater
-  stars: 81
-  forks: 3
-  language: Python
-  updated_at: '2026-03-24'
-  topics:
-  - bibtex
-  - bibtex-references
-  - bibtexparser
-  - latex
 - name: rpatrik96.github.io
   description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
   url: https://github.com/rpatrik96/rpatrik96.github.io
   stars: 0
   forks: 1
   language: JavaScript
-  updated_at: '2026-03-23'
+  updated_at: '2026-04-02'
   topics: []
+- name: research-agora
+  description: 'Research Agora: Claude Code skills, benchmarks & tools for ML researchers
+    — paper writing, citation verification, experiment tracking, LaTeX automation'
+  url: https://github.com/rpatrik96/research-agora
+  stars: 4
+  forks: 0
+  language: Python
+  updated_at: '2026-04-02'
+  topics:
+  - academic-writing
+  - benchmarks
+  - citation-verification
+  - claude-code
+  - latex
+  - machine-learning
+  - ml-research
+  - paper-writing
+  - research-tools
+  - skills
+- name: ica_causal_effect
+  description: Code for 'Estimating Treatment Effects with Independent Component Analysis'
+    (arXiv:2507.16467)
+  url: https://github.com/rpatrik96/ica_causal_effect
+  stars: 1
+  forks: 0
+  language: Python
+  updated_at: '2026-03-31'
+  topics:
+  - causal-inference
+  - debiased-machine-learning
+  - double-machine-learning
+  - econometrics
+  - fastica
+  - ica
+  - independent-component-analysis
+  - monte-carlo-simulation
+  - orthogonal-machine-learning
+  - partially-linear-model
+  - semiparametric-estimation
+  - treatment-effect-estimation
 - name: CV
   description: ''
   url: https://github.com/rpatrik96/CV
@@ -69,24 +90,3 @@ repos:
   language: TeX
   updated_at: '2026-03-22'
   topics: []
-- name: ima-vae
-  description: 'This is the code for the paper Embrace the Gap: VAEs perform Independent
-    Mechanism Analysis, showing that optimizing the ELBO is equivalent to optimizing
-    the IMA-regularized log-likelihood under certain assumptions (e.g., small decoder
-    variance).'
-  url: https://github.com/rpatrik96/ima-vae
-  stars: 22
-  forks: 0
-  language: Jupyter Notebook
-  updated_at: '2026-03-21'
-  topics:
-  - disentanglement
-  - dsprites
-  - ica
-  - independent-component-analysis
-  - pytorch
-  - pytorch-lightning
-  - vae
-  - variational-autoencoder
-  - variational-inference
-  - wandb
