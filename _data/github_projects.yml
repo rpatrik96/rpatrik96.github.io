@@ -1,14 +1,49 @@
-last_updated: '2026-04-13 07:47:02'
+last_updated: '2026-04-20 07:49:57'
 github_url: https://github.com/rpatrik96
 repos:
+- name: bibtexupdater
+  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
+    to published versions and filter to only cited references.'
+  url: https://github.com/rpatrik96/bibtexupdater
+  stars: 83
+  forks: 5
+  language: Python
+  updated_at: '2026-04-15'
+  topics:
+  - bibtex
+  - bibtex-references
+  - bibtexparser
+  - latex
+- name: 3d-tracking
+  description: Object tracking with OpenCV based on stereo camera images
+  url: https://github.com/rpatrik96/3d-tracking
+  stars: 24
+  forks: 12
+  language: Python
+  updated_at: '2026-04-14'
+  topics:
+  - 3d-tracking
+  - block-matching
+  - camera-calibration
+  - chessboard-detection
+  - computer-vision
+  - disparity-map
+  - morphology
+  - opencv
+  - python3
+  - rectification
+  - reprojection
+  - stereo-matching
+  - stereo-vision
+  - tracking
 - name: research-agora
   description: 'Research Agora: Claude Code skills, benchmarks & tools for ML researchers
     — paper writing, citation verification, experiment tracking, LaTeX automation'
   url: https://github.com/rpatrik96/research-agora
-  stars: 5
-  forks: 1
+  stars: 6
+  forks: 2
   language: Python
-  updated_at: '2026-04-11'
+  updated_at: '2026-04-13'
   topics:
   - academic-writing
   - benchmarks
@@ -26,7 +61,7 @@ repos:
   stars: 0
   forks: 1
   language: JavaScript
-  updated_at: '2026-04-06'
+  updated_at: '2026-04-13'
   topics: []
 - name: hallmark
   description: 'HALLMARK: Citation hallucination detection benchmark for ML papers
@@ -36,7 +71,7 @@ repos:
   stars: 1
   forks: 0
   language: Python
-  updated_at: '2026-04-06'
+  updated_at: '2026-04-13'
   topics:
   - academic-integrity
   - benchmark
@@ -48,19 +83,6 @@ repos:
   - machine-learning
   - nlp
   - reproducibility
-- name: bibtexupdater
-  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
-    to published versions and filter to only cited references.'
-  url: https://github.com/rpatrik96/bibtexupdater
-  stars: 82
-  forks: 5
-  language: Python
-  updated_at: '2026-04-05'
-  topics:
-  - bibtex
-  - bibtex-references
-  - bibtexparser
-  - latex
 - name: ica_causal_effect
   description: Code for 'Estimating Treatment Effects with Independent Component Analysis'
     (arXiv:2507.16467)
@@ -82,11 +104,3 @@ repos:
   - partially-linear-model
   - semiparametric-estimation
   - treatment-effect-estimation
-- name: CV
-  description: ''
-  url: https://github.com/rpatrik96/CV
-  stars: 0
-  forks: 0
-  language: TeX
-  updated_at: '2026-03-22'
-  topics: []
