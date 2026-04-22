@@ -1,11 +1,11 @@
-last_updated: '2026-03-30 07:20:51'
+last_updated: '2026-04-20 07:58:55'
 papers:
 - title: Who Guards the Guardians? The Challenges of Evaluating Identifiability of
     Learned Representations
   authors: Shruti Joshi and Théo Saulus and Wieland Brendel and Philippe Brouillard
     and Dhanya Sridhar and Patrik Reizinger
   year: 2026
-  venue: arXiv (Cornell University)
+  venue: Open MIND
   citations: 0
   url: https://openalex.org/W7133197095
   paper_url: https://arxiv.org/abs/2602.24278
@@ -13,7 +13,7 @@ papers:
   authors: Shruti Joshi and Aaron Mueller and David Klindt and Wieland Brendel and
     Patrik Reizinger and Dhanya Sridhar
   year: 2026
-  venue: arXiv (Cornell University)
+  venue: Open MIND
   citations: 0
   url: https://openalex.org/W7130538568
   paper_url: https://arxiv.org/abs/2602.16698
