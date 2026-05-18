@@ -1,6 +1,19 @@
-last_updated: '2026-05-11 08:56:52'
+last_updated: '2026-05-18 09:38:21'
 github_url: https://github.com/rpatrik96
 repos:
+- name: bibtexupdater
+  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
+    to published versions and filter to only cited references.'
+  url: https://github.com/rpatrik96/bibtexupdater
+  stars: 89
+  forks: 6
+  language: Python
+  updated_at: '2026-05-17'
+  topics:
+  - bibtex
+  - bibtex-references
+  - bibtexparser
+  - latex
 - name: research-agora
   description: 'Research Agora: Claude Code skills, benchmarks & tools for ML researchers
     — paper writing, citation verification, experiment tracking, LaTeX automation'
@@ -8,7 +21,7 @@ repos:
   stars: 11
   forks: 3
   language: Python
-  updated_at: '2026-05-08'
+  updated_at: '2026-05-16'
   topics:
   - academic-writing
   - benchmarks
@@ -20,19 +33,6 @@ repos:
   - paper-writing
   - research-tools
   - skills
-- name: bibtexupdater
-  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
-    to published versions and filter to only cited references.'
-  url: https://github.com/rpatrik96/bibtexupdater
-  stars: 88
-  forks: 6
-  language: Python
-  updated_at: '2026-05-08'
-  topics:
-  - bibtex
-  - bibtex-references
-  - bibtexparser
-  - latex
 - name: hallmark
   description: 'HALLMARK: Citation hallucination detection benchmark for ML papers
     — 2,525 entries, 14 hallucination types, 3 difficulty tiers, 10 baselines including
@@ -41,7 +41,7 @@ repos:
   stars: 1
   forks: 0
   language: Python
-  updated_at: '2026-05-07'
+  updated_at: '2026-05-13'
   topics:
   - academic-integrity
   - benchmark
@@ -59,7 +59,7 @@ repos:
   stars: 0
   forks: 1
   language: JavaScript
-  updated_at: '2026-05-04'
+  updated_at: '2026-05-11'
   topics: []
 - name: ica_causal_effect
   description: Code for 'Estimating Treatment Effects with Independent Component Analysis'
