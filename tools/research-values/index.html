@@ -232,7 +232,12 @@
     <div class="resultgrid" style="margin-top:18px">
       <div class="card">
         <div id="radar-host"></div>
-        <div class="legend" id="radar-legend"></div>
+        <p class="small muted" style="margin:8px 0 2px">Each spoke is one trade-off. Your dot sits
+          toward the side you leaned — out at the <b>rim</b> for the bold pole listed below, in toward
+          the <b>center</b> for its opposite; sitting on the dashed ring means you were balanced. A
+          hollow, greyed dot means too few cards to call.</p>
+        <div class="small muted" style="margin-top:6px">The nine spokes (bold = the pole on the rim):</div>
+        <div class="legend" id="radar-legend" aria-label="What each spoke measures"></div>
       </div>
       <div class="card">
         <div class="arch-pre" id="res-arch-pre"></div>
@@ -264,6 +269,9 @@
           <b>Self-Enhancement ↔ Self-Transcendence</b>; a strong lean isn't "better" — the wheel
           works as a balanced set (Aristotle's golden mean).</p>
         <div class="crosswalk" id="res-crosswalk"></div>
+        <p class="small" style="margin-top:10px">Explore Schwartz's actual model:
+          <a href="https://en.wikipedia.org/wiki/Theory_of_basic_human_values" target="_blank" rel="noopener noreferrer">the values circle — an overview</a>
+          · <a href="https://doi.org/10.9707/2307-0919.1116" target="_blank" rel="noopener noreferrer">Schwartz (2012), the open-access primer (PDF)</a>.</p>
       </div>
     </details>
     <details class="expander" id="exp-method">
@@ -768,7 +776,7 @@ function renderResults(R){
       : `left:50%; width:${pct/2}%; transform:translateX(-100%); background:${col}`;
     return `<div class="lean">
       <div class="bar" aria-hidden="true"><i style="${fill}"></i><i style="left:50%; width:1px; background:#cbd5e3"></i></div>
-      <div class="lab"><b>${word} (${pct}): ${pole}</b> <span class="muted">over ${other.toLowerCase()}</span></div>
+      <div class="lab"><b>${word}: ${pole}</b> <span class="muted">over ${other.toLowerCase()}</span></div>
     </div>`;
   }).join("") : "<p class='muted'>Your picks landed near the middle on every axis — see the live tensions above.</p>";
 
@@ -789,7 +797,7 @@ function renderResults(R){
                        : `left:50%; width:${pct/2}%; transform:translateX(-100%); background:${col}`;
       $("res-fieldaxis-body").innerHTML =
         `<div class="lean"><div class="bar" aria-hidden="true"><i style="${fill}"></i><i style="left:50%; width:1px; background:#cbd5e3"></i></div>
-         <div class="lab"><b>${word} (${pct}): ${pole}</b> <span class="muted">over ${other.toLowerCase()}</span></div></div>
+         <div class="lab"><b>${word}: ${pole}</b> <span class="muted">over ${other.toLowerCase()}</span></div></div>
          <p class="narr" style="font-size:.98rem">Here, ${pos?fa.def.gloss[0]:fa.def.gloss[1]}.</p>`;
     }
   } else { $("res-fieldaxis-card").classList.add("hidden"); }
