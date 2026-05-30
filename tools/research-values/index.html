@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research Values — Would You Rather</title>
+<meta name="description" content="A playful, reflective Would-You-Rather for researchers: surface your research values across nine trade-offs. No backend, no test — the reasoning is the point.">
+<style>
+  :root{
+    --accent:#4A8FE3; --accent-dark:#2f6fbf; --ink:#1c2430; --muted:#525c6b;
+    --bg:#ffffff; --soft:#f4f7fb; --line:#e3e9f1; --b:#fbfdff;
+    --pos:#4A8FE3; --neg:#c2701f; --skip:#727c8b; --good:#3aa66f;
+    --radius:16px; --shadow:0 6px 24px rgba(31,52,84,.10);
+    --maxw:880px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink); background:var(--soft); line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:24px 18px 64px}
+  a{color:var(--accent-dark)}
+  h1,h2,h3{line-height:1.2; margin:0 0 .4em}
+  h1{font-size:1.9rem; letter-spacing:-.01em}
+  .sub{color:var(--muted); font-size:1.02rem; margin:.2em 0 0}
+  .muted{color:var(--muted)}
+  .small{font-size:.86rem}
+  .center{text-align:center}
+  button{font:inherit; cursor:pointer; border:0; background:none; color:inherit}
+  /* visible focus for keyboard / switch users (WCAG 2.4.7) */
+  :focus-visible{outline:2px solid var(--accent-dark); outline-offset:2px; border-radius:8px}
+  .opt:focus-visible,.btn:focus-visible,.chip:focus-visible,.mode:focus-visible{outline:2px solid var(--accent-dark); outline-offset:2px}
+  .btn{display:inline-block; background:var(--accent); color:#fff; padding:.7em 1.2em;
+       border-radius:999px; font-weight:600; box-shadow:0 4px 12px rgba(74,143,227,.28);
+       transition:transform .08s ease, box-shadow .15s ease}
+  .btn:hover{transform:translateY(-1px); box-shadow:0 6px 18px rgba(74,143,227,.36)}
+  .btn.ghost{background:#fff; color:var(--accent-dark); border:1.5px solid var(--accent); box-shadow:none}
+  .btn.sm{padding:.45em .9em; font-size:.86rem}
+  .btn.grey{background:#eef2f7; color:var(--ink); box-shadow:none}
+  .card{background:var(--bg); border:1px solid var(--line); border-radius:var(--radius);
+        box-shadow:var(--shadow); padding:22px}
+  .hidden{display:none !important}
+  .row{display:flex; gap:14px; flex-wrap:wrap}
+  .row.center{justify-content:center; align-items:center}
+  .spread{justify-content:space-between; align-items:center}
+
+  header.top{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:18px}
+  .brandmark{font-weight:700; letter-spacing:-.01em}
+  .topnav{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+
+  .modegrid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:22px}
+  @media(max-width:620px){.modegrid{grid-template-columns:1fr}}
+  .mode{cursor:pointer; text-align:left; transition:transform .1s ease, box-shadow .15s ease}
+  .mode:hover{transform:translateY(-2px); box-shadow:0 10px 30px rgba(31,52,84,.14)}
+  .mode .tag{display:inline-block; font-size:.74rem; font-weight:700; text-transform:uppercase;
+       letter-spacing:.05em; color:var(--accent-dark); background:rgba(74,143,227,.10);
+       padding:.25em .7em; border-radius:999px; margin-bottom:10px}
+  .mode h3{font-size:1.25rem}
+  .fields{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 0}
+  .chip{border:1.5px solid var(--line); background:#fff; padding:.5em 1em; border-radius:999px;
+        font-size:.9rem; transition:all .12s ease}
+  .chip:hover{border-color:var(--accent)}
+  .chip[aria-pressed="true"]{background:var(--accent); color:#fff; border-color:var(--accent)}
+
+  .progress{height:6px; background:#e9eef5; border-radius:999px; overflow:hidden; margin:4px 0 18px}
+  .progress>i{display:block; height:100%; background:var(--accent); width:0; transition:width .3s ease}
+  .counter{font-size:.85rem; color:var(--muted); display:flex; justify-content:space-between; margin-bottom:4px}
+
+  .qhead{font-size:.82rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted);
+         text-align:center; margin:2px 0 16px}
+  .opts{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media(max-width:620px){.opts{grid-template-columns:1fr}}
+  .opt{position:relative; text-align:left; border:2px solid var(--line); background:var(--b);
+       border-radius:14px; padding:20px 18px 18px; min-height:96px; display:flex; flex-direction:column;
+       justify-content:flex-start;
+       transition:border-color .12s ease, transform .08s ease, box-shadow .15s ease}
+  .opt:hover{border-color:var(--accent); transform:translateY(-2px); box-shadow:0 8px 22px rgba(74,143,227,.16)}
+  .opt .ltr{position:absolute; top:-12px; left:16px; width:26px; height:26px; border-radius:50%;
+       background:var(--accent); color:#fff; font-weight:700; font-size:.82rem;
+       display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(74,143,227,.35)}
+  .opt .txt{font-size:1.04rem}
+  .vs{display:flex; align-items:center; justify-content:center; color:var(--muted); font-weight:700;
+      font-size:.8rem; letter-spacing:.08em}
+  .underbar{display:flex; gap:10px; align-items:center; justify-content:center; margin-top:16px; flex-wrap:wrap}
+  .link{color:var(--accent-dark); font-size:.9rem; background:none; text-decoration:underline; text-underline-offset:2px}
+  .link.grey{color:var(--muted)}
+  .disclose{margin-top:14px; border-top:1px dashed var(--line); padding-top:12px}
+  .disclose .body{margin-top:8px; background:var(--soft); border-radius:10px; padding:12px 14px; font-size:.92rem; color:var(--muted)}
+  .why textarea{width:100%; resize:vertical; min-height:42px; border:1.5px solid var(--line);
+       border-radius:10px; padding:10px 12px; font:inherit; margin-top:8px}
+  .why textarea:focus{outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent)}
+
+  .resultgrid{display:grid; grid-template-columns:340px 1fr; gap:22px; align-items:start}
+  @media(max-width:760px){.resultgrid{grid-template-columns:1fr}}
+  svg.radar{width:100%; height:auto; display:block}
+  .lean{display:flex; align-items:center; gap:10px; margin:10px 0}
+  .lean .bar{flex:1; height:10px; background:#eef2f7; border-radius:999px; position:relative; overflow:hidden}
+  .lean .bar>i{position:absolute; top:0; bottom:0; border-radius:999px}
+  .lean .lab{font-size:.92rem; min-width:0}
+  .lean .lab b{color:var(--ink)}
+  .tension{background:rgba(194,112,31,.09); border-left:3px solid var(--neg); padding:10px 14px; border-radius:8px; margin:8px 0; font-size:.94rem}
+  .arch-pre{font-size:.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:2px}
+  .archetype{font-size:1.18rem; font-weight:700; letter-spacing:-.01em; margin:.1em 0}
+  .narr{font-size:1.04rem; margin:.6em 0 0}
+  .notes{margin-top:14px}
+  .notes .n{font-size:.92rem; border-left:3px solid var(--line); padding:4px 0 4px 12px; margin:8px 0; color:var(--muted)}
+  .notes .n b{color:var(--ink)}
+  .legend{font-size:.8rem; color:var(--muted); display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:8px}
+  .legend span b{color:var(--ink)}
+  details.expander{margin-top:16px; border:1px solid var(--line); border-radius:12px; background:#fff}
+  details.expander>summary{cursor:pointer; padding:12px 16px; font-weight:600; list-style:none}
+  details.expander>summary::-webkit-details-marker{display:none}
+  details.expander>summary::before{content:"▸ "; color:var(--accent-dark)}
+  details.expander[open]>summary::before{content:"▾ "}
+  details.expander .inner{padding:0 16px 16px; font-size:.94rem; color:var(--muted)}
+  .crosswalk{display:flex; flex-wrap:wrap; gap:8px; margin:10px 0}
+  .cw{font-size:.85rem; background:var(--soft); border:1px solid var(--line); border-radius:8px; padding:.4em .7em}
+  .cw b{color:var(--ink)}
+  .disclaimer{font-size:.86rem; color:var(--muted); background:var(--soft); border-radius:10px; padding:12px 14px; margin-top:6px}
+  .toast{position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(20px);
+    background:var(--ink); color:#fff; padding:.7em 1.2em; border-radius:999px; font-size:.9rem;
+    opacity:0; transition:all .2s ease; pointer-events:none; z-index:50}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+  .scrim{position:fixed; inset:0; background:rgba(20,28,40,.45); display:flex; align-items:center;
+    justify-content:center; padding:20px; z-index:40}
+  .modal{max-width:560px; width:100%; max-height:84vh; overflow:auto}
+  kbd{font:.8em ui-monospace,Menlo,monospace; background:#eef2f7; border:1px solid var(--line);
+    border-bottom-width:2px; border-radius:5px; padding:.1em .45em}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div><div class="brandmark">Research Values <span class="muted">· Would You Rather</span></div></div>
+    <nav class="topnav">
+      <button class="link" id="nav-house">House rules</button>
+      <button class="link grey" id="nav-restart">Restart</button>
+    </nav>
+  </header>
+
+  <!-- HOME -->
+  <section id="screen-home">
+    <h1>What do you actually value in research?</h1>
+    <p class="sub">A series of forced choices between two researcher fates. There are no wrong
+      answers — <em>the reasoning is the point</em>. Pick the one you'd <b>rather</b>, and watch a
+      picture of your research values take shape.</p>
+    <div class="modegrid">
+      <button class="card mode" id="go-values" aria-label="Find my research values — scored, about four minutes">
+        <span class="tag">Reflect · ~4 min</span>
+        <h3>Find my research values</h3>
+        <p class="muted" style="margin:0">~18 dilemmas, scored across nine research trade-offs.
+          Get a research-values fingerprint, a closest archetype, and a profile you can share or revisit.</p>
+      </button>
+      <button class="card mode" id="go-ice" aria-label="Icebreaker mode — click through, no scoring">
+        <span class="tag">Play · group</span>
+        <h3>Icebreaker mode</h3>
+        <p class="muted" style="margin:0">Two options, random order, click through. No scoring, no
+          profile — just the argument at the table. Built for lab retreats and seminars.</p>
+      </button>
+    </div>
+    <p class="small muted" style="margin-top:18px">A reflective party game, not a validated test.
+      Everything runs in your browser — nothing is sent anywhere.</p>
+  </section>
+
+  <!-- FIELD -->
+  <section id="screen-field" class="hidden">
+    <h1>One quick thing — what's your field?</h1>
+    <p class="sub">The trade-offs are universal; the wording isn't. This re-voices a few cards so a
+      bench scientist, a theorist, and an archival historian aren't all asked the same way. Optional —
+      pick <b>Any field</b> to keep it generic.</p>
+    <div class="fields" id="field-chips" role="group" aria-label="Research field"></div>
+    <div class="underbar" style="justify-content:flex-start; margin-top:22px">
+      <button class="btn" id="field-start">Start</button>
+    </div>
+  </section>
+
+  <!-- CARD -->
+  <section id="screen-card" class="hidden">
+    <div class="counter"><span id="c-left"></span><span id="c-right"></span></div>
+    <div class="progress"><i id="c-bar"></i></div>
+    <div class="card">
+      <div class="qhead">Would you rather…</div>
+      <div class="opts">
+        <button class="opt" id="opt1"><span class="ltr">A</span><span class="txt" id="opt1-txt"></span></button>
+        <div class="vs">— or —</div>
+        <button class="opt" id="opt2"><span class="ltr">B</span><span class="txt" id="opt2-txt"></span></button>
+      </div>
+      <div class="underbar">
+        <button class="link grey" id="btn-skip">Genuinely can't choose →</button>
+        <span id="why-toggle-wrap">· <button class="link" id="btn-why">add a note — why?</button></span>
+      </div>
+      <div class="disclose why hidden" id="why-box">
+        <label class="small muted" for="why-text">Why? (optional — saved on this device; only you see it)</label>
+        <textarea id="why-text" placeholder="In one line: what made you pick that side?"></textarea>
+      </div>
+      <div class="disclose hidden" id="pin-box">
+        <button class="link" id="pin-toggle">⊕ Pin this down (for the nitpickers)</button>
+        <div class="body hidden" id="pin-body"></div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:14px; justify-content:space-between">
+      <button class="btn grey sm" id="btn-back">← Back</button>
+      <span class="small muted">Keys: <kbd>A</kbd> / <kbd>B</kbd> · <kbd>S</kbd> skip · <kbd>←</kbd> back</span>
+    </div>
+  </section>
+
+  <!-- ICEBREAKER -->
+  <section id="screen-ice" class="hidden">
+    <div class="card">
+      <div class="qhead">Would you rather…</div>
+      <div class="opts">
+        <button class="opt" id="ice1"><span class="ltr">A</span><span class="txt" id="ice1-txt"></span></button>
+        <div class="vs">— or —</div>
+        <button class="opt" id="ice2"><span class="ltr">B</span><span class="txt" id="ice2-txt"></span></button>
+      </div>
+      <p class="center muted small" style="margin:16px 0 0">Say <b>why</b> out loud. Then tap a side for the next one.</p>
+    </div>
+    <div class="row center" style="margin-top:16px">
+      <button class="btn ghost" id="ice-next">Next →</button>
+      <span class="small muted" id="ice-count"></span>
+      <span class="small muted">· keys <kbd>A</kbd>/<kbd>B</kbd>/<kbd>space</kbd></span>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="screen-results" class="hidden">
+    <h1>Your research-values fingerprint</h1>
+    <p class="disclaimer" id="res-disclaimer"></p>
+    <div class="resultgrid" style="margin-top:18px">
+      <div class="card">
+        <div id="radar-host"></div>
+        <div class="legend" id="radar-legend"></div>
+      </div>
+      <div class="card">
+        <div class="arch-pre" id="res-arch-pre"></div>
+        <div class="archetype" id="res-archetype"></div>
+        <p class="narr" id="res-narr"></p>
+        <div id="res-tensions"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <h3>Where you leaned hardest</h3>
+      <div id="res-leans"></div>
+    </div>
+    <div class="card hidden" id="res-fieldaxis-card" style="margin-top:18px">
+      <h3 id="res-fieldaxis-h"></h3>
+      <p class="small muted" style="margin:0 0 6px">A tension native to your field that the nine
+        shared axes don't capture — scored from two extra cards, so read it as direction, not degree.</p>
+      <div id="res-fieldaxis-body"></div>
+    </div>
+    <div class="card notes hidden" id="res-notes-card" style="margin-top:18px">
+      <h3>Your notes</h3>
+      <div id="res-notes"></div>
+    </div>
+    <details class="expander" id="exp-schwartz">
+      <summary>Your research values, loosely in Schwartz's terms</summary>
+      <div class="inner">
+        <p>A loose analogy, not a measurement — this is our interpretive overlay onto Schwartz's
+          cross-cultural value wheel, <b>not</b> derived from his instrument. Schwartz's two master
+          tensions are <b>Openness-to-change ↔ Conservation</b> and
+          <b>Self-Enhancement ↔ Self-Transcendence</b>; a strong lean isn't "better" — the wheel
+          works as a balanced set (Aristotle's golden mean).</p>
+        <div class="crosswalk" id="res-crosswalk"></div>
+      </div>
+    </details>
+    <details class="expander" id="exp-method">
+      <summary>How we score this</summary>
+      <div class="inner" id="res-method"></div>
+    </details>
+    <div class="underbar" style="margin-top:20px; justify-content:flex-start">
+      <button class="btn" id="btn-share">Copy share link</button>
+      <button class="btn ghost" id="btn-png">Download image</button>
+      <button class="btn grey" id="btn-copytext">Copy summary</button>
+      <button class="link grey" id="btn-retake">Retake</button>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- HOUSE RULES MODAL -->
+<div class="scrim hidden" id="house-scrim">
+  <div class="card modal" role="dialog" aria-modal="true" aria-labelledby="house-title">
+    <div class="spread"><h2 id="house-title" style="margin:0">House rules</h2><button class="btn grey sm" id="house-close">Close</button></div>
+    <p class="muted">For the nitpickers who refuse to answer an under-specified question — the
+      looseness is intentional. A few conventions so we're playing the same game:</p>
+    <ul class="muted">
+      <li><b>Assume your own situation</b> as the baseline — your current pay, timezone, field,
+        career stage — unless a card says otherwise.</li>
+      <li><b>Pick the reading that makes the choice hardest for you.</b> If a card is only easy
+        because you imagined the convenient version, you're dodging it.</li>
+      <li><b>The ambiguity is the instrument.</b> <em>Which</em> missing detail you reach for, and
+        why, is the actual signal. Name your assumption out loud (or in the note box).</li>
+      <li><b>Stuck for real?</b> Use “genuinely can't choose” — a 50/50 split is recorded as a
+        <em>live tension</em>, which is often the most interesting result.</li>
+      <li>A few genuinely number-dependent cards carry a <b>“pin this down”</b> note with the exact
+        assumption baked in.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================================
+   Research Values — Would You Rather. Self-contained, no deps, no backend.
+   ========================================================================== */
+
+const AXES = [
+  {pos:"Curiosity",  neg:"Consequence",  ps:"Curiosity",  ns:"Consequence"},
+  {pos:"Rigor",      neg:"Novelty",      ps:"Rigor",      ns:"Novelty"},
+  {pos:"Depth",      neg:"Breadth",      ps:"Depth",      ns:"Breadth"},
+  {pos:"Theory",     neg:"Application",  ps:"Theory",     ns:"Application"},
+  {pos:"Intrinsic fulfillment", neg:"External recognition", ps:"Intrinsic", ns:"Recognition"},
+  {pos:"Autonomy",   neg:"Security",     ps:"Autonomy",   ns:"Security"},
+  {pos:"Output",     neg:"Sustainability", ps:"Output",   ns:"Sustainability"},
+  {pos:"Solo",       neg:"Collaborative", ps:"Solo",      ns:"Collaborative"},
+  {pos:"Open science", neg:"Competitive advantage", ps:"Open", ns:"Advantage"}
+];
+
+const FIELDS = [
+  {id:"any", label:"Any field"},
+  {id:"ml", label:"Machine learning / CS"},
+  {id:"experimental", label:"Experimental / lab"},
+  {id:"theory", label:"Theory / mathematics"},
+  {id:"social", label:"Social sciences"},
+  {id:"humanities", label:"Humanities"}
+];
+
+/* per-field flavor tokens */
+const RES = {
+  any:"funding, equipment, and people",
+  ml:"compute, data, and engineers",
+  experimental:"reagents, instruments, and technicians",
+  theory:"students, long visits, and teaching buyout",
+  social:"data access, RAs, and a field budget",
+  humanities:"archive access, research leave, and assistants"
+};
+
+/* axis = primary axis index; pole = which option ('a'|'b') is the POSITIVE pole.
+   dual = optional secondary {axis,pole,w}. w defaults 1. scored:false => icebreaker only.
+   domains: "all" or array (e.g. ["ml"]). pin: surgical disambiguation (Values only). */
+const DECK = [
+  /* Curiosity vs Consequence (0) */
+  {id:"N6", axis:0, pole:"a",
+    a:"Discover something genuinely true and beautiful that you're almost certain will never matter to anyone beyond a handful of specialists",
+    b:"Build something that measurably improves a million lives, in an area you find dutiful rather than thrilling and would never study for its own sake"},
+  {id:"N8", axis:0, pole:"a",
+    a:"Only ever be allowed to ask questions you find beautiful, even if a committee deems them useless and your funding suffers for it",
+    b:"Only ever be allowed to ask questions a funding committee finds useful, even if you personally find every one of them lifeless"},
+  /* Rigor vs Novelty (1) */
+  {id:"K7", axis:1, pole:"a",
+    a:"Only ever work on questions where you can fully pin down your claims and be confident they hold — even if that keeps you to settled, lower-stakes problems",
+    b:"Only ever work on questions where certainty is out of reach, accepting that some of your headline claims will later be overturned"},
+  {id:"N1", axis:1, pole:"a",
+    a:"Spend two years making a result you already believe is true completely airtight, so no one can poke a hole in it",
+    b:"Spend the same two years chasing six risky ideas and publishing the three that look new and exciting, even if a couple later turn out wrong",
+    pin:"Assume “airtight” = an argument any expert can check end to end, and—where it applies—findings others can independently corroborate. “Wrong” = at most one of the three later needs a public correction; nothing fabricated."},
+  {id:"N2", axis:1, pole:"a",
+    a:"Be the person whose results everyone trusts without re-checking, but who is never the first to a new idea",
+    b:"Be the person who opens three new directions, knowing two of your headline claims will be walked back by others within five years"},
+  {id:"N3", axis:1, pole:"a",
+    a:"Re-derive and verify a rival's surprising, load-bearing result yourself before you build on it — a long detour that produces no result of your own",
+    b:"Take it on trust and build fast: your follow-up gets out first, but your whole contribution collapses if their result had a hole",
+    pin:"On trust = a real chance the dependency doesn't hold up and your follow-up needs heavy caveats or a correction. Verifying = months with nothing publishable of your own, but a foundation you're sure of."},
+  /* Depth vs Breadth (2) */
+  {id:"K23", axis:2, pole:"a",
+    a:"Spend your whole PhD on one deep, singular topic and become the world expert on that niche",
+    b:"Study five very different, broad topics — versatile, but a master of none"},
+  {id:"N10", axis:2, pole:"a",
+    a:"Become the undisputed world expert on one narrow problem, knowing that if the field moves on your expertise may become a museum piece",
+    b:"Stay a fast-moving generalist who jumps to whatever is most exciting, knowing you'll always be outgunned on depth by the specialists in any room"},
+  {id:"N11", axis:2, pole:"a",
+    a:"Spend three more years going deeper into the niche you already lead, mining diminishing but certain returns",
+    b:"Abandon your hard-won niche to start over at the bottom of a hot new field where you have no reputation and no advantage"},
+  /* Theory vs Application (3) */
+  {id:"K22", axis:3, pole:"a", dual:{axis:0,pole:"a",w:0.4},
+    a:"Protect your time for deep, fundamental research, even if it leaves you with few practical, applicable skills",
+    b:"Invest heavily in practical, applicable skills that get used, even if it crowds out the fundamental work"},
+  {id:"N9", axis:3, pole:"a",
+    a:"Spend your career producing the deepest account of WHY things work — proofs, principles, explanations — even if few people build directly on it",
+    b:"Spend your career producing knowledge people actually use — shaping practice, policy, public understanding, or working tools — even if a clean account of why never comes from you"},
+  /* Intrinsic vs Recognition (4) */
+  {id:"K13", axis:4, pole:"b",
+    a:"Be widely recognized and cited, on work you respect but no longer find exciting",
+    b:"Stay essentially unknown in your field, on work that absorbs you completely"},
+  {id:"K3", axis:4, pole:"b",
+    a:"Win your field's highest honor, but only ever for work you personally find sterile",
+    b:"Stay unrenowned, working on a problem that grips you completely for its own sake"},
+  {id:"N13", axis:4, pole:"a",
+    a:"Publish your best work in an obscure venue almost no one reads, where it's judged purely on its merits and quietly loved by the few who find it",
+    b:"Publish identical work in the most prestigious venue in your field, where half the attention is really about the logo on the page"},
+  {id:"N14", axis:4, pole:"a",
+    a:"Mentor a generation of students into thriving researchers and watch your best ideas become known as theirs, the credit landing on them rather than you",
+    b:"Pour that same energy into your own output, producing far more under your own name, and train no one who carries your thinking forward"},
+  /* Autonomy vs Security (5) */
+  {id:"K21", axis:5, pole:"a",
+    a:"Have permanent, total control over your calendar and working hours — unlimited flexibility",
+    b:"Have a permanent 15% raise, every year, for the rest of your career",
+    pin:"Assume your current pay and current flexibility as the baseline. The raise is permanent and compounding-ish; the calendar control is total and permanent."},
+  {id:"K16", axis:5, pole:"a",
+    a:"Have complete freedom over what you work on, but perpetually scrape for the funding to do it",
+    b:"Have a well-resourced position — a big budget, staff, and stability — but tightly bound to an agenda someone else sets",
+    pin:"Assume “scrape for funding” = roughly a third of your time chasing money, with real year-to-year precarity. “Well-resourced” = abundant support, but ~70% of your projects must serve someone else's roadmap."},
+  {id:"K6", axis:4, pole:"b",
+    a:"Have your pay doubled, but work on a topic you genuinely hate",
+    b:"Work for half your current pay, on a topic you're incredibly passionate about",
+    pin:"Assume your current pay as the baseline; “doubled” and “half” are permanent. The two topics are otherwise equal in prestige and difficulty."},
+  {id:"K5", axis:5, pole:"b",
+    a:"Have every working session visible to your supervisor or manager, in exchange for skipping all formal reviews and evaluations",
+    b:"Sit through one brutal evaluation a year, then be left completely alone to work how you like"},
+  {id:"K12", axis:5, pole:"a", w:0.8,
+    a:"Skip all teaching and administrative duties, but live a one-hour commute from work",
+    b:"Live right next to work, but carry a heavy teaching and service load"},
+  {id:"N16", axis:5, pole:"b",
+    a:"Be handed every resource you could want — {resources} — on the condition that someone else sets the agenda your work must serve",
+    b:"Keep total freedom over what you work on, but on a shoestring: scarce funding, borrowed equipment, and no support",
+    flavor:true,
+    pin:"Assume “every resource” = effectively unlimited {resources}, but ~70% of your agenda set by others. “Shoestring” = you control 100% of your agenda at maybe a tenth of the support."},
+  /* Output vs Sustainability (6) */
+  {id:"K17", axis:6, pole:"a",
+    a:"Be known for a steady, high-volume body of work — always something new in press",
+    b:"Be known for a sustainable pace and a clean boundary at the end of each day, even if your output looks thin year to year"},
+  {id:"K20", axis:6, pole:"a", w:0.8,
+    a:"Achieve all your professional aspirations by 30, then have a boring, repetitive career until retirement",
+    b:"Struggle your entire career, finally succeeding in spectacular fashion at age 65"},
+  {id:"N17", axis:6, pole:"a",
+    a:"Run hot for five years — ship twice as much as your peers and accept the sleep debt, the strained relationships, and the real risk of burning out",
+    b:"Run sustainably for thirty years — produce half as much each year, protect your health and evenings, and let faster colleagues pass you on every short-term metric"},
+  /* Solo vs Collaborative (7) */
+  {id:"K9", axis:7, pole:"a",
+    a:"Do your defining work as a single long solo effort that is unmistakably, entirely yours",
+    b:"Be one of fifteen voices shaping a single shared result that no one person owns"},
+  {id:"N18", axis:7, pole:"a",
+    a:"Be the irreplaceable sole author of a small, elegant idea that is unmistakably yours",
+    b:"Be one of several names on the landmark result everyone in your field will cite for the next twenty years"},
+  {id:"N19", axis:7, pole:"a",
+    a:"Do your best work alone, in long stretches of uninterrupted silence, owning both the wins and the failures by yourself",
+    b:"Do your best work embedded in a buzzing team where ideas fly constantly, never quite sure which of the good ones were originally yours"},
+  /* Open vs Advantage (8) */
+  {id:"N21", axis:8, pole:"a",
+    a:"Share everything your result rests on — methods, data, materials, code, sources — the moment you have it, accepting that a faster, better-resourced group may use it to beat you to the headline",
+    b:"Keep what your result rests on private until your own paper is out and your follow-ups are secured, accepting that the field moves slower and some people quietly resent you"},
+  {id:"N22", axis:8, pole:"a",
+    a:"Openly write up every dead end and failed approach you hit — the ones that cost you months and make you look unproductive",
+    b:"Quietly set your dead ends aside and report only your wins"},
+  {id:"N23", axis:8, pole:"a",
+    a:"Pour months into a shared resource — a public dataset, tool, or method the whole field comes to depend on — for little personal credit",
+    b:"Keep your best methods and tools in-house, as the private edge that keeps you a step ahead of everyone else"},
+
+  /* ---------- Icebreaker-only pool (unscored) ---------- */
+  {id:"K14", scored:false,
+    a:"Be known for absolute integrity and moral consistency in all your academic dealings",
+    b:"Be known for groundbreaking genius that sometimes requires morally ambiguous choices"},
+  {id:"K19", scored:false,
+    a:"Be directly responsible for creating a technology that causes massive global job displacement",
+    b:"Have your own dream research project banned globally for ethical concerns"},
+  {id:"F1", scored:false, domains:["ml"],
+    a:"Have your research rely on a deep-learning library that randomly changes its API three times a year",
+    b:"Have your primary compute cluster run on hardware from 2010"},
+  {id:"F10", scored:false, domains:["ml"],
+    a:"Write all your papers in perfect, elegant LaTeX",
+    b:"Have an AI generate all your figures and graphs — but you can never review them"},
+  {id:"F11", scored:false, domains:["ml"],
+    a:"Accidentally delete your entire project repository the day before a major deadline",
+    b:"Find out your most critical data point was based on a spreadsheet typo"},
+  {id:"F2", scored:false, domains:["ml"],
+    a:"Debug a complex 10,000-line codebase in one afternoon, but never again write new code from scratch",
+    b:"Get one guaranteed top-venue accept with zero revisions, but you don't get to choose the topic"},
+  {id:"F4", scored:false,
+    a:"Write all your documentation as haikus (5-7-5)",
+    b:"Never be able to use a keyboard shortcut again — everything by mouse"},
+  {id:"F8", scored:false,
+    a:"Only be able to work from 10pm to 6am",
+    b:"Attend three mandatory, unhelpful, hour-long meetings every single morning"},
+  {id:"F15", scored:false,
+    a:"Go back in time to change one professional mistake from your training",
+    b:"Have a crystal ball showing the definitive success of your life's work in 20 years"},
+  {id:"F24", scored:false,
+    a:"Have unlimited intelligence — grasp any concept instantly — but no emotional connection to any person or place",
+    b:"Have average intelligence but deep, meaningful, loving relationships"},
+  {id:"F25", scored:false,
+    a:"Live perpetually rushed and busy, but achieve all your long-term career goals",
+    b:"Live a slow, unhurried, fully present life, but achieve only half your career goals"},
+  {id:"F26", scored:false,
+    a:"Be able to perfectly communicate with all animals",
+    b:"Be able to instantly learn any skill by reading a textbook about it"},
+  {id:"F27", scored:false,
+    a:"Have unlimited space at home but a noisy, overcrowded city view",
+    b:"Live in a tiny, minimalist apartment with a perfect, secluded mountain view"},
+  {id:"F28", scored:false,
+    a:"Wear pajamas to every formal event for the rest of your life",
+    b:"Wear full formal wear to every casual event, like grocery shopping"},
+  {id:"F29", scored:false,
+    a:"Sing everything you say, Broadway-musical style",
+    b:"Whisper everything you say"},
+  {id:"F30", scored:false,
+    a:"Be five minutes late to everything for the rest of your life",
+    b:"Check your phone for five minutes every time you hear a notification"},
+  {id:"F31", scored:false,
+    a:"Only be able to eat extremely spicy food",
+    b:"Only be able to eat completely bland food"}
+];
+const BYID = Object.fromEntries(DECK.map(c=>[c.id,c]));
+
+const ARCHETYPES = [
+  {name:"The free-roaming theorist", traits:[[0,+1],[3,+1],[5,+1]],
+   line:"You chase ideas for their own sake, in your own direction, and you want to understand <em>why</em>."},
+  {name:"The impact-driven builder", traits:[[0,-1],[3,-1],[7,-1]],
+   line:"You're here to change something real — and you'd rather make it with a team than admire it alone."},
+  {name:"The careful specialist", traits:[[1,+1],[2,+1]],
+   line:"Depth and correctness over flash: you'd rather own one thing completely and be right."},
+  {name:"The restless explorer", traits:[[1,-1],[2,-1],[0,+1]],
+   line:"Novelty and range pull you; you'd rather be early and wide than late and narrow."},
+  {name:"The quiet craftsperson", traits:[[4,+1],[6,-1],[7,+1]],
+   line:"The work itself is the reward, kept at a pace you can sustain for decades."},
+  {name:"The ambitious climber", traits:[[4,-1],[6,+1]],
+   line:"You want the work seen and the record strong, and you'll run hot to get there."},
+  {name:"The open collaborator", traits:[[8,+1],[7,-1]],
+   line:"You'd rather work in the open, together — share first, sort out credit later."},
+  {name:"The independent maverick", traits:[[5,+1],[7,+1],[8,-1]],
+   line:"Your agenda, your terms — you'd trade resources and company for freedom every time."},
+  {name:"The pragmatic professional", traits:[[5,-1],[3,-1],[6,+1]],
+   line:"Resources, stability, and things that get used: you build a career that holds."}
+];
+
+const SCHWARTZ = [
+  ["Self-Direction / Stimulation","Universalism / Achievement"],
+  ["a conscientious, truth-seeking facet (closer to Self-Direction / Universalism than to conformity)","Stimulation (novelty)"],
+  ["Environmental Mastery / Achievement","Self-Direction / Personal growth"],
+  ["Self-Direction (ideas)","Achievement (competence)"],
+  ["Self-Direction (eudaimonic — meaning over applause)","Achievement / Power"],
+  ["Self-Direction","Security"],
+  ["Achievement","Security"],
+  ["Self-Direction","Benevolence"],
+  ["Universalism / Benevolence (Self-Transcendence)","Power / Achievement (Self-Enhancement)"]
+];
+
+const CLAUSES = [
+  ["you'd chase a question for its own sake, intrinsic pull over external payoff",
+   "you measure a question by what it changes in the world, not by how interesting it is"],
+  ["you'd rather be slow and right than first and fragile",
+   "you'd rather be early and wrong-able than late and safe — novelty over certainty"],
+  ["you commit to depth, content to own a niche completely",
+   "you range across areas, trading mastery for versatility"],
+  ["you reach for the underlying why — principles and explanation",
+   "you reach for the working how — knowledge people can actually use"],
+  ["the work itself is the reward; recognition is incidental",
+   "being known, cited, and credited genuinely matters to you"],
+  ["you'd trade money and stability for freedom over your own agenda",
+   "you'd trade some freedom for resources, funding, and a safety net"],
+  ["you'll run hot and produce, accepting the cost to pace and balance",
+   "you protect pace and longevity, a career you can run for decades"],
+  ["your best work is yours alone, with clear, attributable contribution",
+   "your best work is collective; you'd rather be a node in a team"],
+  ["you'd share everything — the commons over the edge",
+   "you'd guard a strategic edge — priority and advantage over openness"]
+];
+
+/* ---- field-native axes: one extra, field-specific tension per field (2 cards each).
+        Scored separately from the 9 core axes and shown as its own result block, so the
+        radar stays legible. `pole` = which option is the axis's first-named (positive) pole. ---- */
+const FIELD_AXES = {
+  ml: { pos:"Scale-leverage", neg:"Ingenuity",
+    gloss:["you reach for scale — more compute, more data, the biggest hammer","you back ingenuity — the clever idea that wins on a shoestring"],
+    cards:[
+      {id:"ML1", pole:"a", a:"Own a headline result that only a frontier-scale compute budget could ever reproduce", b:"Own a clever result anyone can reproduce on a single GPU in an afternoon"},
+      {id:"ML2", pole:"a", a:"Win by sheer scale — more data and more compute than anyone you compete with", b:"Win by a sharper idea that beats brute force on a shoestring"}
+    ]},
+  experimental: { pos:"Big-instrument", neg:"Bench-ingenuity",
+    gloss:["you'd build on big, shared instruments and rare infrastructure","you'd back frugal bench ingenuity that needs nothing special"],
+    cards:[
+      {id:"EX1", pole:"a", a:"Do work that needs a rare, million-dollar shared instrument and a long waiting list", b:"Do work you can run with cheap reagents and a clever protocol at your own bench"},
+      {id:"EX2", pole:"a", a:"Win through access to expensive infrastructure others simply can't get near", b:"Win through frugal ingenuity that needs nothing special"}
+    ]},
+  theory: { pos:"Generality", neg:"Concreteness",
+    gloss:["you reach for generality — the abstract, reusable structure","you reach for the concrete — one hard case nailed completely"],
+    cards:[
+      {id:"TH1", pole:"a", a:"Prove the most general theorem — abstract, structural, reusable across many cases", b:"Nail one concrete case completely — a sharp constant, an explicit construction, the hard computation done"},
+      {id:"TH2", pole:"a", a:"Be remembered for a sweeping framework that reorganizes how people think", b:"Be remembered for settling one notoriously hard, specific problem for good"}
+    ]},
+  social: { pos:"Confirmatory", neg:"Exploratory",
+    gloss:["you prize confirmatory discipline — preregistered, locked-down, replicable","you prize exploration — finding the patterns no one thought to look for"],
+    cards:[
+      {id:"SO1", pole:"a", a:"Preregister a single confirmatory hypothesis and report it whether it works or not", b:"Explore the data freely and report the most interesting pattern you find"},
+      {id:"SO2", pole:"a", a:"Be trusted for findings that are locked-down, preregistered, and replicable", b:"Be admired for discovering surprising patterns no one thought to look for"}
+    ]},
+  humanities: { pos:"Interpretive boldness", neg:"Cautious grounding",
+    gloss:["you take interpretive risks — bold readings that reframe the debate","you prize cautious grounding — the meticulous, unimpeachable account"],
+    cards:[
+      {id:"HU1", pole:"a", a:"Advance a bold, field-shifting interpretation that half your peers will call overreach", b:"Produce a meticulous, unimpeachable account that adds certainty but breaks no new ground"},
+      {id:"HU2", pole:"a", a:"Be known for a daring reading that reframes the whole debate, even if later contested", b:"Be known for the definitive, careful study everyone cites as settled"}
+    ]}
+};
+const NATBYID = {};
+Object.values(FIELD_AXES).forEach(fa=>fa.cards.forEach(c=>{ NATBYID[c.id]=c; }));
+const CARDLOOKUP = Object.assign({}, BYID, NATBYID);
+
+const LS = "rvwyr.v1";
+let S = load() || {mode:null, field:"any", deck:[], answers:{}, idx:0};
+let viewingShared = false;
+
+function load(){ try{return JSON.parse(localStorage.getItem(LS));}catch(e){return null;} }
+function save(){ if(viewingShared) return; try{localStorage.setItem(LS, JSON.stringify(S));}catch(e){} }
+
+const $ = id => document.getElementById(id);
+function show(screen){
+  ["home","field","card","ice","results"].forEach(s=>$("screen-"+s).classList.add("hidden"));
+  $("screen-"+screen).classList.remove("hidden");
+  try{ window.scrollTo(0,0); }catch(e){}
+}
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function flavor(text){ return text.replace(/\{resources\}/g, RES[S.field]||RES.any); }
+function domainOK(card){ const d=card.domains||"all"; if(d==="all")return true; return d.includes(S.field); }
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1700); }
+function fieldLabel(){ const f=FIELDS.find(f=>f.id===S.field); return f?f.label:"any field"; }
+
+/* ---- build sessions ---- */
+function buildValuesDeck(){
+  const byAxis = {};
+  DECK.filter(c=>c.scored!==false && domainOK(c)).forEach(c=>{ (byAxis[c.axis]=byAxis[c.axis]||[]).push(c); });
+  let picks = [];
+  Object.values(byAxis).forEach(group=>{ shuffle(group); picks.push(...group.slice(0,2)); });
+  // append the field-native axis cards (if a specific field is selected)
+  const fa = FIELD_AXES[S.field];
+  if(fa) picks.push(...fa.cards);
+  shuffle(picks);
+  return picks.map(c=>({id:c.id, swap:Math.random()<0.5}));
+}
+
+/* ---- card screen ---- */
+function startValues(){ S.mode="values"; S.deck=buildValuesDeck(); S.answers={}; S.idx=0; save(); renderCard(); show("card"); }
+
+function renderCard(){
+  const item = S.deck[S.idx]; if(!item){ return finishValues(); }
+  const card = CARDLOOKUP[item.id];
+  const aTxt = flavor(card.a), bTxt = flavor(card.b);
+  const leftIsB = item.swap;
+  $("opt1-txt").textContent = leftIsB ? bTxt : aTxt;
+  $("opt2-txt").textContent = leftIsB ? aTxt : bTxt;
+  $("opt1").onclick = ()=>answer(leftIsB?"b":"a");
+  $("opt2").onclick = ()=>answer(leftIsB?"a":"b");
+
+  const n = S.deck.length;
+  $("c-left").textContent = "Question "+(S.idx+1)+" of "+n;
+  $("c-right").textContent = Object.keys(S.answers).length+" answered";
+  $("c-bar").style.width = (100*S.idx/n)+"%";
+
+  const prev = S.answers[item.id];
+  const hasWhy = !!(prev && prev.why);
+  $("why-box").classList.toggle("hidden", !hasWhy);
+  $("why-text").value = (prev && prev.why) || "";
+  $("btn-why").textContent = hasWhy ? "edit your note ✓" : "add a note — why?";
+
+  if(card.pin){
+    $("pin-box").classList.remove("hidden");
+    $("pin-body").classList.add("hidden");
+    $("pin-body").textContent = flavor(card.pin);
+  } else { $("pin-box").classList.add("hidden"); }
+
+  $("btn-back").style.visibility = S.idx>0 ? "visible":"hidden";
+}
+
+function answer(pick){
+  const item = S.deck[S.idx];
+  const why = $("why-text").value.trim();
+  S.answers[item.id] = {pick, why};
+  S.idx++; save();
+  if(S.idx>=S.deck.length) finishValues(); else renderCard();
+}
+function skip(){ answer("s"); }
+function back(){ if(S.idx>0){ S.idx--; save(); renderCard(); } }
+
+$("btn-skip").onclick = skip;
+$("btn-back").onclick = back;
+$("btn-why").onclick = ()=>$("why-box").classList.toggle("hidden");
+$("pin-toggle").onclick = ()=>$("pin-body").classList.toggle("hidden");
+
+document.addEventListener("keydown",e=>{
+  if(!$("house-scrim").classList.contains("hidden")){ if(e.key==="Escape") closeHouse(); return; }
+  if(!$("screen-ice").classList.contains("hidden")){
+    if(["a","A","b","B"," ","Enter","ArrowRight"].includes(e.key)){ e.preventDefault(); nextIce(); }
+    return;
+  }
+  if($("screen-card").classList.contains("hidden")) return;
+  if(e.target && e.target.tagName==="TEXTAREA") return;
+  if(e.key==="a"||e.key==="A") $("opt1").click();
+  else if(e.key==="b"||e.key==="B") $("opt2").click();
+  else if(e.key==="s"||e.key==="S") skip();
+  else if(e.key==="ArrowLeft"){ e.preventDefault(); back(); }
+});
+
+/* ---- scoring ---- */
+function score(answers){
+  const raw=Array(9).fill(0), max=Array(9).fill(0), n=Array(9).fill(0);
+  for(const id in answers){
+    const ans=answers[id], card=BYID[id];
+    if(!card || card.scored===false || ans.pick==="s") continue;
+    const loads=[{axis:card.axis,pole:card.pole,w:card.w||1}];
+    if(card.dual) loads.push(card.dual);
+    loads.forEach(L=>{
+      const w=L.w||1, sign=(ans.pick===L.pole)?+1:-1;
+      raw[L.axis]+=sign*w; max[L.axis]+=w; n[L.axis]++;
+    });
+  }
+  const sc=raw.map((r,i)=> max[i]>0 ? r/max[i] : null);
+  return {score:sc, n, max};
+}
+
+function scoreFieldAxis(answers){
+  const def = FIELD_AXES[S.field]; if(!def) return null;
+  let raw=0,max=0,n=0;
+  def.cards.forEach(c=>{
+    const ans=answers[c.id]; if(!ans||ans.pick==="s") return;
+    raw += (ans.pick===c.pole)?+1:-1; max+=1; n++;
+  });
+  return {score: max>0?raw/max:null, n, def};
+}
+
+function pickArchetype(sc){
+  let best=null, bestFrac=0, bestMass=0;
+  ARCHETYPES.forEach(A=>{
+    let m=0, mass=0;
+    A.traits.forEach(([ax,sg])=>{ if(sc[ax]!=null && Math.sign(sc[ax])===sg && Math.abs(sc[ax])>=0.25){ m++; mass+=Math.abs(sc[ax]); } });
+    if(m<2) return;
+    const frac=m/A.traits.length;
+    if(frac>bestFrac || (frac===bestFrac && mass>bestMass)){ bestFrac=frac; bestMass=mass; best=A; }
+  });
+  if(!best) return {name:"The balanced generalist", soft:true,
+    line:"Your choices sat close to the middle on most axes — you're holding the trade-offs in tension rather than resolving them."};
+  return {name:best.name, line:best.line, soft:bestFrac<1};
+}
+
+/* ---- results ---- */
+function finishValues(){ save(); renderResults(score(S.answers)); show("results"); }
+
+function renderResults(R){
+  const sc=R.score, n=R.n;
+  $("radar-host").innerHTML = radarSVG(sc,n);
+  $("radar-legend").innerHTML = AXES.map(a=>`<span><b>${a.ps}</b>↔${a.ns}</span>`).join("");
+
+  const A=pickArchetype(sc);
+  $("res-arch-pre").textContent = A.soft ? "Closest archetype — a loose match" : "Closest archetype";
+  $("res-archetype").textContent = A.name;
+
+  const ranked = sc.map((v,i)=>({i,v})).filter(o=>o.v!=null && n[o.i]>=2).sort((a,b)=>Math.abs(b.v)-Math.abs(a.v));
+  const strong = ranked.filter(o=>Math.abs(o.v)>=0.34).slice(0,3);
+  const clauses = strong.map(o=> CLAUSES[o.i][o.v>0?0:1]);
+  let narr = A.line;
+  if(clauses.length){ narr += " In your picks, "+joinClauses(clauses)+"."; }
+  $("res-narr").innerHTML = narr;
+
+  const tens = sc.map((v,i)=>({i,v})).filter(o=>o.v!=null && n[o.i]>=2 && Math.abs(o.v)<0.2);
+  $("res-tensions").innerHTML = tens.length ? tens.map(o=>
+    `<div class="tension"><b>Live tension — ${AXES[o.i].ps} ↔ ${AXES[o.i].ns}:</b> you split almost evenly here. Worth a conversation: which way do you actually lean, and why?</div>`).join("") : "";
+
+  // leans: only axes with a real lean (|v|>=0.2); near-zero axes live in the tensions panel instead
+  const leans = ranked.filter(o=>Math.abs(o.v)>=0.2);
+  $("res-leans").innerHTML = leans.length ? leans.map(o=>{
+    const v=o.v, pct=Math.round(Math.abs(v)*100), pos=v>0;
+    const pole=pos?AXES[o.i].ps:AXES[o.i].ns, other=pos?AXES[o.i].ns:AXES[o.i].ps;
+    const col=pos?"var(--pos)":"var(--neg)";
+    const word=Math.abs(v)>=0.6?"Leaned hard":Math.abs(v)>=0.34?"Leaned":"Leaned slightly";
+    const fill = pos
+      ? `left:50%; width:${pct/2}%; background:${col}`
+      : `left:50%; width:${pct/2}%; transform:translateX(-100%); background:${col}`;
+    return `<div class="lean">
+      <div class="bar" aria-hidden="true"><i style="${fill}"></i><i style="left:50%; width:1px; background:#cbd5e3"></i></div>
+      <div class="lab"><b>${word} (${pct}): ${pole}</b> <span class="muted">over ${other.toLowerCase()}</span></div>
+    </div>`;
+  }).join("") : "<p class='muted'>Your picks landed near the middle on every axis — see the live tensions above.</p>";
+
+  // field-native axis (its own block; not on the radar)
+  const fa = scoreFieldAxis(S.answers);
+  if(fa && fa.score!=null && fa.n>=1){
+    $("res-fieldaxis-card").classList.remove("hidden");
+    $("res-fieldaxis-h").textContent = "Your field's own axis — "+fieldLabel();
+    const v=fa.score, pct=Math.round(Math.abs(v)*100), pos=v>0;
+    const pole=pos?fa.def.pos:fa.def.neg, other=pos?fa.def.neg:fa.def.pos;
+    if(Math.abs(v)<0.2){
+      $("res-fieldaxis-body").innerHTML =
+        `<div class="tension"><b>Live tension — ${fa.def.pos} ↔ ${fa.def.neg}:</b> you split here. The field's own fault line is one you're genuinely of two minds about.</div>`;
+    } else {
+      const word=Math.abs(v)>=0.6?"Leaned hard":Math.abs(v)>=0.34?"Leaned":"Leaned slightly";
+      const col=pos?"var(--pos)":"var(--neg)";
+      const fill = pos ? `left:50%; width:${pct/2}%; background:${col}`
+                       : `left:50%; width:${pct/2}%; transform:translateX(-100%); background:${col}`;
+      $("res-fieldaxis-body").innerHTML =
+        `<div class="lean"><div class="bar" aria-hidden="true"><i style="${fill}"></i><i style="left:50%; width:1px; background:#cbd5e3"></i></div>
+         <div class="lab"><b>${word} (${pct}): ${pole}</b> <span class="muted">over ${other.toLowerCase()}</span></div></div>
+         <p class="narr" style="font-size:.98rem">Here, ${pos?fa.def.gloss[0]:fa.def.gloss[1]}.</p>`;
+    }
+  } else { $("res-fieldaxis-card").classList.add("hidden"); }
+
+  // your notes recap (local only)
+  const notes = Object.keys(S.answers).map(id=>({id, card:CARDLOOKUP[id], why:(S.answers[id].why||"").trim()}))
+                  .filter(o=>o.card && o.why);
+  if(notes.length){
+    $("res-notes-card").classList.remove("hidden");
+    $("res-notes").innerHTML = notes.map(o=>{
+      const ax = (typeof o.card.axis==="number") ? `<b>${AXES[o.card.axis].ps} ↔ ${AXES[o.card.axis].ns}</b> — ` : "";
+      return `<div class="n">${ax}“${escapeHTML(o.why)}”</div>`;
+    }).join("");
+  } else { $("res-notes-card").classList.add("hidden"); }
+
+  $("res-crosswalk").innerHTML = strong.length ? strong.map(o=>{
+    const pos=o.v>0, pole=pos?AXES[o.i].ps:AXES[o.i].ns, sv=SCHWARTZ[o.i][pos?0:1];
+    return `<span class="cw"><b>${pole}</b> → ${sv}</span>`;
+  }).join("") : "<span class='muted'>Answer a few more cards to see the Schwartz mapping.</span>";
+
+  const answered = countAnswered();
+  $("res-method").innerHTML = `Each card casts a signed vote on one research-value axis (a few load two).
+    For each axis we sum the signed votes and divide by the weight you actually answered, landing on a −1…+1
+    scale (the bars). <b>Each non-greyed axis here rests on at most two of your choices</b>, so read the
+    magnitude as <em>direction, not precision</em> — “leaned hard” means you picked the same side twice, not
+    that it's a calibrated score. Axes you met fewer than twice are greyed (“needs more signal”). A near-zero
+    score isn't noise — it's a genuine <em>live tension</em>. ${answered} of ${S.deck.length} cards answered${S.field!=='any'?`, reworded for ${fieldLabel()}`:''}.`;
+  $("res-disclaimer").innerHTML = `<b>A reflective mirror, not a validated test.</b> The nine axes are a
+    hand-designed map, not a calibrated psychometric, and each rests on just a couple of deliberately-loose
+    choices. Your picks <em>leaned</em> — you don't have to <em>be</em> anything. A snapshot of today's
+    trade-offs; values drift, so retake it in six months.`;
+
+  S.lastScore = {sc, n}; save();
+}
+
+function joinClauses(arr){ if(arr.length===1) return arr[0]; return arr.slice(0,-1).join("; ")+"; and "+arr[arr.length-1]; }
+function countAnswered(){ return Object.values(S.answers).filter(a=>a.pick!=="s").length; }
+function escapeHTML(s){ return s.replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+/* ---- inline SVG radar: rim = positive pole, mid ring = balanced. Low-signal axes
+        are drawn as hollow markers at the balanced ring and EXCLUDED from the filled
+        polygon, so "unknown" never masquerades as a deliberate 50/50. ---- */
+function radarSVG(sc,n){
+  const N=9, R=120, cx=160, cy=150, W=320, H=320;
+  const ang = k => -Math.PI/2 + k*2*Math.PI/N;
+  const pt = (k,v)=>{ const r=R*((v+1)/2); return [cx+r*Math.cos(ang(k)), cy+r*Math.sin(ang(k))]; };
+  let g="";
+  [0.25,0.5,0.75,1].forEach(f=>{
+    const pts=[...Array(N)].map((_,k)=>{const r=R*f;return (cx+r*Math.cos(ang(k)))+","+(cy+r*Math.sin(ang(k)));}).join(" ");
+    g+=`<polygon points="${pts}" fill="none" stroke="${f===0.5?'#c9d6ea':'#eef2f7'}" stroke-width="${f===0.5?1.5:1}" ${f===0.5?'stroke-dasharray="3 3"':''}/>`;
+  });
+  for(let k=0;k<N;k++){ const[x,y]=[cx+R*Math.cos(ang(k)),cy+R*Math.sin(ang(k))]; g+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#eef2f7"/>`; }
+  // filled polygon over confident axes only
+  const conf=[]; for(let k=0;k<N;k++){ if(sc[k]!=null && n[k]>=2) conf.push(k); }
+  if(conf.length>=3){
+    const poly=conf.map(k=>{const[x,y]=pt(k,sc[k]); return x+","+y;}).join(" ");
+    g+=`<polygon points="${poly}" fill="rgba(74,143,227,.20)" stroke="var(--accent)" stroke-width="2"/>`;
+  }
+  for(let k=0;k<N;k++){
+    const has = sc[k]!=null && n[k]>=2;
+    const[x,y]= has ? pt(k,sc[k]) : pt(k,0); // unknown axes sit at the balanced ring as hollow markers
+    g+=`<circle cx="${x}" cy="${y}" r="4" fill="${has?'var(--accent)':'#fff'}" stroke="${has?'#fff':'#9aa6b6'}" stroke-width="1.5" ${has?'':'stroke-dasharray="2 2"'}><title>${AXES[k].ps} ↔ ${AXES[k].ns}${has?'':' (needs more signal)'}</title></circle>`;
+    const[lx,ly]=[cx+(R+16)*Math.cos(ang(k)), cy+(R+16)*Math.sin(ang(k))];
+    const c=Math.cos(ang(k)); const anchor = c>0.3?"start":c<-0.3?"end":"middle";
+    g+=`<text x="${lx}" y="${ly}" font-size="11" fill="${has?'#2f6fbf':'#6b7686'}" text-anchor="${anchor}" dominant-baseline="middle" font-weight="600">${AXES[k].ps}</text>`;
+  }
+  return `<svg class="radar" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" id="radar-svg" role="img" aria-label="Research-values radar across nine axes">
+    <rect width="${W}" height="${H}" fill="#fff"/>${g}
+    <text x="${cx}" y="${H-8}" font-size="10" fill="#6b7686" text-anchor="middle">outer = the named pole · dashed ring = balanced</text>
+  </svg>`;
+}
+
+/* ---- icebreaker ---- */
+let iceQueue=[];
+let iceSeen=0;
+function startIce(){
+  S.mode="ice"; save();
+  iceQueue = shuffle(DECK.filter(domainOK).map(c=>c.id));
+  iceSeen=0; nextIce(); show("ice");
+}
+function nextIce(){
+  if(iceQueue.length===0){ iceQueue=shuffle(DECK.filter(domainOK).map(c=>c.id)); }
+  const card=BYID[iceQueue.shift()];
+  const swap=Math.random()<0.5;
+  $("ice1-txt").textContent = flavor(swap?card.b:card.a);
+  $("ice2-txt").textContent = flavor(swap?card.a:card.b);
+  iceSeen++; $("ice-count").textContent = iceSeen+" played";
+}
+$("ice-next").onclick = nextIce;
+$("ice1").onclick = nextIce; $("ice2").onclick = nextIce;
+
+/* ---- share ---- */
+function encodeAnswers(){
+  const parts=[]; for(const id in S.answers){ const p=S.answers[id].pick; parts.push(id+(p==='a'?'1':p==='b'?'2':'0')); }
+  const str = S.field+"|"+parts.join(",");
+  return "v1."+btoa(unescape(encodeURIComponent(str))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function decodeAnswers(h){
+  try{
+    if(h.indexOf("v1.")!==0) return null;
+    const b=h.slice(3).replace(/-/g,'+').replace(/_/g,'/');
+    const str=decodeURIComponent(escape(atob(b)));
+    const [field, rest]=str.split("|");
+    const answers={};
+    (rest?rest.split(","):[]).forEach(tok=>{
+      const code=tok.slice(-1), id=tok.slice(0,-1);
+      if(CARDLOOKUP[id]) answers[id]={pick: code==='1'?'a':code==='2'?'b':'s', why:""};
+    });
+    return {field: FIELDS.some(f=>f.id===field)?field:"any", answers};
+  }catch(e){ return null; }
+}
+function shareLink(){
+  const url = location.origin+location.pathname+"#"+encodeAnswers();
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(()=>toast("Share link copied")).catch(()=>prompt("Copy your share link:", url));
+  } else prompt("Copy your share link:", url);
+}
+function copySummary(){
+  const R=S.lastScore; if(!R) return;
+  const A=pickArchetype(R.sc);
+  const ranked=R.sc.map((v,i)=>({i,v})).filter(o=>o.v!=null&&R.n[o.i]>=2&&Math.abs(o.v)>=0.2).sort((a,b)=>Math.abs(b.v)-Math.abs(a.v)).slice(0,3);
+  let t="My research-values fingerprint — "+A.name+(A.soft?" (loose match)":"")+"\n";
+  ranked.forEach(o=>{ const pos=o.v>0; t+= "• "+(pos?AXES[o.i].ps:AXES[o.i].ns)+" over "+(pos?AXES[o.i].ns:AXES[o.i].ps).toLowerCase()+" ("+Math.round(Math.abs(o.v)*100)+")\n"; });
+  const fa=scoreFieldAxis(S.answers);
+  if(fa && fa.score!=null && Math.abs(fa.score)>=0.2){ const pos=fa.score>0; t+="• ["+fieldLabel()+"] "+(pos?fa.def.pos:fa.def.neg)+" over "+(pos?fa.def.neg:fa.def.pos).toLowerCase()+" ("+Math.round(Math.abs(fa.score)*100)+")\n"; }
+  const notes=Object.keys(S.answers).map(id=>(S.answers[id].why||"").trim()).filter(Boolean);
+  if(notes.length) t+="notes: "+notes.slice(0,3).map(w=>'“'+w+'”').join(" ")+"\n";
+  t+= location.origin+location.pathname+"#"+encodeAnswers();
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(()=>toast("Summary copied")).catch(()=>prompt("Copy:",t));
+  } else prompt("Copy:",t);
+}
+function downloadPNG(){
+  const svg=$("radar-svg"); if(!svg) return;
+  const xml=new XMLSerializer().serializeToString(svg);
+  const img=new Image();
+  const svg64="data:image/svg+xml;base64,"+btoa(unescape(encodeURIComponent(xml)));
+  img.onload=function(){
+    const k=2, c=document.createElement("canvas"); c.width=320*k; c.height=320*k;
+    const ctx=c.getContext("2d"); ctx.scale(k,k); ctx.fillStyle="#fff"; ctx.fillRect(0,0,320,320);
+    ctx.drawImage(img,0,0,320,320);
+    c.toBlob(b=>{ const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download="research-values.png"; a.click(); toast("Image downloaded"); });
+  };
+  img.onerror=()=>toast("Couldn't render image");
+  img.src=svg64;
+}
+$("btn-share").onclick=shareLink;
+$("btn-copytext").onclick=copySummary;
+$("btn-png").onclick=downloadPNG;
+
+/* ---- house-rules modal (dialog semantics) ---- */
+let houseReturn=null;
+function openHouse(){ houseReturn=document.activeElement; $("house-scrim").classList.remove("hidden"); $("house-close").focus(); }
+function closeHouse(){ $("house-scrim").classList.add("hidden"); if(houseReturn && houseReturn.focus) houseReturn.focus(); }
+$("nav-house").onclick = openHouse;
+$("house-close").onclick = closeHouse;
+$("house-scrim").onclick = e=>{ if(e.target===$("house-scrim")) closeHouse(); };
+
+/* ---- navigation ---- */
+function renderFieldChips(){
+  $("field-chips").innerHTML = FIELDS.map(f=>
+    `<button class="chip" data-f="${f.id}" aria-pressed="${S.field===f.id}">${f.label}</button>`).join("");
+  $("field-chips").querySelectorAll(".chip").forEach(ch=>ch.onclick=()=>{
+    S.field=ch.dataset.f;
+    $("field-chips").querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed", c.dataset.f===S.field));
+  });
+}
+$("go-values").onclick = ()=>{ renderFieldChips(); show("field"); };
+$("field-start").onclick = ()=>{ save(); startValues(); };
+$("go-ice").onclick = ()=>startIce();
+$("btn-retake").onclick = ()=>resetAll();
+$("nav-restart").onclick = ()=>resetAll();
+
+function resetAll(){
+  viewingShared=false;
+  S={mode:null, field:(S.field||"any"), deck:[], answers:{}, idx:0};
+  save(); history.replaceState(null,"",location.pathname); show("home");
+}
+
+/* ---- boot ---- */
+(function boot(){
+  if(location.hash.length>1){
+    const dec=decodeAnswers(location.hash.slice(1));
+    if(dec && Object.keys(dec.answers).length){
+      viewingShared=true;                 // ephemeral: never persist a shared view over the viewer's own data
+      S.field=dec.field; S.answers=dec.answers; S.mode=null;
+      S.deck=Object.keys(dec.answers).map(id=>({id,swap:false}));
+      renderResults(score(S.answers)); show("results"); return;
+    }
+  }
+  if(S.mode==="values" && S.deck.length && S.idx<S.deck.length){ renderCard(); show("card"); return; }
+  show("home");
+})();
+</script>
+</body>
+</html>
