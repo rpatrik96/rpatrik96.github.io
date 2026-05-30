@@ -3,7 +3,6 @@ title: 'What do you actually value in research? (a tiny tool)'
 date: 2026-05-30
 permalink: /posts/2026/05/research-values/
 tags:
-  - research taste
   - values
   - tools
 header:
