@@ -31,7 +31,7 @@ pushes toward the axis's **first-named** (positive) pole.
 
 | # | Axis | + pole (positive) | − pole |
 |---|------|-------------------|--------|
-| 1 | Curiosity vs. Consequence | Curiosity (understanding for its own sake) | Consequence (impact on the world) |
+| 1 | Curiosity vs. Real-world impact | Curiosity (understanding for its own sake) | Real-world impact (what it changes in the world) |
 | 2 | Rigor vs. Novelty | Rigor (correct, reproducible, slow-and-right) | Novelty (new, surprising, first-and-wrong-able) |
 | 3 | Depth vs. Breadth | Depth (world expert on a niche) | Breadth (versatile generalist) |
 | 4 | Theory vs. Application | Theory (a proof / principle / why) | Application (a working artifact / how) |
@@ -40,6 +40,7 @@ pushes toward the axis's **first-named** (positive) pole.
 | 7 | Output vs. Sustainability | Output (intensity, volume, run hot) | Sustainability (pace, longevity) |
 | 8 | Solo vs. Collaborative | Solo (deep individual focus, clear credit) | Collaborative (collective work, shared credit) |
 | 9 | Open Science vs. Competitive Advantage | Openness (share everything) | Advantage (protect priority/IP) |
+| 10 | Integrity vs. Expedience | Integrity (won't cut corners) | Expedience (do what it takes to land the result) |
 
 Axes 2 and 3 are the signature *research-taste* dimensions generic value frameworks miss;
 1 and 4 are kept orthogonal (why vs. medium) so "theorist ≠ automatically curiosity-driven."
@@ -263,6 +264,16 @@ separately and shown as a dedicated **"Your field's own axis"** result block —
 "Any field" gets no native axis (it's the generic mode). A native session is **18 core + 2 native = 20
 cards**; native cards never vote on the nine core axes, and the share link round-trips them.
 
-**Still deferred (optional):** folding the two icebreaker'd ethics cards into a standalone
-*Integrity ↔ Expedience* core axis (a 10th scored axis) — held pending author decision, since it changes
-the radar from 9 to 10 spokes for everyone.
+**Integrity ↔ Expedience — added as the 10th core axis (author request).** The two ethics cards K14
+(integrity vs morally-ambiguous genius) and K19 (cause harm vs accept an ethical ban) are now *scored*
+on a dedicated **Integrity ↔ Expedience** axis, joined by a lighter everyday companion **N24** (report
+results as-is vs present them in their most favorable light). This re-homes ethics where it belongs
+instead of polluting the Open-Science axis, and takes the radar to **10 spokes**. Scored deck is now
+**33 cards**; a General-field session is 20 cards (2 × 10 axes), a specific-field session 22 (+2 native).
+
+**Later copy tweaks (author review):** axis 1's negative pole renamed *Consequence → Real-world impact*;
+the "Any field" option renamed **General** (internal id stays `any` for share-link compatibility); the
+"leaned hardest" labels dropped their misleading percentage (with ~2 cards/axis the score is direction,
+not degree); a how-to-read line was added under the radar; and the results expander now links Schwartz's
+model ([Wikipedia overview](https://en.wikipedia.org/wiki/Theory_of_basic_human_values) +
+[Schwartz 2012 open-access primer](https://doi.org/10.9707/2307-0919.1116)).

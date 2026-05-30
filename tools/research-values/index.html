@@ -148,10 +148,10 @@
       answers — <em>the reasoning is the point</em>. Pick the one you'd <b>rather</b>, and watch a
       picture of your research values take shape.</p>
     <div class="modegrid">
-      <button class="card mode" id="go-values" aria-label="Find my research values — scored, about four minutes">
-        <span class="tag">Reflect · ~4 min</span>
+      <button class="card mode" id="go-values" aria-label="Find my research values — scored, about five minutes">
+        <span class="tag">Reflect · ~5 min</span>
         <h3>Find my research values</h3>
-        <p class="muted" style="margin:0">~18 dilemmas, scored across nine research trade-offs.
+        <p class="muted" style="margin:0">~20 dilemmas, scored across ten research trade-offs.
           Get a research-values fingerprint, a closest archetype, and a profile you can share or revisit.</p>
       </button>
       <button class="card mode" id="go-ice" aria-label="Icebreaker mode — click through, no scoring">
@@ -170,7 +170,7 @@
     <h1>One quick thing — what's your field?</h1>
     <p class="sub">The trade-offs are universal; the wording isn't. This re-voices a few cards so a
       bench scientist, a theorist, and an archival historian aren't all asked the same way. Optional —
-      pick <b>Any field</b> to keep it generic.</p>
+      pick <b>General</b> to keep it generic.</p>
     <div class="fields" id="field-chips" role="group" aria-label="Research field"></div>
     <div class="underbar" style="justify-content:flex-start; margin-top:22px">
       <button class="btn" id="field-start">Start</button>
@@ -236,7 +236,7 @@
           toward the side you leaned — out at the <b>rim</b> for the bold pole listed below, in toward
           the <b>center</b> for its opposite; sitting on the dashed ring means you were balanced. A
           hollow, greyed dot means too few cards to call.</p>
-        <div class="small muted" style="margin-top:6px">The nine spokes (bold = the pole on the rim):</div>
+        <div class="small muted" style="margin-top:6px">The spokes (bold = the pole on the rim):</div>
         <div class="legend" id="radar-legend" aria-label="What each spoke measures"></div>
       </div>
       <div class="card">
@@ -317,7 +317,7 @@
    ========================================================================== */
 
 const AXES = [
-  {pos:"Curiosity",  neg:"Consequence",  ps:"Curiosity",  ns:"Consequence"},
+  {pos:"Curiosity",  neg:"Real-world impact",  ps:"Curiosity",  ns:"Real-world impact"},
   {pos:"Rigor",      neg:"Novelty",      ps:"Rigor",      ns:"Novelty"},
   {pos:"Depth",      neg:"Breadth",      ps:"Depth",      ns:"Breadth"},
   {pos:"Theory",     neg:"Application",  ps:"Theory",     ns:"Application"},
@@ -325,11 +325,12 @@ const AXES = [
   {pos:"Autonomy",   neg:"Security",     ps:"Autonomy",   ns:"Security"},
   {pos:"Output",     neg:"Sustainability", ps:"Output",   ns:"Sustainability"},
   {pos:"Solo",       neg:"Collaborative", ps:"Solo",      ns:"Collaborative"},
-  {pos:"Open science", neg:"Competitive advantage", ps:"Open", ns:"Advantage"}
+  {pos:"Open science", neg:"Competitive advantage", ps:"Open", ns:"Advantage"},
+  {pos:"Integrity",  neg:"Expedience",   ps:"Integrity",  ns:"Expedience"}
 ];
 
 const FIELDS = [
-  {id:"any", label:"Any field"},
+  {id:"any", label:"General"},
   {id:"ml", label:"Machine learning / CS"},
   {id:"experimental", label:"Experimental / lab"},
   {id:"theory", label:"Theory / mathematics"},
@@ -458,13 +459,18 @@ const DECK = [
     a:"Pour months into a shared resource — a public dataset, tool, or method the whole field comes to depend on — for little personal credit",
     b:"Keep your best methods and tools in-house, as the private edge that keeps you a step ahead of everyone else"},
 
-  /* ---------- Icebreaker-only pool (unscored) ---------- */
-  {id:"K14", scored:false,
+  /* Integrity vs Expedience (9) */
+  {id:"K14", axis:9, pole:"a",
     a:"Be known for absolute integrity and moral consistency in all your academic dealings",
     b:"Be known for groundbreaking genius that sometimes requires morally ambiguous choices"},
-  {id:"K19", scored:false,
+  {id:"K19", axis:9, pole:"b", w:0.8,
     a:"Be directly responsible for creating a technology that causes massive global job displacement",
     b:"Have your own dream research project banned globally for ethical concerns"},
+  {id:"N24", axis:9, pole:"a",
+    a:"Report your results exactly as they are, even when a small, defensible massage would make them far more publishable",
+    b:"Present your results in their most favorable light — well within the norms everyone bends — because that's what gets through review"},
+
+  /* ---------- Icebreaker-only pool (unscored) ---------- */
   {id:"F1", scored:false, domains:["ml"],
     a:"Have your research rely on a deep-learning library that randomly changes its API three times a year",
     b:"Have your primary compute cluster run on hardware from 2010"},
@@ -531,7 +537,9 @@ const ARCHETYPES = [
   {name:"The independent maverick", traits:[[5,+1],[7,+1],[8,-1]],
    line:"Your agenda, your terms — you'd trade resources and company for freedom every time."},
   {name:"The pragmatic professional", traits:[[5,-1],[3,-1],[6,+1]],
-   line:"Resources, stability, and things that get used: you build a career that holds."}
+   line:"Resources, stability, and things that get used: you build a career that holds."},
+  {name:"The principled holdout", traits:[[9,+1],[4,+1]],
+   line:"You won't trade integrity for advantage — the work has to be clean, credit or no credit."}
 ];
 
 const SCHWARTZ = [
@@ -543,7 +551,8 @@ const SCHWARTZ = [
   ["Self-Direction","Security"],
   ["Achievement","Security"],
   ["Self-Direction","Benevolence"],
-  ["Universalism / Benevolence (Self-Transcendence)","Power / Achievement (Self-Enhancement)"]
+  ["Universalism / Benevolence (Self-Transcendence)","Power / Achievement (Self-Enhancement)"],
+  ["Benevolence (honesty) / Universalism","Achievement / Power"]
 ];
 
 const CLAUSES = [
@@ -564,7 +573,9 @@ const CLAUSES = [
   ["your best work is yours alone, with clear, attributable contribution",
    "your best work is collective; you'd rather be a node in a team"],
   ["you'd share everything — the commons over the edge",
-   "you'd guard a strategic edge — priority and advantage over openness"]
+   "you'd guard a strategic edge — priority and advantage over openness"],
+  ["you hold the line on integrity, even when cutting a corner would pay off",
+   "you'll do what's expedient to land the result, within the norms everyone bends"]
 ];
 
 /* ---- field-native axes: one extra, field-specific tension per field (2 cards each).
@@ -702,7 +713,7 @@ document.addEventListener("keydown",e=>{
 
 /* ---- scoring ---- */
 function score(answers){
-  const raw=Array(9).fill(0), max=Array(9).fill(0), n=Array(9).fill(0);
+  const raw=Array(AXES.length).fill(0), max=Array(AXES.length).fill(0), n=Array(AXES.length).fill(0);
   for(const id in answers){
     const ans=answers[id], card=BYID[id];
     if(!card || card.scored===false || ans.pick==="s") continue;
@@ -825,7 +836,7 @@ function renderResults(R){
     magnitude as <em>direction, not precision</em> — “leaned hard” means you picked the same side twice, not
     that it's a calibrated score. Axes you met fewer than twice are greyed (“needs more signal”). A near-zero
     score isn't noise — it's a genuine <em>live tension</em>. ${answered} of ${S.deck.length} cards answered${S.field!=='any'?`, reworded for ${fieldLabel()}`:''}.`;
-  $("res-disclaimer").innerHTML = `<b>A reflective mirror, not a validated test.</b> The nine axes are a
+  $("res-disclaimer").innerHTML = `<b>A reflective mirror, not a validated test.</b> The ten axes are a
     hand-designed map, not a calibrated psychometric, and each rests on just a couple of deliberately-loose
     choices. Your picks <em>leaned</em> — you don't have to <em>be</em> anything. A snapshot of today's
     trade-offs; values drift, so retake it in six months.`;
@@ -841,7 +852,7 @@ function escapeHTML(s){ return s.replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",
         are drawn as hollow markers at the balanced ring and EXCLUDED from the filled
         polygon, so "unknown" never masquerades as a deliberate 50/50. ---- */
 function radarSVG(sc,n){
-  const N=9, R=120, cx=160, cy=150, W=320, H=320;
+  const N=AXES.length, R=120, cx=160, cy=150, W=320, H=320;
   const ang = k => -Math.PI/2 + k*2*Math.PI/N;
   const pt = (k,v)=>{ const r=R*((v+1)/2); return [cx+r*Math.cos(ang(k)), cy+r*Math.sin(ang(k))]; };
   let g="";
