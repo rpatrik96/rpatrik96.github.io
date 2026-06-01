@@ -1,36 +1,15 @@
-last_updated: '2026-05-25 09:46:48'
+last_updated: '2026-06-01 11:07:01'
 github_url: https://github.com/rpatrik96
 repos:
-- name: bibtexupdater
-  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
-    to published versions and filter to only cited references.'
-  url: https://github.com/rpatrik96/bibtexupdater
-  stars: 90
-  forks: 6
-  language: Python
-  updated_at: '2026-05-19'
-  topics:
-  - bibtex
-  - bibtex-references
-  - bibtexparser
-  - latex
-- name: rpatrik96.github.io
-  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
-  url: https://github.com/rpatrik96/rpatrik96.github.io
-  stars: 0
-  forks: 1
-  language: JavaScript
-  updated_at: '2026-05-18'
-  topics: []
 - name: hallmark
   description: 'HALLMARK: Citation hallucination detection benchmark for ML papers
     — 2,525 entries, 14 hallucination types, 3 difficulty tiers, 10 baselines including
     LLMs and verification tools'
   url: https://github.com/rpatrik96/hallmark
-  stars: 1
+  stars: 3
   forks: 0
   language: Python
-  updated_at: '2026-05-18'
+  updated_at: '2026-06-01'
   topics:
   - academic-integrity
   - benchmark
@@ -42,6 +21,56 @@ repos:
   - machine-learning
   - nlp
   - reproducibility
+- name: CV
+  description: ''
+  url: https://github.com/rpatrik96/CV
+  stars: 0
+  forks: 0
+  language: TeX
+  updated_at: '2026-05-31'
+  topics: []
+- name: bibtexupdater
+  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
+    to published versions and filter to only cited references.'
+  url: https://github.com/rpatrik96/bibtexupdater
+  stars: 91
+  forks: 6
+  language: Python
+  updated_at: '2026-05-31'
+  topics:
+  - bibtex
+  - bibtex-references
+  - bibtexparser
+  - latex
+- name: rpatrik96.github.io
+  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
+  url: https://github.com/rpatrik96/rpatrik96.github.io
+  stars: 0
+  forks: 1
+  language: HTML
+  updated_at: '2026-05-30'
+  topics: []
+- name: ica_causal_effect
+  description: Code for 'Estimating Treatment Effects with Independent Component Analysis'
+    (arXiv:2507.16467)
+  url: https://github.com/rpatrik96/ica_causal_effect
+  stars: 1
+  forks: 0
+  language: Python
+  updated_at: '2026-05-27'
+  topics:
+  - causal-inference
+  - debiased-machine-learning
+  - double-machine-learning
+  - econometrics
+  - fastica
+  - ica
+  - independent-component-analysis
+  - monte-carlo-simulation
+  - orthogonal-machine-learning
+  - partially-linear-model
+  - semiparametric-estimation
+  - treatment-effect-estimation
 - name: research-agora
   description: 'Research Agora: Claude Code skills, benchmarks & tools for ML researchers
     — paper writing, citation verification, experiment tracking, LaTeX automation'
@@ -61,51 +90,3 @@ repos:
   - paper-writing
   - research-tools
   - skills
-- name: ica_causal_effect
-  description: Code for 'Estimating Treatment Effects with Independent Component Analysis'
-    (arXiv:2507.16467)
-  url: https://github.com/rpatrik96/ica_causal_effect
-  stars: 1
-  forks: 0
-  language: Python
-  updated_at: '2026-04-30'
-  topics:
-  - causal-inference
-  - debiased-machine-learning
-  - double-machine-learning
-  - econometrics
-  - fastica
-  - ica
-  - independent-component-analysis
-  - monte-carlo-simulation
-  - orthogonal-machine-learning
-  - partially-linear-model
-  - semiparametric-estimation
-  - treatment-effect-estimation
-- name: pytorch-a2c
-  description: A well-documented A2C written in PyTorch
-  url: https://github.com/rpatrik96/pytorch-a2c
-  stars: 53
-  forks: 9
-  language: Python
-  updated_at: '2026-04-27'
-  topics:
-  - a2c
-  - actor-critic
-  - advantage
-  - advantage-actor-critic
-  - baselines
-  - deep-learning
-  - deep-neural-networks
-  - deep-reinforcement-learning
-  - episode-rollout
-  - openai-gym
-  - python
-  - python3
-  - pytorch
-  - pytorch-implementation
-  - pytorch-tutorial
-  - reinforcement-learning
-  - reinforcement-learning-agent
-  - reinforcement-learning-algorithms
-  - stable-baselines
