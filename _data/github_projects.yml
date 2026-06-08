@@ -1,15 +1,36 @@
-last_updated: '2026-06-01 11:07:01'
+last_updated: '2026-06-08 10:15:06'
 github_url: https://github.com/rpatrik96
 repos:
+- name: bibtexupdater
+  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
+    to published versions and filter to only cited references.'
+  url: https://github.com/rpatrik96/bibtexupdater
+  stars: 98
+  forks: 6
+  language: Python
+  updated_at: '2026-06-08'
+  topics:
+  - bibtex
+  - bibtex-references
+  - bibtexparser
+  - latex
+- name: CV
+  description: ''
+  url: https://github.com/rpatrik96/CV
+  stars: 0
+  forks: 0
+  language: TeX
+  updated_at: '2026-06-06'
+  topics: []
 - name: hallmark
   description: 'HALLMARK: Citation hallucination detection benchmark for ML papers
     — 2,525 entries, 14 hallucination types, 3 difficulty tiers, 10 baselines including
     LLMs and verification tools'
   url: https://github.com/rpatrik96/hallmark
-  stars: 3
+  stars: 5
   forks: 0
   language: Python
-  updated_at: '2026-06-01'
+  updated_at: '2026-06-02'
   topics:
   - academic-integrity
   - benchmark
@@ -21,34 +42,13 @@ repos:
   - machine-learning
   - nlp
   - reproducibility
-- name: CV
-  description: ''
-  url: https://github.com/rpatrik96/CV
-  stars: 0
-  forks: 0
-  language: TeX
-  updated_at: '2026-05-31'
-  topics: []
-- name: bibtexupdater
-  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
-    to published versions and filter to only cited references.'
-  url: https://github.com/rpatrik96/bibtexupdater
-  stars: 91
-  forks: 6
-  language: Python
-  updated_at: '2026-05-31'
-  topics:
-  - bibtex
-  - bibtex-references
-  - bibtexparser
-  - latex
 - name: rpatrik96.github.io
   description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
   url: https://github.com/rpatrik96/rpatrik96.github.io
   stars: 0
   forks: 1
   language: HTML
-  updated_at: '2026-05-30'
+  updated_at: '2026-06-01'
   topics: []
 - name: ica_causal_effect
   description: Code for 'Estimating Treatment Effects with Independent Component Analysis'
