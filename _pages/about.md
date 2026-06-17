@@ -8,7 +8,7 @@ redirect_from:
   - /about.html
 ---
 
-I am a final-year Ph.D. student in the Robust Machine Learning group at the Max Planck Institute of Intelligent Systems in Tübingen, supervised by Wieland Brendel, Ferenc Huszár, Matthias Bethge, and Bernhard Schölkopf. I am part of the [ELLIS](https://ellis.eu/phd-postdoc) and [IMPRS-IS](http://imprs.is.mpg.de/) programs. I have also spent time at [Mila](https://mila.quebec/), the [Vector Institute](https://x.com/VectorInst/status/1859689575288860992), and at the University of Cambridge.
+I am a final-year Ph.D. student in the Robust Machine Learning group at the Max Planck Institute of Intelligent Systems in Tübingen, supervised by Wieland Brendel, Ferenc Huszár, Matthias Bethge, and Bernhard Schölkopf. I am an incoming [IVADO](https://ivado.ca/en/) postdoctoral fellow at the [Université de Montréal](https://www.umontreal.ca/en/) and [Mila](https://mila.quebec/), co-supervised by Dhanya Sridhar and Simon Lacoste-Julien. I am part of the [ELLIS](https://ellis.eu/phd-postdoc) and [IMPRS-IS](http://imprs.is.mpg.de/) programs. I have also spent time at the [Vector Institute](https://x.com/VectorInst/status/1859689575288860992) and at the University of Cambridge.
 
 The main motivation for my research is to advance our **understanding of how and why deep learning models work**. 
 My research toolkit currently focuses around _identifiable causal and self-supervised representation learning_ and _out-of-distribution (OOD) generalization,_ with a focus on _compositionality in language models_. During my Ph.D., I [realized](https://openreview.net/forum?id=pVyOchWUBa) that current machine learning theory is insufficient to explain especially the interesting and useful properties of deep neural networks. 
