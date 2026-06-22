@@ -1,19 +1,27 @@
-last_updated: '2026-06-15 11:43:27'
+last_updated: '2026-06-22 11:32:42'
 github_url: https://github.com/rpatrik96
 repos:
 - name: bibtexupdater
   description: 'Tools for managing BibTeX bibliographies: automatically update preprints
     to published versions and filter to only cited references.'
   url: https://github.com/rpatrik96/bibtexupdater
-  stars: 99
+  stars: 102
   forks: 6
   language: Python
-  updated_at: '2026-06-15'
+  updated_at: '2026-06-19'
   topics:
   - bibtex
   - bibtex-references
   - bibtexparser
   - latex
+- name: rpatrik96.github.io
+  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
+  url: https://github.com/rpatrik96/rpatrik96.github.io
+  stars: 0
+  forks: 1
+  language: HTML
+  updated_at: '2026-06-17'
+  topics: []
 - name: hallmark
   description: 'HALLMARK: Citation hallucination detection benchmark for ML papers
     — 2,525 entries, 14 hallucination types, 3 difficulty tiers, 10 baselines including
@@ -22,7 +30,7 @@ repos:
   stars: 7
   forks: 0
   language: Python
-  updated_at: '2026-06-12'
+  updated_at: '2026-06-15'
   topics:
   - academic-integrity
   - benchmark
@@ -34,14 +42,6 @@ repos:
   - machine-learning
   - nlp
   - reproducibility
-- name: rpatrik96.github.io
-  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
-  url: https://github.com/rpatrik96/rpatrik96.github.io
-  stars: 0
-  forks: 1
-  language: HTML
-  updated_at: '2026-06-08'
-  topics: []
 - name: CV
   description: ''
   url: https://github.com/rpatrik96/CV
