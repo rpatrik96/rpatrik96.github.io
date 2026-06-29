@@ -1,14 +1,33 @@
-last_updated: '2026-06-22 11:32:42'
+last_updated: '2026-06-29 10:19:53'
 github_url: https://github.com/rpatrik96
 repos:
+- name: research-agora
+  description: 'Research Agora: Claude Code skills, benchmarks & tools for ML researchers
+    — paper writing, citation verification, experiment tracking, LaTeX automation'
+  url: https://github.com/rpatrik96/research-agora
+  stars: 12
+  forks: 3
+  language: Python
+  updated_at: '2026-06-29'
+  topics:
+  - academic-writing
+  - benchmarks
+  - citation-verification
+  - claude-code
+  - latex
+  - machine-learning
+  - ml-research
+  - paper-writing
+  - research-tools
+  - skills
 - name: bibtexupdater
   description: 'Tools for managing BibTeX bibliographies: automatically update preprints
     to published versions and filter to only cited references.'
   url: https://github.com/rpatrik96/bibtexupdater
-  stars: 102
+  stars: 103
   forks: 6
   language: Python
-  updated_at: '2026-06-19'
+  updated_at: '2026-06-24'
   topics:
   - bibtex
   - bibtex-references
@@ -20,7 +39,7 @@ repos:
   stars: 0
   forks: 1
   language: HTML
-  updated_at: '2026-06-17'
+  updated_at: '2026-06-22'
   topics: []
 - name: hallmark
   description: 'HALLMARK: Citation hallucination detection benchmark for ML papers
@@ -30,7 +49,7 @@ repos:
   stars: 7
   forks: 0
   language: Python
-  updated_at: '2026-06-15'
+  updated_at: '2026-06-22'
   topics:
   - academic-integrity
   - benchmark
@@ -71,22 +90,3 @@ repos:
   - partially-linear-model
   - semiparametric-estimation
   - treatment-effect-estimation
-- name: research-agora
-  description: 'Research Agora: Claude Code skills, benchmarks & tools for ML researchers
-    — paper writing, citation verification, experiment tracking, LaTeX automation'
-  url: https://github.com/rpatrik96/research-agora
-  stars: 11
-  forks: 3
-  language: Python
-  updated_at: '2026-05-16'
-  topics:
-  - academic-writing
-  - benchmarks
-  - citation-verification
-  - claude-code
-  - latex
-  - machine-learning
-  - ml-research
-  - paper-writing
-  - research-tools
-  - skills
