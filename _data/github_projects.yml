@@ -1,14 +1,48 @@
-last_updated: '2026-06-29 10:19:53'
+last_updated: '2026-07-06 09:53:46'
 github_url: https://github.com/rpatrik96
 repos:
+- name: ica_causal_effect
+  description: Code for 'Estimating Treatment Effects with Independent Component Analysis'
+    (arXiv:2507.16467)
+  url: https://github.com/rpatrik96/ica_causal_effect
+  stars: 1
+  forks: 0
+  language: Python
+  updated_at: '2026-07-02'
+  topics:
+  - causal-inference
+  - debiased-machine-learning
+  - double-machine-learning
+  - econometrics
+  - fastica
+  - ica
+  - independent-component-analysis
+  - monte-carlo-simulation
+  - orthogonal-machine-learning
+  - partially-linear-model
+  - semiparametric-estimation
+  - treatment-effect-estimation
+- name: bibtexupdater
+  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
+    to published versions and filter to only cited references.'
+  url: https://github.com/rpatrik96/bibtexupdater
+  stars: 105
+  forks: 6
+  language: Python
+  updated_at: '2026-07-01'
+  topics:
+  - bibtex
+  - bibtex-references
+  - bibtexparser
+  - latex
 - name: research-agora
   description: 'Research Agora: Claude Code skills, benchmarks & tools for ML researchers
     — paper writing, citation verification, experiment tracking, LaTeX automation'
   url: https://github.com/rpatrik96/research-agora
-  stars: 12
+  stars: 13
   forks: 3
   language: Python
-  updated_at: '2026-06-29'
+  updated_at: '2026-06-30'
   topics:
   - academic-writing
   - benchmarks
@@ -20,26 +54,13 @@ repos:
   - paper-writing
   - research-tools
   - skills
-- name: bibtexupdater
-  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
-    to published versions and filter to only cited references.'
-  url: https://github.com/rpatrik96/bibtexupdater
-  stars: 103
-  forks: 6
-  language: Python
-  updated_at: '2026-06-24'
-  topics:
-  - bibtex
-  - bibtex-references
-  - bibtexparser
-  - latex
 - name: rpatrik96.github.io
   description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
   url: https://github.com/rpatrik96/rpatrik96.github.io
   stars: 0
   forks: 1
   language: HTML
-  updated_at: '2026-06-22'
+  updated_at: '2026-06-29'
   topics: []
 - name: hallmark
   description: 'HALLMARK: Citation hallucination detection benchmark for ML papers
@@ -49,7 +70,7 @@ repos:
   stars: 7
   forks: 0
   language: Python
-  updated_at: '2026-06-22'
+  updated_at: '2026-06-29'
   topics:
   - academic-integrity
   - benchmark
@@ -69,24 +90,3 @@ repos:
   language: TeX
   updated_at: '2026-06-06'
   topics: []
-- name: ica_causal_effect
-  description: Code for 'Estimating Treatment Effects with Independent Component Analysis'
-    (arXiv:2507.16467)
-  url: https://github.com/rpatrik96/ica_causal_effect
-  stars: 1
-  forks: 0
-  language: Python
-  updated_at: '2026-05-27'
-  topics:
-  - causal-inference
-  - debiased-machine-learning
-  - double-machine-learning
-  - econometrics
-  - fastica
-  - ica
-  - independent-component-analysis
-  - monte-carlo-simulation
-  - orthogonal-machine-learning
-  - partially-linear-model
-  - semiparametric-estimation
-  - treatment-effect-estimation
