@@ -1,5 +1,13 @@
-last_updated: '2026-06-29 10:47:04'
+last_updated: '2026-07-06 10:07:38'
 papers:
+- title: Stabilizing Extrapolation in Looped Transformers via Learned Stochastic Stopping
+  authors: Hsun-Yu Kuo and El Mahdi Chayti and Patrik Reizinger and Wieland Brendel
+    and Martin Jaggi
+  year: 2026
+  venue: arXiv (Cornell University)
+  citations: 0
+  url: https://openalex.org/W7166900447
+  paper_url: https://arxiv.org/abs/2606.29983
 - title: Who Guards the Guardians? The Challenges of Evaluating Identifiability of
     Learned Representations
   authors: Shruti Joshi and Théo Saulus and Wieland Brendel and Philippe Brouillard
@@ -17,26 +25,19 @@ papers:
   citations: 0
   url: https://openalex.org/W7130538568
   paper_url: https://arxiv.org/abs/2602.16698
+- title: 'From Isolation to Entanglement: When Do Interpretability Methods Identify
+    and Disentangle Known Concepts?'
+  authors: Aaron Mueller and Andrew Lee and Shruti Joshi and Ekdeep Singh Lubana and
+    Dhanya Sridhar and Patrik Reizinger
+  year: 2026
+  venue: ''
+  citations: 0
+  url: https://openalex.org/W7166827055
+  paper_url: https://doi.org/10.18653/v1/2026.acl-long.782
 - title: Out-of-distribution Tests Reveal Compositionality in Chess Transformers
   authors: Anna Mészáros and Patrik Reizinger and Ferenc Huszár
   year: 2025
-  venue: ArXiv.org
+  venue: arXiv (Cornell University)
   citations: 0
   url: https://openalex.org/W4416621834
   paper_url: https://arxiv.org/abs/2510.20783
-- title: Estimating Treatment Effects with Independent Component Analysis
-  authors: Patrik Reizinger and Lester Mackey and Wieland Brendel and Rahul Krishnan
-  year: 2025
-  venue: ArXiv.org
-  citations: 0
-  url: https://openalex.org/W4414421775
-  paper_url: https://arxiv.org/abs/2507.16467
-- title: Skill Learning via Policy Diversity Yields Identifiable Representations for
-    Reinforcement Learning
-  authors: Patrik Reizinger and Bálint Mucsányi and Siyuan Guo and Benjamin Eysenbach
-    and Bernhard Schölkopf and Wieland Brendel
-  year: 2025
-  venue: ArXiv.org
-  citations: 0
-  url: https://openalex.org/W4416838970
-  paper_url: http://arxiv.org/abs/2507.14748
