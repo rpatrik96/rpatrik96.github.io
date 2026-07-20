@@ -60,6 +60,12 @@
 }
 
 .masthead__menu {
+  // Allow the nav to shrink below its intrinsic content width so the
+  // priority-plus greedy nav can measure the real available space and
+  // collapse overflowing links on narrow (mobile) viewports.
+  flex: 1 1 auto;
+  min-width: 0;
+
   ul {
     margin: 0;
     padding: 0;

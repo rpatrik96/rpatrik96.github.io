@@ -176,7 +176,10 @@
   position: relative;
   display: flex;
   align-items: center;
-  min-width: 250px;
+  // Fill the available width and allow shrinking; a fixed min-width would
+  // keep the bar wider than a phone screen and defeat the greedy collapse.
+  width: 100%;
+  min-width: 0;
   background: transparent;
 
   a {
@@ -222,6 +225,10 @@
 
   .visible-links {
     display: flex;
+    // Take the available width (flex-basis 0) and clip the overflow so the
+    // greedy-nav JS can move links that don't fit into the hidden dropdown.
+    flex: 1 1 auto;
+    min-width: 0;
     align-items: center;
     flex-wrap: nowrap;
     overflow: hidden;
@@ -277,6 +284,8 @@
   }
 
   .hidden-links {
+    // Override the masthead's flex row so dropdown items stack vertically.
+    display: block;
     position: absolute;
     top: 100%;
     right: 0;
