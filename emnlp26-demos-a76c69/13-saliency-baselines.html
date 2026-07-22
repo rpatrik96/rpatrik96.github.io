@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Local sensitivity ≠ global importance · EMNLP 2026 tutorial demo</title>
+<style>
+  :root {
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --line:#E1DEEC;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+      --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+      --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+      --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --line:#332B49;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --line:#332B49;
+  }
+  :root[data-theme="light"] {
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --line:#E1DEEC;
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: 'Avenir Next', Avenir, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.55; padding: 1.6rem 1.2rem 2.5rem;
+  }
+  h1, h2 { font-family: Futura, 'Century Gothic', 'Avenir Next', 'Trebuchet MS', sans-serif; }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  .kicker {
+    font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-mute); font-weight: 600;
+  }
+  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.2rem; }
+  header h1 { color: var(--purple); font-size: 1.65rem; line-height: 1.2; margin: .3rem 0 .35rem; }
+  header .dek { color: var(--ink-soft); max-width: 62ch; }
+  a.back {
+    color: var(--purple); text-decoration: none; font-size: .85rem; white-space: nowrap;
+    border: 1px solid var(--line); border-radius: 999px; padding: .3rem .8rem; margin-top: .2rem;
+  }
+  a.back:hover { background: var(--hero); }
+  a.back:focus-visible, button:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+
+  .stage {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 1.1rem 1.2rem 1rem; margin-bottom: 1.6rem;
+  }
+  .pins { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; margin-bottom: .9rem; }
+  .chip {
+    font-size: .78rem; border: 1px solid var(--line); border-radius: 999px;
+    padding: .18rem .7rem; color: var(--ink-soft); background: var(--panel);
+    font-variant-numeric: tabular-nums;
+  }
+  .chip strong { color: var(--ink); }
+  .chip.pred { border-color: var(--purple-soft); background: var(--hero); }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 1.1rem; margin-bottom: .55rem; }
+  .group .lbl { font-size: .64rem; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; }
+  .seg {
+    display: inline-flex; border: 1px solid var(--line); border-radius: 10px;
+    overflow: hidden; margin-top: .3rem; background: var(--panel);
+  }
+  .seg button {
+    font: inherit; font-size: .84rem; padding: .42rem .8rem; border: none; cursor: pointer;
+    background: transparent; color: var(--ink-soft);
+  }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button[aria-pressed="true"] { background: var(--purple); color: var(--paper); font-weight: 600; }
+  .seg button:disabled { cursor: not-allowed; opacity: .38; }
+  .seg button:disabled[aria-pressed="true"] { background: var(--purple-faint); color: var(--ink-mute); }
+  .knob-note { font-size: .76rem; color: var(--ink-mute); margin-top: .15rem; max-width: 78ch; }
+  .start-cue {
+    font-size: .83rem; color: var(--ink); background: var(--hero);
+    border: 1px dashed var(--purple-mid); border-radius: 10px;
+    padding: .45rem .75rem; margin-bottom: .85rem; max-width: 84ch;
+  }
+  .start-cue strong { color: var(--purple); }
+  .blendrow { display: flex; align-items: center; gap: .5rem; margin-top: .45rem; flex-wrap: wrap; }
+  .blend-lbl { font-size: .72rem; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+  .blendrow input[type="range"] { width: 140px; accent-color: var(--purple); margin: 0; }
+  .blendrow input[type="range"]:disabled { opacity: .38; cursor: not-allowed; }
+  .blendrow input[type="range"]:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+  .blendrow output { font-size: .74rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; min-width: 5ch; }
+
+  .stagegrid { display: grid; grid-template-columns: minmax(0, 1fr) 268px; gap: 1.1rem; align-items: start; margin-top: .5rem; }
+  @media (max-width: 880px) { .stagegrid { grid-template-columns: 1fr; } }
+
+  .chart svg { width: 100%; height: auto; display: block; }
+  .chart text { font-family: inherit; }
+  .panel-cap { font-size: .8rem; color: var(--ink-soft); margin-bottom: .15rem; font-variant-numeric: tabular-nums; }
+  .zero-line { stroke: var(--ink-mute); stroke-width: 1; stroke-dasharray: 4 4; }
+  .bar-pos { fill: var(--purple); }
+  .bar-neg { fill: var(--magenta); }
+  .bar-agg-pos { fill: var(--gap-green); }
+  .bar-agg-neg { fill: var(--magenta); }
+  .val-label { fill: var(--ink-soft); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .tok-label { fill: var(--ink); font-size: 12.5px; }
+  .tok-top-pill { fill: var(--purple); }
+  .tok-top-text { fill: var(--paper); font-size: 12.5px; font-weight: 700; }
+  .tok-agg-pill { fill: var(--gap-green); }
+  .whisker { stroke: var(--ink); stroke-width: 1.4; }
+  .legend-note { font-size: .74rem; color: var(--ink-mute); margin-top: .3rem; }
+  .provenance { font-size: .76rem; color: var(--ink-mute); margin-top: .55rem; max-width: 76ch; }
+
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+  .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: .55rem .7rem; }
+  .tile .lbl { font-size: .64rem; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; }
+  .tile .val { font-size: 1.45rem; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: .1rem; color: var(--purple); }
+  .tile .sub { font-size: .72rem; color: var(--ink-mute); }
+  .verdict {
+    margin-top: .7rem; background: var(--hero); border-left: 3px solid var(--purple);
+    border-radius: 0 10px 10px 0; padding: .65rem .8rem; font-size: .86rem; color: var(--ink);
+  }
+  .verdict .lbl { font-size: .64rem; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; margin-bottom: .25rem; }
+
+  .aggblock { border-top: 1px dashed var(--line); margin-top: 1rem; padding-top: .9rem; }
+  button.aggtoggle {
+    font: inherit; font-size: .88rem; font-weight: 600; padding: .5rem 1rem; cursor: pointer;
+    border: 1px solid var(--gap-green); border-radius: 10px; background: var(--panel); color: var(--gap-green);
+  }
+  button.aggtoggle[aria-pressed="true"] { background: var(--gap-green); color: var(--paper); }
+  .agg-sub { font-size: .78rem; color: var(--ink-mute); margin-top: .35rem; max-width: 78ch; }
+  #agg-panel[hidden] { display: none; }
+  .stable-badge {
+    display: inline-block; font-size: .78rem; font-weight: 600; color: var(--gap-green);
+    border: 1px solid var(--gap-green); border-radius: 999px; padding: .16rem .7rem; margin: .55rem 0 .3rem;
+  }
+  .estimands { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-top: .6rem; }
+  @media (max-width: 700px) { .estimands { grid-template-columns: 1fr; } }
+  .est { border: 1px solid var(--line); border-radius: 10px; padding: .55rem .75rem; font-size: .8rem; color: var(--ink-soft); background: var(--panel); }
+  .est .tag { font-size: .64rem; letter-spacing: .11em; text-transform: uppercase; font-weight: 700; }
+  .est.pt .tag { color: var(--l1); }
+  .est.dist .tag { color: var(--l2); }
+  .est .formula { font-size: .92rem; color: var(--ink); margin: .15rem 0; font-variant-numeric: tabular-nums; }
+
+  section { max-width: 70ch; margin: 0 auto 1.5rem; }
+  section h2 { color: var(--purple); font-size: 1.05rem; margin-bottom: .5rem; }
+  section p { margin-bottom: .7rem; color: var(--ink); }
+  blockquote {
+    background: var(--panel); border-left: 3px solid var(--purple-mid);
+    border-radius: 0 10px 10px 0; padding: .8rem 1rem; margin-bottom: .7rem;
+  }
+  blockquote p { color: var(--ink-soft); font-style: italic; margin-bottom: .35rem; }
+  blockquote cite { font-style: normal; font-size: .8rem; color: var(--ink-mute); }
+  ol.try { padding-left: 1.2rem; }
+  ol.try li { margin-bottom: .55rem; color: var(--ink); }
+  footer { max-width: 70ch; margin: 2rem auto 0; font-size: .78rem; color: var(--ink-mute); border-top: 1px solid var(--line); padding-top: .9rem; }
+  footer a { color: var(--purple); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .chart rect { transition: opacity .15s ease; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</div>
+      <h1>Local sensitivity ≠ global importance</h1>
+      <p class="dek">Baseline, parameterisation, perturbation scheme: analyst choices reshuffle which tokens look responsible. Aggregating over an explicit intervention family stabilises the ranking.</p>
+    </div>
+    <a class="back" href="./index.html">← All demos</a>
+  </header>
+
+  <div class="stage">
+    <div class="pins" aria-live="polite">
+      <span class="chip">same model · same input</span>
+      <span class="chip pred">“the film was not bad , honestly” → <strong id="pred-val">f(x₀) = +?</strong> <strong>(positive)</strong></span>
+      <span class="chip">only the <strong>analyst choice</strong> changes below</span>
+    </div>
+
+    <p class="start-cue"><strong>Start here:</strong> click through the four baselines, then switch recipe — watch which token wears the “most responsible” pill. Then drag the blend slider. Open the aggregate row last.</p>
+
+    <div class="controls">
+      <div class="group">
+        <div class="lbl">Attribution recipe</div>
+        <div class="seg" role="group" aria-label="Attribution recipe">
+          <button id="m-occ" aria-pressed="true">Occlusion f(x₀) − f(x₀ with token → b)</button>
+          <button id="m-grad" aria-pressed="false">Gradient saliency ‖∇f‖</button>
+        </div>
+      </div>
+      <div class="group">
+        <div class="lbl">Baseline b (analyst choice)</div>
+        <div class="seg" role="group" aria-label="Baseline vector">
+          <button id="base-zero" aria-pressed="true">zero</button>
+          <button id="base-mean" aria-pressed="false">mean</button>
+          <button id="base-rand" aria-pressed="false">random</button>
+          <button id="base-pad" aria-pressed="false">PAD</button>
+        </div>
+        <div class="blendrow">
+          <label class="blend-lbl" for="base-blend">blend b(t) = (1−t)·mean + t·random</label>
+          <input type="range" id="base-blend" min="0" max="1" step="0.01" value="0"
+                 aria-label="Blend the occlusion baseline continuously from mean (t = 0) to random (t = 1)">
+          <output id="blend-out">t = —</output>
+        </div>
+      </div>
+      <div class="group">
+        <div class="lbl">Parameterisation (analyst choice)</div>
+        <div class="seg" role="group" aria-label="Input parameterisation">
+          <button id="par-raw" aria-pressed="true">embedding basis</button>
+          <button id="par-rot" aria-pressed="false">rotated basis z = A⁻¹x</button>
+        </div>
+      </div>
+    </div>
+    <p class="knob-note" id="knob-note">Occlusion’s live knob is the baseline; the parameterisation toggle does not enter it.</p>
+
+    <div class="stagegrid">
+      <div class="chart">
+        <div class="panel-cap" id="panel-cap">Pointwise attribution at x₀ — occlusion, zero baseline</div>
+        <svg id="chart" viewBox="0 0 660 330" role="img"
+             aria-label="Seven token attribution bars for the sentence: the film was not bad comma honestly. The bars and the top-ranked token change with the analyst controls.">
+        </svg>
+        <p class="legend-note" id="chart-legend">Positive bar: replacing the token lowers the score (it supports the positive prediction) · negative: raises it. Bar heights are normalised within each choice; printed values are raw.</p>
+        <p class="provenance">Toy model: a fixed seeded 14-unit MLP over 7 × 6-D token embeddings plus an explicit not×bad interaction term, so the distributional ground truth is known by construction. Every number on this page is computed live and deterministically in your browser.</p>
+      </div>
+
+      <div>
+        <div class="tiles" aria-live="polite">
+          <div class="tile">
+            <div class="lbl">Choices viewed</div>
+            <div class="val" id="v-viewed">1/6</div>
+            <div class="sub">4 baselines + 2 bases across 2 recipes</div>
+          </div>
+          <div class="tile">
+            <div class="lbl">Distinct “top tokens”</div>
+            <div class="val" id="v-distinct">1</div>
+            <div class="sub" id="v-distinct-sub">so far: “bad”</div>
+          </div>
+        </div>
+        <div class="verdict" aria-live="polite">
+          <div class="lbl">What your current choice computes</div>
+          <div id="verdict-text">…</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="aggblock">
+      <button class="aggtoggle" id="agg-toggle" aria-pressed="false" aria-controls="agg-panel">
+        Aggregate over an explicit intervention family →
+      </button>
+      <p class="agg-sub">200 seeded deletions: inputs jittered around x₀ (a reference distribution p), replacement drawn across all four baselines. The knobs above are marginalised (averaged over, not hidden) rather than silently fixed. That specification pins down the estimand — the precise quantity a claim is about — here 𝔼<sub>x∼p</sub>[f(x) − f(x<sup>∖i</sup>)], where x<sup>∖i</sup> is x with token i deleted.</p>
+
+      <div id="agg-panel" hidden>
+        <span class="stable-badge" id="stable-badge">…</span>
+        <div class="panel-cap">Distributional estimand 𝔼<sub>x∼p</sub>[f(x) − f(x<sup>∖i</sup>)] · x<sup>∖i</sup> = x with token i deleted · whiskers ±2 s.e.</div>
+        <svg id="agg-chart" viewBox="0 0 660 300" role="img"
+             aria-label="Aggregated token importance with error bars: not and bad clearly separate from the other five tokens, and this chart does not change with the controls above.">
+        </svg>
+        <p class="legend-note">This row does not respond to the controls above — that is the point: once the intervention family and reference distribution are declared, the estimand’s value is a property of the model; the analyst’s choices are explicit, declared inputs rather than silent knobs.</p>
+        <div class="estimands">
+          <div class="est pt">
+            <div class="tag">Pointwise · the evidence (L1)</div>
+            <div class="formula">∇f(x)│<sub>x₀</sub> &nbsp;or&nbsp; f(x₀) − f(x₀ with token i → b)</div>
+            a property of (model, input, analyst choice)
+          </div>
+          <div class="est dist">
+            <div class="tag">Distributional · the claim’s estimand (L2)</div>
+            <div class="formula">𝔼<sub>x∼p</sub>[f(x) − f(x<sup>∖i</sup>)]</div>
+            fixed once the intervention family and reference distribution p are specified
+          </div>
+        </div>
+        <p class="legend-note">L1/L2 = rungs one and two of Pearl’s ladder of causation (see the Causal Ladder demo): L1 is what the observed evidence at hand shows, L2 is what an explicit intervention establishes.</p>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <h2>What this shows</h2>
+    <p>All six analyst choices read the same frozen network at the same input, and the prediction never moves from f(x₀) = +3.00. Occlusion with a zero baseline says “bad” matters most; swap in the mean embedding and the comma takes over; a random baseline hands the top spot to “not” at ten times the mean-baseline scale; plain gradient saliency ranks “bad” — the token the toy model was built around — last, and an invertible change of input coordinates reshuffles the gradient ranking again. The blend slider makes the arbitrariness continuous: sweeping between two defensible-looking baselines, the crown changes hands at flip points no analyst would defend while the printed magnitudes inflate roughly ten-fold. None of these knobs touches a model parameter. Each panel answers a question about (model, input, choice); quoting one as “token i is what the model relies on” elevates local sensitivity into a distributional claim the evidence does not license.</p>
+    <p>The fix is not a better baseline but a better-specified estimand. The aggregated row computes the expected effect of an explicit deletion intervention across a reference distribution of jittered inputs and across all four baseline choices, with the spread reported as a standard error. Under that estimand the ranking is stable: “not” and “bad”, the interaction the toy was built around, separate cleanly from every other token, and the row stays put no matter which pointwise knob you flip, because the knobs are marginalised rather than silently fixed. The same failure modes are documented for real models — saliency maps remain stable under parameter randomization (Adebayo et al., 2018), attributions shift under semantics-preserving transformations (Kindermans et al., 2019), and SHAP values distribute arbitrarily among correlated features (Merrick and Taly, 2020).</p>
+  </section>
+
+  <section>
+    <h2>What the paper says</h2>
+    <blockquote>
+      <p>“The quantity depends on arbitrary choices—baseline, parameterisation, perturbation scheme—that are not properties of the model; different choices yield different attributions (Adebayo et al., 2018; Sundararajan et al., 2017; Ancona et al., 2018). Even if local sensitivity were uniquely defined, pointwise evidence does not establish distributional claims.”</p>
+      <p>“Saliency measures local sensitivity whereas global importance requires distributional aggregation over explicit interventions.”</p>
+      <cite>— <em>Causality is Key for Interpretability Claims to Generalise</em> (arXiv:2602.16698), mismatch box “Local Sensitivity ≠ Global Importance”</cite>
+    </blockquote>
+  </section>
+
+  <section>
+    <h2>Try this</h2>
+    <ol class="try">
+      <li>Cycle through all six choices and watch the tally: four different tokens take the “most responsible” slot. Then drag the blend slider from mean to random: at which t does the crown flip, and could you defend that number in a paper? Write the one-sentence claim you would have shipped after seeing only the first panel; which word in it survives the sixth?</li>
+      <li>Gradient saliency ranks “bad” last in both coordinate bases, yet the aggregated estimand ranks it second with a tight standard error. State the claim each quantity licenses: one is about sensitivity at x₀, the other about average behaviour under an explicit intervention family.</li>
+      <li>The aggregated row ignores every knob above it. What did you have to specify to earn that stability (intervention family, reference distribution, robustness set) — and which of those specifications is missing from a bare saliency figure in a paper?</li>
+    </ol>
+  </section>
+
+  <footer>
+    Original toy illustration built for this tutorial to accompany the mismatch box “Local Sensitivity ≠ Global Importance” and the feature-attribution estimand discussion in <a href="https://arxiv.org/abs/2602.16698"><em>Causality is Key for Interpretability Claims to Generalise</em> (arXiv:2602.16698)</a>; the simulation is not an experiment from the paper. · tutorial demo · CC-BY
+  </footer>
+
+</div>
+
+<script>
+/* ---------- deterministic toy attribution sandbox (seeded, no Math.random) ---------- */
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function makeGauss(rng) {
+  let spare = null;
+  return function () {
+    if (spare !== null) { const v = spare; spare = null; return v; }
+    let u = 0, v = 0, s = 0;
+    do { u = rng() * 2 - 1; v = rng() * 2 - 1; s = u * u + v * v; } while (s >= 1 || s === 0);
+    const m = Math.sqrt(-2 * Math.log(s) / s);
+    spare = v * m; return u * m;
+  };
+}
+
+const TOKENS = ["the", "film", "was", "not", "bad", ",", "honestly"];
+const T = 7, D = 6, H = 14;
+const NOT = 3, BAD = 4;
+const LAMBDA = 3.6, W2S = 0.35, GAIN = 2.2;
+const SEED = 26707, AGG_N = 200;
+
+function buildWorld(seed) {
+  const g = makeGauss(mulberry32(seed));
+  const E = [];
+  for (let t = 0; t < T; t++) { const e = []; for (let d = 0; d < D; d++) e.push(g() * 0.9); E.push(e); }
+  const W1 = []; for (let h = 0; h < H; h++) { const r = []; for (let j = 0; j < T * D; j++) r.push(g() * 0.33); W1.push(r); }
+  const b1 = []; for (let h = 0; h < H; h++) b1.push(g() * 0.3);
+  const w2 = []; for (let h = 0; h < H; h++) w2.push(g() * W2S);
+  const u = []; for (let d = 0; d < D; d++) u.push(g());
+  const v = []; for (let d = 0; d < D; d++) v.push(g());
+  const nu = Math.hypot(...u), nv = Math.hypot(...v);
+  for (let d = 0; d < D; d++) { u[d] /= nu; v[d] /= nv; }
+  const padVec = []; for (let d = 0; d < D; d++) padVec.push(g() * 0.9);
+  const randVec = []; for (let d = 0; d < D; d++) randVec.push(g() * 0.9);
+  const meanVec = new Array(D).fill(0);
+  for (let t = 0; t < T; t++) for (let d = 0; d < D; d++) meanVec[d] += E[t][d] / T;
+  const A = []; for (let i = 0; i < D; i++) { const r = []; for (let j = 0; j < D; j++) r.push((i === j ? 1 : 0) + g() * 0.55); A.push(r); }
+  const x0 = new Float64Array(T * D);
+  for (let t = 0; t < T; t++) for (let d = 0; d < D; d++) x0[t * D + d] = E[t][d];
+  return { E, W1, b1, w2, u, v, padVec, randVec, meanVec, A, x0 };
+}
+
+function fval(W, x) {
+  let s = 0;
+  for (let h = 0; h < H; h++) {
+    let p = W.b1[h];
+    for (let j = 0; j < T * D; j++) p += W.W1[h][j] * x[j];
+    s += W.w2[h] * Math.tanh(p);
+  }
+  let a3 = 0, a4 = 0;
+  for (let d = 0; d < D; d++) { a3 += W.u[d] * x[NOT * D + d]; a4 += W.v[d] * x[BAD * D + d]; }
+  return s + LAMBDA * Math.tanh(GAIN * a3) * Math.tanh(GAIN * a4);
+}
+
+function grad(W, x) {
+  const gx = new Float64Array(T * D);
+  for (let h = 0; h < H; h++) {
+    let p = W.b1[h];
+    for (let j = 0; j < T * D; j++) p += W.W1[h][j] * x[j];
+    const th = Math.tanh(p);
+    const gh = W.w2[h] * (1 - th * th);
+    for (let j = 0; j < T * D; j++) gx[j] += W.W1[h][j] * gh;
+  }
+  let a3 = 0, a4 = 0;
+  for (let d = 0; d < D; d++) { a3 += W.u[d] * x[NOT * D + d]; a4 += W.v[d] * x[BAD * D + d]; }
+  const t3 = Math.tanh(GAIN * a3), t4 = Math.tanh(GAIN * a4);
+  for (let d = 0; d < D; d++) {
+    gx[NOT * D + d] += LAMBDA * GAIN * (1 - t3 * t3) * t4 * W.u[d];
+    gx[BAD * D + d] += LAMBDA * GAIN * t3 * (1 - t4 * t4) * W.v[d];
+  }
+  return gx;
+}
+
+function occlusion(W, baseVec) {
+  const f0 = fval(W, W.x0);
+  const out = [];
+  for (let t = 0; t < T; t++) {
+    const x = Float64Array.from(W.x0);
+    for (let d = 0; d < D; d++) x[t * D + d] = baseVec[d];
+    out.push(f0 - fval(W, x));
+  }
+  return out;
+}
+
+function gradNorm(W, rotated) {
+  const gx = grad(W, W.x0);
+  const out = [];
+  for (let t = 0; t < T; t++) {
+    let s = 0;
+    if (!rotated) {
+      for (let d = 0; d < D; d++) s += gx[t * D + d] ** 2;
+    } else {
+      /* coordinates z with x = A z  =>  grad_z = A^T grad_x, per token block */
+      for (let i = 0; i < D; i++) {
+        let c = 0;
+        for (let j = 0; j < D; j++) c += W.A[j][i] * gx[t * D + j];
+        s += c * c;
+      }
+    }
+    out.push(Math.sqrt(s));
+  }
+  return out;
+}
+
+function aggregate(W, N, seed) {
+  const g = makeGauss(mulberry32(seed));
+  const bases = [new Array(D).fill(0), W.meanVec, W.randVec, W.padVec];
+  const sum = new Float64Array(T), sumsq = new Float64Array(T);
+  for (let n = 0; n < N; n++) {
+    const x = Float64Array.from(W.x0);
+    for (let j = 0; j < T * D; j++) x[j] = W.x0[j] + 0.35 * g();
+    const fx = fval(W, x);
+    const base = bases[n % 4];
+    for (let t = 0; t < T; t++) {
+      const xi = Float64Array.from(x);
+      for (let d = 0; d < D; d++) xi[t * D + d] = base[d] + 0.25 * g();
+      const del = fx - fval(W, xi);
+      sum[t] += del; sumsq[t] += del * del;
+    }
+  }
+  const mean = [], sem2 = [];
+  for (let t = 0; t < T; t++) {
+    const m = sum[t] / N;
+    mean.push(m);
+    sem2.push(2 * Math.sqrt(Math.max(0, sumsq[t] / N - m * m) / N));
+  }
+  return { mean, sem2 };
+}
+
+/* ---------- build the world once ---------- */
+const W = buildWorld(SEED);
+const F0 = fval(W, W.x0);
+const CONFIGS = {
+  "occ:zero": { vals: occlusion(W, new Array(D).fill(0)), cap: "Pointwise attribution at x₀ — occlusion, zero baseline",
+    note: "Zero vectors look neutral but are still an analyst choice — the model never saw them." },
+  "occ:mean": { vals: occlusion(W, W.meanVec), cap: "Pointwise attribution at x₀ — occlusion, mean-embedding baseline",
+    note: "Averaging embeddings feels principled; it crowns the comma, and “not” flips sign." },
+  "occ:rand": { vals: occlusion(W, W.randVec), cap: "Pointwise attribution at x₀ — occlusion, random baseline",
+    note: "A random reference point produces the largest attributions on the page." },  /* note templated with computed ratios below */
+  "occ:pad":  { vals: occlusion(W, W.padVec), cap: "Pointwise attribution at x₀ — occlusion, PAD-token baseline",
+    note: "The PAD token is what practitioners often reach for; it also crowns the comma." },
+  "grad:raw": { vals: gradNorm(W, false), cap: "Pointwise gradient saliency ‖∇f‖ at x₀ — embedding basis",
+    note: "“bad” — the token the toy model was built around — ranks last." },
+  "grad:rot": { vals: gradNorm(W, true), cap: "Pointwise gradient saliency ‖∇f‖ at x₀ — rotated basis z = A⁻¹x",
+    note: "Same f, an invertible change of coordinates: the norms reshuffle. Saliency is coordinate-dependent — the same issue mech-interp meets when features are not axis-aligned in the residual stream: same model, different basis, different saliency." },
+};
+const maxAbsOf = (a) => Math.max(...a.map(Math.abs));
+{
+  const mxZero = maxAbsOf(CONFIGS["occ:zero"].vals), mxMean = maxAbsOf(CONFIGS["occ:mean"].vals), mxRand = maxAbsOf(CONFIGS["occ:rand"].vals);
+  CONFIGS["occ:rand"].note = "A random reference point produces the largest attributions on the page — roughly " +
+    Math.round(mxRand / mxZero) + "× the zero-baseline scale and " + Math.round(mxRand / mxMean) + "× the mean baseline.";
+}
+const AGG = aggregate(W, AGG_N, SEED * 7 + 13);
+
+/* ---------- rendering ---------- */
+const SVGNS = "http://www.w3.org/2000/svg";
+const fmt = (v) => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(2);
+const argmaxAbs = (a) => a.reduce((bi, v, i) => Math.abs(v) > Math.abs(a[bi]) ? i : bi, 0);
+
+function el(name, attrs, text) {
+  const n = document.createElementNS(SVGNS, name);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (text !== undefined) n.textContent = text;
+  return n;
+}
+
+function drawBars(svg, vals, opts) {
+  svg.replaceChildren();
+  const Wd = 660, Ht = opts.height, padT = 26, padB = 46, padX = 12;
+  const plotH = Ht - padT - padB;
+  const slot = (Wd - 2 * padX) / T, barW = 36;
+  const err = opts.err;
+  /* allocate vertical space to the actual positive / negative extents (whiskers included) */
+  let posExt = 0, negExt = 0;
+  for (let t = 0; t < T; t++) {
+    posExt = Math.max(posExt, vals[t] + (err ? err[t] : 0));
+    negExt = Math.max(negExt, -(vals[t] - (err ? err[t] : 0)));
+  }
+  posExt = Math.max(posExt, 1e-9); negExt = Math.max(negExt, 0);
+  const hasNeg = negExt > 1e-9;
+  const scale = (plotH - 16 - (hasNeg ? 20 : 0)) / (posExt + negExt);
+  const y0 = padT + 16 + posExt * scale;
+  svg.append(el("line", { x1: padX, x2: Wd - padX, y1: y0, y2: y0, class: "zero-line" }));
+  const topIdx = argmaxAbs(vals);
+  for (let t = 0; t < T; t++) {
+    const cx = padX + slot * t + slot / 2;
+    const v = vals[t];
+    const h = Math.max(Math.abs(v) * scale, 1.2);
+    const y = v >= 0 ? y0 - h : y0;
+    const cls = opts.agg ? (v >= 0 ? "bar-agg-pos" : "bar-agg-neg") : (v >= 0 ? "bar-pos" : "bar-neg");
+    svg.append(el("rect", { x: cx - barW / 2, y, width: barW, height: h, rx: 3, class: cls }));
+    if (err) {
+      const yTop = y0 - (v + err[t]) * scale, yBot = y0 - (v - err[t]) * scale;
+      svg.append(el("line", { x1: cx, x2: cx, y1: yTop, y2: yBot, class: "whisker" }));
+      svg.append(el("line", { x1: cx - 5, x2: cx + 5, y1: yTop, y2: yTop, class: "whisker" }));
+      svg.append(el("line", { x1: cx - 5, x2: cx + 5, y1: yBot, y2: yBot, class: "whisker" }));
+    }
+    const vy = v >= 0 ? y - (err ? err[t] * scale + 6 : 6) : y + h + (err ? err[t] * scale + 13 : 13);
+    svg.append(el("text", { x: cx, y: vy, "text-anchor": "middle", class: "val-label" }, fmt(v)));
+    const ly = Ht - 16;
+    const isTop = opts.pillIdx ? opts.pillIdx.includes(t) : t === topIdx;
+    if (isTop) {
+      const w = TOKENS[t].length * 8.2 + 20;
+      svg.append(el("rect", { x: cx - w / 2, y: ly - 15, width: w, height: 21, rx: 10.5, class: opts.agg ? "tok-agg-pill" : "tok-top-pill" }));
+      svg.append(el("text", { x: cx, y: ly, "text-anchor": "middle", class: "tok-top-text" }, TOKENS[t]));
+    } else {
+      svg.append(el("text", { x: cx, y: ly, "text-anchor": "middle", class: "tok-label" }, TOKENS[t]));
+    }
+    if (isTop && !opts.agg) {
+      svg.append(el("text", { x: cx, y: Ht - 1, "text-anchor": "middle", class: "val-label" }, "most responsible"));
+    }
+  }
+  return topIdx;
+}
+
+/* ---------- state + wiring ---------- */
+const state = { method: "occ", base: "zero", par: "raw" };
+const viewed = new Set(), distinctTops = new Set();
+const $ = (id) => document.getElementById(id);
+
+const methodBtns = { occ: $("m-occ"), grad: $("m-grad") };
+const baseBtns = { zero: $("base-zero"), mean: $("base-mean"), rand: $("base-rand"), pad: $("base-pad") };
+const parBtns = { raw: $("par-raw"), rot: $("par-rot") };
+const blendEl = $("base-blend"), blendOut = $("blend-out");
+const blendVec = (t) => W.meanVec.map((m, d) => (1 - t) * m + t * W.randVec[d]);
+
+function configKey() { return state.method === "occ" ? "occ:" + state.base : "grad:" + state.par; }
+
+function render() {
+  const isGrad = state.method === "grad";
+  let vals, cap, note;
+  if (!isGrad && state.base === "blend") {
+    vals = occlusion(W, blendVec(state.t));
+    cap = "Pointwise attribution at x₀ — occlusion, blended baseline b(t), t = " + state.t.toFixed(2);
+    note = "Between two defensible-looking baselines the crown changes hands at flip points no analyst would defend, while the scale inflates roughly ten-fold. The aggregated row below never moves.";
+  } else {
+    const cfg = CONFIGS[configKey()];
+    vals = cfg.vals; cap = cfg.cap; note = cfg.note;
+    viewed.add(configKey());
+  }
+  const topIdx = drawBars($("chart"), vals, { height: 330 });
+  $("panel-cap").textContent = cap + (isGrad ? " · max ‖∇f‖ = " : " · max |attr| = ") + maxAbsOf(vals).toFixed(2);
+  distinctTops.add(topIdx);
+  $("v-viewed").textContent = viewed.size + "/6";
+  $("v-distinct").textContent = String(distinctTops.size);
+  $("v-distinct-sub").textContent = "so far: " + [...distinctTops].map(i => "“" + TOKENS[i] + "”").join(" · ");
+  $("chart-legend").textContent = isGrad
+    ? "Bar = per-token gradient norm ‖∇f‖ at x₀ (always ≥ 0). Bar heights are normalised within each choice; printed values are raw."
+    : "Positive bar: replacing the token lowers the score (it supports the positive prediction) · negative: raises it. Bar heights are normalised within each choice; printed values are raw.";
+  $("knob-note").textContent = isGrad
+    ? "Gradient saliency’s live knob is the parameterisation; a pure gradient uses no baseline, so the baseline buttons and blend slider are inactive."
+    : "Occlusion’s live knob is the baseline — pick one of the four, or drag the slider to sweep continuously from mean to random; the parameterisation toggle does not enter it.";
+  $("verdict-text").innerHTML = "Top token: <strong>“" + TOKENS[topIdx] + "”</strong> (" + fmt(vals[topIdx]) + "). " + note +
+    " f(x₀) is still " + fmt(F0) + ".";
+  for (const k in methodBtns) methodBtns[k].setAttribute("aria-pressed", String(k === state.method));
+  for (const k in baseBtns) {
+    baseBtns[k].setAttribute("aria-pressed", String(k === state.base));
+    baseBtns[k].disabled = isGrad;
+    if (isGrad) baseBtns[k].title = "Not used by gradient saliency — switch the recipe to Occlusion"; else baseBtns[k].removeAttribute("title");
+  }
+  for (const k in parBtns) {
+    parBtns[k].setAttribute("aria-pressed", String(k === state.par));
+    parBtns[k].disabled = !isGrad;
+    if (!isGrad) parBtns[k].title = "Not used by occlusion — switch the recipe to Gradient saliency"; else parBtns[k].removeAttribute("title");
+  }
+  blendEl.disabled = isGrad;
+  if (isGrad) blendEl.title = "Not used by gradient saliency — switch the recipe to Occlusion"; else blendEl.removeAttribute("title");
+  blendOut.textContent = isGrad ? "t = —"
+    : state.base === "blend" ? "t = " + state.t.toFixed(2)
+    : state.base === "mean" ? "t = 0.00"
+    : state.base === "rand" ? "t = 1.00" : "t = —";
+}
+
+for (const k in methodBtns) methodBtns[k].addEventListener("click", () => { state.method = k; render(); });
+for (const k in baseBtns) baseBtns[k].addEventListener("click", () => {
+  state.base = k;
+  if (k === "mean") blendEl.value = "0";
+  if (k === "rand") blendEl.value = "1";
+  render();
+});
+for (const k in parBtns) parBtns[k].addEventListener("click", () => { state.par = k; render(); });
+blendEl.addEventListener("input", () => {
+  const t = parseFloat(blendEl.value);
+  if (t <= 0) state.base = "mean";
+  else if (t >= 1) state.base = "rand";
+  else { state.base = "blend"; state.t = t; }
+  render();
+});
+
+/* ---------- aggregate panel ---------- */
+let aggDrawn = false;
+$("agg-toggle").addEventListener("click", () => {
+  const btn = $("agg-toggle");
+  const on = btn.getAttribute("aria-pressed") !== "true";
+  btn.setAttribute("aria-pressed", String(on));
+  btn.textContent = on ? "Hide the aggregated estimand" : "Aggregate over an explicit intervention family →";
+  $("agg-panel").hidden = !on;
+  if (on && !aggDrawn) {
+    const order = [...Array(T).keys()].sort((a, b) => Math.abs(AGG.mean[b]) - Math.abs(AGG.mean[a]));
+    drawBars($("agg-chart"), AGG.mean, { height: 300, agg: true, err: AGG.sem2, pillIdx: order.slice(0, 2) });
+    $("stable-badge").textContent = "ranking stable — top-2: “" + TOKENS[order[0]] + "” · “" + TOKENS[order[1]] + "” (the built-in interaction), under every choice above";
+    aggDrawn = true;
+  }
+});
+
+/* ---------- init ---------- */
+$("pred-val").textContent = "f(x₀) = " + fmt(F0);
+render();
+</script>
+</body>
+</html>

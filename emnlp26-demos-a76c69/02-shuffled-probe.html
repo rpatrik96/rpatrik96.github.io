@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The probe that aces shuffled labels · EMNLP 2026 tutorial demo</title>
+<style>
+  :root {
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --line:#E1DEEC;
+    --series-real:#5B4B9E; --series-shuf:#9E6A0C;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+      --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+      --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+      --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --line:#332B49;
+      --series-real:#8F7BC4; --series-shuf:#BD831C;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --line:#332B49;
+    --series-real:#8F7BC4; --series-shuf:#BD831C;
+  }
+  :root[data-theme="light"] {
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --line:#E1DEEC;
+    --series-real:#5B4B9E; --series-shuf:#9E6A0C;
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: 'Avenir Next', Avenir, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.55; padding: 1.6rem 1.2rem 2.5rem;
+  }
+  h1, h2 { font-family: Futura, 'Century Gothic', 'Avenir Next', 'Trebuchet MS', sans-serif; }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  .kicker {
+    font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-mute); font-weight: 600;
+  }
+  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.2rem; }
+  header h1 { color: var(--purple); font-size: 1.65rem; line-height: 1.2; margin: .3rem 0 .35rem; }
+  header .dek { color: var(--ink-soft); max-width: 60ch; }
+  a.back {
+    color: var(--purple); text-decoration: none; font-size: .85rem; white-space: nowrap;
+    border: 1px solid var(--line); border-radius: 999px; padding: .3rem .8rem; margin-top: .2rem;
+  }
+  a.back:hover { background: var(--hero); }
+  a.back:focus-visible, button:focus-visible, input[type="range"]:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+
+  .stage {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 1.1rem 1.2rem 1rem; margin-bottom: 1.6rem;
+  }
+  .controls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .9rem; margin-bottom: .9rem; }
+  .controls .group { flex: 1 1 auto; min-width: 260px; }
+  .seg {
+    display: inline-flex; border: 1px solid var(--line); border-radius: 10px;
+    overflow: hidden; margin-top: .35rem; background: var(--panel);
+  }
+  .seg button {
+    font: inherit; font-size: .86rem; padding: .45rem .85rem; border: none; cursor: pointer;
+    background: transparent; color: var(--ink-soft);
+  }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button[aria-pressed="true"] { background: var(--purple); color: var(--paper); font-weight: 600; }
+  .probe-note { font-size: .78rem; color: var(--ink-mute); margin-top: .4rem; font-variant-numeric: tabular-nums; }
+  button.replay {
+    font: inherit; font-size: .83rem; padding: .42rem .9rem; cursor: pointer;
+    border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--ink-soft);
+  }
+  button.replay:hover { background: var(--hero); }
+  .cap-row { display: flex; align-items: flex-start; gap: .7rem; margin-top: .45rem; }
+  .cap-slider-col { flex: 1 1 auto; min-width: 170px; }
+  #cap-slider { width: 100%; display: block; accent-color: var(--purple); margin: 0; }
+  .cap-read { font-size: .85rem; font-weight: 600; color: var(--purple); white-space: nowrap; font-variant-numeric: tabular-nums; min-width: 8.5ch; margin-top: .05rem; }
+  .cap-ticks { display: flex; justify-content: space-between; padding: 0 5px; margin-top: .1rem; font-size: .66rem; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+  .cue {
+    font-size: .85rem; color: var(--ink); background: var(--hero);
+    border: 1px solid var(--purple-soft); border-radius: 10px;
+    padding: .5rem .75rem; margin-bottom: .9rem;
+  }
+  .cue strong { color: var(--purple); }
+  .run-note { font-size: .78rem; color: var(--ink-soft); margin-top: .35rem; font-variant-numeric: tabular-nums; }
+  .mech { font-size: .8rem; color: var(--ink-soft); margin-top: .55rem; max-width: 72ch; }
+  .gloss { font-size: .8rem; color: var(--ink-soft); border-left: 3px solid var(--line); padding: .1rem 0 .1rem 1rem; margin-bottom: .7rem; }
+
+  .stagegrid { display: grid; grid-template-columns: minmax(0, 1fr) 272px; gap: 1.1rem; align-items: start; }
+  @media (max-width: 880px) { .stagegrid { grid-template-columns: 1fr; } }
+
+  .chart svg { width: 100%; height: auto; display: block; }
+  .chart text { font-family: inherit; }
+  .axis-caption { fill: var(--ink-mute); font-size: 11px; }
+  .tick-label { fill: var(--ink-mute); font-size: 10.5px; font-variant-numeric: tabular-nums; }
+  .gridline { stroke: var(--line); stroke-width: 1; }
+  .chance-line { stroke: var(--ink-mute); stroke-width: 1; stroke-dasharray: 4 4; }
+  .curve-real { stroke: var(--series-real); stroke-width: 2.6; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+  .curve-shuf { stroke: var(--series-shuf); stroke-width: 2.6; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+  .gapfill { fill: var(--gap-green); opacity: .13; }
+  .gap-label { fill: var(--gap-green); font-size: 11.5px; font-style: italic; }
+  .tip-real { fill: var(--series-real); }
+  .tip-shuf { fill: var(--series-shuf); }
+  .tag { fill: var(--ink-soft); font-size: 11.5px; }
+  .provenance { font-size: .76rem; color: var(--ink-mute); margin-top: .55rem; max-width: 72ch; }
+
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+  @media (max-width: 880px) { .tiles { grid-template-columns: 1fr 1fr 1fr; } }
+  .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: .55rem .7rem; }
+  .tile .lbl { font-size: .64rem; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; }
+  .tile .val { font-size: 1.45rem; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: .1rem; }
+  .tile .sub { font-size: .72rem; color: var(--ink-mute); }
+  #tile-sel { grid-column: 1 / -1; }
+  @media (max-width: 880px) { #tile-sel { grid-column: auto; } }
+  .val-real { color: var(--series-real); }
+  .val-shuf { color: var(--series-shuf); }
+  .sel-high { color: var(--gap-green); }
+  .sel-mid { color: var(--l2); }
+  .sel-low { color: var(--magenta); }
+
+  .verdict {
+    margin-top: .7rem; background: var(--hero); border-left: 3px solid var(--purple);
+    border-radius: 0 10px 10px 0; padding: .65rem .8rem; font-size: .88rem; color: var(--ink);
+  }
+  .verdict .lbl { font-size: .64rem; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; margin-bottom: .25rem; }
+
+  section { max-width: 70ch; margin: 0 auto 1.5rem; }
+  section h2 { color: var(--purple); font-size: 1.05rem; margin-bottom: .5rem; }
+  section p { margin-bottom: .7rem; color: var(--ink); }
+  blockquote {
+    background: var(--panel); border-left: 3px solid var(--purple-mid);
+    border-radius: 0 10px 10px 0; padding: .8rem 1rem; margin-bottom: .7rem;
+  }
+  blockquote p { color: var(--ink-soft); font-style: italic; margin-bottom: .35rem; }
+  blockquote cite { font-style: normal; font-size: .8rem; color: var(--ink-mute); }
+  ol.try { padding-left: 1.2rem; }
+  ol.try li { margin-bottom: .55rem; color: var(--ink); }
+  footer { max-width: 70ch; margin: 2rem auto 0; font-size: .78rem; color: var(--ink-mute); border-top: 1px solid var(--line); padding-top: .9rem; }
+  footer a { color: var(--purple); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</div>
+      <h1>The probe that aces shuffled labels</h1>
+      <p class="dek">A probe decoding a binary linguistic tag from frozen LM-style activations reaches high accuracy even on labels with no content. Selectivity, not raw accuracy, is the informative quantity.</p>
+    </div>
+    <a class="back" href="./index.html">← All demos</a>
+  </header>
+
+  <div class="stage">
+    <div class="controls">
+      <div class="group">
+        <label class="kicker" for="cap-slider">Probe capacity · hidden units (0 = linear probe)</label>
+        <div class="cap-row">
+          <div class="cap-slider-col">
+            <input type="range" id="cap-slider" min="0" max="7" step="1" value="0"
+                   aria-label="Probe capacity: hidden units of a one-hidden-layer tanh probe; 0 is a linear probe"
+                   aria-valuetext="linear probe, 0 hidden units, 13 parameters">
+            <div class="cap-ticks" aria-hidden="true"><span>0</span><span>2</span><span>4</span><span>8</span><span>16</span><span>24</span><span>32</span><span>48</span></div>
+          </div>
+          <div class="cap-read" id="cap-read">linear · w = 0</div>
+        </div>
+        <div class="seg" role="group" aria-label="Capacity presets (move the slider)" style="margin-top:.5rem">
+          <button id="cap-linear" aria-pressed="true">Linear</button>
+          <button id="cap-mlp1" aria-pressed="false">MLP · 4 units</button>
+          <button id="cap-mlp2" aria-pressed="false">MLP · 48 units</button>
+        </div>
+        <div class="probe-note" id="probe-note">logistic regression on the frozen 12-D features · 13 parameters</div>
+      </div>
+      <button class="replay" id="replay" aria-label="Replay the training animation"
+              title="Re-run the 60-epoch animation: watch whether the orange control curve stays flat near chance or climbs">↻ Replay training</button>
+    </div>
+
+    <div class="cue">
+      <strong>Do this first:</strong> drag the slider to give the probe more capacity — the probe retrains live; watch the orange control curve climb and the green selectivity gap close.
+      <div class="run-note" id="run-note" role="status">trained live at page load — linear probe: control 58.3%, selectivity +32.5 pts (<span class="sel-high">green band</span>)</div>
+    </div>
+
+    <div class="stagegrid">
+      <div class="chart">
+        <svg id="chart" viewBox="0 0 660 380" role="img"
+             aria-label="Two training curves: probe accuracy on real labels versus on randomly shuffled labels, over sixty training epochs.">
+          <text class="axis-caption" x="2" y="14">training-set accuracy (%)</text>
+          <g id="grid"></g>
+          <polygon id="gapfill" class="gapfill" points="" ></polygon>
+          <text id="gaplabel" class="gap-label" text-anchor="middle" visibility="hidden">selectivity</text>
+          <polyline id="line-shuf" class="curve-shuf" points=""></polyline>
+          <polyline id="line-real" class="curve-real" points=""></polyline>
+          <circle id="tip-shuf" class="tip-shuf" r="3.4"></circle>
+          <circle id="tip-real" class="tip-real" r="3.4"></circle>
+          <text id="tag-real" class="tag" text-anchor="end">real labels</text>
+          <text id="tag-shuf" class="tag" text-anchor="end">shuffled labels (control)</text>
+          <text class="axis-caption" x="346" y="377" text-anchor="middle">training epoch</text>
+        </svg>
+        <p class="mech">The 12-D features stand in for a frozen LM layer’s activations, the labels for a binary linguistic tag (think <em>is-verb</em>). The control keeps the same features and the same probe but randomly shuffles the labels — so any above-chance control accuracy can only be probe memorisation.</p>
+        <p class="provenance">Toy simulation: 120 synthetic points with 12-dimensional features; each probe is trained live in your browser with seeded gradient descent, so every load is identical. The shuffled task permutes the real labels; the representation never changes.</p>
+      </div>
+
+      <div>
+        <div class="tiles" aria-live="polite">
+          <div class="tile">
+            <div class="lbl">Real-label acc.</div>
+            <div class="val val-real" id="v-real">–</div>
+            <div class="sub">the number papers report</div>
+          </div>
+          <div class="tile">
+            <div class="lbl">Control acc.</div>
+            <div class="val val-shuf" id="v-shuf">–</div>
+            <div class="sub">same probe + features, shuffled labels — above chance = memorisation</div>
+          </div>
+          <div class="tile" id="tile-sel">
+            <div class="lbl">Selectivity</div>
+            <div class="val sel-high" id="v-sel">–</div>
+            <div class="sub">real − control · <span class="sel-high">green</span> ≥ +25 pts, <span class="sel-mid">amber</span> +8 to +25, <span class="sel-low">red</span> &lt; +8 (gap gone)</div>
+          </div>
+        </div>
+        <div class="verdict" aria-live="polite">
+          <div class="lbl">What the accuracy licenses</div>
+          <div id="verdict-text">…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <h2>What this shows</h2>
+    <p>Every probe on the capacity slider — from the 13-parameter linear probe to the 673-parameter MLP — reads the same frozen 12-dimensional representation; only the probe changes. Every capacity reaches high accuracy on the real labels, so that number alone cannot distinguish “the representation encodes the concept” from “the probe is expressive enough to fit any labelling”. The shuffled-label control makes the second explanation visible: as capacity grows, the control curve climbs toward the real one and the selectivity gap shrinks continuously to nothing. The y-axis is training-set accuracy, which is exactly where probe memorisation shows up. Hewitt and Liang’s actual protocol is stricter than the toy’s — control labels assigned consistently per word type, probes scored on held-out data — whereas the toy shuffles labels per example and reports training accuracy: a deliberately simplified analogue built to surface the same mechanism.</p>
+    <p>The toy mirrors the paper’s worked example. A linear probe on BERT’s hidden states reaches over 97% accuracy at predicting part-of-speech tags (Hewitt and Manning, 2019), yet Hewitt and Liang (2019) showed that probes of similar capacity reach high accuracy on random control labels that carry no linguistic content. Extractability is not use, either: Elazar et al. (2021) removed the information exploited by POS probes via causal intervention and found minimal effect on BERT’s language modelling. High probe accuracy admits a stronger reading than the evidence supports; reporting selectivity alongside accuracy separates the two readings.</p>
+  </section>
+
+  <section>
+    <h2>What the paper says</h2>
+    <blockquote>
+      <p>“Hewitt and Liang (2019) introduced ‘control tasks’—random label assignments that probes can nonetheless fit—demonstrating that high probe accuracy does not entail that representations <em>encode</em> the probed property; the probe may simply memorise.”</p>
+      <p>“The ‘selectivity’ of a probe—accuracy on the real task minus accuracy on controls—is a better estimand than raw accuracy.”</p>
+      <cite>— <em>Causality is Key for Interpretability Claims to Generalise</em> (arXiv:2602.16698), on probing evidence</cite>
+    </blockquote>
+    <p class="gloss"><strong>estimand</strong> — the precise quantity an analysis sets out to estimate. Selectivity is a sharper estimand than raw accuracy, but still an <em>associational</em> one (rung 1 of the causal ladder: patterns in observed data, no intervention on the model); whether the model <em>uses</em> the concept is a separate, causal estimand.</p>
+  </section>
+
+  <section>
+    <h2>Try this</h2>
+    <ol class="try">
+      <li>Stay on the linear probe and read only the purple number. Write the one-sentence claim you would put in an abstract. Now drag the slider to 48 hidden units: does your sentence survive, and which word in it had to change? Sweep back down and find the width where you would stop believing the claim.</li>
+      <li>The tutorial’s live case: a probe that “detects gender” in a model’s activations scores just as high when the labels are randomly shuffled. Which reported number would have caught this before publication: accuracy, or selectivity?</li>
+      <li>Even the linear probe’s +32.5-point selectivity only supports a decodability claim. What experiment would you run to argue the model <em>uses</em> the concept? (Interventions come later in the tutorial.)</li>
+    </ol>
+  </section>
+
+  <footer>
+    Original toy illustration built for this tutorial to accompany the probing discussion in <a href="https://arxiv.org/abs/2602.16698"><em>Causality is Key for Interpretability Claims to Generalise</em> (arXiv:2602.16698)</a>; the simulation is not an experiment from the paper. · tutorial demo · CC-BY
+  </footer>
+
+</div>
+
+<script>
+/* ---------- deterministic toy probe training (seeded, no Math.random) ---------- */
+/*SIM-BEGIN*/
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function makeGauss(rng) {
+  let spare = null;
+  return function () {
+    if (spare !== null) { const v = spare; spare = null; return v; }
+    let u = 0, v = 0, s = 0;
+    do { u = rng() * 2 - 1; v = rng() * 2 - 1; s = u * u + v * v; } while (s >= 1 || s === 0);
+    const m = Math.sqrt(-2 * Math.log(s) / s);
+    spare = v * m; return u * m;
+  };
+}
+
+const N = 120, D = 12, EPOCHS = 60, STEPS_PER_EPOCH = 3;
+
+function makeData(seed) {
+  const rng = mulberry32(seed), g = makeGauss(rng);
+  const X = [];
+  for (let i = 0; i < N; i++) { const row = new Float64Array(D); for (let j = 0; j < D; j++) row[j] = g(); X.push(row); }
+  const w = new Float64Array(D); let nrm = 0;
+  for (let j = 0; j < D; j++) { w[j] = g(); nrm += w[j] * w[j]; }
+  nrm = Math.sqrt(nrm); for (let j = 0; j < D; j++) w[j] /= nrm;
+  const yReal = new Float64Array(N);
+  for (let i = 0; i < N; i++) { let s = 0; for (let j = 0; j < D; j++) s += w[j] * X[i][j]; yReal[i] = s > 0 ? 1 : 0; }
+  const idx = Array.from({ length: N }, (_, i) => i);
+  for (let i = N - 1; i > 0; i--) { const k = Math.floor(rng() * (i + 1)); const t = idx[i]; idx[i] = idx[k]; idx[k] = t; }
+  const nFlip = Math.round(0.07 * N);
+  for (let i = 0; i < nFlip; i++) yReal[idx[i]] = 1 - yReal[idx[i]];
+  const yShuf = Float64Array.from(yReal);
+  for (let i = N - 1; i > 0; i--) { const k = Math.floor(rng() * (i + 1)); const t = yShuf[i]; yShuf[i] = yShuf[k]; yShuf[k] = t; }
+  return { X, yReal, yShuf };
+}
+
+function trainProbe(X, y, sizes, lr, seed) {
+  const rng = mulberry32(seed), g = makeGauss(rng);
+  const L = sizes.length - 1;
+  const W = [], B = [], gW = [], gB = [];
+  for (let l = 0; l < L; l++) {
+    const rows = sizes[l + 1], cols = sizes[l];
+    const w = new Float64Array(rows * cols);
+    const sc = Math.sqrt(2 / cols);
+    for (let i = 0; i < w.length; i++) w[i] = g() * sc;
+    W.push(w); B.push(new Float64Array(rows));
+    gW.push(new Float64Array(rows * cols)); gB.push(new Float64Array(rows));
+  }
+  const n = X.length;
+  const acts = [null], dArr = [null];
+  for (let l = 0; l < L; l++) { acts.push(new Float64Array(sizes[l + 1])); dArr.push(new Float64Array(sizes[l + 1])); }
+  function forward(xi) {
+    acts[0] = xi;
+    for (let l = 0; l < L; l++) {
+      const rows = sizes[l + 1], cols = sizes[l], a = acts[l], z = acts[l + 1];
+      for (let r = 0; r < rows; r++) {
+        let s = B[l][r];
+        const off = r * cols;
+        for (let c = 0; c < cols; c++) s += W[l][off + c] * a[c];
+        z[r] = l === L - 1 ? s : Math.tanh(s);
+      }
+    }
+  }
+  function accuracy() {
+    let ok = 0;
+    for (let i = 0; i < n; i++) {
+      forward(X[i]);
+      const p = 1 / (1 + Math.exp(-acts[L][0]));
+      if ((p > 0.5 ? 1 : 0) === y[i]) ok++;
+    }
+    return ok / n;
+  }
+  const accs = [accuracy()];
+  for (let e = 0; e < EPOCHS; e++) {
+    for (let s = 0; s < STEPS_PER_EPOCH; s++) {
+      for (let l = 0; l < L; l++) { gW[l].fill(0); gB[l].fill(0); }
+      for (let i = 0; i < n; i++) {
+        forward(X[i]);
+        const p = 1 / (1 + Math.exp(-acts[L][0]));
+        dArr[L][0] = p - y[i];
+        let delta = dArr[L];
+        for (let l = L - 1; l >= 0; l--) {
+          const rows = sizes[l + 1], cols = sizes[l], aPrev = acts[l];
+          for (let r = 0; r < rows; r++) {
+            const dv = delta[r], off = r * cols;
+            gB[l][r] += dv;
+            for (let c = 0; c < cols; c++) gW[l][off + c] += dv * aPrev[c];
+          }
+          if (l > 0) {
+            const nd = dArr[l];
+            for (let c = 0; c < cols; c++) {
+              let s2 = 0;
+              for (let r = 0; r < rows; r++) s2 += W[l][r * cols + c] * delta[r];
+              const a2 = acts[l][c];
+              nd[c] = s2 * (1 - a2 * a2);
+            }
+            delta = nd;
+          }
+        }
+      }
+      for (let l = 0; l < L; l++) {
+        for (let i = 0; i < W[l].length; i++) W[l][i] -= lr * gW[l][i] / n;
+        for (let i = 0; i < B[l].length; i++) B[l][i] -= lr * gB[l][i] / n;
+      }
+    }
+    accs.push(accuracy());
+  }
+  return accs;
+}
+
+/* capacity axis: one-hidden-layer tanh probes of width w (w = 0 is the linear probe).
+   lr/seed per width tuned once so every curve stays inside the 40–100% axis and the
+   final control accuracy rises monotonically with capacity; all values are fixed, so
+   every load is identical. */
+const CAPS = [
+  { w: 0,  lr: 2.0,  seed: 8 },
+  { w: 2,  lr: 0.5,  seed: 8 },
+  { w: 4,  lr: 0.8,  seed: 8 },
+  { w: 8,  lr: 0.4,  seed: 8 },
+  { w: 16, lr: 0.4,  seed: 12 },
+  { w: 24, lr: 0.35, seed: 8 },
+  { w: 32, lr: 0.45, seed: 8 },
+  { w: 48, lr: 0.35, seed: 8 },
+];
+function runAll() {
+  const { X, yReal, yShuf } = makeData(20260716);
+  return CAPS.map(c => {
+    const sizes = c.w === 0 ? [D, 1] : [D, c.w, 1];
+    return {
+      w: c.w,
+      real: trainProbe(X, yReal, sizes, c.lr, c.seed),
+      shuf: trainProbe(X, yShuf, sizes, c.lr, c.seed),
+    };
+  });
+}
+/*SIM-END*/
+
+/* ---------- chart + interaction ---------- */
+const RESULTS = runAll();
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const PLOT = { x0: 46, x1: 646, y0: 26, y1: 346 };
+const xS = e => PLOT.x0 + (e / EPOCHS) * (PLOT.x1 - PLOT.x0);
+const yS = a => PLOT.y1 - ((a * 100 - 40) / 60) * (PLOT.y1 - PLOT.y0);
+
+function noteFor(w) {
+  return w === 0
+    ? 'logistic regression on the frozen 12-D features · 13 parameters'
+    : 'tanh MLP, one hidden layer (' + w + ' units) · ' + (14 * w + 1) + ' parameters';
+}
+/* verdicts keyed to the selectivity color band (thresholds: ≥ +25 green, ≥ +8 amber, else red) */
+const VERDICTS = {
+  high: '<strong>Large selectivity (green band):</strong> the probe fits real labels far better than content-free ones, so the accuracy reflects structure in the representation rather than probe memorisation. Even so, it licenses a decodability claim only: whether the model uses that information is a separate, causal question.',
+  mid: '<strong>Selectivity is shrinking (amber band):</strong> same representation, higher real-label accuracy, yet the control probe now fits much of the shuffled data too. A growing share of the accuracy is explained by probe capacity rather than by the representation; the number that changed meaningfully is selectivity.',
+  low: '<strong>Raw accuracy now licenses almost nothing (red band):</strong> the probe fits shuffled labels about as well as real ones, and a probe that aces labels with no content cannot certify that the representation encodes the concept. Selectivity, not accuracy, is the informative quantity.',
+};
+const BAND_SPAN = {
+  high: '<span class="sel-high">green band</span>',
+  mid: '<span class="sel-mid">amber band</span>',
+  low: '<span class="sel-low">red band</span>',
+};
+function bandFor(sel) { return sel >= 25 ? 'high' : sel >= 8 ? 'mid' : 'low'; }
+
+const $ = id => document.getElementById(id);
+
+/* static grid */
+(function buildGrid() {
+  const g = $('grid');
+  const ns = 'http://www.w3.org/2000/svg';
+  for (let v = 40; v <= 100; v += 10) {
+    const y = yS(v / 100);
+    const ln = document.createElementNS(ns, 'line');
+    ln.setAttribute('x1', PLOT.x0); ln.setAttribute('x2', PLOT.x1);
+    ln.setAttribute('y1', y); ln.setAttribute('y2', y);
+    ln.setAttribute('class', v === 50 ? 'chance-line' : 'gridline');
+    g.appendChild(ln);
+    const t = document.createElementNS(ns, 'text');
+    t.setAttribute('x', PLOT.x0 - 7); t.setAttribute('y', y + 3.5);
+    t.setAttribute('text-anchor', 'end'); t.setAttribute('class', 'tick-label');
+    t.textContent = v;
+    g.appendChild(t);
+  }
+  const ch = document.createElementNS(ns, 'text');
+  ch.setAttribute('x', PLOT.x0 + 8); ch.setAttribute('y', yS(0.5) - 5);
+  ch.setAttribute('class', 'tick-label'); ch.textContent = 'chance';
+  g.appendChild(ch);
+  for (let e = 0; e <= EPOCHS; e += 15) {
+    const t = document.createElementNS(ns, 'text');
+    t.setAttribute('x', xS(e)); t.setAttribute('y', PLOT.y1 + 16);
+    t.setAttribute('text-anchor', 'middle'); t.setAttribute('class', 'tick-label');
+    t.textContent = e;
+    g.appendChild(t);
+  }
+})();
+
+let current = 0; /* index into CAPS / RESULTS */
+let raf = null;
+
+function draw(k) {
+  const { real, shuf } = RESULTS[current];
+  let pr = '', ps = '';
+  for (let i = 0; i <= k; i++) {
+    pr += xS(i).toFixed(1) + ',' + yS(real[i]).toFixed(1) + ' ';
+    ps += xS(i).toFixed(1) + ',' + yS(shuf[i]).toFixed(1) + ' ';
+  }
+  $('line-real').setAttribute('points', pr);
+  $('line-shuf').setAttribute('points', ps);
+  if (k >= 1) {
+    let poly = pr;
+    for (let i = k; i >= 0; i--) poly += xS(i).toFixed(1) + ',' + yS(shuf[i]).toFixed(1) + ' ';
+    $('gapfill').setAttribute('points', poly);
+  } else {
+    $('gapfill').setAttribute('points', '');
+  }
+  const tx = xS(k);
+  $('tip-real').setAttribute('cx', tx); $('tip-real').setAttribute('cy', yS(real[k]));
+  $('tip-shuf').setAttribute('cx', tx); $('tip-shuf').setAttribute('cy', yS(shuf[k]));
+  /* clamp so the end-anchored tags never clip off the left plot edge during early frames */
+  $('tag-real').setAttribute('x', Math.max(tx - 8, PLOT.x0 + 68)); $('tag-real').setAttribute('y', yS(real[k]) - 9);
+  $('tag-shuf').setAttribute('x', Math.max(tx - 8, PLOT.x0 + 142)); $('tag-shuf').setAttribute('y', yS(shuf[k]) + 18);
+  const gl = $('gaplabel');
+  const mid = 42;
+  if (k >= mid && (real[mid] - shuf[mid]) * 100 > 9) {
+    gl.setAttribute('visibility', 'visible');
+    gl.setAttribute('x', xS(mid));
+    gl.setAttribute('y', (yS(real[mid]) + yS(shuf[mid])) / 2 + 4);
+  } else {
+    gl.setAttribute('visibility', 'hidden');
+  }
+  const r = real[k] * 100, s = shuf[k] * 100, sel = r - s;
+  $('v-real').textContent = r.toFixed(1) + '%';
+  $('v-shuf').textContent = s.toFixed(1) + '%';
+  const vs = $('v-sel');
+  vs.textContent = (sel >= 0 ? '+' : '−') + Math.abs(sel).toFixed(1) + ' pts';
+  vs.className = 'val sel-' + bandFor(sel);
+}
+
+function animate() {
+  if (raf) cancelAnimationFrame(raf);
+  if (REDUCED) { draw(EPOCHS); return; }
+  const dur = 520;
+  const t0 = performance.now();
+  function frame(t) {
+    const p = Math.max(0, Math.min(1, (t - t0) / dur));
+    draw(Math.round(p * EPOCHS));
+    if (p < 1) raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+}
+
+const PRESETS = { 'cap-linear': 0, 'cap-mlp1': 2, 'cap-mlp2': 7 }; /* slider indices: w = 0, 4, 48 */
+let hasInteracted = false;
+
+function setCapacity(idx) {
+  current = idx;
+  const w = CAPS[idx].w;
+  const slider = $('cap-slider');
+  slider.value = idx;
+  slider.setAttribute('aria-valuetext', w === 0
+    ? 'linear probe, 0 hidden units, 13 parameters'
+    : w + ' hidden units, ' + (14 * w + 1) + ' parameters');
+  $('cap-read').textContent = w === 0 ? 'linear · w = 0' : 'w = ' + w + ' units';
+  for (const id in PRESETS) $(id).setAttribute('aria-pressed', PRESETS[id] === idx ? 'true' : 'false');
+  $('probe-note').textContent = noteFor(w);
+  const { real, shuf } = RESULTS[idx];
+  const fr = real[EPOCHS] * 100, fs = shuf[EPOCHS] * 100, sel = fr - fs;
+  const band = bandFor(sel);
+  $('verdict-text').innerHTML = VERDICTS[band];
+  $('run-note').innerHTML = (hasInteracted ? '↻ retrained live' : 'trained live at page load') +
+    ' — ' + (w === 0 ? 'linear probe' : w + '-unit MLP') + ': control ' + fs.toFixed(1) +
+    '%, selectivity ' + (sel >= 0 ? '+' : '−') + Math.abs(sel).toFixed(1) + ' pts (' + BAND_SPAN[band] + ')';
+  animate();
+}
+
+$('cap-slider').addEventListener('input', e => { hasInteracted = true; setCapacity(+e.target.value); });
+for (const id in PRESETS) $(id).addEventListener('click', () => { hasInteracted = true; setCapacity(PRESETS[id]); });
+$('replay').addEventListener('click', animate);
+
+setCapacity(0);
+</script>
+</body>
+</html>

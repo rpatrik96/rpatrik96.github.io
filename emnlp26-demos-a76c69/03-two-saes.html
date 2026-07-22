@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two SAEs, same activations, different features</title>
+<style>
+  :root{
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A;
+    --line:#E1DEEC;
+    --seriesA:#3E8E5A; --seriesB:#9E6A0C;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+      --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+      --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+      --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E;
+      --line:#332B49;
+      --seriesA:#4AA06B; --seriesB:#BD831C;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E;
+    --line:#332B49;
+    --seriesA:#4AA06B; --seriesB:#BD831C;
+  }
+  :root[data-theme="light"]{
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A;
+    --line:#E1DEEC;
+    --seriesA:#3E8E5A; --seriesB:#9E6A0C;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{background:var(--paper);}
+  body{
+    font-family:'Avenir Next', Avenir, 'Segoe UI', system-ui, sans-serif;
+    color:var(--ink); background:var(--paper); line-height:1.55;
+    padding:1.4rem 1.2rem 3rem; max-width:1120px; margin:0 auto;
+  }
+  h1,h2{font-family:Futura,'Century Gothic','Avenir Next','Trebuchet MS',sans-serif;}
+  h1{color:var(--purple); font-size:1.7rem; line-height:1.2; letter-spacing:.01em;}
+  h2{font-size:1.05rem; margin-bottom:.5rem; color:var(--ink);}
+  .kicker{font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-mute); font-weight:600;}
+  .page-head{margin-bottom:1.1rem;}
+  .head-row{display:flex; align-items:baseline; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-top:.35rem;}
+  .back{color:var(--purple); text-decoration:none; font-size:.9rem; white-space:nowrap;}
+  .back:hover{text-decoration:underline;}
+  .dek{color:var(--ink-soft); max-width:70ch; margin-top:.3rem;}
+
+  /* ---------- stage ---------- */
+  .stage{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:1rem; margin-bottom:1.6rem;}
+  .controls{display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap; margin-bottom:.9rem;}
+  .control-note{color:var(--ink-soft); font-size:.8rem;}
+  .do-this{font-size:.95rem; margin-bottom:.2rem;}
+  .do-this strong{color:var(--purple);}
+  .slider-row{display:flex; align-items:center; gap:.7rem; flex-wrap:wrap; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:.55rem .8rem; margin-bottom:.9rem;}
+  .slider-row label{font-size:.85rem;}
+  .slider-row input[type=range]{flex:1 1 160px; min-width:120px; accent-color:var(--purple); margin:0;}
+  .slider-row output{font-weight:700; font-variant-numeric:tabular-nums;}
+  .recov{font-size:.82rem; color:var(--ink-soft); display:inline-flex; align-items:center; gap:.3rem; border:1px solid var(--line); border-radius:99px; padding:.1rem .55rem; background:var(--panel); font-variant-numeric:tabular-nums; white-space:nowrap;}
+  .slider-hint{flex-basis:100%; font-size:.75rem; color:var(--ink-mute);}
+  .narrate{background:var(--card); border:1px solid var(--line); border-left:3px solid var(--purple); border-radius:8px; padding:.5rem .7rem; font-size:.88rem; color:var(--ink-soft); margin-bottom:.9rem; font-variant-numeric:tabular-nums;}
+  .card-gloss{font-size:.72rem; color:var(--ink-mute); margin:-.25rem 0 .35rem;}
+  .grid-legend{font-size:.78rem; color:var(--ink-mute); margin:0 0 .9rem;}
+  .lg-box{display:inline-block; width:.72rem; height:.72rem; border-radius:3px; vertical-align:-1px; background:var(--panel); border:1px solid var(--line);}
+  .lg-sel{border-color:var(--purple); box-shadow:0 0 0 1.5px var(--purple);}
+  .lg-match{border-style:dashed; border-color:var(--purple-mid); box-shadow:0 0 0 1px var(--purple-mid);}
+  .lg-dead{opacity:.35;}
+  #retrain:disabled{opacity:.65; cursor:wait;}
+  button{
+    font:inherit; color:inherit; cursor:pointer;
+    border:1px solid var(--line); border-radius:8px; background:var(--card);
+  }
+  #retrain{
+    background:var(--purple); color:var(--paper); border:none;
+    padding:.55rem 1rem; font-weight:600; font-size:.92rem; border-radius:9px;
+  }
+  #retrain:hover{background:var(--purple-mid);}
+  button:focus-visible, .feat:focus-visible{outline:2px solid var(--magenta); outline-offset:2px;}
+
+  .stats{display:grid; grid-template-columns:1fr 1.3fr 1fr; gap:.7rem; margin-bottom:.9rem;}
+  .stat-card{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:.7rem .8rem;}
+  .stat-card .kicker{margin-bottom:.4rem;}
+  .obj-vals{display:flex; gap:1.4rem; align-items:baseline; flex-wrap:wrap;}
+  .obj-vals .val{font-size:1.35rem; font-weight:700; font-variant-numeric:tabular-nums;}
+  .obj-vals .who{font-size:.78rem; color:var(--ink-soft); display:flex; align-items:center; gap:.3rem;}
+  .dot{width:.55rem; height:.55rem; border-radius:50%; display:inline-block; flex:none;}
+  .dot.a{background:var(--seriesA);} .dot.b{background:var(--seriesB);}
+  .delta{margin-top:.35rem; font-size:.85rem; color:var(--ink-soft); font-variant-numeric:tabular-nums;}
+  .curve-card svg{width:100%; height:auto; display:block;}
+  .curve-cap{font-size:.75rem; color:var(--ink-mute); margin-top:.15rem;}
+  .meter-track{position:relative; height:.65rem; border-radius:99px; background:var(--purple-faint); margin:.55rem 0 .4rem;}
+  .meter-fill{position:absolute; inset:0 auto 0 0; border-radius:99px; background:var(--purple);}
+  .meter-scale{display:flex; justify-content:space-between; font-size:.72rem; color:var(--ink-mute); font-variant-numeric:tabular-nums;}
+  .overlap-line{font-size:.85rem; color:var(--ink-soft); margin-top:.3rem; font-variant-numeric:tabular-nums;}
+  .overlap-big{font-size:1.25rem; font-weight:700; font-variant-numeric:tabular-nums;}
+
+  .dicts{display:grid; grid-template-columns:1fr 1fr; gap:.7rem; margin-bottom:.45rem;}
+  .panel-box{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:.7rem .8rem;}
+  .panel-head{display:flex; justify-content:space-between; align-items:baseline; gap:.5rem; margin-bottom:.55rem; flex-wrap:wrap;}
+  .panel-title{font-weight:700; font-size:.95rem; display:flex; align-items:center; gap:.4rem;}
+  .panel-sub{font-size:.75rem; color:var(--ink-mute);}
+  .featgrid{display:grid; grid-template-columns:repeat(4, 1fr); gap:.45rem;}
+  .feat{
+    display:flex; flex-direction:column; gap:.3rem; padding:.4rem .45rem;
+    border:1px solid var(--line); border-radius:8px; background:var(--panel);
+    text-align:left;
+  }
+  .feat[aria-pressed="true"]{border-color:var(--purple); box-shadow:0 0 0 2px var(--purple); background:var(--hero);}
+  .feat.match{border-style:dashed; border-color:var(--purple-mid); box-shadow:0 0 0 1px var(--purple-mid);}
+  .feat:disabled{cursor:default; opacity:.45;}
+  .feat-top{display:flex; justify-content:space-between; font-size:.75rem; font-variant-numeric:tabular-nums;}
+  .fid{font-weight:700;}
+  .fuse{color:var(--ink-mute);}
+  .strip{display:flex; gap:2px;}
+  .cell{flex:1; height:1.05rem; border-radius:2px; border:1px solid var(--line);}
+
+  .inspector{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:.8rem .9rem; min-height:15rem;}
+  .insp-grid{display:grid; grid-template-columns:1fr 1.45fr; gap:1.1rem;}
+  .insp-title{font-weight:700; margin-bottom:.15rem; display:flex; align-items:center; gap:.4rem;}
+  .insp-sub{font-size:.8rem; color:var(--ink-soft); margin-bottom:.55rem;}
+  .align-row{display:grid; grid-template-columns:4.6rem 1fr 2.4rem; gap:.45rem; align-items:center; margin-bottom:.28rem; font-size:.82rem;}
+  .align-row .name{color:var(--ink-soft);}
+  .align-row .num{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-soft);}
+  .bar-track{display:block; height:.5rem; background:var(--purple-faint); border-radius:99px; overflow:hidden;}
+  .bar-fill{display:block; height:100%; background:var(--purple); border-radius:99px;}
+  .nocase{text-transform:none;}
+  .align-note{font-size:.73rem; color:var(--ink-mute); margin-top:.5rem; max-width:38ch;}
+  .ctx-row{display:flex; align-items:center; gap:.5rem; margin-bottom:.32rem; flex-wrap:wrap;}
+  .ctx-z{font-size:.75rem; color:var(--ink-mute); font-variant-numeric:tabular-nums; width:4.2rem; flex:none;}
+  .word{font-size:.82rem; padding:.05rem .45rem; border-radius:99px; background:var(--panel); border:1px solid var(--line); color:var(--ink-soft);}
+  .word.hl{background:var(--purple-soft); color:var(--ink); border-color:var(--purple-mid); font-weight:600;}
+  .match-line{margin-top:.65rem; font-size:.87rem; color:var(--ink-soft); font-variant-numeric:tabular-nums;}
+  .match-line .none{color:var(--magenta); font-weight:600;}
+  .match-line button{padding:.15rem .55rem; font-size:.8rem; margin-left:.4rem; border-radius:6px;}
+  .match-line button:hover{background:var(--hero);}
+
+  /* ---------- prose sections ---------- */
+  section.prose{margin-bottom:1.5rem; max-width:70ch;}
+  section.prose p{margin-bottom:.7rem; color:var(--ink);}
+  blockquote{
+    border-left:3px solid var(--purple-mid); background:var(--panel);
+    padding:.7rem .9rem; border-radius:0 8px 8px 0; margin-bottom:.7rem;
+  }
+  blockquote p{font-style:italic; margin-bottom:.3rem;}
+  blockquote cite{font-style:normal; font-size:.8rem; color:var(--ink-mute);}
+  ol{padding-left:1.3rem;}
+  ol li{margin-bottom:.55rem;}
+  footer{border-top:1px solid var(--line); padding-top:.9rem; font-size:.8rem; color:var(--ink-mute); max-width:78ch;}
+  footer a{color:var(--purple);}
+  a{color:var(--purple);}
+
+  @media (prefers-reduced-motion: no-preference){
+    #retrain, .feat, .word{transition:background .15s ease, border-color .15s ease;}
+  }
+  @media (max-width: 880px){
+    .stats{grid-template-columns:1fr;}
+    .dicts{grid-template-columns:1fr;}
+    .insp-grid{grid-template-columns:1fr;}
+    .featgrid{grid-template-columns:repeat(4, 1fr);}
+  }
+</style>
+</head>
+<body>
+
+<header class="page-head">
+  <p class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</p>
+  <div class="head-row">
+    <h1>Two SAEs, same activations, different features</h1>
+    <a class="back" href="./index.html">&larr; All demos</a>
+  </div>
+  <p class="dek">Two sparse autoencoders are trained in your browser on the <em>same</em> toy activations. They reach near-identical objective values — and disagree about what the features are.</p>
+</header>
+
+<section class="stage" aria-label="Interactive demo: two SAE training runs">
+  <div class="controls">
+    <div>
+      <p class="do-this"><strong>Do this first:</strong> click <em>Retrain</em> — the objective barely moves, the dictionaries don&rsquo;t match. Then click any feature card to inspect it.</p>
+      <p class="control-note">Both runs share one dataset: 500 toy activations (6 dims) from six word-category concepts · SAE objective = reconstruction + &lambda;&#8214;z&#8214;<sub>1</sub>, where z = the vector of feature activations</p>
+    </div>
+    <button id="retrain" type="button">Retrain Run B with a new seed</button>
+  </div>
+
+  <div class="slider-row">
+    <label for="corr"><strong>Concept correlation</strong> · how often two concepts co-occur (and co-vary) in a sample</label>
+    <input type="range" id="corr" min="0" max="0.9" step="0.15" value="0.6" aria-describedby="corrHint">
+    <output id="corrVal" for="corr">0.60</output>
+    <span class="recov" id="recov" title="How many of the 6 ground-truth concept directions each run matches with a live decoder direction at |cos| &ge; 0.9 — measurable only because the data is synthetic.">true concepts recovered:&nbsp;<span class="dot a"></span><strong id="recovA">–</strong>&nbsp;·&nbsp;<span class="dot b"></span><strong id="recovB">–</strong></span>
+    <span class="slider-hint" id="corrHint">Release the slider to regenerate the data and retrain both runs (&sim;1&thinsp;s). Near 0 the concepts vary independently and recovery climbs toward 6/6 for both runs; high correlation blurs co-occurring concepts into mixture features, and which mixtures you get depends on the seed.</span>
+  </div>
+
+  <div class="stats" aria-live="polite">
+    <div class="stat-card">
+      <p class="kicker">Objective (recon + <span class="nocase">&lambda;&middot;&#8467;<sub>1</sub></span>)</p>
+      <div class="obj-vals">
+        <div><span class="who"><span class="dot a"></span>Run A · seed 1</span><div class="val" id="objA">–</div></div>
+        <div><span class="who"><span class="dot b"></span>Run B · <span id="seedB">seed 2</span></span><div class="val" id="objB">–</div></div>
+      </div>
+      <p class="delta" id="objDelta">–</p>
+    </div>
+    <div class="stat-card curve-card">
+      <p class="kicker">Training curves</p>
+      <svg id="curves" viewBox="0 0 340 128" role="img" aria-label="Training loss curves for Run A and Run B, converging to near-identical objective values."></svg>
+      <p class="curve-cap">objective over 600 training iterations (from iteration 10)</p>
+    </div>
+    <div class="stat-card">
+      <p class="kicker">Dictionary overlap</p>
+      <p class="card-gloss">dictionary = a run&rsquo;s 12 decoder directions, one per feature</p>
+      <div class="overlap-big" id="ovMean">–</div>
+      <div class="meter-track" id="ovTrack" role="img" aria-label="Dictionary overlap meter">
+        <div class="meter-fill" id="ovFill" style="width:0%"></div>
+      </div>
+      <div class="meter-scale"><span>0</span><span>0.5</span><span>1.0</span></div>
+      <p class="overlap-line" id="ovLine">–</p>
+      <p class="overlap-line">1.0 = same dictionary up to permutation &amp; sign (decoders are unit-norm, so scaling reduces to a sign)</p>
+    </div>
+  </div>
+
+  <p class="narrate" id="narration" role="status"></p>
+
+  <div class="dicts">
+    <div class="panel-box">
+      <div class="panel-head">
+        <span class="panel-title"><span class="dot a"></span>Run A — seed 1</span>
+        <span class="panel-sub">each card: decoder weights (6 dims) + usage</span>
+      </div>
+      <div class="featgrid" id="gridA"></div>
+    </div>
+    <div class="panel-box">
+      <div class="panel-head">
+        <span class="panel-title"><span class="dot b"></span>Run B — <span id="seedB2">seed 2</span></span>
+        <span class="panel-sub">same data, different initialisation</span>
+      </div>
+      <div class="featgrid" id="gridB"></div>
+    </div>
+  </div>
+
+  <p class="grid-legend"><span class="lg-box lg-sel" aria-hidden="true"></span> solid ring = selected &middot; <span class="lg-box lg-match" aria-hidden="true"></span> dashed ring = its closest match in the other run &middot; <span class="lg-box lg-dead" aria-hidden="true"></span> faded &ldquo;dead&rdquo; = never activates</p>
+
+  <div class="inspector" id="inspector" aria-live="polite">
+    <div class="insp-grid" id="inspGrid"></div>
+  </div>
+</section>
+
+<section class="prose">
+  <h2>What this shows</h2>
+  <p>
+    Both runs minimise the same objective on the same 500 activations: reconstruction error plus an
+    &#8467;<sub>1</sub> sparsity penalty. Their objective values land within a few percent of each other,
+    yet the best one-to-one match between their decoder dictionaries stays well below
+    |cos|&nbsp;=&nbsp;1: some features correspond almost exactly, others split, merge, or have no
+    counterpart in the other run. Each live feature still looks interpretable in isolation — its
+    top-activating contexts cluster around coherent word categories. Interpretable-looking features
+    plus a low loss are exactly the evidence an SAE analysis typically reports, and here two different
+    dictionaries supply that evidence equally well. This is the situation in the paper&rsquo;s Case
+    Study II (proxy gaming): reconstruction and sparsity are proxies, and, as the paper notes, it is
+    known that proxies such as reconstruction error or the &#8467;<sub>0</sub> norm cannot be used for
+    model selection (Locatello et&nbsp;al., 2019). Auto-interpretability scores do not break the tie
+    either: the paper cites evidence that they can attain high values even on random structure
+    (Heap et&nbsp;al., 2025).
+  </p>
+  <p>
+    What would break the tie is identifiability: conditions on the data under which the recovered
+    representation is unique up to permutation and scaling — that is, every acceptable solution is
+    the same dictionary reordered and rescaled, one equivalence class of answers. (The overlap
+    meter&rsquo;s &ldquo;permutation &amp; sign&rdquo; is the same class: decoder directions are
+    unit-norm, so rescaling collapses to a sign flip.) The paper points to sufficient-variability
+    conditions (Lachapelle et&nbsp;al., 2022) — the concepts must vary enough across contexts rather
+    than always co-occurring — and to sparse shift autoencoders trained on paired samples
+    (Joshi et&nbsp;al., 2025), i.e. pairs of contexts that differ in only a few concepts, as concrete
+    routes. At the default correlation setting the toy sits in the opposite regime — co-occurring,
+    co-varying concepts in superposition, no paired data — so many sparse factorisations tie on the
+    objective in principle, the two runs surface just two of these near-optima, and the training seed
+    decides which dictionary you would have reported. The slider makes the diagnosis playable: drop
+    the correlation toward 0 and both runs recover nearly all six true concept directions; raise it
+    and recovery falls as features blur into seed-dependent mixtures, while the objective values stay
+    close throughout. Identification tracks the data, not the loss value.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>What the paper says</h2>
+  <blockquote>
+    <p>&ldquo;Multiple sparse factorisations can achieve similar objective values. Thus, while sparsity is a useful inductive bias, it does not guarantee identification.&rdquo;</p>
+    <cite>— Case Study II: Proxy Gaming, arXiv:2602.16698</cite>
+  </blockquote>
+  <blockquote>
+    <p>&ldquo;However, even if SAE features are interpretable, that implies neither uniqueness nor identifiability.&rdquo;</p>
+    <cite>— &sect; &ldquo;The Right Question Is Not Enough. Answers Must Be Identifiable&rdquo;, arXiv:2602.16698</cite>
+  </blockquote>
+</section>
+
+<section class="prose">
+  <h2>Try this</h2>
+  <ol>
+    <li>Retrain Run B several times. The objective stays within a few percent of Run A while the dictionary reshuffles. What extra evidence would you need before calling either run&rsquo;s features &ldquo;the model&rsquo;s features&rdquo;?</li>
+    <li>Select the cleanest-looking feature in Run A (one dominant concept bar), then check its closest match in Run B. Now do the same for a mixed feature. Which kind survives the seed change, and why might correlated concepts matter? Then drop the concept-correlation slider to 0 and watch the truth check: both runs now recover nearly all six concept directions.</li>
+    <li>Both runs score similarly on reconstruction and sparsity, and both look interpretable feature-by-feature. Name one data property, experiment, or assumption that would rule one dictionary out — then compare with the &ldquo;What would resolve it&rdquo; step of Case Study II: verify that the data varies enough for the answer to be unique (or collect paired contexts), rather than pointing to a low loss.</li>
+  </ol>
+</section>
+
+<footer>
+  <p>
+    Toy illustration built for this tutorial: a 12-feature ReLU sparse autoencoder (reconstruction +
+    &#8467;<sub>1</sub> objective, &lambda;&nbsp;=&nbsp;0.08, 600 Adam iterations) trained live in your
+    browser on 500 synthetic 6-dimensional &ldquo;activations&rdquo; generated from six word-category
+    concept directions in superposition. All numbers above are computed by this page. It illustrates
+    Case Study II (proxy gaming) of
+    <a href="https://arxiv.org/abs/2602.16698">Causality is Key for Interpretability Claims to Generalise (arXiv:2602.16698)</a>;
+    the toy itself is not an experiment from the paper. · tutorial demo · CC-BY
+  </p>
+</footer>
+
+<script>
+'use strict';
+/* ================= seeded PRNG ================= */
+function mulberry32(a){
+  return function(){
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function gauss(rng){
+  let u = 0, v = 0;
+  while (u === 0) u = rng();
+  while (v === 0) v = rng();
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+/* ================= toy data ================= */
+const N_DIM = 6, N_CAT = 6, N_FEAT = 12, N_SAMPLES = 500;
+const LAMBDA = 0.08, ITERS = 600, LR = 0.03;
+const CATS = [
+  { name:'animals', words:['fox','otter','heron','badger','lynx','seal','crow','hare'] },
+  { name:'colours', words:['crimson','amber','violet','teal','ochre','indigo','slate','jade'] },
+  { name:'numbers', words:['three','seven','twelve','forty','nine','sixty','five','twenty'] },
+  { name:'weather', words:['drizzle','frost','thunder','haze','gale','sleet','fog','mist'] },
+  { name:'foods',   words:['rye','plum','broth','fig','barley','olive','cider','hazelnut'] },
+  { name:'places',  words:['harbour','meadow','quarry','cliff','orchard','canal','ridge','moor'] },
+];
+const CORR_PAIRS = [[0,1],[2,3],[4,5]];
+
+function makeDataset(seed, pCorr){
+  const rng = mulberry32(seed);
+  const U = [];
+  for (let k = 0; k < N_CAT; k++){
+    const v = Array.from({length:N_DIM}, () => gauss(rng));
+    const n = Math.hypot.apply(null, v);
+    U.push(v.map(x => x / n));
+  }
+  const X = [], meta = [];
+  for (let s = 0; s < N_SAMPLES; s++){
+    let active = [];
+    const r = rng();
+    if (r < pCorr){
+      active = CORR_PAIRS[Math.floor(rng() * CORR_PAIRS.length)].slice();
+    } else if (r < pCorr + 0.25){
+      active = [Math.floor(rng() * N_CAT)];
+    } else {
+      const a = Math.floor(rng() * N_CAT);
+      let b = Math.floor(rng() * N_CAT);
+      while (b === a) b = Math.floor(rng() * N_CAT);
+      active = [a, b];
+    }
+    const coef = new Array(N_CAT).fill(0);
+    const x = new Array(N_DIM).fill(0);
+    const shared = (r < pCorr); // a correlated pair co-varies: one shared coefficient
+    let cShared = 0;
+    for (const k of active){
+      const c = shared ? (cShared || (cShared = 0.6 + 0.9 * rng())) : (0.6 + 0.9 * rng());
+      coef[k] = c;
+      for (let d = 0; d < N_DIM; d++) x[d] += c * U[k][d];
+    }
+    for (let d = 0; d < N_DIM; d++) x[d] += 0.02 * gauss(rng);
+    const words = [];
+    for (const k of active){
+      const w1 = CATS[k].words[Math.floor(rng() * 8)];
+      let w2 = CATS[k].words[Math.floor(rng() * 8)];
+      while (w2 === w1) w2 = CATS[k].words[Math.floor(rng() * 8)];
+      words.push([w1, k], [w2, k]);
+    }
+    for (let i = words.length - 1; i > 0; i--){
+      const j = Math.floor(rng() * (i + 1));
+      const t = words[i]; words[i] = words[j]; words[j] = t;
+    }
+    X.push(x); meta.push({ active, coef, words });
+  }
+  return { X, meta, U };
+}
+
+/* ================= tiny SAE, Adam, unit-norm decoder ================= */
+function trainSAE(data, seed){
+  const X = data.X;
+  const m = N_FEAT, n = N_DIM, N = X.length;
+  const rng = mulberry32(seed * 7919 + 13);
+  const We = Array.from({length:m}, () => Array.from({length:n}, () => gauss(rng) / Math.sqrt(n)));
+  const be = new Array(m).fill(0);
+  const Wd = Array.from({length:n}, () => new Array(m).fill(0));
+  for (let j = 0; j < m; j++){
+    let nn = 0;
+    for (let d = 0; d < n; d++) nn += We[j][d] * We[j][d];
+    nn = Math.sqrt(nn) || 1;
+    for (let d = 0; d < n; d++) Wd[d][j] = We[j][d] / nn;
+  }
+  const zeros = (r, c) => Array.from({length:r}, () => new Array(c).fill(0));
+  const mWe = zeros(m,n), vWe = zeros(m,n), mWd = zeros(n,m), vWd = zeros(n,m);
+  const mbe = new Array(m).fill(0), vbe = new Array(m).fill(0);
+  const b1 = 0.9, b2 = 0.999, eps = 1e-8;
+  const curve = [];
+  let t = 0;
+  for (let it = 0; it < ITERS; it++){
+    const gWe = zeros(m,n), gWd = zeros(n,m), gbe = new Array(m).fill(0);
+    let recSum = 0, l1Sum = 0;
+    for (let s = 0; s < N; s++){
+      const x = X[s];
+      const z = new Array(m);
+      for (let j = 0; j < m; j++){
+        let a = be[j];
+        for (let d = 0; d < n; d++) a += We[j][d] * x[d];
+        z[j] = a > 0 ? a : 0;
+      }
+      const xh = new Array(n);
+      for (let d = 0; d < n; d++){
+        let v = 0;
+        for (let j = 0; j < m; j++) v += Wd[d][j] * z[j];
+        xh[d] = v;
+      }
+      const g = new Array(n);
+      for (let d = 0; d < n; d++){
+        const e = xh[d] - x[d];
+        recSum += e * e;
+        g[d] = 2 * e / N;
+      }
+      for (let j = 0; j < m; j++) l1Sum += z[j];
+      for (let j = 0; j < m; j++){
+        if (z[j] <= 0) continue;
+        let dz = LAMBDA / N;
+        for (let d = 0; d < n; d++){
+          dz += Wd[d][j] * g[d];
+          gWd[d][j] += g[d] * z[j];
+        }
+        gbe[j] += dz;
+        for (let d = 0; d < n; d++) gWe[j][d] += dz * x[d];
+      }
+    }
+    t++;
+    const c1 = 1 - Math.pow(b1, t), c2 = 1 - Math.pow(b2, t);
+    for (let j = 0; j < m; j++){
+      for (let d = 0; d < n; d++){
+        mWe[j][d] = b1 * mWe[j][d] + (1 - b1) * gWe[j][d];
+        vWe[j][d] = b2 * vWe[j][d] + (1 - b2) * gWe[j][d] * gWe[j][d];
+        We[j][d] -= LR * (mWe[j][d] / c1) / (Math.sqrt(vWe[j][d] / c2) + eps);
+        mWd[d][j] = b1 * mWd[d][j] + (1 - b1) * gWd[d][j];
+        vWd[d][j] = b2 * vWd[d][j] + (1 - b2) * gWd[d][j] * gWd[d][j];
+        Wd[d][j] -= LR * (mWd[d][j] / c1) / (Math.sqrt(vWd[d][j] / c2) + eps);
+      }
+      mbe[j] = b1 * mbe[j] + (1 - b1) * gbe[j];
+      vbe[j] = b2 * vbe[j] + (1 - b2) * gbe[j] * gbe[j];
+      be[j] -= LR * (mbe[j] / c1) / (Math.sqrt(vbe[j] / c2) + eps);
+    }
+    for (let j = 0; j < m; j++){
+      let nn = 0;
+      for (let d = 0; d < n; d++) nn += Wd[d][j] * Wd[d][j];
+      nn = Math.sqrt(nn) || 1;
+      for (let d = 0; d < n; d++) Wd[d][j] /= nn;
+    }
+    if (it % 5 === 0 || it === ITERS - 1) curve.push({ it, obj: recSum / N + LAMBDA * l1Sum / N });
+  }
+  const Z = [];
+  let recSum = 0, l1Sum = 0;
+  for (let s = 0; s < N; s++){
+    const x = X[s];
+    const z = new Array(m);
+    for (let j = 0; j < m; j++){
+      let a = be[j];
+      for (let d = 0; d < n; d++) a += We[j][d] * x[d];
+      z[j] = a > 0 ? a : 0;
+      l1Sum += z[j];
+    }
+    let e2 = 0;
+    for (let d = 0; d < n; d++){
+      let v = 0;
+      for (let j = 0; j < m; j++) v += Wd[d][j] * z[j];
+      const e = v - x[d];
+      e2 += e * e;
+    }
+    recSum += e2;
+    Z.push(z);
+  }
+  const usage = new Array(m).fill(0);
+  for (let s = 0; s < N; s++) for (let j = 0; j < m; j++) if (Z[s][j] > 1e-3) usage[j]++;
+  return { seed, Wd, Z, curve, obj: recSum / N + LAMBDA * l1Sum / N, usage: usage.map(u => u / N) };
+}
+
+/* ================= metrics ================= */
+function decoderCol(run, j){ return run.Wd.map(row => row[j]); }
+function cosAbs(a, b){
+  let s = 0, na = 0, nb = 0;
+  for (let i = 0; i < a.length; i++){ s += a[i]*b[i]; na += a[i]*a[i]; nb += b[i]*b[i]; }
+  return Math.abs(s) / (Math.sqrt(na * nb) || 1);
+}
+function dictionaryOverlap(runA, runB){
+  const aliveA = [], aliveB = [];
+  for (let j = 0; j < N_FEAT; j++){
+    if (runA.usage[j] >= 0.01) aliveA.push(j);
+    if (runB.usage[j] >= 0.01) aliveB.push(j);
+  }
+  const pairs = [];
+  for (const i of aliveA) for (const j of aliveB){
+    pairs.push({ i, j, c: cosAbs(decoderCol(runA, i), decoderCol(runB, j)) });
+  }
+  pairs.sort((p, q) => q.c - p.c);
+  const usedA = new Set(), usedB = new Set(), matched = [];
+  for (const p of pairs){
+    if (usedA.has(p.i) || usedB.has(p.j)) continue;
+    usedA.add(p.i); usedB.add(p.j); matched.push(p);
+  }
+  const mean = matched.length ? matched.reduce((s, p) => s + p.c, 0) / matched.length : 0;
+  const strong = matched.filter(p => p.c >= 0.9).length;
+  return { matched, mean, strong, nAliveB: aliveB.length };
+}
+function conceptAlignment(run, j, U){ return U.map(u => cosAbs(decoderCol(run, j), u)); }
+function conceptRecovery(run){
+  // how many ground-truth concept directions have a live decoder direction at |cos| >= 0.9
+  let n = 0;
+  for (let k = 0; k < N_CAT; k++){
+    let best = 0;
+    for (let j = 0; j < N_FEAT; j++){
+      if (run.usage[j] < 0.01) continue;
+      const c = cosAbs(decoderCol(run, j), data.U[k]);
+      if (c > best) best = c;
+    }
+    if (best >= 0.9) n++;
+  }
+  return n;
+}
+
+/* ================= state ================= */
+const B_SEEDS = [2,3,4,5,6,7,8,9];
+let pCorr = 0.6;
+let data = makeDataset(42, pCorr);
+let runA = trainSAE(data, 1);
+let seedIdx = 0;
+let runB = trainSAE(data, B_SEEDS[seedIdx]);
+let overlap = dictionaryOverlap(runA, runB);
+let selected = null; // {run:'A'|'B', j}
+let busy = false;
+
+/* ================= rendering ================= */
+const $ = id => document.getElementById(id);
+const fmt4 = x => x.toFixed(4);
+
+function renderStats(){
+  $('objA').textContent = fmt4(runA.obj);
+  $('objB').textContent = fmt4(runB.obj);
+  const d = 100 * Math.abs(runB.obj - runA.obj) / runA.obj;
+  $('objDelta').textContent = 'Δ = ' + d.toFixed(1) + '% — ' +
+    (d < 3 ? 'a near-tie on the training objective' : 'close on the objective, not tied');
+  const seedChip = 'seed ' + runB.seed + ' (' + (seedIdx + 1) + ' of ' + B_SEEDS.length + ')';
+  $('seedB').textContent = seedChip;
+  $('seedB2').textContent = seedChip;
+  $('recovA').textContent = conceptRecovery(runA) + '/6';
+  $('recovB').textContent = conceptRecovery(runB) + '/6';
+  $('ovMean').textContent = overlap.mean.toFixed(2);
+  $('ovFill').style.width = (100 * overlap.mean).toFixed(1) + '%';
+  const line = overlap.strong + ' of ' + overlap.nAliveB + ' live Run B features have a ≥ 0.9 match in Run A';
+  $('ovLine').textContent = line;
+  $('ovTrack').setAttribute('aria-label',
+    'Dictionary overlap: mean best-match absolute cosine ' + overlap.mean.toFixed(2) + ' out of 1. ' + line + '.');
+}
+
+function renderCurves(){
+  const svg = $('curves');
+  const W = 340, H = 128, x0 = 8, x1 = 262, y0 = 116, yTop = 12;
+  const pts = run => run.curve.filter(p => p.it >= 10);
+  const pA = pts(runA), pB = pts(runB);
+  const ymax = 1.05 * Math.max(
+    pA.reduce((s, p) => Math.max(s, p.obj), 0),
+    pB.reduce((s, p) => Math.max(s, p.obj), 0));
+  const X = it => x0 + (it - 10) / (ITERS - 10) * (x1 - x0);
+  const Y = v => y0 - (v / ymax) * (y0 - yTop);
+  const path = ps => ps.map((p, i) => (i ? 'L' : 'M') + X(p.it).toFixed(1) + ',' + Y(p.obj).toFixed(1)).join('');
+  const endA = pA[pA.length - 1], endB = pB[pB.length - 1];
+  const eAy = Y(endA.obj), eBy = Y(endB.obj);
+  // keep the two end labels from colliding
+  let lAy = eAy - 6, lBy = eBy + 13;
+  if (lBy - lAy < 17) { lAy = eAy - 8; lBy = eBy + 14; }
+  svg.innerHTML =
+    '<line x1="' + x0 + '" y1="' + y0 + '" x2="' + x1 + '" y2="' + y0 + '" stroke="var(--line)" stroke-width="1"/>' +
+    '<path d="' + path(pA) + '" fill="none" stroke="var(--seriesA)" stroke-width="2"/>' +
+    '<path d="' + path(pB) + '" fill="none" stroke="var(--seriesB)" stroke-width="2" stroke-dasharray="5 3"/>' +
+    '<circle cx="' + X(endA.it).toFixed(1) + '" cy="' + eAy.toFixed(1) + '" r="3" fill="var(--seriesA)"/>' +
+    '<circle cx="' + X(endB.it).toFixed(1) + '" cy="' + eBy.toFixed(1) + '" r="3" fill="var(--seriesB)"/>' +
+    '<text x="' + (x1 + 8) + '" y="' + lAy.toFixed(1) + '" font-size="11" fill="var(--ink-soft)">A ' + runA.obj.toFixed(3) + '</text>' +
+    '<text x="' + (x1 + 8) + '" y="' + lBy.toFixed(1) + '" font-size="11" fill="var(--ink-soft)">B ' + runB.obj.toFixed(3) + '</text>';
+}
+
+function featButton(runTag, run, j){
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'feat';
+  btn.dataset.run = runTag; btn.dataset.j = j;
+  const dead = run.usage[j] < 0.01;
+  const top = document.createElement('span');
+  top.className = 'feat-top';
+  top.innerHTML = '<span class="fid">f' + j + '</span><span class="fuse">' +
+    (dead ? 'dead' : Math.round(100 * run.usage[j]) + '%') + '</span>';
+  const strip = document.createElement('span');
+  strip.className = 'strip';
+  const col = decoderCol(run, j);
+  for (let d = 0; d < N_DIM; d++){
+    const cell = document.createElement('span');
+    cell.className = 'cell';
+    const w = col[d];
+    cell.style.background = w >= 0 ? 'var(--purple)' : 'var(--magenta)';
+    cell.style.opacity = dead ? 0.05 : Math.max(0.06, Math.min(1, Math.abs(w))).toFixed(2);
+    strip.appendChild(cell);
+  }
+  btn.appendChild(top); btn.appendChild(strip);
+  if (dead){
+    btn.disabled = true;
+    btn.setAttribute('aria-label', 'Run ' + runTag + ' feature ' + j + ', dead (never activates)');
+  } else {
+    btn.setAttribute('aria-label', 'Run ' + runTag + ' feature ' + j + ', usage ' + Math.round(100 * run.usage[j]) + ' percent');
+    btn.setAttribute('aria-pressed', 'false');
+    btn.addEventListener('click', () => select(runTag, j));
+  }
+  return btn;
+}
+
+function renderGrids(){
+  const gA = $('gridA'), gB = $('gridB');
+  gA.innerHTML = ''; gB.innerHTML = '';
+  for (let j = 0; j < N_FEAT; j++) gA.appendChild(featButton('A', runA, j));
+  for (let j = 0; j < N_FEAT; j++) gB.appendChild(featButton('B', runB, j));
+}
+
+function matchFor(runTag, j){
+  for (const p of overlap.matched){
+    if (runTag === 'A' && p.i === j) return { j: p.j, c: p.c };
+    if (runTag === 'B' && p.j === j) return { j: p.i, c: p.c };
+  }
+  return null;
+}
+
+function markSelection(){
+  document.querySelectorAll('.feat').forEach(b => {
+    b.classList.remove('match');
+    if (!b.disabled) b.setAttribute('aria-pressed', 'false');
+  });
+  if (!selected) return;
+  const sel = document.querySelector('.feat[data-run="' + selected.run + '"][data-j="' + selected.j + '"]');
+  if (sel && !sel.disabled) sel.setAttribute('aria-pressed', 'true');
+  const m = matchFor(selected.run, selected.j);
+  if (m && m.c >= 0.5){
+    const other = selected.run === 'A' ? 'B' : 'A';
+    const mb = document.querySelector('.feat[data-run="' + other + '"][data-j="' + m.j + '"]');
+    if (mb) mb.classList.add('match');
+  }
+}
+
+function renderInspector(){
+  const grid = $('inspGrid');
+  if (!selected){ grid.innerHTML = '<p class="insp-sub">Select a feature to inspect it.</p>'; return; }
+  const run = selected.run === 'A' ? runA : runB;
+  const j = selected.j;
+  const align = conceptAlignment(run, j, data.U);
+  const topCat = align.indexOf(Math.max.apply(null, align));
+  // alignment bars
+  let left = '<p class="insp-title"><span class="dot ' + (selected.run === 'A' ? 'a' : 'b') + '"></span>Run ' +
+    selected.run + ' &middot; feature f' + j + '</p>' +
+    '<p class="insp-sub">active on ' + Math.round(100 * run.usage[j]) + '% of samples</p>';
+  for (let k = 0; k < N_CAT; k++){
+    left += '<div class="align-row"><span class="name">' + CATS[k].name + '</span>' +
+      '<span class="bar-track"><span class="bar-fill" style="width:' + (100 * align[k]).toFixed(0) + '%"></span></span>' +
+      '<span class="num">' + align[k].toFixed(2) + '</span></div>';
+  }
+  left += '<p class="align-note">Concept alignment = |cosine| between this feature’s decoder direction and each ground-truth concept direction — known here only because the data is synthetic.</p>';
+  // top contexts
+  const order = data.X.map((_, s) => s).sort((a, b) => run.Z[b][j] - run.Z[a][j]).slice(0, 5);
+  let right = '<p class="insp-title">Top-activating toy contexts</p>' +
+    '<p class="insp-sub">z = this feature&rsquo;s activation on the context · words from the top-aligned category (' + CATS[topCat].name + ') highlighted</p>';
+  for (const s of order){
+    right += '<div class="ctx-row"><span class="ctx-z">z = ' + run.Z[s][j].toFixed(2) + '</span>';
+    for (const [w, k] of data.meta[s].words){
+      right += '<span class="word' + (k === topCat ? ' hl' : '') + '">' + w + '</span>';
+    }
+    right += '</div>';
+  }
+  const other = selected.run === 'A' ? 'B' : 'A';
+  const m = matchFor(selected.run, selected.j);
+  if (m && m.c >= 0.5){
+    right += '<p class="match-line">Closest feature in Run ' + other + ': <strong>f' + m.j +
+      '</strong> &middot; |cos| = ' + m.c.toFixed(2) +
+      '<button type="button" id="jumpMatch">inspect it</button></p>';
+  } else {
+    right += '<p class="match-line"><span class="none">No close counterpart in Run ' + other + '</span>' +
+      (m ? ' (best one-to-one match: f' + m.j + ', |cos| = ' + m.c.toFixed(2) + ')' : '') +
+      ' — this feature’s direction is not in the other dictionary.</p>';
+  }
+  grid.innerHTML = '<div>' + left + '</div><div>' + right + '</div>';
+  const jump = $('jumpMatch');
+  if (jump) jump.addEventListener('click', () => select(other, m.j));
+}
+
+function select(runTag, j){
+  selected = { run: runTag, j };
+  markSelection();
+  renderInspector();
+}
+
+function defaultSelection(run, tag){
+  let best = -1, bj = 0;
+  for (let j = 0; j < N_FEAT; j++) if (run.usage[j] > best){ best = run.usage[j]; bj = j; }
+  return { run: tag, j: bj };
+}
+
+function renderAll(){
+  renderStats();
+  renderCurves();
+  renderGrids();
+  markSelection();
+  renderInspector();
+}
+
+/* ================= narration + busy state ================= */
+function narrate(msg){ $('narration').textContent = msg; }
+function statsSummary(){
+  const d = 100 * Math.abs(runB.obj - runA.obj) / runA.obj;
+  return 'Δ = ' + d.toFixed(1) + '% on the objective, overlap ' + overlap.mean.toFixed(2) +
+    ', true concepts recovered A ' + conceptRecovery(runA) + '/6 · B ' + conceptRecovery(runB) + '/6';
+}
+function verdict(){
+  const d = 100 * Math.abs(runB.obj - runA.obj) / runA.obj;
+  if (d >= 3) return 'a visible gap on the objective this run; the dictionaries differ too.';
+  if (Math.min(conceptRecovery(runA), conceptRecovery(runB)) >= 5)
+    return 'objectives near-tied, and this time both runs recover (nearly) all six true concepts.';
+  return 'near-tied loss, different features: the seed decided which dictionary you would report.';
+}
+function runJob(liveMsg, work){
+  if (busy) return;
+  busy = true;
+  const btn = $('retrain'), sld = $('corr');
+  const sliderFocused = document.activeElement === sld;
+  const label = btn.textContent;
+  btn.disabled = true; sld.disabled = true;
+  btn.textContent = 'training…';
+  narrate(liveMsg);
+  setTimeout(function(){
+    work();
+    btn.textContent = label;
+    btn.disabled = false; sld.disabled = false;
+    if (sliderFocused) sld.focus();
+    busy = false;
+  }, 30);
+}
+
+/* ================= init + retrain + correlation slider ================= */
+selected = defaultSelection(runA, 'A');
+renderAll();
+narrate('Run A (seed 1) vs Run B (seed 2) at correlation 0.60: ' + statsSummary() + ' — ' + verdict());
+
+$('retrain').addEventListener('click', function(){
+  const nextIdx = (seedIdx + 1) % B_SEEDS.length;
+  runJob('Retraining Run B with seed ' + B_SEEDS[nextIdx] + '…', function(){
+    seedIdx = nextIdx;
+    runB = trainSAE(data, B_SEEDS[seedIdx]);
+    overlap = dictionaryOverlap(runA, runB);
+    let moved = false;
+    if (selected && selected.run === 'B'){ selected = defaultSelection(runB, 'B'); moved = true; }
+    renderAll();
+    narrate('Seed ' + runB.seed + ': ' + statsSummary() + ' — ' + verdict() +
+      (moved ? ' Inspector jumped to Run B’s most-used feature (retraining replaces every Run B feature).' : ''));
+  });
+});
+
+const corrEl = $('corr');
+function syncCorrLabel(){
+  const v = parseFloat(corrEl.value);
+  $('corrVal').textContent = v.toFixed(2);
+  corrEl.setAttribute('aria-valuetext',
+    v.toFixed(2) + ' — ' + Math.round(100 * v) + '% of samples draw a correlated concept pair');
+}
+syncCorrLabel();
+corrEl.addEventListener('input', syncCorrLabel);
+corrEl.addEventListener('change', function(){
+  const v = parseFloat(corrEl.value);
+  if (v === pCorr) return;
+  if (busy){ corrEl.value = String(pCorr); syncCorrLabel(); return; }
+  runJob('Concept correlation ' + v.toFixed(2) + ': regenerating the data and retraining both runs…', function(){
+    pCorr = v;
+    data = makeDataset(42, pCorr);
+    runA = trainSAE(data, 1);
+    runB = trainSAE(data, B_SEEDS[seedIdx]);
+    overlap = dictionaryOverlap(runA, runB);
+    selected = defaultSelection(runA, 'A');
+    renderAll();
+    narrate('Correlation ' + pCorr.toFixed(2) + ': ' + statsSummary() + ' — ' + verdict());
+  });
+});
+</script>
+</body>
+</html>

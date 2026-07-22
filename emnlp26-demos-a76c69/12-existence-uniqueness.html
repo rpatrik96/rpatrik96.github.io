@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Existence &ne; uniqueness · EMNLP 2026 tutorial demo</title>
+<style>
+  :root{
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B;
+    --gap-green:#3E8E5A; --line:#E1DEEC;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+      --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+      --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+      --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E;
+      --gap-green:#5FB37E; --line:#332B49;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E;
+    --gap-green:#5FB37E; --line:#332B49;
+  }
+  :root[data-theme="light"]{
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B;
+    --gap-green:#3E8E5A; --line:#E1DEEC;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:'Avenir Next', Avenir, 'Segoe UI', system-ui, sans-serif;
+    line-height:1.55; padding:1.5rem 1rem 3rem;
+  }
+  h1,h2,h3{font-family:Futura,'Century Gothic','Avenir Next','Trebuchet MS',sans-serif;}
+  .wrap{max-width:1040px; margin:0 auto;}
+  .prose{max-width:70ch;}
+  a{color:var(--purple);}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--magenta); outline-offset:2px;}
+  .sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
+
+  header{margin-bottom:1.4rem;}
+  .topline{display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap;}
+  .kicker{font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-mute); font-weight:600;}
+  .back{font-size:.85rem; text-decoration:none; white-space:nowrap;}
+  .back:hover{text-decoration:underline;}
+  h1{color:var(--purple); font-size:1.75rem; margin:.45rem 0 .35rem; line-height:1.2;}
+  .dek{color:var(--ink-soft); max-width:70ch;}
+
+  .stage{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    padding:1.1rem; margin:1.4rem 0;
+  }
+  .stage-head{font-size:.9rem; color:var(--ink-soft); margin-bottom:.9rem; max-width:78ch;}
+  .stage-grid{display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:1.1rem; align-items:start;}
+  @media (max-width:880px){ .stage-grid{grid-template-columns:minmax(0,1fr);} }
+
+  .dagbox{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:.6rem;}
+  .dagbox svg{width:100%; height:auto; display:block;}
+  .legend{display:flex; gap:1.2rem; flex-wrap:wrap; font-size:.78rem; color:var(--ink-soft); margin-top:.5rem; padding:0 .3rem;}
+  .legend .key{display:inline-block; width:.85em; height:.85em; border-radius:3px; margin-right:.35em; vertical-align:-.08em;}
+  .key.in{background:var(--purple);}
+  .key.out{background:var(--card); border:1.5px dashed var(--ink-mute);}
+
+  .controls{display:flex; flex-direction:column; gap:.9rem;}
+  .btnrow{display:flex; gap:.5rem; flex-wrap:wrap;}
+  .btnrow button{
+    cursor:pointer; font-family:inherit; border-radius:9px; padding:.55rem .8rem; font-size:.9rem;
+    border:1px solid var(--line); background:var(--card); color:var(--ink-soft);
+  }
+  .btnrow button.primary{
+    background:var(--purple); color:var(--paper); border-color:var(--purple); font-weight:700; flex:1 1 auto;
+  }
+  .btnrow button:disabled{opacity:.45; cursor:not-allowed;}
+
+  .meterbox{background:var(--card); border:1px solid var(--line); border-radius:9px; padding:.7rem .8rem;}
+  .meterbox h3{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:.55rem;}
+  .mrow{display:grid; grid-template-columns:minmax(0,1fr) 4.2em; gap:.5em; align-items:center;
+        font-size:.82rem; font-variant-numeric:tabular-nums;}
+  .mbar{display:block; height:10px; background:var(--panel); border:1px solid var(--line); border-radius:5px; overflow:hidden; position:relative;}
+  .mfill{display:block; height:100%; width:0; background:var(--gap-green); border-radius:4px; transition:width .3s;}
+  .mtau{position:absolute; top:-2px; bottom:-2px; width:2px; background:var(--magenta); left:95%;}
+  .mval{text-align:right; color:var(--ink); font-weight:700;}
+  .mnote{font-size:.72rem; color:var(--ink-mute); margin-top:.5rem;}
+  .mnote code, .status code, .droplog code, .qcard code, .nlpnote code{font-family:ui-monospace, Menlo, Consolas, monospace; font-size:.95em;}
+  .taurow{text-align:right; margin-top:.2rem; margin-right:4.7em;}
+  .taulab{font-size:.72rem; color:var(--magenta); font-weight:700; font-variant-numeric:tabular-nums;}
+  input[type=range]{width:100%; accent-color:var(--purple); margin:0;}
+  .cue{
+    background:var(--hero); border:1px solid var(--purple-soft); border-radius:9px;
+    padding:.5rem .65rem; font-size:.82rem; color:var(--ink);
+  }
+  .seednote{font-size:.72rem; color:var(--ink-mute); margin-top:.35rem;}
+  .nlpnote{font-size:.78rem; color:var(--ink-soft); margin-top:.45rem; padding:0 .3rem;}
+
+  .statusbox{
+    background:var(--hero); border-left:3px solid var(--purple); border-radius:0 9px 9px 0;
+    padding:.7rem .85rem; font-size:.86rem; color:var(--ink-soft);
+  }
+  .statusbox .st{font-weight:700; color:var(--ink); display:block; margin-bottom:.25rem;}
+  .droplog{margin-top:.45rem; font-size:.78rem; color:var(--ink-mute);}
+
+  .gallery-head{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-mute);
+    font-weight:600; margin:1.2rem 0 .55rem;}
+  .tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:.6rem; margin-bottom:.9rem;}
+  .tile{background:var(--card); border:1px solid var(--line); border-radius:9px; padding:.55rem .7rem;}
+  .tile .tv{display:block; font-size:1.15rem; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums;}
+  .tile .tl{display:block; font-size:.72rem; color:var(--ink-mute);}
+
+  .gcards{display:flex; gap:.6rem; flex-wrap:wrap; margin-bottom:1rem;}
+  .gcard{
+    display:flex; gap:.6rem; align-items:center;
+    background:var(--card); border:1px solid var(--line); border-radius:9px; padding:.5rem .65rem;
+    font-size:.8rem; font-variant-numeric:tabular-nums;
+  }
+  .gcard .badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:1.9em; height:1.9em; border-radius:7px; font-weight:800; font-size:.95rem;
+    background:var(--bc, var(--purple)); color:var(--paper);
+  }
+  .gcard .gm{display:block; font-family:ui-monospace, Menlo, Consolas, monospace; color:var(--ink); font-size:.86em;}
+  .gcard .gt{display:block; color:var(--ink-mute); font-size:.9em;}
+  .gcard .gf{display:block; color:var(--ink-soft);}
+  .gcard.repeat{border-style:dashed;}
+  button.gcard{cursor:pointer; font-family:inherit; text-align:left; color:inherit;}
+  button.gcard:hover{border-color:var(--purple-mid);}
+  .gcard[aria-pressed="true"]{border-color:var(--purple); box-shadow:0 0 0 1px var(--purple) inset;}
+
+  .matrixwrap{overflow-x:auto;}
+  table.matrix{border-collapse:collapse; width:100%; font-size:.84rem;}
+  table.matrix caption{text-align:left; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--ink-mute); font-weight:600; padding-bottom:.45rem;}
+  table.matrix th, table.matrix td{padding:.32rem .6rem; text-align:left; border-bottom:1px solid var(--line);}
+  table.matrix th{color:var(--ink-soft); font-weight:600;}
+  table.matrix td.c, table.matrix th.c{text-align:center;}
+  table.matrix .comp{font-family:ui-monospace, Menlo, Consolas, monospace; font-size:.9em; white-space:nowrap;}
+  table.matrix .role{color:var(--ink-mute);}
+  table.matrix .dot{font-weight:700;}
+  table.matrix .no{color:var(--ink-mute);}
+
+  .quant{display:grid; grid-template-columns:1fr 1fr; gap:.8rem; margin-top:1.2rem;}
+  @media (max-width:700px){ .quant{grid-template-columns:1fr;} }
+  .qcard{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:.75rem .9rem;}
+  .qcard.have{border-left:4px solid var(--gap-green);}
+  .qcard.want{border-left:4px solid var(--magenta);}
+  .qcard .qk{font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-mute); font-weight:700; display:block; margin-bottom:.3rem;}
+  .qcard .qmath{font-family:Georgia, 'Times New Roman', serif; font-style:italic; font-size:1.05rem; color:var(--ink); display:block; margin-bottom:.3rem;}
+  .qcard .qc{font-size:.8rem; color:var(--ink-soft);}
+  .qcard .gloss{display:block; margin-top:.35rem; font-size:.74rem; color:var(--ink-mute);}
+  .qresolve{grid-column:1 / -1; background:var(--hero); border:1px solid var(--line); border-radius:10px;
+    padding:.75rem .9rem; font-size:.85rem; color:var(--ink-soft);}
+  .qresolve .qk{font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-mute); font-weight:700; display:block; margin-bottom:.3rem;}
+
+  section{margin:2rem 0;}
+  section h2{color:var(--purple); font-size:1.15rem; margin-bottom:.6rem;}
+  section p{margin-bottom:.8rem;}
+  blockquote{
+    border-left:3px solid var(--purple-mid); background:var(--panel);
+    padding:.8rem 1rem; border-radius:0 9px 9px 0; margin-bottom:.8rem;
+    color:var(--ink-soft); font-size:.95rem;
+  }
+  blockquote .src{display:block; margin-top:.45rem; font-size:.78rem; color:var(--ink-mute); font-style:normal;}
+  ol.try{margin-left:1.2rem;}
+  ol.try li{margin-bottom:.6rem;}
+
+  footer{
+    margin-top:2.5rem; padding-top:1rem; border-top:1px solid var(--line);
+    font-size:.78rem; color:var(--ink-mute); max-width:70ch;
+  }
+  footer a{color:var(--ink-mute);}
+
+  /* SVG DAG */
+  .edge{stroke:var(--purple-mid); stroke-width:1.8; opacity:.85;
+    transition:opacity .18s, stroke .18s; transition-delay:var(--d,0ms);}
+  .edge.dim{stroke:var(--ink-mute); opacity:.22;}
+  .node rect{fill:var(--purple); stroke:var(--purple); stroke-width:1.2;
+    transition:fill .18s, stroke .18s; transition-delay:var(--d,0ms);}
+  .node text{fill:var(--paper); transition:fill .18s; transition-delay:var(--d,0ms);}
+  .node .role{font-size:9.5px; opacity:.8;}
+  .node.out-of-circuit rect{fill:var(--card); stroke:var(--ink-mute); stroke-dasharray:4 3;}
+  .node.out-of-circuit text{fill:var(--ink-mute);}
+  .node.fixed rect{fill:var(--hero); stroke:var(--purple); stroke-dasharray:none;}
+  .node.fixed text{fill:var(--ink);}
+  .chip rect{fill:var(--panel); stroke:var(--line);}
+  .chip text{fill:var(--ink-soft);}
+  .laylab{fill:var(--ink-mute); font-size:8.5px; letter-spacing:.1em; text-transform:uppercase;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; animation:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="topline">
+    <span class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</span>
+    <a class="back" href="./index.html">&larr; All demos</a>
+  </div>
+  <h1>Circuit discovery proves existence, not uniqueness</h1>
+  <p class="dek">One network, one dataset, one ablation baseline, one stopping threshold. A new run changes only the seed that orders the pruning search, and it can return a different &ldquo;minimal circuit&rdquo; at exactly the same faithfulness.</p>
+</header>
+
+<div class="stage">
+  <p class="stage-head">Press <strong>Run circuit discovery</strong>. Each run starts from the full network and greedily prunes components while faithfulness stays above the threshold &tau; (0.95 by default; the slider on the right changes it); the seed only shuffles the order in which components are considered for removal. Network weights, dataset, zero-ablation baseline, and metric are frozen across runs &mdash; and within one sweep, so is &tau;.</p>
+  <div class="stage-grid">
+    <div>
+      <div class="dagbox">
+        <svg viewBox="0 0 660 432" role="img" aria-label="Directed graph of the toy network: two input tokens, four layer-1 heads, four layer-2 units, one output logit. Filled nodes are in the currently discovered circuit; dashed nodes were pruned.">
+          <g id="edges">
+            <line class="edge" data-from="in-s" data-to="h1a" x1="187" y1="390" x2="115" y2="318"/>
+            <line class="edge" data-from="in-s" data-to="h1b" x1="187" y1="390" x2="260" y2="318"/>
+            <line class="edge" data-from="in-d" data-to="h1c" x1="477" y1="390" x2="405" y2="318"/>
+            <line class="edge" data-from="in-d" data-to="h1d" x1="477" y1="390" x2="550" y2="318"/>
+            <line class="edge" data-from="h1a" data-to="m2a" x1="115" y1="272" x2="110" y2="193"/>
+            <line class="edge" data-from="h1a" data-to="m2c" x1="115" y1="272" x2="235" y2="193"/>
+            <line class="edge" data-from="h1b" data-to="m2c" x1="260" y1="272" x2="235" y2="193"/>
+            <line class="edge" data-from="h1b" data-to="m2b" x1="260" y1="272" x2="380" y2="193"/>
+            <line class="edge" data-from="h1c" data-to="m2d" x1="405" y1="272" x2="525" y2="193"/>
+            <line class="edge" data-from="h1d" data-to="m2d" x1="550" y1="272" x2="525" y2="193"/>
+            <line class="edge" data-from="m2a" data-to="y" x1="110" y1="147" x2="282" y2="70"/>
+            <line class="edge" data-from="m2c" data-to="y" x1="235" y1="147" x2="300" y2="70"/>
+            <line class="edge" data-from="m2b" data-to="y" x1="380" y1="147" x2="326" y2="70"/>
+            <line class="edge" data-from="m2d" data-to="y" x1="525" y1="147" x2="350" y2="70"/>
+          </g>
+
+          <text class="laylab" x="12" y="51">output</text>
+          <text class="laylab" x="12" y="174">layer 2</text>
+          <text class="laylab" x="12" y="299">layer 1</text>
+          <text class="laylab" x="12" y="409">tokens</text>
+
+          <g class="node fixed" id="n-y">
+            <rect x="247" y="26" width="120" height="44" rx="9"/>
+            <text x="307" y="45" text-anchor="middle" font-size="13" font-weight="700">logit y</text>
+            <text class="role" x="307" y="60" text-anchor="middle">always computed</text>
+          </g>
+
+          <g class="node" id="n-m2a">
+            <rect x="58" y="147" width="104" height="46" rx="9"/>
+            <text x="110" y="167" text-anchor="middle" font-size="13" font-weight="700">m2.a</text>
+            <text class="role" x="110" y="182" text-anchor="middle">reads h1.a</text>
+          </g>
+          <g class="node" id="n-m2c">
+            <rect x="183" y="147" width="104" height="46" rx="9"/>
+            <text x="235" y="167" text-anchor="middle" font-size="13" font-weight="700">m2.c</text>
+            <text class="role" x="235" y="182" text-anchor="middle">reads h1.a + h1.b</text>
+          </g>
+          <g class="node" id="n-m2b">
+            <rect x="328" y="147" width="104" height="46" rx="9"/>
+            <text x="380" y="167" text-anchor="middle" font-size="13" font-weight="700">m2.b</text>
+            <text class="role" x="380" y="182" text-anchor="middle">reads h1.b</text>
+          </g>
+          <g class="node" id="n-m2d">
+            <rect x="473" y="147" width="104" height="46" rx="9"/>
+            <text x="525" y="167" text-anchor="middle" font-size="13" font-weight="700">m2.d</text>
+            <text class="role" x="525" y="182" text-anchor="middle">distractor mixer</text>
+          </g>
+
+          <g class="node" id="n-h1a">
+            <rect x="63" y="272" width="104" height="46" rx="9"/>
+            <text x="115" y="292" text-anchor="middle" font-size="13" font-weight="700">h1.a</text>
+            <text class="role" x="115" y="307" text-anchor="middle">signal head</text>
+          </g>
+          <g class="node" id="n-h1b">
+            <rect x="208" y="272" width="104" height="46" rx="9"/>
+            <text x="260" y="292" text-anchor="middle" font-size="13" font-weight="700">h1.b</text>
+            <text class="role" x="260" y="307" text-anchor="middle">duplicate signal head</text>
+          </g>
+          <g class="node" id="n-h1c">
+            <rect x="353" y="272" width="104" height="46" rx="9"/>
+            <text x="405" y="292" text-anchor="middle" font-size="13" font-weight="700">h1.c</text>
+            <text class="role" x="405" y="307" text-anchor="middle">distractor head</text>
+          </g>
+          <g class="node" id="n-h1d">
+            <rect x="498" y="272" width="104" height="46" rx="9"/>
+            <text x="550" y="292" text-anchor="middle" font-size="13" font-weight="700">h1.d</text>
+            <text class="role" x="550" y="307" text-anchor="middle">distractor head</text>
+          </g>
+
+          <g class="chip">
+            <rect x="159" y="390" width="56" height="30" rx="15"/>
+            <text x="187" y="405" text-anchor="middle" font-size="12" font-weight="700">s</text>
+            <text x="187" y="416" text-anchor="middle" font-size="8.5">signal &plusmn;1</text>
+          </g>
+          <g class="chip">
+            <rect x="449" y="390" width="56" height="30" rx="15"/>
+            <text x="477" y="405" text-anchor="middle" font-size="12" font-weight="700">d</text>
+            <text x="477" y="416" text-anchor="middle" font-size="8.5">distractor</text>
+          </g>
+        </svg>
+      </div>
+      <div class="legend">
+        <span><span class="key in"></span>in the discovered circuit</span>
+        <span><span class="key out"></span>pruned (zero-ablated)</span>
+      </div>
+      <p class="nlpnote">Read <code>s</code> as the grammatical number of the subject and <code>d</code> as an intervening distractor noun &mdash; an agreement-style task in miniature.</p>
+    </div>
+
+    <div class="controls">
+      <p class="cue"><strong>Do this first:</strong> press <strong>Run circuit discovery</strong> twice and compare the cards below &mdash; does the same circuit come back?</p>
+      <div>
+        <div class="btnrow">
+          <button type="button" class="primary" id="btn-run" aria-label="Run circuit discovery once with a new seed">Run circuit discovery</button>
+          <button type="button" id="btn-run5" aria-label="Run circuit discovery five more times, one new seed each">+5 runs</button>
+          <button type="button" id="btn-reset" aria-label="Reset all runs and start a new sweep from run 1">Reset</button>
+        </div>
+        <p class="seednote">Each press uses a new seed; everything else stays frozen.</p>
+      </div>
+
+      <div class="meterbox">
+        <h3>Faithfulness of the displayed circuit</h3>
+        <div class="mrow">
+          <span class="mbar"><span class="mfill" id="fbar"></span><span class="mtau" id="mtau" title="threshold &tau;"></span></span>
+          <span class="mval" id="fval"></span>
+        </div>
+        <div class="taurow"><span class="taulab" id="taulab">&tau; = 0.950</span></div>
+        <p class="mnote">Computed live from the seeded toy: <code>F(S) = 1 &minus; MSE(y_S, y_full) / MSE(y_&empty;, y_full)</code>, keeping <code>S</code> and zero-ablating the rest; prune while <code>F &ge; <span id="mnote-tau">0.950</span></code> (magenta tick). The seed only sets the pruning order.</p>
+      </div>
+
+      <div class="meterbox">
+        <h3><label for="tau-slider">Faithfulness threshold &tau; &mdash; drag to change it</label></h3>
+        <div class="mrow">
+          <input type="range" id="tau-slider" min="0.80" max="0.999" step="0.001" value="0.95" aria-describedby="tau-help">
+          <span class="mval" id="tau-val">0.950</span>
+        </div>
+        <p class="mnote" id="tau-help">Stricter thresholds keep more of the network in every circuit, but never shrink the set of admissible circuits to one. Changing &tau; resets the gallery (runs at different &tau; aren&rsquo;t comparable) and re-runs once.</p>
+      </div>
+
+      <div class="statusbox" aria-live="polite">
+        <span class="st" id="status"></span>
+        <span id="statusbody"></span>
+        <p class="droplog" id="droplog"></p>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="gallery-head">Every circuit found so far &middot; click a card to show it on the graph</h3>
+  <div class="tiles">
+    <div class="tile"><span class="tv" id="t-runs">0</span><span class="tl">runs &middot; distinct circuits</span></div>
+    <div class="tile"><span class="tv" id="t-spread">&mdash;</span><span class="tl">faithfulness spread (max &minus; min)</span></div>
+    <div class="tile"><span class="tv" id="t-jaccard">&mdash;</span><span class="tl">mean pairwise Jaccard overlap (shared &divide; total components)</span></div>
+    <div class="tile"><span class="tv" id="t-common">&mdash;</span><span class="tl">components in every circuit</span></div>
+  </div>
+  <div class="gcards" id="gcards"></div>
+  <div class="matrixwrap">
+    <table class="matrix">
+      <caption id="matrix-caption">Component membership across distinct discovered circuits</caption>
+      <thead><tr id="matrix-head"></tr></thead>
+      <tbody id="matrix-body"></tbody>
+    </table>
+  </div>
+
+  <div class="quant">
+    <div class="qcard have">
+      <span class="qk">What each run establishes</span>
+      <span class="qmath">&exist; S : p(y &mid; do(h<sub>S&#772;</sub> := 0)) &asymp; p(y)</span>
+      <span class="qc">An existence result: <em>some</em> sufficient subgraph. Keep <code>S</code>, zero-ablate the rest (<code>S&#772;</code>), and behaviour is preserved &mdash; exactly the <code>F(S) &ge; &tau;</code> test the meter narrates. Every run above delivers this, and every run&rsquo;s evidence is genuinely interventional.
+      <span class="gloss">do(&middot;): pin activations to chosen values &mdash; the causal notation for patching/ablation.</span></span>
+    </div>
+    <div class="qcard want">
+      <span class="qk">What &ldquo;the mechanism&rdquo; would need</span>
+      <span class="qmath">&exist;! S (mod &sim;)</span>
+      <span class="qc">An identification result: uniqueness up to a stated equivalence class &sim;. In plain words: exactly one circuit (&exist;!), once you declare which circuits count as the same (&sim;). The gallery above is a direct counterexample for the toy.</span>
+    </div>
+    <div class="qresolve">
+      <span class="qk">What would rule out alternatives</span>
+      In the paper&rsquo;s words: &ldquo;One would need to introduce certain constraints to identify a more unique solution.&rdquo; The paper also notes this is not a rung-level (observational- vs interventional-evidence) mismatch &mdash; the evidence is already interventional; it fails to rule out alternative values of the estimand (the quantity the experiment is designed to pin down). Short of identifying constraints, the honest unit of report is the equivalence class of circuits, not one member of it.
+    </div>
+  </div>
+</div>
+
+<section class="prose">
+  <h2>What this shows</h2>
+  <p>Every run performs the same backward-pruning search over the same frozen network; the seed enters only through the order in which components are tested for removal, a stand-in for the initialisation and optimisation choices that real discovery pipelines make &mdash; mask initialisation, edge ordering in automated circuit discovery (Conmy et&nbsp;al., 2023), stopping heuristics. The toy contains a duplicated signal head and redundant readers by construction, so four different two-component subgraphs each reconstruct the model&rsquo;s behaviour exactly. Which one a run returns is decided entirely by the seed, and at the default &tau; all four score the same faithfulness to every decimal shown: their patching effects are identical, so no experiment on this page can tell them apart. After four distinct circuits, the intersection tile reads <em>none</em> &mdash; not a single component is shared by all of the reported &ldquo;mechanisms&rdquo;. Raising &tau; with the slider repeats the story one level up: circuits must now keep the weak 0.246&middot;d distractor pathway, so they grow to four or five components (around &tau; &asymp; 0.98&ndash;0.99, even which distractor head survives varies by seed, and the faithfulness spread goes nonzero) &mdash; yet the set of admissible circuits never shrinks to one.</p>
+  <p>This is the paper&rsquo;s Existence &ne; Uniqueness mismatch. Interventional evidence establishes that <em>a</em> sufficient subgraph exists (&exist;S), while calling the result &ldquo;<em>the</em> mechanism&rdquo; admits a stronger reading that would require uniqueness up to a stated equivalence class (&exist;!S mod &sim;). The paper&rsquo;s method taxonomy scopes circuit evidence the same way: &ldquo;Existence of a sufficient path is identified; uniqueness and necessity are not&rdquo; (Zhang &amp; Nanda, 2024; Chan et&nbsp;al., 2022). Until additional constraints rule out the alternatives, the paper&rsquo;s takeaway applies verbatim to the gallery above: the uncovered subgraphs are &ldquo;intervention handles, and not unique explanations&rdquo;.</p>
+</section>
+
+<section class="prose">
+  <h2>What the paper says</h2>
+  <blockquote>
+    <p>&ldquo;However, multiple circuits can produce identical patching effects: the observation that patching component <em>C</em> restores behavior does not rule out alternative components <em>C&prime;</em> that would do the same.&rdquo;</p>
+    <span class="src">&mdash; method taxonomy, &ldquo;Causal and Circuit-Based Methods&rdquo;, arXiv:2602.16698</span>
+  </blockquote>
+  <blockquote>
+    <p>&ldquo;The method identifies one member of an equivalence class of sufficient circuits, and which one it returns depends on initialisation, optimisation choices, etc.&rdquo;</p>
+    <span class="src">&mdash; mismatch box &ldquo;Existence &ne; Uniqueness&rdquo;, arXiv:2602.16698</span>
+  </blockquote>
+</section>
+
+<section class="prose">
+  <h2>Try this</h2>
+  <ol class="try">
+    <li>Run discovery twice and compare the first two cards. Nothing about the model changed between the runs. If run 1 had been a paper reporting &ldquo;the circuit for s&rdquo;, what exactly does run 2 refute &mdash; the experiment, or the word &ldquo;the&rdquo;?</li>
+    <li>Keep running until the &ldquo;components in every circuit&rdquo; tile reads <em>none</em> (four distinct circuits suffice). Every report came with the same faithfulness score, yet no component is common to all of them. Which circuit claims that you know from the literature would survive a seed sweep like this one?</li>
+    <li>The ablation-strategy demo on this site changes the baseline and gets a different circuit; this demo sweeps the search seed &mdash; and, with the slider, the threshold &tau;. Sweep &tau; to both extremes: circuits shrink to two components or grow to five, yet the set of admissible circuits never collapses to one. List the remaining degrees of freedom (metric, dataset, component granularity) and discuss which constraints &mdash; necessity tests, hypothesis-testing frameworks such as causal scrubbing (Chan et&nbsp;al., 2022), or an explicitly declared equivalence class &mdash; would shrink that set.</li>
+  </ol>
+</section>
+
+<footer>
+  <p>Original toy illustration built for this tutorial: the network is constructed with redundant signal pathways so that four distinct two-component subgraphs restore behaviour exactly; the search, the seeds, and every number on this page are computed live in your browser and are not experiments from the paper. It illustrates the &ldquo;Existence &ne; Uniqueness&rdquo; mismatch box of <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a>, <em>Causality is Key for Interpretability Claims to Generalise</em>. &nbsp;&middot;&nbsp; tutorial demo &nbsp;&middot;&nbsp; CC-BY</p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- seeded toy model ---------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function clip(z){return Math.max(-1,Math.min(1,z));}
+
+var dataRand=mulberry32(424242);
+var N=64, DATA=[];
+for(var i=0;i<N;i++){DATA.push({s:dataRand()<0.5?-1:1, d:dataRand()*2-1});}
+
+var COMPS=[
+  {id:'h1a', f:function(x,v){return x.s;}},
+  {id:'h1b', f:function(x,v){return x.s;}},
+  {id:'h1c', f:function(x,v){return 0.7*x.d;}},
+  {id:'h1d', f:function(x,v){return 0.5*x.d;}},
+  {id:'m2a', f:function(x,v){return clip(1.6*v.h1a);}},
+  {id:'m2b', f:function(x,v){return clip(1.6*v.h1b);}},
+  {id:'m2c', f:function(x,v){return clip(v.h1a+v.h1b);}},
+  {id:'m2d', f:function(x,v){return 0.6*v.h1c+0.8*v.h1d;}}
+];
+function OUT(v){return clip(v.m2a+v.m2b+v.m2c)+0.3*v.m2d;}
+
+var yFull=DATA.map(function(x){var v={};COMPS.forEach(function(c){v[c.id]=c.f(x,v);});return OUT(v);});
+function forward(j,S){var x=DATA[j],v={};COMPS.forEach(function(c){v[c.id]=S.has(c.id)?c.f(x,v):0;});return OUT(v);}
+function mse(S){var e=0;for(var j=0;j<N;j++){var r=forward(j,S)-yFull[j];e+=r*r;}return e/N;}
+var MSE0=mse(new Set());
+function faith(S){return Math.max(0,Math.min(1,1-mse(S)/MSE0));}
+
+var TAU=0.95, BASE=20260707, MAXRUNS=24;
+
+function discover(seed){
+  var rnd=mulberry32(seed);
+  var order=COMPS.map(function(c){return c.id;});
+  for(var i=order.length-1;i>0;i--){var j=Math.floor(rnd()*(i+1));var t=order[i];order[i]=order[j];order[j]=t;}
+  var S=new Set(order), dropped=[], changed=true;
+  while(changed){
+    changed=false;
+    order.forEach(function(id){
+      if(!S.has(id))return;
+      S.delete(id);
+      var f=faith(S);
+      if(f>=TAU){dropped.push({id:id,F:f});changed=true;}
+      else{S.add(id);}
+    });
+  }
+  return {set:S, F:faith(S), dropped:dropped};
+}
+
+/* ---------- UI state ---------- */
+var LABELS={h1a:'h1.a',h1b:'h1.b',h1c:'h1.c',h1d:'h1.d',m2a:'m2.a',m2b:'m2.b',m2c:'m2.c',m2d:'m2.d'};
+var ROLES={
+  h1a:'signal head (reads s)',
+  h1b:'duplicate signal head (reads s)',
+  h1c:'distractor head (reads d)',
+  h1d:'distractor head (reads d)',
+  m2a:'reader of h1.a',
+  m2b:'reader of h1.b',
+  m2c:'pooled reader (h1.a + h1.b)',
+  m2d:'distractor mixer'
+};
+var BADGE=['var(--gap-green)','var(--l1)','var(--l2)','var(--l3)','var(--purple)'];
+
+var runs=[];            // {k, seed, set, F, dropped, letter, isNew}
+var distinct=[];        // {key, letter, set}
+var shownK=0;           // run whose circuit is currently drawn on the DAG
+var reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function keyOf(set){return Array.from(set).sort().join('+');}
+function memberList(set){
+  return COMPS.filter(function(c){return set.has(c.id);})
+              .map(function(c){return LABELS[c.id];}).join(' · ');
+}
+function fmt(x,d){return x.toFixed(d===undefined?4:d);}
+
+function jaccard(a,b){
+  var inter=0, uni=new Set();
+  a.forEach(function(x){uni.add(x); if(b.has(x))inter++;});
+  b.forEach(function(x){uni.add(x);});
+  return uni.size?inter/uni.size:1;
+}
+
+/* ---------- rendering ---------- */
+function renderDag(res){
+  var delay={}, step=reduceMotion?0:60;
+  res.dropped.forEach(function(d,i){delay[d.id]=(i+1)*step;});
+  COMPS.forEach(function(c){
+    var node=document.getElementById('n-'+c.id);
+    node.style.setProperty('--d','0ms');
+    node.classList.remove('out-of-circuit');
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('#edges .edge'),function(e){
+    e.style.setProperty('--d','0ms');
+    e.classList.remove('dim');
+  });
+  // force reflow so the restore above is committed before the cascade
+  void document.getElementById('n-y').getBoundingClientRect();
+  function nodeDelay(id){
+    if(id==='y'||id.indexOf('in-')===0)return 0;
+    return delay[id]||0;
+  }
+  COMPS.forEach(function(c){
+    if(res.set.has(c.id))return;
+    var node=document.getElementById('n-'+c.id);
+    node.style.setProperty('--d',(delay[c.id]||0)+'ms');
+    node.classList.add('out-of-circuit');
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('#edges .edge'),function(e){
+    var a=e.getAttribute('data-from'), b=e.getAttribute('data-to');
+    var inA=(a==='y'||a.indexOf('in-')===0)||res.set.has(a);
+    var inB=(b==='y'||b.indexOf('in-')===0)||res.set.has(b);
+    if(inA&&inB)return;
+    e.style.setProperty('--d',Math.max(nodeDelay(a),nodeDelay(b))+'ms');
+    e.classList.add('dim');
+  });
+}
+
+function showMeter(run){
+  document.getElementById('fbar').style.width=(run.F*100).toFixed(1)+'%';
+  document.getElementById('fval').textContent=fmt(run.F);
+}
+
+function fSpreadNote(){
+  if(runs.length<2)return '';
+  var fs=runs.map(function(r){return r.F;});
+  var spread=Math.max.apply(null,fs)-Math.min.apply(null,fs);
+  if(spread<1e-12)return ' F is identical for every circuit in the gallery.';
+  return ' F varies across the gallery by '+fmt(spread)+' (max − min).';
+}
+
+function dropLine(run){
+  if(!run.dropped.length)return 'no component could be pruned at this τ';
+  return 'prune order (run '+run.k+'): '+
+    run.dropped.map(function(d){return '<code>'+LABELS[d.id]+'</code>';}).join(' → ')+
+    ' (each drop kept F ≥ '+TAU.toFixed(3)+')';
+}
+
+function renderRun(run){
+  showMeter(run);
+  document.getElementById('status').textContent=
+    'Run '+run.k+' · seed '+run.seed+' → Circuit '+run.letter+' {'+memberList(run.set)+'}';
+  var exuniq;
+  if(runs.length===1){
+    exuniq='Existence: established — a sufficient circuit exists. Uniqueness: unknown after one run.';
+  } else if(distinct.length===1){
+    exuniq='Existence: shown again. Uniqueness: not refuted yet — every run so far returned the same circuit.';
+  } else {
+    exuniq='Existence: shown again. Uniqueness: refuted — '+distinct.length+' distinct circuits at τ = '+TAU.toFixed(3)+'.';
+  }
+  var cap=(runs.length>=MAXRUNS)
+    ?' Run cap ('+MAXRUNS+') reached — the equivalence class is well sampled; press Reset to start a new sweep.':'';
+  document.getElementById('statusbody').textContent=
+    (run.isNew?'A circuit not seen before. ':'The same circuit as an earlier run — re-found, not confirmed unique. ')+
+    exuniq+' Faithfulness F = '+fmt(run.F)+'.'+fSpreadNote()+cap;
+  document.getElementById('droplog').innerHTML=dropLine(run);
+}
+
+function showCircuit(run){
+  shownK=run.k;
+  renderDag({set:run.set, dropped:run.dropped});
+  showMeter(run);
+  document.getElementById('status').textContent=
+    'Showing circuit '+run.letter+' on the graph · {'+memberList(run.set)+'}';
+  var other=null;
+  distinct.forEach(function(d){if(!other&&d.letter!==run.letter)other=d;});
+  var body;
+  if(other){
+    var shared=COMPS.filter(function(c){return run.set.has(c.id)&&other.set.has(c.id);})
+                    .map(function(c){return LABELS[c.id];});
+    body='Compare with circuit '+other.letter+' {'+memberList(other.set)+'}: '+
+      (shared.length?'shared components '+shared.join(' · '):'no shared components')+
+      '. F = '+fmt(run.F)+'.'+fSpreadNote();
+  } else {
+    body='F = '+fmt(run.F)+'. Press Run circuit discovery to search again with a new seed.';
+  }
+  document.getElementById('statusbody').textContent=body;
+  document.getElementById('droplog').innerHTML=dropLine(run);
+  renderGallery();
+}
+
+function renderGallery(){
+  var g=document.getElementById('gcards');
+  g.textContent='';
+  runs.forEach(function(run){
+    var card=document.createElement('button');
+    card.type='button';
+    card.className='gcard'+(run.isNew?'':' repeat');
+    card.setAttribute('aria-pressed', run.k===shownK?'true':'false');
+    card.setAttribute('aria-label','Show circuit '+run.letter+' from run '+run.k+' on the graph');
+    card.addEventListener('click',function(){showCircuit(run);});
+    var badge=document.createElement('span');
+    badge.className='badge';
+    badge.style.setProperty('--bc',BADGE[(run.letter.charCodeAt(0)-65)%BADGE.length]);
+    badge.textContent=run.letter;
+    var body=document.createElement('div');
+    var t=document.createElement('span'); t.className='gt';
+    t.textContent='run '+run.k+' · seed '+run.seed+(run.isNew?'':' · repeat');
+    var m=document.createElement('span'); m.className='gm'; m.textContent='{'+memberList(run.set)+'}';
+    var f=document.createElement('span'); f.className='gf'; f.textContent='F = '+fmt(run.F);
+    body.appendChild(t); body.appendChild(m); body.appendChild(f);
+    card.appendChild(badge); card.appendChild(body);
+    g.appendChild(card);
+  });
+}
+
+function renderTiles(){
+  document.getElementById('t-runs').textContent=runs.length+' · '+distinct.length;
+  if(runs.length){
+    var fs=runs.map(function(r){return r.F;});
+    var spread=Math.max.apply(null,fs)-Math.min.apply(null,fs);
+    document.getElementById('t-spread').textContent=fmt(spread);
+  } else {
+    document.getElementById('t-spread').textContent='—';
+  }
+  if(distinct.length>=2){
+    var s=0,n=0;
+    for(var i=0;i<distinct.length;i++)for(var j=i+1;j<distinct.length;j++){s+=jaccard(distinct[i].set,distinct[j].set);n++;}
+    document.getElementById('t-jaccard').textContent=fmt(s/n,2);
+  } else {
+    document.getElementById('t-jaccard').textContent='—';
+  }
+  if(runs.length){
+    var common=COMPS.filter(function(c){
+      return distinct.every(function(d){return d.set.has(c.id);});
+    }).map(function(c){return LABELS[c.id];});
+    document.getElementById('t-common').textContent=common.length?common.join(' · '):'none';
+  } else {
+    document.getElementById('t-common').textContent='—';
+  }
+}
+
+function renderMatrix(){
+  var head=document.getElementById('matrix-head');
+  head.textContent='';
+  var th1=document.createElement('th'); th1.scope='col'; th1.textContent='component';
+  var th2=document.createElement('th'); th2.scope='col'; th2.textContent='role in the toy';
+  head.appendChild(th1); head.appendChild(th2);
+  distinct.forEach(function(d){
+    var th=document.createElement('th'); th.scope='col'; th.className='c'; th.textContent=d.letter;
+    head.appendChild(th);
+  });
+  var body=document.getElementById('matrix-body');
+  body.textContent='';
+  COMPS.forEach(function(c){
+    var tr=document.createElement('tr');
+    var t1=document.createElement('td'); t1.className='comp'; t1.textContent=LABELS[c.id];
+    var t2=document.createElement('td'); t2.className='role'; t2.textContent=ROLES[c.id];
+    tr.appendChild(t1); tr.appendChild(t2);
+    distinct.forEach(function(d,di){
+      var td=document.createElement('td'); td.className='c';
+      var inC=d.set.has(c.id);
+      var span=document.createElement('span');
+      span.className=inC?'dot':'no';
+      if(inC)span.style.color=BADGE[di%BADGE.length];
+      span.textContent=inC?'●':'–';
+      var sr=document.createElement('span'); sr.className='sr-only';
+      sr.textContent=inC?' in circuit '+d.letter:' not in circuit '+d.letter;
+      td.appendChild(span); td.appendChild(sr);
+      tr.appendChild(td);
+    });
+    body.appendChild(tr);
+  });
+}
+
+/* ---------- actions ---------- */
+function runOnce(){
+  if(runs.length>=MAXRUNS)return;
+  var k=runs.length+1, seed=BASE+k;
+  var res=discover(seed);
+  var key=keyOf(res.set);
+  var found=null;
+  distinct.forEach(function(d){if(d.key===key)found=d;});
+  var isNew=!found;
+  if(isNew){
+    found={key:key, letter:String.fromCharCode(65+distinct.length), set:res.set};
+    distinct.push(found);
+  }
+  var run={k:k, seed:seed, set:res.set, F:res.F, dropped:res.dropped, letter:found.letter, isNew:isNew};
+  runs.push(run);
+  shownK=k;
+  renderDag(res);
+  renderRun(run);
+  renderGallery();
+  renderTiles();
+  renderMatrix();
+  if(runs.length>=MAXRUNS){
+    document.getElementById('btn-run').disabled=true;
+    document.getElementById('btn-run5').disabled=true;
+  }
+}
+
+function reset(){
+  runs=[]; distinct=[]; shownK=0;
+  document.getElementById('btn-run').disabled=false;
+  document.getElementById('btn-run5').disabled=false;
+  runOnce();
+}
+
+document.getElementById('btn-run').addEventListener('click',runOnce);
+document.getElementById('btn-run5').addEventListener('click',function(){
+  for(var i=0;i<5;i++)runOnce();
+});
+document.getElementById('btn-reset').addEventListener('click',reset);
+
+var slider=document.getElementById('tau-slider');
+function syncTauUI(){
+  document.getElementById('tau-val').textContent=TAU.toFixed(3);
+  document.getElementById('taulab').textContent='τ = '+TAU.toFixed(3);
+  document.getElementById('mnote-tau').textContent=TAU.toFixed(3);
+  document.getElementById('mtau').style.left=(TAU*100)+'%';
+}
+slider.addEventListener('input',function(){
+  TAU=parseFloat(slider.value);
+  syncTauUI();
+  reset();
+});
+
+TAU=parseFloat(slider.value)||TAU; // in case the browser restored a previous slider position
+syncTauUI();
+runOnce(); // deterministic first run on load
+})();
+</script>
+</body>
+</html>

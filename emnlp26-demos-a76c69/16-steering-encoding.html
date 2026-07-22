@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Steering ≠ encoding · EMNLP 2026 tutorial demo</title>
+<style>
+  :root {
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --line:#E1DEEC;
+    --series-steer:#5B4B9E; --series-side:#9E6A0C;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+      --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+      --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+      --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --line:#332B49;
+      --series-steer:#8F7BC4; --series-side:#BD831C;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --line:#332B49;
+    --series-steer:#8F7BC4; --series-side:#BD831C;
+  }
+  :root[data-theme="light"] {
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --line:#E1DEEC;
+    --series-steer:#5B4B9E; --series-side:#9E6A0C;
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: 'Avenir Next', Avenir, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.55; padding: 1.6rem 1.2rem 2.5rem;
+  }
+  h1, h2 { font-family: Futura, 'Century Gothic', 'Avenir Next', 'Trebuchet MS', sans-serif; }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  .kicker {
+    display: block; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-mute); font-weight: 600;
+  }
+  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.2rem; }
+  header h1 { color: var(--purple); font-size: 1.65rem; line-height: 1.2; margin: .3rem 0 .35rem; }
+  header .dek { color: var(--ink-soft); max-width: 62ch; }
+  a.back {
+    color: var(--purple); text-decoration: none; font-size: .85rem; white-space: nowrap;
+    border: 1px solid var(--line); border-radius: 999px; padding: .3rem .8rem; margin-top: .2rem;
+  }
+  a.back:hover { background: var(--hero); }
+  a.back:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+
+  .stage {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 1.1rem 1.2rem 1.1rem; margin-bottom: 1.6rem;
+  }
+  .controls { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 1.1rem; margin-bottom: .9rem; }
+  .controls .group { min-width: 200px; }
+  .controls .group.grow { flex: 1 1 260px; }
+  .sliderrow { display: flex; align-items: center; gap: .6rem; margin-top: .45rem; }
+  input[type="range"] { flex: 1; accent-color: var(--purple); min-width: 140px; }
+  output { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--purple); min-width: 4.4rem; font-size: .95rem; }
+  .seg {
+    display: inline-flex; border: 1px solid var(--line); border-radius: 10px;
+    overflow: hidden; margin-top: .35rem; background: var(--panel);
+  }
+  .seg button {
+    font: inherit; font-size: .86rem; padding: .4rem .7rem; border: none; cursor: pointer;
+    background: transparent; color: var(--ink-soft);
+    display: inline-flex; align-items: center; gap: .4rem;
+  }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button[aria-pressed="true"] { background: var(--purple); color: var(--paper); font-weight: 600; }
+  .ctl-note { font-size: .76rem; color: var(--ink-mute); margin-top: .4rem; font-variant-numeric: tabular-nums; max-width: 40ch; }
+  .group.grow .ctl-note { max-width: 56ch; }
+  .gk { text-transform: none; }
+
+  .stagegrid { display: grid; grid-template-columns: minmax(0, 1fr) 276px; gap: 1.1rem; align-items: start; }
+  @media (max-width: 880px) { .stagegrid { grid-template-columns: 1fr; } }
+
+  .chart svg { width: 100%; height: auto; display: block; }
+  .chart text, .meter text { font-family: inherit; }
+  .axis-caption { fill: var(--ink-mute); font-size: 11px; }
+  .tick-label { fill: var(--ink-mute); font-size: 10.5px; font-variant-numeric: tabular-nums; }
+  .axisline { stroke: var(--line); stroke-width: 1; }
+  .thresh { stroke: var(--magenta); stroke-width: 1.4; stroke-dasharray: 4 4; opacity: .85; }
+  .thresh-lbl { fill: var(--magenta); font-size: 11px; }
+  .curve-base { stroke: var(--ink-mute); stroke-width: 1.8; fill: none; stroke-dasharray: 5 4; opacity: .85; }
+  .curve-steer { stroke: var(--series-steer); stroke-width: 2.6; fill: none; stroke-linejoin: round; }
+  .shade { fill: var(--magenta); opacity: .14; }
+  .shade-lbl { fill: var(--magenta); font-size: 11.5px; font-style: italic; }
+  .tag { fill: var(--ink-soft); font-size: 11.5px; }
+  .tag-base { fill: var(--ink-mute); font-size: 11.5px; }
+  .side-line { stroke: var(--series-side); stroke-width: 2.5; opacity: .75; }
+  .side-dot { fill: var(--series-side); }
+  .base-dot { fill: var(--card); stroke: var(--ink-mute); stroke-width: 1.6; }
+  .delta-lbl { fill: var(--series-side); font-size: 11.5px; font-style: italic; }
+  .provenance { font-size: .76rem; color: var(--ink-mute); margin-top: .55rem; max-width: 72ch; }
+
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+  .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: .5rem .65rem; }
+  .tile .lbl { font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; }
+  .tile .val { font-size: 1.32rem; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: .1rem; }
+  .tile .sub { font-size: .7rem; color: var(--ink-mute); }
+  .tile.dim { opacity: .45; }
+  .val-steer { color: var(--series-steer); }
+  .val-side { color: var(--series-side); }
+  .val-alert { color: var(--magenta); }
+
+  .chips { margin-top: .7rem; display: grid; gap: .5rem; }
+  .chip {
+    border: 1px solid var(--line); border-left: 3px solid var(--line);
+    border-radius: 0 10px 10px 0; padding: .45rem .65rem; background: transparent;
+  }
+  .chip.found { border-left-color: var(--magenta); background: var(--panel); }
+  .chip .lbl { font-size: .64rem; letter-spacing: .11em; text-transform: uppercase; font-weight: 700; color: var(--ink-mute); }
+  .chip.found .lbl { color: var(--magenta); }
+  .chip .txt { font-size: .78rem; color: var(--ink-soft); margin-top: .12rem; }
+
+  .verdicts { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin-top: 1rem; }
+  @media (max-width: 880px) { .verdicts { grid-template-columns: 1fr; } }
+  .verdict { border: 1px solid var(--line); border-left: 3px solid var(--gap-green); border-radius: 0 10px 10px 0; padding: .65rem .85rem; background: var(--panel); }
+  .verdict.no { border-left-color: var(--magenta); }
+  .verdict .lbl { font-size: .64rem; letter-spacing: .11em; text-transform: uppercase; font-weight: 700; margin-bottom: .15rem; }
+  .verdict .lbl { color: var(--gap-green); }
+  .verdict.no .lbl { color: var(--magenta); }
+  .verdict h3 { font-size: .95rem; margin-bottom: .25rem; color: var(--ink); }
+  .verdict p { font-size: .84rem; color: var(--ink-soft); }
+  .verdict p.gloss { font-size: .72rem; color: var(--ink-mute); margin-bottom: .3rem; }
+
+  section { max-width: 70ch; margin: 0 auto 1.5rem; }
+  section h2 { color: var(--purple); font-size: 1.05rem; margin-bottom: .5rem; }
+  section p { margin-bottom: .7rem; color: var(--ink); }
+  blockquote {
+    background: var(--panel); border-left: 3px solid var(--purple-mid);
+    border-radius: 0 10px 10px 0; padding: .8rem 1rem; margin-bottom: .7rem;
+  }
+  blockquote p { color: var(--ink-soft); font-style: italic; margin-bottom: .35rem; }
+  blockquote cite { font-style: normal; font-size: .8rem; color: var(--ink-mute); }
+  ol.try { padding-left: 1.2rem; }
+  ol.try li { margin-bottom: .55rem; color: var(--ink); }
+  footer { max-width: 70ch; margin: 2rem auto 0; font-size: .78rem; color: var(--ink-mute); border-top: 1px solid var(--line); padding-top: .9rem; }
+  footer a { color: var(--purple); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</div>
+      <h1>Steering ≠ encoding</h1>
+      <p class="dek">Adding α·v reliably shifts a toy model toward refusal. That licenses a control handle (interventional evidence — “L2”, rung 2 of Pearl’s causal ladder); it does not license “the model represents refusal”, which claims v is an internal causal variable.</p>
+    </div>
+    <a class="back" href="./index.html">← All demos</a>
+  </header>
+
+  <div class="stage">
+    <div class="controls">
+      <div class="group grow">
+        <label class="kicker" for="alpha">Steering strength <span class="gk">α</span></label>
+        <div class="sliderrow">
+          <input type="range" id="alpha" min="0" max="2" step="0.05" value="0"
+                 aria-label="Steering strength alpha, from 0 to 2">
+          <output id="alpha-out" for="alpha">α = 0.00</output>
+        </div>
+        <div class="ctl-note">Drag α right to steer every prompt toward refusal (h ← h + α·v) — then switch vectors and toggle prompt sets.</div>
+      </div>
+      <div class="group">
+        <div class="kicker" id="vec-kicker">Steering vector</div>
+        <div class="seg" role="group" aria-labelledby="vec-kicker">
+          <button id="vec-1" aria-pressed="true">v₁</button>
+          <button id="vec-2" aria-pressed="false">v₂</button>
+          <button id="vec-3" aria-pressed="false">v₃</button>
+        </div>
+        <div class="ctl-note" id="vec-note"></div>
+      </div>
+      <div class="group">
+        <div class="kicker" id="dist-kicker">Prompt distribution</div>
+        <div class="seg" role="group" aria-labelledby="dist-kicker">
+          <button id="dist-in" aria-pressed="true">In-distribution</button>
+          <button id="dist-ood" aria-pressed="false">Novel prompts</button>
+        </div>
+        <div class="ctl-note" id="dist-note">the prompt set v was calibrated on</div>
+      </div>
+    </div>
+
+    <div class="stagegrid">
+      <div>
+        <div class="chart">
+          <svg id="chart" viewBox="0 0 660 300" role="img"
+               aria-label="Distribution of per-prompt refusal scores. A dashed baseline curve and a solid steered curve; mass to the right of the dashed refusal boundary counts as refusal.">
+            <text class="axis-caption" x="2" y="14">share of prompts (density)</text>
+            <g id="grid"></g>
+            <line id="threshline" class="thresh"></line>
+            <text id="lbl-comply" class="thresh-lbl" text-anchor="end">← comply</text>
+            <text id="lbl-refuse" class="thresh-lbl" text-anchor="start">refuse →</text>
+            <polygon id="shade" class="shade" points=""></polygon>
+            <text id="shade-lbl" class="shade-lbl" text-anchor="start" visibility="hidden"></text>
+            <polyline id="curve-base" class="curve-base" points=""></polyline>
+            <polyline id="curve-steer" class="curve-steer" points=""></polyline>
+            <text id="tag-base" class="tag-base" text-anchor="end"></text>
+            <text id="tag-steer" class="tag" text-anchor="start"></text>
+            <text class="axis-caption" x="346" y="296" text-anchor="middle">refusal score per prompt (projection onto the refusal readout — a linear probe direction)</text>
+          </svg>
+        </div>
+        <div class="meter">
+          <svg id="meter" viewBox="0 0 660 92" role="img"
+               aria-label="Politeness readout on a horizontal axis: a hollow baseline marker and a filled steered marker show how far the mean politeness score drifts as a side effect of steering.">
+            <text class="axis-caption" x="2" y="13">politeness readout (a concept the slider never targets)</text>
+            <g id="maxis"></g>
+            <line id="side-line" class="side-line"></line>
+            <circle id="base-dot" class="base-dot" r="5"></circle>
+            <circle id="side-dot" class="side-dot" r="5.5"></circle>
+            <text id="base-lbl" class="tag-base" text-anchor="middle">baseline</text>
+            <text id="delta-lbl" class="delta-lbl" text-anchor="middle"></text>
+          </svg>
+        </div>
+        <p class="provenance">Toy simulation: 240 seeded prompts per distribution, embedded as 8-D activations with linear refusal and politeness readouts. The three steering vectors are constructed to share the same unit projection onto the refusal readout, so their refusal effect is identical by design; everything else about them differs. Original illustration for this tutorial; not an experiment from the paper.</p>
+      </div>
+
+      <div>
+        <div class="tiles" aria-live="polite">
+          <div class="tile">
+            <div class="lbl">Refusal rate</div>
+            <div class="val val-steer" id="t-rate">–</div>
+            <div class="sub" id="t-rate-sub">steered, this prompt set</div>
+          </div>
+          <div class="tile">
+            <div class="lbl">At <span class="gk">α</span> = 0</div>
+            <div class="val" id="t-base">–</div>
+            <div class="sub">baseline, this prompt set</div>
+          </div>
+          <div class="tile">
+            <div class="lbl">Politeness drift</div>
+            <div class="val val-side" id="t-drift">–</div>
+            <div class="sub">mean shift vs baseline</div>
+          </div>
+          <div class="tile" id="tile-ref">
+            <div class="lbl">In-dist at same <span class="gk">α</span></div>
+            <div class="val" id="t-ref">–</div>
+            <div class="sub">same α on the calibration prompts — compare after toggling</div>
+          </div>
+        </div>
+        <div class="chips" aria-live="polite">
+          <div class="kicker" style="margin-bottom:-.1rem">What playing reveals</div>
+          <div class="chip" id="chip-nu">
+            <div class="lbl"><span class="dot">○</span> Non-unique</div>
+            <div class="txt">Set α &gt; 0, then switch vectors: the refusal curve will not move.</div>
+          </div>
+          <div class="chip" id="chip-ent">
+            <div class="lbl"><span class="dot">○</span> Entangled</div>
+            <div class="txt">Watch the politeness meter while you steer with v₁ or v₂.</div>
+          </div>
+          <div class="chip" id="chip-ood">
+            <div class="lbl"><span class="dot">○</span> Miscalibrated OOD</div>
+            <div class="txt">Calibrate α in-distribution, then toggle to novel prompts.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdicts">
+      <div class="verdict">
+        <div class="lbl">Licensed by this evidence</div>
+        <h3>A control handle (L2)</h3>
+        <p class="gloss">L2 = the intervention rung of Pearl’s ladder (what happens when you act on the system), not the ℓ₂ norm.</p>
+        <p>Adding a scaled direction α·v to the activations controllably shifts the output distribution toward refusal. That is interventional evidence: v affords behavioural control on this prompt distribution.</p>
+      </div>
+      <div class="verdict no">
+        <div class="lbl">Not licensed by this evidence</div>
+        <h3>An internal causal variable</h3>
+        <p>Reading the same result as “the model represents refusal” asserts that v is a causal variable mediating the model’s computation. This toy satisfies all the steering evidence while v is non-unique, entangles politeness, and miscalibrates on novel prompts; the stronger claim needs structural assumptions beyond controllability.</p>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <h2>What this shows</h2>
+    <p>Every control manipulates one toy model: seeded prompts embedded as 8-dimensional activations, a linear refusal readout, and a linear politeness readout. The slider adds α·v to every activation and the refusal distribution slides past the boundary, so steering genuinely works, and that success is real interventional (L2) evidence. But the measured behaviour constrains only one coordinate of v: its projection onto the refusal readout. The three vectors agree on that coordinate and differ everywhere else, which makes them interchangeable for the evidence you collected (non-unique), free to move concepts you never measured (entangled), and calibrated only to the prompt distribution you tested (the same α overshoots on novel prompts).</p>
+    <p>This is the paper’s steering ≠ encoding gap. Describing a successful steering result as “the model represents refusal” admits a stronger reading than the evidence supports, because it asserts that v is an internal causal variable mediating the model’s computation; the paper notes that “steering vectors miscalibrate OOD” (Turner et al., 2023). What would resolve it, per the paper: evidence that v is a stable, reusable causal variable, e.g. transfer across distributions (Todd et al., 2023), specificity to a constrained subspace (Marks et al., 2025), and a causal abstraction in which interventions on v compose appropriately with other model computations (Geiger et al., 2021).</p>
+  </section>
+
+  <section>
+    <h2>What the paper says</h2>
+    <blockquote>
+      <p>“However, v may entangle multiple concepts, may not be unique, and may exploit distributional shortcuts rather than the model’s natural computation (Turner et al., 2023; Jorgensen et al., 2023; Wu et al., 2025; Mueller et al., 2025).”</p>
+      <p>“Steering identifies a control handle on a particular concept, but claiming that the model represents that concept asserts that it is an internal causal variable. The former is supported by L2 evidence, while the latter requires additional structural assumptions beyond controllability.”</p>
+      <cite>— <em>Causality is Key for Interpretability Claims to Generalise</em> (arXiv:2602.16698), “Steering ≠ Encoding” mismatch box</cite>
+    </blockquote>
+  </section>
+
+  <section>
+    <h2>Try this</h2>
+    <ol class="try">
+      <li>Calibrate: with v₁ on in-distribution prompts, find the α that produces roughly 40% refusal, and write the one-sentence claim you would put in the abstract. Now toggle to novel prompts without touching α. Which word in your sentence failed first?</li>
+      <li>Set α = 1 and cycle v₁ → v₂ → v₃ watching only the refusal curve; then cycle again watching the politeness meter. What exactly did the refusal evidence constrain about v, and what did it leave free?</li>
+      <li>The paper’s resolution list: transfer across distributions, specificity to a constrained subspace, compositional interventions. Match each test to the symptom chip it would catch in this toy, and decide which test your favourite steering paper actually ran.</li>
+    </ol>
+  </section>
+
+  <footer>
+    Original toy illustration built for this tutorial to accompany the “Steering ≠ Encoding” mismatch box in <a href="https://arxiv.org/abs/2602.16698"><em>Causality is Key for Interpretability Claims to Generalise</em> (arXiv:2602.16698)</a>; the simulation is not an experiment from the paper. · tutorial demo · CC-BY
+  </footer>
+
+</div>
+
+<script>
+/* ---------- seeded determinism (no Math.random) ---------- */
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function makeGauss(rng) {
+  let spare = null;
+  return function () {
+    if (spare !== null) { const v = spare; spare = null; return v; }
+    let u = 0, v = 0, s = 0;
+    do { u = rng() * 2 - 1; v = rng() * 2 - 1; s = u * u + v * v; } while (s >= 1 || s === 0);
+    const m = Math.sqrt(-2 * Math.log(s) / s);
+    spare = v * m; return u * m;
+  };
+}
+
+/* ---------- toy model: 8-D activations, two linear readouts ---------- */
+const D8 = 8;
+function orthoFrame(k, d, seed) {
+  const g = makeGauss(mulberry32(seed));
+  const out = [];
+  for (let i = 0; i < k; i++) {
+    const v = new Float64Array(d);
+    for (let j = 0; j < d; j++) v[j] = g();
+    for (const u of out) {
+      let dot = 0;
+      for (let j = 0; j < d; j++) dot += u[j] * v[j];
+      for (let j = 0; j < d; j++) v[j] -= dot * u[j];
+    }
+    let n = 0;
+    for (let j = 0; j < d; j++) n += v[j] * v[j];
+    n = Math.sqrt(n);
+    for (let j = 0; j < d; j++) v[j] /= n;
+    out.push(v);
+  }
+  return out;
+}
+const [WR, WP, U1, U2, U3] = orthoFrame(5, D8, 0xBEEF01);
+function combo(parts) {
+  const v = new Float64Array(D8);
+  for (const [c, u] of parts) for (let j = 0; j < D8; j++) v[j] += c * u[j];
+  return v;
+}
+function dot(a, b) { let s = 0; for (let j = 0; j < D8; j++) s += a[j] * b[j]; return s; }
+function norm(a) { return Math.sqrt(dot(a, a)); }
+
+/* three steering vectors: identical projection onto the refusal readout (= 1),
+   different politeness components and different off-readout junk */
+const VECS = {
+  v1: combo([[1, WR], [1.10, WP], [0.9, U1]]),
+  v2: combo([[1, WR], [-0.90, WP], [0.7, U2]]),
+  v3: combo([[1, WR], [0.08, WP], [1.2, U3]]),
+};
+const BETA = { v1: dot(VECS.v1, WP), v2: dot(VECS.v2, WP), v3: dot(VECS.v3, WP) };
+const cosv = (a, b) => dot(a, b) / (norm(a) * norm(b));
+const PAIR_COS = {
+  'v1|v2': cosv(VECS.v1, VECS.v2),
+  'v1|v3': cosv(VECS.v1, VECS.v3),
+  'v2|v3': cosv(VECS.v2, VECS.v3),
+};
+function minSeenCos(seen) {
+  const ks = [...seen].sort();
+  let m = Infinity;
+  for (let i = 0; i < ks.length; i++)
+    for (let j = i + 1; j < ks.length; j++)
+      m = Math.min(m, PAIR_COS[ks[i] + '|' + ks[j]]);
+  return m;
+}
+
+/* prompts: refusal / politeness readout projections per prompt */
+const N = 240;
+function makePrompts(seed, muS, sdS) {
+  const g = makeGauss(mulberry32(seed));
+  const s = new Float64Array(N), p = new Float64Array(N);
+  for (let i = 0; i < N; i++) { s[i] = muS + sdS * g(); p[i] = 0.4 + 0.5 * g(); }
+  return { s, p };
+}
+const DISTS = {
+  ind: makePrompts(20260716, -1.2, 0.80),
+  ood: makePrompts(31415927, -0.55, 0.33),
+};
+
+function refusalRate(dist, alpha) {
+  const s = DISTS[dist].s;
+  let c = 0;
+  for (let i = 0; i < N; i++) if (s[i] + alpha > 0) c++;
+  return c / N;
+}
+function politenessMean(dist, alpha, vec) {
+  const p = DISTS[dist].p;
+  let m = 0;
+  for (let i = 0; i < N; i++) m += p[i];
+  return m / N + alpha * BETA[vec];
+}
+
+/* kernel density over the refusal-score axis */
+const GRID = [];
+for (let x = -4; x <= 4.0001; x += 0.05) GRID.push(x);
+const BW = 0.32, KC = 1 / (N * BW * Math.sqrt(2 * Math.PI));
+function kde(dist, alpha) {
+  const s = DISTS[dist].s;
+  return GRID.map(x => {
+    let d = 0;
+    for (let i = 0; i < N; i++) { const z = (x - s[i] - alpha) / BW; d += Math.exp(-0.5 * z * z); }
+    return d * KC;
+  });
+}
+
+/* ---------- chart geometry ---------- */
+const $ = id => document.getElementById(id);
+const NS = 'http://www.w3.org/2000/svg';
+const CH = { x0: 46, x1: 646, y0: 22, y1: 252 };
+const xS = x => CH.x0 + ((x + 4) / 8) * (CH.x1 - CH.x0);
+const yS = d => CH.y1 - Math.min(d, 1) * (CH.y1 - CH.y0);
+
+(function buildChartStatics() {
+  const g = $('grid');
+  const ax = document.createElementNS(NS, 'line');
+  ax.setAttribute('x1', CH.x0); ax.setAttribute('x2', CH.x1);
+  ax.setAttribute('y1', CH.y1); ax.setAttribute('y2', CH.y1);
+  ax.setAttribute('class', 'axisline');
+  g.appendChild(ax);
+  for (let v = -4; v <= 4; v += 2) {
+    const t = document.createElementNS(NS, 'text');
+    t.setAttribute('x', xS(v)); t.setAttribute('y', CH.y1 + 16);
+    t.setAttribute('text-anchor', 'middle'); t.setAttribute('class', 'tick-label');
+    t.textContent = v > 0 ? '+' + v : String(v);
+    g.appendChild(t);
+  }
+  const th = $('threshline');
+  th.setAttribute('x1', xS(0)); th.setAttribute('x2', xS(0));
+  th.setAttribute('y1', CH.y0); th.setAttribute('y2', CH.y1);
+  $('lbl-comply').setAttribute('x', xS(0) - 8); $('lbl-comply').setAttribute('y', CH.y0 + 10);
+  $('lbl-refuse').setAttribute('x', xS(0) + 8); $('lbl-refuse').setAttribute('y', CH.y0 + 10);
+})();
+
+/* ---------- politeness meter geometry ---------- */
+const MT = { x0: 46, x1: 646, y: 52 };
+const xM = p => MT.x0 + ((Math.max(-3, Math.min(3, p)) + 3) / 6) * (MT.x1 - MT.x0);
+(function buildMeterStatics() {
+  const g = $('maxis');
+  const ax = document.createElementNS(NS, 'line');
+  ax.setAttribute('x1', MT.x0); ax.setAttribute('x2', MT.x1);
+  ax.setAttribute('y1', MT.y); ax.setAttribute('y2', MT.y);
+  ax.setAttribute('class', 'axisline');
+  g.appendChild(ax);
+  for (let v = -3; v <= 3; v++) {
+    const tk = document.createElementNS(NS, 'line');
+    tk.setAttribute('x1', xM(v)); tk.setAttribute('x2', xM(v));
+    tk.setAttribute('y1', MT.y - 3); tk.setAttribute('y2', MT.y + 3);
+    tk.setAttribute('class', 'axisline');
+    g.appendChild(tk);
+    const t = document.createElementNS(NS, 'text');
+    t.setAttribute('x', xM(v)); t.setAttribute('y', MT.y + 17);
+    t.setAttribute('text-anchor', 'middle'); t.setAttribute('class', 'tick-label');
+    t.textContent = v > 0 ? '+' + v : String(v);
+    g.appendChild(t);
+  }
+})();
+
+/* ---------- fingerprints + cosine note ---------- */
+(function decorateVectorButtons() {
+  const scale = 6.5, mid = 9;
+  for (const k of ['v1', 'v2', 'v3']) {
+    const btn = $('vec-' + k[1]);
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('width', '42'); svg.setAttribute('height', '18');
+    svg.setAttribute('viewBox', '0 0 42 18'); svg.setAttribute('aria-hidden', 'true');
+    const axis = document.createElementNS(NS, 'line');
+    axis.setAttribute('x1', 0); axis.setAttribute('x2', 42);
+    axis.setAttribute('y1', mid); axis.setAttribute('y2', mid);
+    axis.setAttribute('stroke', 'currentColor'); axis.setAttribute('stroke-width', '.6'); axis.setAttribute('opacity', '.35');
+    svg.appendChild(axis);
+    const v = VECS[k];
+    for (let j = 0; j < D8; j++) {
+      const h = Math.min(8.4, Math.abs(v[j]) * scale);
+      const r = document.createElementNS(NS, 'rect');
+      r.setAttribute('x', 1 + j * 5.1); r.setAttribute('width', 3.4);
+      r.setAttribute('y', v[j] > 0 ? mid - h : mid); r.setAttribute('height', Math.max(h, .4));
+      r.setAttribute('fill', 'currentColor'); r.setAttribute('opacity', '.85');
+      svg.appendChild(r);
+    }
+    btn.appendChild(svg);
+  }
+  $('vec-note').innerHTML =
+    'all three share the same component along the refusal readout w<sub>r</sub> (w<sub>r</sub>·v = 1.00) · pairwise cosines: ' +
+    'v₁v₂ ' + PAIR_COS['v1|v2'].toFixed(2) +
+    ', v₁v₃ ' + PAIR_COS['v1|v3'].toFixed(2) +
+    ', v₂v₃ ' + PAIR_COS['v2|v3'].toFixed(2);
+})();
+
+/* ---------- state + drawing ---------- */
+const state = { alpha: 0, vec: 'v1', dist: 'ind' };
+const seenVectors = new Set();
+const pct = r => (r * 100).toFixed(1) + '%';
+
+function polyPoints(dens) {
+  let pts = '';
+  for (let i = 0; i < GRID.length; i++) pts += xS(GRID[i]).toFixed(1) + ',' + yS(dens[i]).toFixed(1) + ' ';
+  return pts;
+}
+function peakOf(dens) {
+  let k = 0;
+  for (let i = 1; i < dens.length; i++) if (dens[i] > dens[k]) k = i;
+  return k;
+}
+
+function setChip(id, found, txt) {
+  const chip = $(id);
+  chip.classList.toggle('found', found);
+  chip.querySelector('.dot').textContent = found ? '●' : '○';
+  chip.querySelector('.txt').textContent = txt;
+}
+
+function update() {
+  const { alpha, dist, vec } = state;
+  if (alpha > 0.1) seenVectors.add(vec);
+
+  /* main chart */
+  const base = kde(dist, 0), steer = kde(dist, alpha);
+  $('curve-base').setAttribute('points', polyPoints(base));
+  $('curve-steer').setAttribute('points', polyPoints(steer));
+  const showBase = alpha >= 0.05;
+  $('curve-base').setAttribute('visibility', showBase ? 'visible' : 'hidden');
+
+  let shade = '';
+  for (let i = 0; i < GRID.length; i++) {
+    if (GRID[i] < 0) continue;
+    shade += xS(GRID[i]).toFixed(1) + ',' + yS(steer[i]).toFixed(1) + ' ';
+  }
+  shade += CH.x1 + ',' + CH.y1 + ' ' + xS(0).toFixed(1) + ',' + CH.y1;
+  $('shade').setAttribute('points', shade);
+
+  const kb = peakOf(base), ks = peakOf(steer);
+  const tb = $('tag-base'), ts = $('tag-steer');
+  if (showBase) {
+    tb.setAttribute('visibility', 'visible');
+    tb.setAttribute('x', xS(GRID[kb]) - 8);
+    tb.setAttribute('y', Math.max(yS(base[kb]) - 8, CH.y0 + 24));
+    tb.textContent = 'before steering';
+    ts.textContent = 'steered';
+  } else {
+    tb.setAttribute('visibility', 'hidden');
+    ts.textContent = 'α = 0 · unsteered';
+  }
+  ts.setAttribute('x', xS(GRID[ks]) + 8);
+  ts.setAttribute('y', Math.max(yS(steer[ks]) - 8, CH.y0 + 24));
+
+  const rate = refusalRate(dist, alpha);
+  const sl = $('shade-lbl');
+  if (rate >= 0.02) {
+    sl.setAttribute('visibility', 'visible');
+    sl.setAttribute('x', xS(0) + 10); sl.setAttribute('y', CH.y1 - 12);
+    sl.textContent = pct(rate) + ' refuse';
+  } else {
+    sl.setAttribute('visibility', 'hidden');
+  }
+
+  /* politeness meter */
+  const pBase = politenessMean(dist, 0, vec);
+  const pNow = politenessMean(dist, alpha, vec);
+  const xb = xM(pBase), xn = xM(pNow);
+  $('side-line').setAttribute('x1', xb); $('side-line').setAttribute('x2', xn);
+  $('side-line').setAttribute('y1', MT.y); $('side-line').setAttribute('y2', MT.y);
+  $('base-dot').setAttribute('cx', xb); $('base-dot').setAttribute('cy', MT.y);
+  $('side-dot').setAttribute('cx', xn); $('side-dot').setAttribute('cy', MT.y);
+  const bl = $('base-lbl');
+  bl.setAttribute('x', Math.max(70, Math.min(622, xb)));
+  bl.setAttribute('y', MT.y + 32);
+  const drift = pNow - pBase;
+  const dl = $('delta-lbl');
+  dl.setAttribute('x', Math.max(90, Math.min(602, (xb + xn) / 2)));
+  dl.setAttribute('y', MT.y - 14);
+  dl.textContent = 'Δ politeness ' + (drift >= 0 ? '+' : '−') + Math.abs(drift).toFixed(2);
+
+  /* tiles */
+  const rate0 = refusalRate(dist, 0);
+  const rateInd = refusalRate('ind', alpha);
+  const overshoot = dist === 'ood' && rate - rateInd > 0.12;
+  $('t-rate').textContent = pct(rate);
+  $('t-rate').className = 'val ' + (overshoot ? 'val-alert' : 'val-steer');
+  $('t-rate-sub').textContent = overshoot ? 'overshoots the in-dist calibration' : 'steered, this prompt set';
+  $('t-base').textContent = pct(rate0);
+  $('t-drift').textContent = (drift >= 0 ? '+' : '−') + Math.abs(drift).toFixed(2);
+  $('t-ref').textContent = pct(rateInd);
+  $('tile-ref').classList.toggle('dim', dist === 'ind');
+
+  /* symptom chips */
+  const nuFound = seenVectors.size >= 2 && alpha > 0.1;
+  setChip('chip-nu', nuFound, nuFound
+    ? 'Visibly different vectors (cosine as low as ' + minSeenCos(seenVectors).toFixed(2) + ' among the ones you tried), one identical refusal curve: the behaviour pins down a single coordinate of v.'
+    : 'Set α > 0, then switch vectors: the refusal curve will not move.');
+  const entFound = Math.abs(drift) > 0.25;
+  setChip('chip-ent', entFound, entFound
+    ? 'Steering refusal dragged politeness by ' + (drift >= 0 ? '+' : '−') + Math.abs(drift).toFixed(2) + ': the handle moves a concept you never targeted.'
+    : 'Watch the politeness meter while you steer with v₁ or v₂.');
+  const oodFound = dist === 'ood' && alpha >= 0.3 && rate - rateInd > 0.12;
+  setChip('chip-ood', oodFound, oodFound
+    ? 'Same α: ' + pct(rate) + ' refusal on novel prompts vs ' + pct(rateInd) + ' in-distribution; the α you calibrated does not carry over to new prompts (in causal terms, it fails to transport).'
+    : 'Calibrate α in-distribution, then toggle to novel prompts.');
+}
+
+/* ---------- wiring ---------- */
+$('alpha').addEventListener('input', e => {
+  state.alpha = parseFloat(e.target.value);
+  $('alpha-out').textContent = 'α = ' + state.alpha.toFixed(2);
+  update();
+});
+for (const k of ['1', '2', '3']) {
+  $('vec-' + k).addEventListener('click', () => {
+    state.vec = 'v' + k;
+    for (const j of ['1', '2', '3']) $('vec-' + j).setAttribute('aria-pressed', j === k ? 'true' : 'false');
+    update();
+  });
+}
+$('dist-in').addEventListener('click', () => {
+  state.dist = 'ind';
+  $('dist-in').setAttribute('aria-pressed', 'true');
+  $('dist-ood').setAttribute('aria-pressed', 'false');
+  $('dist-note').textContent = 'the prompt set v was calibrated on';
+  update();
+});
+$('dist-ood').addEventListener('click', () => {
+  state.dist = 'ood';
+  $('dist-in').setAttribute('aria-pressed', 'false');
+  $('dist-ood').setAttribute('aria-pressed', 'true');
+  $('dist-note').textContent = 'prompts unseen during calibration';
+  update();
+});
+
+update();
+</script>
+</body>
+</html>

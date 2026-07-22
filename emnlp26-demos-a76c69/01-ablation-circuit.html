@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The circuit depends on the ablation strategy · EMNLP 2026 tutorial demo</title>
+<style>
+  :root{
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B;
+    --gap-green:#3E8E5A; --line:#E1DEEC;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+      --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+      --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+      --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E;
+      --gap-green:#5FB37E; --line:#332B49;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E;
+    --gap-green:#5FB37E; --line:#332B49;
+  }
+  :root[data-theme="light"]{
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B;
+    --gap-green:#3E8E5A; --line:#E1DEEC;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:'Avenir Next', Avenir, 'Segoe UI', system-ui, sans-serif;
+    line-height:1.55; padding:1.5rem 1rem 3rem;
+  }
+  h1,h2,h3{font-family:Futura,'Century Gothic','Avenir Next','Trebuchet MS',sans-serif;}
+  .wrap{max-width:1040px; margin:0 auto;}
+  .prose{max-width:70ch;}
+  a{color:var(--purple);}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--magenta); outline-offset:2px;}
+  .sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
+
+  header{margin-bottom:1.4rem;}
+  .topline{display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap;}
+  .kicker{font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-mute); font-weight:600;}
+  .back{font-size:.85rem; text-decoration:none; white-space:nowrap;}
+  .back:hover{text-decoration:underline;}
+  h1{color:var(--purple); font-size:1.75rem; margin:.45rem 0 .35rem; line-height:1.2;}
+  .dek{color:var(--ink-soft); max-width:70ch;}
+
+  .stage{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    padding:1.1rem; margin:1.4rem 0;
+  }
+  .stage-head{font-size:.9rem; color:var(--ink-soft); margin-bottom:.9rem;}
+  .stage-grid{display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:1.1rem; align-items:start;}
+  @media (max-width:880px){
+    .stage-grid{grid-template-columns:minmax(0,1fr);}
+    .stage-grid > div:first-child{order:2;}
+    .stage-grid > .controls{order:1;}
+  }
+
+  .dagbox{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:.6rem;}
+  .dagbox svg{width:100%; height:auto; display:block;}
+  .legend{display:flex; gap:1.2rem; flex-wrap:wrap; font-size:.78rem; color:var(--ink-soft); margin-top:.5rem; padding:0 .3rem;}
+  .legend .key{display:inline-block; width:.85em; height:.85em; border-radius:3px; margin-right:.35em; vertical-align:-.08em;}
+  .key.in{background:var(--purple);}
+  .key.out{background:var(--card); border:1.5px dashed var(--ink-mute);}
+  .legend .lnote{font-style:italic;}
+
+  .controls{display:flex; flex-direction:column; gap:.9rem;}
+  .cue{font-size:.8rem; color:var(--ink); background:var(--hero); border-radius:8px; padding:.45rem .6rem; margin:0;}
+  .tau{background:var(--card); border:1px solid var(--line); border-radius:9px; padding:.55rem .7rem .65rem;}
+  .tau .tt{display:block; font-weight:700; font-size:.9rem; color:var(--ink); font-variant-numeric:tabular-nums;}
+  .tau .ts{display:block; font-size:.76rem; color:var(--ink-mute); margin:.15rem 0 .35rem;}
+  .tau input[type="range"]{width:100%; accent-color:var(--purple); cursor:pointer;}
+  .seg{display:flex; flex-direction:column; gap:.45rem;}
+  .seg button{
+    display:block; width:100%; text-align:left; cursor:pointer;
+    background:var(--card); color:var(--ink-soft);
+    border:1px solid var(--line); border-radius:9px; padding:.5rem .7rem;
+    font-family:inherit; font-size:.9rem; transition:background .2s, color .2s;
+  }
+  .seg button .bt{font-weight:700; display:block;}
+  .seg button .bs{font-size:.76rem; color:var(--ink-mute); display:block;}
+  .seg button[aria-pressed="true"]{
+    background:var(--purple); color:var(--paper); border-color:var(--purple);
+  }
+  .seg button[aria-pressed="true"] .bs{color:var(--paper); opacity:.75;}
+
+  .meterbox{background:var(--card); border:1px solid var(--line); border-radius:9px; padding:.7rem .8rem;}
+  .meterbox h3{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:.55rem;}
+  .mrow{display:grid; grid-template-columns:5.4em minmax(0,1fr) 3.2em 4.5em; gap:.5em; align-items:center;
+        font-size:.82rem; padding:.22rem .3rem; border-radius:6px; font-variant-numeric:tabular-nums;}
+  .mrow.current{background:var(--purple-faint);}
+  .mrow .mlab{color:var(--ink-soft); font-weight:600;}
+  .mrow.current .mlab{color:var(--ink);}
+  .mbar{display:block; height:9px; background:var(--panel); border:1px solid var(--line); border-radius:5px; overflow:hidden;}
+  .mfill{display:block; height:100%; width:0; background:var(--gap-green); border-radius:4px; transition:width .3s;}
+  .mval{text-align:right; color:var(--ink);}
+  .msize{text-align:right; color:var(--ink-mute);}
+  .mnote{font-size:.72rem; color:var(--ink-mute); margin-top:.5rem;}
+  .mnote code{font-family:ui-monospace, Menlo, Consolas, monospace; font-size:.95em;}
+
+  .why{
+    background:var(--hero); border-left:3px solid var(--purple); border-radius:0 9px 9px 0;
+    padding:.7rem .85rem; font-size:.86rem; color:var(--ink-soft);
+  }
+  .why .wt{font-weight:700; color:var(--ink); display:block; margin-bottom:.25rem;}
+  .why .members{display:block; margin-top:.5rem; font-size:.8rem; color:var(--ink);}
+  .why .members code{font-family:ui-monospace, Menlo, Consolas, monospace; font-size:.92em;}
+
+  .matrixwrap{overflow-x:auto; margin-top:1.1rem;}
+  table.matrix{border-collapse:collapse; width:100%; font-size:.84rem;}
+  table.matrix caption{text-align:left; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--ink-mute); font-weight:600; padding-bottom:.45rem;}
+  table.matrix th, table.matrix td{padding:.32rem .6rem; text-align:left; border-bottom:1px solid var(--line);}
+  table.matrix th{color:var(--ink-soft); font-weight:600;}
+  table.matrix td.c, table.matrix th.c{text-align:center;}
+  table.matrix .comp{font-family:ui-monospace, Menlo, Consolas, monospace; font-size:.9em; white-space:nowrap;}
+  table.matrix .role{color:var(--ink-mute);}
+  table.matrix .dot{color:var(--purple); font-weight:700;}
+  table.matrix .no{color:var(--ink-mute);}
+  table.matrix .cur{background:var(--purple-faint);}
+  .matrixnotes{margin:.8rem 0 0 1.2rem; font-size:.86rem; color:var(--ink-soft);}
+  .matrixnotes li{margin-bottom:.35rem;}
+  .matrixnotes code{font-family:ui-monospace, Menlo, Consolas, monospace; font-size:.92em; color:var(--ink);}
+  .matrixlead{margin:.8rem 0 0; font-size:.86rem; color:var(--ink-soft);}
+  .matrixlead + .matrixnotes{margin-top:.35rem;}
+  .why .ws{display:block; margin-top:.45rem; font-size:.74rem; color:var(--ink-mute); font-style:italic;}
+
+  section{margin:2rem 0;}
+  section h2{color:var(--purple); font-size:1.15rem; margin-bottom:.6rem;}
+  section p{margin-bottom:.8rem;}
+  blockquote{
+    border-left:3px solid var(--purple-mid); background:var(--panel);
+    padding:.8rem 1rem; border-radius:0 9px 9px 0; margin-bottom:.8rem;
+    color:var(--ink-soft); font-size:.95rem;
+  }
+  blockquote .src{display:block; margin-top:.45rem; font-size:.78rem; color:var(--ink-mute); font-style:normal;}
+  ol.try{margin-left:1.2rem;}
+  ol.try li{margin-bottom:.6rem;}
+
+  footer{
+    margin-top:2.5rem; padding-top:1rem; border-top:1px solid var(--line);
+    font-size:.78rem; color:var(--ink-mute); max-width:70ch;
+  }
+  footer a{color:var(--ink-mute);}
+
+  /* SVG DAG */
+  .edge{stroke:var(--purple-mid); stroke-width:1.8; opacity:.85; transition:opacity .25s, stroke .25s;}
+  .edge.dim{stroke:var(--ink-mute); opacity:.22;}
+  .node rect{fill:var(--purple); stroke:var(--purple); stroke-width:1.2; transition:fill .25s, stroke .25s;}
+  .node text{fill:var(--paper); transition:fill .25s;}
+  .node .role{font-size:9.5px; opacity:.8;}
+  .node.out-of-circuit rect{fill:var(--card); stroke:var(--ink-mute); stroke-dasharray:4 3;}
+  .node.out-of-circuit text{fill:var(--ink-mute);}
+  .node.fixed rect{fill:var(--hero); stroke:var(--purple); stroke-dasharray:none;}
+  .node.fixed text{fill:var(--ink);}
+  .node.changed rect{animation:flash-outline 1.1s ease-out;}
+  @keyframes flash-outline{
+    0%,60%{stroke:var(--magenta); stroke-width:3;}
+    100%{stroke-width:1.2;}
+  }
+  .chip rect{fill:var(--panel); stroke:var(--line);}
+  .chip text{fill:var(--ink-soft);}
+  .laylab{fill:var(--ink-mute); font-size:8.5px; letter-spacing:.1em; text-transform:uppercase;}
+  .gatemark{fill:var(--ink-mute); font-size:10px;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; animation:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="topline">
+    <span class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</span>
+    <a class="back" href="./index.html">&larr; All demos</a>
+  </div>
+  <h1>The circuit depends on the ablation strategy</h1>
+  <p class="dek">One toy network, one greedy search, one faithfulness threshold you can drag. The only thing the three buttons change is the value written into knocked-out components, and each choice returns a different &ldquo;minimal circuit&rdquo; at effectively the same behavioural faithfulness.</p>
+</header>
+
+<div class="stage">
+  <p class="stage-head">Pick the ablation baseline; the only thing each button changes is the value substituted into components outside the candidate circuit. Watch which nodes turn dashed and how each strategy&rsquo;s <em>comps</em> count moves. Think of <code>s</code> as the subject token whose identity the logit must recover, <code>d</code> as a distractor token, and <code>b</code> as a punctuation-style format token.</p>
+  <div class="stage-grid">
+    <div>
+      <div class="dagbox">
+        <svg viewBox="0 0 660 450" role="img" aria-label="Directed graph of the toy network. Eight components between input tokens and the output logit; filled nodes are in the discovered circuit, dashed nodes are knocked out.">
+          <!-- edges (drawn first, behind nodes) -->
+          <g id="edges">
+            <line class="edge" data-from="in-s" data-to="h1a" x1="150" y1="390" x2="115" y2="318"/>
+            <line class="edge" data-from="in-s" data-to="h1b" x1="150" y1="390" x2="260" y2="318"/>
+            <line class="edge" data-from="in-d" data-to="h1b" x1="330" y1="390" x2="260" y2="318"/>
+            <line class="edge" data-from="in-b" data-to="h1d" x1="510" y1="390" x2="550" y2="318"/>
+            <line class="edge" data-from="in-d" data-to="h2d" x1="330" y1="390" x2="550" y2="193"/>
+            <line class="edge" data-from="h1a" data-to="m2a" x1="115" y1="272" x2="115" y2="193"/>
+            <line class="edge" data-from="h1b" data-to="m2a" x1="260" y1="272" x2="115" y2="193"/>
+            <line class="edge" data-from="h1c" data-to="m2b" x1="405" y1="272" x2="260" y2="193"/>
+            <line class="edge" data-from="h1d" data-to="m2c" x1="550" y1="272" x2="405" y2="193"/>
+            <line class="edge" data-from="h1a" data-to="m2c" x1="115" y1="272" x2="405" y2="193"/>
+            <line class="edge" data-from="m2a" data-to="y" x1="115" y1="147" x2="305" y2="70"/>
+            <line class="edge" data-from="m2b" data-to="y" x1="260" y1="147" x2="318" y2="70"/>
+            <line class="edge" data-from="m2c" data-to="y" x1="405" y1="147" x2="342" y2="70"/>
+            <line class="edge" data-from="h2d" data-to="y" x1="550" y1="147" x2="355" y2="70"/>
+          </g>
+          <text class="gatemark" x="292" y="112">&times; gate</text>
+
+          <!-- layer labels -->
+          <text class="laylab" x="12" y="51">output</text>
+          <text class="laylab" x="12" y="174">layer 2</text>
+          <text class="laylab" x="12" y="299">layer 1</text>
+          <text class="laylab" x="12" y="409">tokens</text>
+
+          <!-- output node -->
+          <g class="node fixed" id="n-y">
+            <rect x="270" y="26" width="120" height="44" rx="9"/>
+            <text x="330" y="45" text-anchor="middle" font-size="13" font-weight="700">logit y</text>
+            <text class="role" x="330" y="60" text-anchor="middle">always computed</text>
+          </g>
+
+          <!-- layer 2 -->
+          <g class="node" id="n-m2a">
+            <rect x="63" y="147" width="104" height="46" rx="9"/>
+            <text x="115" y="167" text-anchor="middle" font-size="13" font-weight="700">m2.a</text>
+            <text class="role" x="115" y="182" text-anchor="middle">aggregator</text>
+          </g>
+          <g class="node" id="n-m2b">
+            <rect x="208" y="147" width="104" height="46" rx="9"/>
+            <text x="260" y="167" text-anchor="middle" font-size="13" font-weight="700">m2.b</text>
+            <text class="role" x="260" y="182" text-anchor="middle">gate on h1.c</text>
+          </g>
+          <g class="node" id="n-m2c">
+            <rect x="353" y="147" width="104" height="46" rx="9"/>
+            <text x="405" y="167" text-anchor="middle" font-size="13" font-weight="700">m2.c</text>
+            <text class="role" x="405" y="182" text-anchor="middle">format reader</text>
+          </g>
+          <g class="node" id="n-h2d">
+            <rect x="498" y="147" width="104" height="46" rx="9"/>
+            <text x="550" y="167" text-anchor="middle" font-size="13" font-weight="700">h2.d</text>
+            <text class="role" x="550" y="182" text-anchor="middle">noise head</text>
+          </g>
+
+          <!-- layer 1 -->
+          <g class="node" id="n-h1a">
+            <rect x="63" y="272" width="104" height="46" rx="9"/>
+            <text x="115" y="292" text-anchor="middle" font-size="13" font-weight="700">h1.a</text>
+            <text class="role" x="115" y="307" text-anchor="middle">signal head</text>
+          </g>
+          <g class="node" id="n-h1b">
+            <rect x="208" y="272" width="104" height="46" rx="9"/>
+            <text x="260" y="292" text-anchor="middle" font-size="13" font-weight="700">h1.b</text>
+            <text class="role" x="260" y="307" text-anchor="middle">backup signal</text>
+          </g>
+          <g class="node" id="n-h1c">
+            <rect x="353" y="272" width="104" height="46" rx="9"/>
+            <text x="405" y="292" text-anchor="middle" font-size="13" font-weight="700">h1.c</text>
+            <text class="role" x="405" y="307" text-anchor="middle">always-on</text>
+          </g>
+          <g class="node" id="n-h1d">
+            <rect x="498" y="272" width="104" height="46" rx="9"/>
+            <text x="550" y="292" text-anchor="middle" font-size="13" font-weight="700">h1.d</text>
+            <text class="role" x="550" y="307" text-anchor="middle">format head</text>
+          </g>
+
+          <!-- input chips -->
+          <g class="chip">
+            <rect x="106" y="390" width="88" height="30" rx="15"/>
+            <text x="150" y="405" text-anchor="middle" font-size="12" font-weight="700">s</text>
+            <text x="150" y="416" text-anchor="middle" font-size="8">subject token</text>
+          </g>
+          <g class="chip">
+            <rect x="286" y="390" width="88" height="30" rx="15"/>
+            <text x="330" y="405" text-anchor="middle" font-size="12" font-weight="700">d</text>
+            <text x="330" y="416" text-anchor="middle" font-size="8">distractor token</text>
+          </g>
+          <g class="chip">
+            <rect x="466" y="390" width="88" height="30" rx="15"/>
+            <text x="510" y="405" text-anchor="middle" font-size="12" font-weight="700">b</text>
+            <text x="510" y="416" text-anchor="middle" font-size="8">punctuation token &plusmn;1</text>
+          </g>
+        </svg>
+      </div>
+      <div class="legend">
+        <span><span class="key in"></span>in the discovered circuit</span>
+        <span><span class="key out"></span>knocked out (receives the baseline)</span>
+        <span class="lnote">the diagram is display-only &mdash; drive it with the controls</span>
+      </div>
+    </div>
+
+    <div class="controls">
+      <p class="cue"><strong>Do this first:</strong> click <strong>Mean-ablate</strong> &mdash; two nodes flash, turn dashed, and leave the circuit, yet the discovered circuit&rsquo;s faithfulness hardly changes.</p>
+      <div class="seg" role="group" aria-label="Ablation strategy">
+        <button type="button" id="btn-zero" aria-pressed="true">
+          <span class="bt">Zero-ablate</span>
+          <span class="bs">knocked-out activation &rarr; 0</span>
+        </button>
+        <button type="button" id="btn-mean" aria-pressed="false">
+          <span class="bt">Mean-ablate</span>
+          <span class="bs">knocked-out activation &rarr; its dataset mean</span>
+        </button>
+        <button type="button" id="btn-resample" aria-pressed="false">
+          <span class="bt">Resample-ablate</span>
+          <span class="bs">knocked-out activation &rarr; its value on another input</span>
+        </button>
+      </div>
+
+      <div class="tau">
+        <label for="tau-slider">
+          <span class="tt">Faithfulness threshold &tau; = <span id="tau-val">0.93</span></span>
+          <span class="ts">How faithful is faithful enough? Drag to watch each strategy&rsquo;s minimal circuit grow or shrink.</span>
+        </label>
+        <input type="range" id="tau-slider" min="0.60" max="0.99" step="0.01" value="0.93">
+      </div>
+
+      <div class="meterbox">
+        <h3>Faithfulness of each discovered circuit</h3>
+        <div class="mrow" data-strat="zero">
+          <span class="mlab">zero</span>
+          <span class="mbar"><span class="mfill" id="bar-zero"></span></span>
+          <span class="mval" id="val-zero"></span>
+          <span class="msize" id="size-zero"></span>
+        </div>
+        <div class="mrow" data-strat="mean">
+          <span class="mlab">mean</span>
+          <span class="mbar"><span class="mfill" id="bar-mean"></span></span>
+          <span class="mval" id="val-mean"></span>
+          <span class="msize" id="size-mean"></span>
+        </div>
+        <div class="mrow" data-strat="resample">
+          <span class="mlab">resample</span>
+          <span class="mbar"><span class="mfill" id="bar-resample"></span></span>
+          <span class="mval" id="val-resample"></span>
+          <span class="msize" id="size-resample"></span>
+        </div>
+        <p class="mnote">All three strategies stay visible: a button click only moves the highlight; dragging &tau; recomputes all three.</p>
+        <p class="mnote">Computed live from the seeded toy: <code>F(S) = 1 &minus; MSE(y_S, y_full) / MSE(y_&empty;, y_full)</code>, where <code>y_&empty;</code> is the fully-ablated model (every component knocked out). <code>F = 1</code>: the circuit alone reproduces the full model&rsquo;s output; <code>F = 0</code>: no better than ablating everything. Greedy search until <code>F &ge; <span id="tau-note">0.93</span></code>, then pruned to a minimal set. This behavioural faithfulness metric is unrelated to the causal-discovery &ldquo;faithfulness&rdquo; assumption.</p>
+      </div>
+
+      <div class="why" id="why" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="matrixwrap">
+    <table class="matrix" id="matrix">
+      <caption>Circuit membership across ablation strategies (at the current &tau;)</caption>
+      <thead>
+        <tr>
+          <th scope="col">component</th>
+          <th scope="col">role in the toy</th>
+          <th scope="col" class="c" data-strat="zero">zero</th>
+          <th scope="col" class="c" data-strat="mean">mean</th>
+          <th scope="col" class="c" data-strat="resample">resample</th>
+        </tr>
+      </thead>
+      <tbody id="matrix-body"></tbody>
+    </table>
+  </div>
+  <p class="matrixlead">At the default threshold &tau; = 0.93:</p>
+  <ul class="matrixnotes">
+    <li><code>h1.c</code> and <code>m2.b</code> enter only the zero-ablation circuit: an always-on head never outputs 0 on real inputs, so a zero baseline drags it off-distribution and the search must keep it and its gate, even though neither routes task information.</li>
+    <li><code>h1.d</code> leaves when you move from mean to resample: the reader <code>m2.c</code> only uses the property <code>h1.d&sup2; = 1</code>, which any resampled value still satisfies, whereas the dataset mean (&asymp;0) destroys it.</li>
+    <li><code>h2.d</code> makes it into no circuit: the three searches agree on the exclusions yet disagree on what &ldquo;the circuit&rdquo; is.</li>
+  </ul>
+</div>
+
+<section class="prose">
+  <h2>What this shows</h2>
+  <p>Every run above uses the identical network, dataset, and greedy search; at any fixed threshold, the ablation baseline is the only degree of freedom, and the &tau; slider exposes the second one. Zero-ablation returns the largest circuit because it must retain a constant head and its gate that carry no task signal. Mean-ablation drops those but must retain a format head whose magnitude a downstream reader uses. Resample-ablation keeps activations on-distribution and returns the leanest set. In causal terms, each baseline fixes a different interventional reference value: setting a knocked-out component to zero, to its mean, or to a resampled value are three different <em>do</em>-interventions (do(&middot;) means forcing a variable to a chosen value instead of letting the model compute it), so each strategy estimates a different <em>estimand</em> (the technical term for the precise quantity an analysis sets out to measure). All three circuits recover the model&rsquo;s behaviour to the same faithfulness, so behavioural faithfulness alone cannot arbitrate between them: the discovered circuit is a property of the (model, ablation family, threshold) triple, not of the model alone.</p>
+  <p>This is the paper&rsquo;s Existence &ne; Uniqueness mismatch in miniature. Finding a subgraph whose ablation changes behaviour establishes that <em>a</em> sufficient circuit exists, and the paper&rsquo;s ladder-of-claims table &mdash; its table mapping each interpretability method to the strongest causal claim it can support &mdash; scopes that evidence as &ldquo;an intervention effect for the chosen ablation, not yet a unique localisation&rdquo;. The pattern also shows up at scale: Wang et al. (2023) find multiple redundant circuits for the same task in their Indirect Object Identification study, other circuits can implement equivalent input&ndash;output behaviour (Wang et al., 2023; McGrath et al., 2023), and a circuit whose ablation suppresses a behaviour on the test set can prove brittle under distribution shift (Miller et al., 2024).</p>
+</section>
+
+<section class="prose">
+  <h2>What the paper says</h2>
+  <p>In causal-inference terms: an <em>existence</em> result says some sufficient circuit is out there; an <em>identification</em> result would pin down which one, up to variants that are genuinely interchangeable (an <em>equivalence class</em>, written &sim;).</p>
+  <blockquote>
+    <p>&ldquo;Showing &exist;S is an <em>existence</em> result, not an <em>identification</em> result that establishes uniqueness up to an equivalence class &sim;. Multiple subgraphs may produce the same effect through redundant pathways, distributed implementations, or equivalent reparameterisations. The method identifies one member of an equivalence class of sufficient circuits, and which one it returns depends on initialisation, optimisation choices, etc.&rdquo;</p>
+    <span class="src">&mdash; mismatch box &ldquo;Existence &ne; Uniqueness&rdquo;, arXiv:2602.16698</span>
+  </blockquote>
+  <blockquote>
+    <p>&ldquo;Without ruling out alternatives, we can only consider the uncovered subgraphs from circuit discovery as intervention handles, and not unique explanations.&rdquo;</p>
+    <span class="src">&mdash; takeaway of the same mismatch box, arXiv:2602.16698</span>
+  </blockquote>
+</section>
+
+<section class="prose">
+  <h2>Try this</h2>
+  <ol class="try">
+    <li>Switch from zero to mean and watch <code>h1.c</code> and <code>m2.b</code> leave the circuit while faithfulness stays put. Neither routes any task information; what made them look like circuit components under the zero baseline, and would you have reported them as part of &ldquo;the&rdquo; circuit?</li>
+    <li>Switch from mean to resample: <code>h1.d</code> drops out even though <code>m2.c</code> genuinely reads it. What property of resampling makes <code>h1.d</code> dispensable, and what does that imply for interpreting circuit membership as &ldquo;necessary for the behaviour&rdquo;?</li>
+    <li>Drag &tau; down and watch every circuit shrink toward the core signal path (below 0.93, mean- and resample-ablation even agree exactly); drag it up to 0.99 and watch them grow and diverge, with the zero-ablation circuit growing the most. If circuit membership depends on how faithful is &ldquo;faithful enough&rdquo;, which threshold would you defend in a paper, and why?</li>
+    <li>The paper&rsquo;s claims checklist asks authors to test robustness by varying, among other things, &ldquo;ablation strategies (zero/mean/resample)&rdquo;. Take a circuit paper you know: which of its claims would survive if the reported circuit changed under a different baseline, and which would not?</li>
+  </ol>
+</section>
+
+<footer>
+  <p>Original toy illustration built for this tutorial: the network, the greedy search, and all faithfulness numbers on this page are computed live from a seeded, deterministic toy model, and are not experiments from the paper. It illustrates the &ldquo;Existence &ne; Uniqueness&rdquo; mismatch box and checklist item 6 of <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a>, <em>Causality is Key for Interpretability Claims to Generalise</em>. &nbsp;&middot;&nbsp; tutorial demo &nbsp;&middot;&nbsp; CC-BY</p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- seeded toy model (identical maths to the design prototype) ---------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+var rand=mulberry32(20260716);
+var N=64, DATA=[];
+for(var i=0;i<N;i++){DATA.push({s:rand()<0.5?-1:1, d:rand()*2-1, b:rand()<0.5?-1:1});}
+function sig(z){return 1/(1+Math.exp(-z));}
+var COMPS=[
+  {id:'h1a', f:function(x,v){return x.s;}},
+  {id:'h1b', f:function(x,v){return 0.8*x.s+0.2*x.d;}},
+  {id:'h1c', f:function(x,v){return 1.5;}},
+  {id:'h1d', f:function(x,v){return x.b;}},
+  {id:'m2a', f:function(x,v){return v.h1a+0.9*v.h1b;}},
+  {id:'m2b', f:function(x,v){return sig(4*(v.h1c-0.75));}},
+  {id:'m2c', f:function(x,v){return 0.8*v.h1d*v.h1d*v.h1a;}},
+  {id:'h2d', f:function(x,v){return 0.45*x.d;}}
+];
+function OUT(v){return v.m2a*(0.35+0.9*v.m2b)+v.m2c+0.5*v.h2d;}
+function P(j){return (j+17)%N;}
+
+var fullActs=DATA.map(function(x){var v={};COMPS.forEach(function(c){v[c.id]=c.f(x,v);});return v;});
+var yFull=fullActs.map(OUT);
+var means={};
+COMPS.forEach(function(c){var m=0;for(var j=0;j<N;j++)m+=fullActs[j][c.id];means[c.id]=m/N;});
+
+function baseline(id,j,strat){
+  if(strat==='zero')return 0;
+  if(strat==='mean')return means[id];
+  return fullActs[P(j)][id];
+}
+function forward(j,S,strat){
+  var x=DATA[j], v={};
+  COMPS.forEach(function(c){v[c.id]=S.has(c.id)?c.f(x,v):baseline(c.id,j,strat);});
+  return OUT(v);
+}
+function mse(S,strat){var e=0;for(var j=0;j<N;j++){var r=forward(j,S,strat)-yFull[j];e+=r*r;}return e/N;}
+var STRATS=['zero','mean','resample'];
+var EMPTY={};
+STRATS.forEach(function(s){EMPTY[s]=mse(new Set(),s);});
+function faith(S,strat){var f=1-mse(S,strat)/EMPTY[strat];return Math.max(0,Math.min(1,f));}
+
+var TAU=0.93;
+function discover(strat){
+  var S=new Set();
+  while(faith(S,strat)<TAU && S.size<COMPS.length){
+    var best=null, bestF=-1;
+    COMPS.forEach(function(c){
+      if(S.has(c.id))return;
+      S.add(c.id); var f=faith(S,strat); S.delete(c.id);
+      if(f>bestF+1e-12){bestF=f;best=c.id;}
+    });
+    S.add(best);
+  }
+  var changed=true;
+  while(changed){
+    changed=false;
+    COMPS.forEach(function(c){
+      if(!S.has(c.id))return;
+      S.delete(c.id);
+      if(faith(S,strat)>=TAU){changed=true;}else{S.add(c.id);}
+    });
+  }
+  return {set:S, F:faith(S,strat)};
+}
+var RESULTS={};
+function recompute(){STRATS.forEach(function(s){RESULTS[s]=discover(s);});}
+recompute();
+
+/* ---------- static UI data ---------- */
+var LABELS={h1a:'h1.a',h1b:'h1.b',h1c:'h1.c',h1d:'h1.d',m2a:'m2.a',m2b:'m2.b',m2c:'m2.c',h2d:'h2.d'};
+var ROLES={
+  h1a:'signal head (reads s)',
+  h1b:'backup signal head (reads s, d)',
+  h1c:'always-on head (constant 1.5)',
+  h1d:'format head (±1, no task signal)',
+  m2a:'signal aggregator',
+  m2b:'gate driven by h1.c',
+  m2c:'format reader: 0.8 · h1.d² · h1.a',
+  h2d:'noise head (reads d)'
+};
+var WHY={
+  zero:{title:'Zero-ablation: the largest circuit',
+    body:'Knocked-out components are set to 0. The always-on head h1.c never outputs 0 on real inputs, so zeroing it closes the gate m2.b and the signal path collapses. The search is forced to keep h1.c and m2.b, not because they route task information, but because the baseline drags them off-distribution. The format pair h1.d/m2.c is also kept, as under a zero baseline the reader loses its input.'},
+  mean:{title:'Mean-ablation: constants drop out',
+    body:'Knocked-out components are replaced by their dataset-mean activation. Constants survive ablation unchanged, so h1.c and its gate m2.b leave the circuit. The format head h1.d stays: its mean is close to 0, and the reader m2.c needs its magnitude h1.d² = 1.'},
+  resample:{title:'Resample-ablation: the leanest circuit',
+    body:'Knocked-out components are replaced by their activation on a different input, so marginal statistics are preserved. A resampled h1.d is still ±1, m2.c computes its signal correctly without h1.d in the circuit, and only the core signal path remains.'}
+};
+
+/* ---------- render ---------- */
+var current='zero';
+
+function fmt(x){return x.toFixed(3);}
+
+function renderMeter(){
+  STRATS.forEach(function(s){
+    var r=RESULTS[s];
+    document.getElementById('bar-'+s).style.width=(r.F*100).toFixed(1)+'%';
+    document.getElementById('val-'+s).textContent=fmt(r.F);
+    document.getElementById('size-'+s).textContent=r.set.size+' comps';
+  });
+}
+
+var tbody=document.getElementById('matrix-body');
+function renderMatrix(){
+  tbody.innerHTML='';
+  COMPS.forEach(function(c){
+    var tr=document.createElement('tr');
+    var t1=document.createElement('td'); t1.className='comp'; t1.textContent=LABELS[c.id];
+    var t2=document.createElement('td'); t2.className='role'; t2.textContent=ROLES[c.id];
+    tr.appendChild(t1); tr.appendChild(t2);
+    STRATS.forEach(function(s){
+      var td=document.createElement('td'); td.className='c'; td.setAttribute('data-strat',s);
+      var inC=RESULTS[s].set.has(c.id);
+      var span=document.createElement('span');
+      span.className=inC?'dot':'no';
+      span.textContent=inC?'●':'–';
+      var sr=document.createElement('span');
+      sr.className='sr-only';
+      sr.textContent=inC?' in circuit':' not in circuit';
+      td.appendChild(span); td.appendChild(sr);
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+function memberList(s){
+  return COMPS.filter(function(c){return RESULTS[s].set.has(c.id);})
+              .map(function(c){return LABELS[c.id];}).join(', ');
+}
+
+var prevSet=null;
+function render(){
+  var r=RESULTS[current];
+  COMPS.forEach(function(c){
+    var node=document.getElementById('n-'+c.id);
+    var inNew=r.set.has(c.id);
+    var was=prevSet?prevSet.has(c.id):inNew;
+    node.classList.toggle('out-of-circuit', !inNew);
+    if(was!==inNew){
+      node.classList.remove('changed');
+      void node.getBoundingClientRect();
+      node.classList.add('changed');
+    }
+  });
+  prevSet=new Set(r.set);
+  var active=function(id){
+    if(id==='y'||id.indexOf('in-')===0)return true;
+    return r.set.has(id);
+  };
+  Array.prototype.forEach.call(document.querySelectorAll('#edges .edge'),function(e){
+    var ok=active(e.getAttribute('data-from'))&&active(e.getAttribute('data-to'));
+    e.classList.toggle('dim',!ok);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.mrow'),function(row){
+    row.classList.toggle('current',row.getAttribute('data-strat')===current);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('#matrix [data-strat]'),function(cell){
+    cell.classList.toggle('cur',cell.getAttribute('data-strat')===current);
+  });
+  var w=WHY[current];
+  var scope=Math.abs(TAU-0.93)<1e-9?'':
+    '<span class="ws">Mechanism described at the default &tau; = 0.93; the circuit list above tracks the current &tau; = '+TAU.toFixed(2)+'.</span>';
+  document.getElementById('why').innerHTML=
+    '<span class="wt">'+w.title+'</span>'+w.body+
+    '<span class="members">Circuit ('+r.set.size+'/'+COMPS.length+'): <code>'+memberList(current)+
+    '</code> · faithfulness '+fmt(r.F)+'</span>'+scope;
+  STRATS.forEach(function(s){
+    document.getElementById('btn-'+s).setAttribute('aria-pressed', s===current?'true':'false');
+  });
+}
+
+STRATS.forEach(function(s){
+  document.getElementById('btn-'+s).addEventListener('click',function(){
+    current=s; render();
+  });
+});
+
+var slider=document.getElementById('tau-slider');
+slider.addEventListener('input',function(){
+  TAU=parseFloat(slider.value);
+  var t=TAU.toFixed(2);
+  document.getElementById('tau-val').textContent=t;
+  document.getElementById('tau-note').textContent=t;
+  recompute(); renderMeter(); renderMatrix(); render();
+});
+
+renderMeter();
+renderMatrix();
+render();
+})();
+</script>
+</body>
+</html>

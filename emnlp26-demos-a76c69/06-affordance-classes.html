@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Affordances Shrink the Equivalence Class — Causal Foundations for Interpretability</title>
+<style>
+:root{
+  --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+  --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+  --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+  --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B;
+  --gap-green:#3E8E5A; --line:#E1DEEC;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E;
+    --gap-green:#5FB37E; --line:#332B49;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+  --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+  --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+  --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E;
+  --gap-green:#5FB37E; --line:#332B49;
+}
+:root[data-theme="light"]{
+  --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+  --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+  --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+  --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B;
+  --gap-green:#3E8E5A; --line:#E1DEEC;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);
+  font-family:'Avenir Next',Avenir,'Segoe UI',system-ui,sans-serif;
+  font-size:16px;line-height:1.55}
+h1,h2,h3{font-family:Futura,'Century Gothic','Avenir Next','Trebuchet MS',sans-serif;line-height:1.2}
+.wrap{max-width:1000px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+.kicker{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute)}
+header h1{color:var(--purple);font-size:1.7rem;margin:.35rem 0 .3rem}
+.dek{color:var(--ink-soft);max-width:70ch;margin:0}
+.back{display:inline-block;font-size:.85rem;color:var(--purple);text-decoration:none;margin-bottom:.9rem}
+.back:hover{text-decoration:underline}
+a{color:var(--purple)}
+
+/* ---- stage ---- */
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:1.1rem;margin:1.4rem 0}
+.stage-grid{display:grid;grid-template-columns:300px 1fr;gap:1rem;align-items:start}
+@media (max-width:840px){.stage-grid{grid-template-columns:1fr}}
+
+fieldset.affs{border:1px solid var(--line);border-radius:10px;background:var(--card);
+  margin:0;padding:.7rem .85rem .85rem}
+fieldset.affs legend{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-mute);font-weight:700;padding:0 .35em}
+.aff{display:block;border-bottom:1px dashed var(--line);padding:.55rem .1rem}
+.aff:last-of-type{border-bottom:none;padding-bottom:.2rem}
+.aff label{display:flex;gap:.55rem;align-items:flex-start;cursor:pointer}
+.aff input[type=checkbox]{margin-top:.22rem;width:1.02rem;height:1.02rem;flex:none;
+  accent-color:var(--purple);cursor:pointer}
+.aff input[type=checkbox]:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.aff input[type=checkbox]:disabled{cursor:default}
+.aff .aname{font-weight:600;font-size:.92rem}
+.aff .ameta{display:block;font-size:.75rem;color:var(--ink-mute);margin-top:.1rem}
+.aff .akill{display:block;font-size:.76rem;color:var(--ink-soft);margin-top:.15rem}
+.aff .akill b{color:var(--magenta);font-weight:700}
+.aff.base .aname{color:var(--ink-soft)}
+.aname .alw{font-weight:400;color:var(--ink-mute)}
+.cue{margin:.15rem .1rem .4rem;font-size:.78rem;color:var(--magenta);font-weight:600}
+
+.envrow{display:block;margin:.5rem 0 .1rem;padding:.45rem .55rem .5rem;
+  border:1px dashed var(--line);border-radius:8px}
+.envrow .envlab{display:block;font-size:.75rem;color:var(--ink-soft);font-weight:600}
+.envrow .envlab b{color:var(--purple);font-variant-numeric:tabular-nums}
+.envrow input[type=range]{width:100%;accent-color:var(--purple);margin:.3rem 0 .15rem;cursor:pointer}
+.envrow input[type=range]:disabled{opacity:.45;cursor:default}
+.envrow input[type=range]:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.envrow .envhint{display:block;font-size:.72rem;color:var(--ink-mute)}
+
+.scene{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.8rem .8rem .55rem}
+.scenecap{font-size:.75rem;color:var(--ink-mute);margin:0 0 .45rem}
+#cloud{width:100%;height:auto;display:block;border-radius:8px}
+.cloudlegend{display:flex;flex-wrap:wrap;gap:.35rem .95rem;font-size:.75rem;color:var(--ink-soft);
+  margin:.45rem .15rem 0;align-items:center}
+.cloudlegend .li{display:inline-flex;align-items:center;gap:.35rem}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.dot.fill{background:var(--purple)}
+.dot.hollow{border:2px solid var(--purple);background:transparent}
+.dot.dead{background:var(--ink-mute);opacity:.35;width:7px;height:7px}
+.dot.small{width:6px;height:6px}
+.starglyph{color:var(--magenta);font-size:.95rem;line-height:1}
+
+.readout{background:var(--hero);border-left:4px solid var(--magenta);border-radius:8px;
+  padding:.6rem .85rem;margin-top:.75rem}
+.readout .modline{font-family:Futura,'Century Gothic','Avenir Next',sans-serif;
+  font-weight:700;font-size:1.02rem;color:var(--ink)}
+.readout .modline .modtag{color:var(--magenta);font-style:italic;font-weight:700}
+.readout .modgloss{font-size:.72rem;color:var(--ink-mute);margin:.1rem 0 0}
+.readout .kcount{font-size:.8rem;color:var(--ink-soft);font-variant-numeric:tabular-nums;margin:.15rem 0 0}
+.readout .kevid{font-size:.75rem;color:var(--ink-soft);font-style:italic;margin:.2rem 0 0}
+.readout .kdesc{font-size:.85rem;color:var(--ink-soft);margin:.3rem 0 0}
+
+.nfl{border:1px dashed var(--line);border-radius:10px;background:var(--card);
+  padding:.6rem .85rem;margin-top:.9rem;font-size:.85rem;color:var(--ink-soft);
+  transition:border-color .3s, background .3s}
+.nfl b{color:var(--ink)}
+.nfl.on{border-color:var(--l2);background:color-mix(in srgb,var(--l2) 8%,var(--card))}
+.nfl .nflk{font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--l2);display:block;margin-bottom:.15rem}
+
+/* ---- prose ---- */
+section.prose{max-width:70ch}
+section.prose h2, .paperbox h2{font-size:1.15rem;color:var(--purple);margin:1.6rem 0 .5rem}
+section.prose p{margin:.5rem 0}
+.paperbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:.4rem 1.1rem .9rem;margin:1.4rem 0;max-width:74ch}
+.paperbox blockquote{margin:.7rem 0;padding:.2rem 0 .2rem .9rem;border-left:3px solid var(--purple-mid);
+  color:var(--ink-soft);font-size:.93rem}
+.paperbox cite{display:block;margin-top:.35rem;font-size:.78rem;color:var(--ink-mute);font-style:normal}
+.try ol{padding-left:1.2rem}
+.try li{margin:.45rem 0}
+footer{margin-top:2rem;border-top:1px solid var(--line);padding-top:.9rem;
+  font-size:.78rem;color:var(--ink-mute);max-width:74ch}
+footer p{margin:.35rem 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <a class="back" href="./index.html">&larr; All demos</a>
+  <div class="kicker">EMNLP 2026 Tutorial &middot; Causal Foundations for Interpretability</div>
+  <h1>Affordances Shrink the Equivalence Class</h1>
+  <p class="dek">Two latent concepts in an LLM&rsquo;s residual stream &mdash; say, <em>sentiment</em> and <em>tense</em>. Every dot is a rival explanation that fits your evidence; each interaction you can afford &mdash; paired samples, environments, interventions, or an assumption &mdash; rules out a different family of rivals, and identifiability names what survives.</p>
+</header>
+
+<div class="stage">
+  <div class="stage-grid">
+    <fieldset class="affs">
+      <legend>Affordances available</legend>
+      <p class="cue">Start here: tick an affordance and watch which rivals grey out.</p>
+
+      <div class="aff base">
+        <label>
+          <input type="checkbox" checked disabled aria-label="Observational samples, always available">
+          <span>
+            <span class="aname">Observational samples <span class="alw">(always on)</span></span>
+            <span class="ameta">the baseline &mdash; draws from the model&rsquo;s activations, nothing else</span>
+            <span class="akill">rules out: <b>nothing</b> &mdash; any invertible remixing fits</span>
+          </span>
+        </label>
+      </div>
+
+      <div class="aff">
+        <label>
+          <input type="checkbox" id="aff-paired">
+          <span>
+            <span class="aname">+ Paired samples</span>
+            <span class="ameta">sparse concept shifts across pairs &mdash; minimal-pair prompts, same sentence with one concept flipped &middot; Locatello et&nbsp;al. (2020); Joshi et&nbsp;al. (2025)</span>
+            <span class="akill">rules out: <b>cross-mixing</b> + <b>nonlinear warps</b></span>
+          </span>
+        </label>
+      </div>
+
+      <div class="aff">
+        <label>
+          <input type="checkbox" id="aff-multienv">
+          <span>
+            <span class="aname">+ Multi-environment data</span>
+            <span class="ameta">activations collected under different regimes &mdash; domains, tasks, or checkpoints &middot; Hyv&auml;rinen &amp; Morioka (2016; 2017); Ahuja et&nbsp;al. (2023)</span>
+            <span class="akill">rules out: <b>cross-mixing</b> &mdash; graded by how many environments you observe</span>
+          </span>
+        </label>
+        <span class="envrow">
+          <label class="envlab" for="envN">environments observed: <b id="envVal">2</b></label>
+          <input type="range" id="envN" min="1" max="6" step="1" value="2" disabled aria-describedby="envHint">
+          <span class="envhint" id="envHint">More environments rule out more mixing &mdash; identifiability needs enough variability, not merely a second environment. The graded threshold is a tutorial schematic, not a theorem plot.</span>
+        </span>
+      </div>
+
+      <div class="aff">
+        <label>
+          <input type="checkbox" id="aff-interv">
+          <span>
+            <span class="aname">+ Interventions</span>
+            <span class="ameta">do(concept) &mdash; set a concept&rsquo;s value directly, as activation patching or steering does &mdash; with known targets &middot; Brehmer et&nbsp;al. (2022)</span>
+            <span class="akill">rules out: <b>cross-mixing</b> + <b>coordinate swaps</b></span>
+          </span>
+        </label>
+      </div>
+
+      <div class="aff">
+        <label>
+          <input type="checkbox" id="aff-sparsity">
+          <span>
+            <span class="aname">+ Inductive bias: sparsity</span>
+            <span class="ameta">an assumption, not new data &mdash; an SAE-style sparsity penalty &middot; Lachapelle et&nbsp;al. (2022)</span>
+            <span class="akill">rules out: <b>cross-mixing</b> (by assumption, given enough variability)</span>
+          </span>
+        </label>
+      </div>
+    </fieldset>
+
+    <div>
+      <div class="scene">
+        <p class="scenecap">Each dot is one candidate <em>transformation</em> of the star &mdash; a rival explanation, not a data point.</p>
+        <canvas id="cloud" width="1320" height="880"
+          aria-label="Scatter cloud of candidate explanations. Toggling affordances greys out the candidates each added interaction rules out; the environments slider grades how much cross-mixing is ruled out; a dashed outline marks the surviving equivalence class."
+          role="img"></canvas>
+        <div class="cloudlegend" aria-hidden="true">
+          <span class="li"><span class="dot fill"></span> still fits, coordinates as labelled</span>
+          <span class="li"><span class="dot hollow"></span> still fits, coordinates swapped</span>
+          <span class="li"><span class="dot dead"></span> ruled out</span>
+          <span class="li"><span class="dot fill small"></span><span class="dot fill"></span> dot size = per-concept rescaling (never ruled out)</span>
+          <span class="li"><span class="starglyph">&#9733;</span> hoped-for coordinates</span>
+        </div>
+      </div>
+      <div class="readout" aria-live="polite">
+        <p class="modline"><span class="modtag">mod &sim;</span> &nbsp;<span id="klass">all invertible transformations</span></p>
+        <p class="modgloss">&ldquo;mod &sim;&rdquo; = identified only up to the equivalence class named above: the set of rivals no afforded interaction can tell apart.</p>
+        <p class="kcount" id="kcount"></p>
+        <p class="kevid" id="kevid"></p>
+        <p class="kdesc" id="kdesc"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="nfl" id="nfl">
+    <span class="nflk">No free lunch</span>
+    Supervision is relocated, not eliminated: it enters through the affordances a method leverages, not through labels.
+    <b>Toggle sparsity alone</b> &mdash; the cloud shrinks exactly as multi-environment data shrinks it once enough environments are observed (slide to five), yet not a single new sample was collected. The shrinkage was bought by an assumption, and if the assumption is false, the class can shrink right past the true explanation.
+  </div>
+</div>
+
+<section class="prose">
+  <h2>What this shows</h2>
+  <p>The toy has two latent concepts (read them as sentiment and tense), and each dot is a candidate explanation &mdash; a transformation of the hoped-for coordinates that reproduces every piece of evidence gathered so far. With observational samples alone, all of them fit: the cloud is the equivalence class, and the starred &ldquo;true&rdquo; coordinates are indistinguishable from any other member. Each affordance you switch on is an interaction that makes some rivals visibly wrong: paired concept shifts rule out cross-mixing and nonlinear warps (the paper&rsquo;s SSAE example, where latents are &ldquo;identified up to permutations and scaling&rdquo;), multi-environment contrasts rule out cross-mixing once enough environments supply variability (slide the environments control and watch the band shrink), and single-concept interventions additionally pin which coordinate is which. Combinations intersect &mdash; in the paper&rsquo;s words, &ldquo;the resulting equivalence class reflects the joint constraints imposed by all available affordances.&rdquo;</p>
+  <p>Two things are worth noticing at the controls. First, different affordance sets can induce the <em>same</em> class &mdash; sparsity, an assumption, buys the same shrinkage here as multi-environment data with plenty of environments, which is exactly where the free lunch is repaid. Second, the class never collapses to a point: even with everything on, per-concept rescalings (drawn as dot size) survive, so an honest claim is always &ldquo;identified up to&nbsp;&sim;&rdquo;. This is the paper&rsquo;s affordance lens in one picture: &ldquo;What an interpreter can discover about a model depends on the interactions available to them&rdquo; (the &ldquo;Concepts as Affordances&rdquo; box, citing Gibson, 1979) &mdash; so an interpretability claim should state which interactions back it, and which rivals those interactions were ever able to rule out.</p>
+</section>
+
+<div class="paperbox">
+  <h2>What the paper says</h2>
+  <blockquote>&ldquo;The key insight is threefold: (i) affordances define which variations are observable or inducible; (ii) these variations break equivalence classes among candidate representations such that two representations that behave identically under all afforded interactions are, for our purposes, equivalent; (iii) identifiability characterises precisely which structure survives this winnowing.&rdquo;
+    <cite>&mdash; Appendix, &ldquo;The Metaphysics of Affordance-based Identifiability&rdquo;</cite>
+  </blockquote>
+  <blockquote>&ldquo;There is no free lunch in interpretability: supervision enters both through the affordances a method is designed to leverage (rather than labelled datasets), and through downstream interpretation; unsupervised objectives and evaluations do not, by themselves, distinguish representations that uncover meaningful variables from those that do not.&rdquo;
+    <cite>&mdash; &ldquo;Relocating supervision&rdquo;, in &ldquo;The Right Question Is Not Enough. Answers Must Be Identifiable&rdquo;</cite>
+  </blockquote>
+</div>
+
+<section class="prose try">
+  <h2>Try this</h2>
+  <ol>
+    <li>Find two different affordance sets that draw the same dashed outline. What does that imply for &ldquo;method A vs. method B&rdquo; debates when both methods leverage the same interactions &mdash; and what would you need to change to tell them apart?</li>
+    <li>Switch everything on. The class still contains more than one dot. Say precisely what a claim of &ldquo;we found the true features&rdquo; would have to be weakened to &mdash; and why &ldquo;identified up to permutation and rescaling&rdquo; is a success, not a failure.</li>
+    <li>Pick a method you use &mdash; probing, SAEs, activation patching &mdash; and write down its affordance set: what does it observe, what does it pair, what does it intervene on? Which dots in this cloud would it never be able to rule out?</li>
+  </ol>
+</section>
+
+<footer>
+  <p>Provenance: tutorial illustration of the identifiability discussion in <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a> (<em>Causality is Key for Interpretability Claims to Generalise</em>) &mdash; the subsection &ldquo;The Right Question Is Not Enough. Answers Must Be Identifiable&rdquo;, the &ldquo;Concepts as Affordances&rdquo; box, and the appendices &ldquo;Three Sources of Identifying Structure&rdquo; and &ldquo;The Metaphysics of Affordance-based Identifiability&rdquo;. The candidate cloud, its two-concept toy, and the rule-out logic per affordance are illustrations built for this tutorial, not experiments from the paper; the class labels follow the equivalence classes the paper discusses (e.g. paired sparse shifts identify latents &ldquo;up to permutations and scaling&rdquo;).</p>
+  <p>tutorial demo &middot; CC-BY</p>
+</footer>
+
+</div>
+<script>
+(function(){
+"use strict";
+
+/* ---------- deterministic PRNG ---------- */
+function mulberry32(seed){
+  return function(){
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+    var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+var rnd = mulberry32(20260716);
+
+/* ---------- candidate explanations ----------
+   Attributes of a candidate transformation of the 2 latent concepts:
+   mix  : cross-concept mixing (0 = none)     -> x axis
+   warp : per-concept nonlinearity (0 = linear)-> y axis
+   perm : coordinates swapped                  -> hollow dot
+   s01  : per-concept rescaling (never killed) -> dot radius       */
+var N = 240, cands = [], i;
+for (i = 0; i < N; i++){
+  var mixZero  = rnd() < 0.22;
+  var warpZero = rnd() < 0.38;
+  cands.push({
+    mix:  mixZero  ? 0 : (rnd() < .5 ? -1 : 1) * (0.10 + 0.90 * rnd()),
+    warp: warpZero ? 0 : 0.10 + 0.90 * rnd(),
+    perm: rnd() < 0.5,
+    s01:  rnd(),
+    jx: (rnd() * 2 - 1),   // display jitter for the zero bands
+    jy: rnd(),
+    truth: false,
+    a: 1, at: 1            // displayed / target alpha (for the tween)
+  });
+}
+var star = {mix:0, warp:0, perm:false, s01:0.5, jx:0, jy:0, truth:true, a:1, at:1};
+cands.push(star);
+
+/* ---------- affordances: what each rules out ----------
+   paired / interventions / sparsity rule out cross-mixing outright;
+   multi-environment rules it out GRADUALLY: with E environments
+   observed, only candidates with |mix| above ENV_THRESH[E] die
+   (a tutorial schematic of sufficient-variability conditions,
+   not a theorem plot).                                            */
+var ENV_THRESH = {1: 1.01, 2: 0.9, 3: 0.6, 4: 0.3, 5: 0, 6: 0};
+var CLASSES = {
+  '': {
+    name: 'all invertible transformations',
+    desc: 'Any invertible remixing of the coordinates — rotations, coordinate swaps, nonlinear reparameterisations — reproduces the observed distribution equally well. Nothing distinguishes the star from any other dot.'
+  },
+  'mix': {
+    name: 'permutation · per-concept reparameterisation',
+    desc: 'Cross-concept mixing no longer fits, but which coordinate carries which concept, per-concept monotone warps (stretching each axis on its own, never mixing axes), and per-concept scales all survive.'
+  },
+  'mix,warp': {
+    name: 'permutation · rescaling',
+    desc: 'The classical CRL target class — in the paper’s SSAE example, latents are “identified up to permutations and scaling”.'
+  },
+  'mix,perm': {
+    name: 'per-concept reparameterisation, alignment pinned',
+    desc: 'Intervening on one concept at a time reveals which coordinate moves, pinning the alignment; per-concept warps and scales — stretchings of each axis alone — still fit.'
+  },
+  'mix,perm,warp': {
+    name: 'rescaling only, alignment pinned',
+    desc: 'Only per-concept scale factors survive. The class still does not collapse to a point: identification is always “up to” an equivalence class.'
+  }
+};
+
+var boxes = {
+  paired:   document.getElementById('aff-paired'),
+  multienv: document.getElementById('aff-multienv'),
+  interv:   document.getElementById('aff-interv'),
+  sparsity: document.getElementById('aff-sparsity')
+};
+var envSlider = document.getElementById('envN');
+var envVal = document.getElementById('envVal');
+
+function activeState(){
+  var s = {warp: false, perm: false, mixThresh: Infinity};
+  if (boxes.paired.checked)  { s.warp = true; s.mixThresh = 0; }
+  if (boxes.interv.checked)  { s.perm = true; s.mixThresh = 0; }
+  if (boxes.sparsity.checked){ s.mixThresh = 0; }
+  if (boxes.multienv.checked){
+    s.mixThresh = Math.min(s.mixThresh, ENV_THRESH[+envSlider.value]);
+  }
+  return s;
+}
+function survives(c, s){
+  if (Math.abs(c.mix) > s.mixThresh) return false;
+  if (s.warp && c.warp !== 0) return false;
+  if (s.perm && c.perm)       return false;
+  return true;
+}
+
+/* ---------- canvas ---------- */
+var canvas = document.getElementById('cloud');
+var ctx = canvas.getContext('2d');
+var W = 660, H = 440;                 // logical size (attrs are 2x for crispness)
+ctx.scale(2, 2);
+var PL = 52, PR = 18, PT = 26, PB = 46;      // plot margins
+var PW = W - PL - PR, PH = H - PT - PB;
+
+function tok(name){
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+function px(c){    // display position of a candidate
+  var mx = (c.mix === 0) ? c.jx * 0.035 : c.mix;
+  var wy = (c.warp === 0) ? c.jy * 0.030 : c.warp;
+  return {
+    x: PL + (mx + 1) / 2 * PW,
+    y: PT + PH - wy * PH
+  };
+}
+
+/* outline rect (padded bounding box of survivors), tweened */
+var rectNow = null, rectTo = null, rectFrom = null;
+function survivorRect(state){
+  var minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9, n = 0;
+  cands.forEach(function(c){
+    if (!survives(c, state)) return;
+    var p = px(c);
+    minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
+    minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y);
+    n++;
+  });
+  if (!n) return null;
+  var pad = 15;
+  return {
+    x: Math.max(PL - 8, minX - pad), y: Math.max(PT - 8, minY - pad),
+    x2: Math.min(PL + PW + 8, maxX + pad), y2: Math.min(PT + PH + 6, maxY + pad)
+  };
+}
+function lerp(a, b, t){ return a + (b - a) * t; }
+function lerpRect(r0, r1, t){
+  if (!r0) return r1; if (!r1) return r0;
+  return {x:lerp(r0.x,r1.x,t), y:lerp(r0.y,r1.y,t), x2:lerp(r0.x2,r1.x2,t), y2:lerp(r0.y2,r1.y2,t)};
+}
+function rrect(r){
+  var rad = 10, w = r.x2 - r.x, h = r.y2 - r.y;
+  rad = Math.min(rad, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(r.x + rad, r.y);
+  ctx.arcTo(r.x2, r.y,  r.x2, r.y2, rad);
+  ctx.arcTo(r.x2, r.y2, r.x,  r.y2, rad);
+  ctx.arcTo(r.x,  r.y2, r.x,  r.y,  rad);
+  ctx.arcTo(r.x,  r.y,  r.x2, r.y,  rad);
+  ctx.closePath();
+}
+function drawStarGlyph(x, y, r){
+  var rot = -Math.PI / 2, step = Math.PI / 5, j;
+  ctx.beginPath();
+  for (j = 0; j < 10; j++){
+    var rr = (j % 2 === 0) ? r : r * 0.45;
+    ctx.lineTo(x + Math.cos(rot) * rr, y + Math.sin(rot) * rr);
+    rot += step;
+  }
+  ctx.closePath();
+}
+
+function haloText(text, x, y, fill, halo, align){
+  ctx.save();
+  ctx.textAlign = align || 'left';
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = halo;
+  ctx.strokeText(text, x, y);
+  ctx.fillStyle = fill;
+  ctx.fillText(text, x, y);
+  ctx.restore();
+}
+
+function draw(){
+  var card = tok('--card'), line = tok('--line'), inkMute = tok('--ink-mute'),
+      inkSoft = tok('--ink-soft'), purple = tok('--purple'), magenta = tok('--magenta');
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = card;
+  ctx.fillRect(0, 0, W, H);
+
+  /* axes */
+  ctx.strokeStyle = line; ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(PL, PT); ctx.lineTo(PL, PT + PH); ctx.lineTo(PL + PW, PT + PH);
+  ctx.stroke();
+  ctx.setLineDash([3, 4]);
+  ctx.beginPath();                                 /* centre tick: no mixing */
+  ctx.moveTo(PL + PW / 2, PT); ctx.lineTo(PL + PW / 2, PT + PH);
+  ctx.strokeStyle = line; ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = inkMute;
+  ctx.font = '11px "Avenir Next", Avenir, "Segoe UI", system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('← mixes concepts', PL + PW * 0.16, PT + PH + 18);
+  ctx.fillText('none', PL + PW / 2, PT + PH + 18);
+  ctx.fillText('mixes concepts →', PL + PW * 0.84, PT + PH + 18);
+  ctx.font = '11.5px "Avenir Next", Avenir, "Segoe UI", system-ui, sans-serif';
+  ctx.fillStyle = inkSoft;
+  ctx.fillText('cross-concept mixing', PL + PW / 2, PT + PH + 36);
+  ctx.save();
+  ctx.translate(16, PT + PH / 2); ctx.rotate(-Math.PI / 2);
+  ctx.fillText('per-concept nonlinearity', 0, 0);
+  ctx.fillStyle = inkMute;
+  ctx.font = '11px "Avenir Next", Avenir, "Segoe UI", system-ui, sans-serif';
+  ctx.fillText('linear →', -PH / 2 + 26, 14);
+  ctx.restore();
+
+  /* dots */
+  cands.forEach(function(c){
+    if (c.truth) return;
+    var p = px(c), r = 3.2 + 1.9 * c.s01;
+    if (c.a < 0.999){                              /* ruled out (or fading) */
+      ctx.globalAlpha = 0.13 + 0.87 * c.a;
+      ctx.fillStyle = inkMute;
+      ctx.beginPath(); ctx.arc(p.x, p.y, r * (0.62 + 0.38 * c.a), 0, 7); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    if (c.a > 0.001){                              /* still fits */
+      ctx.globalAlpha = c.a * 0.92;
+      if (c.perm){
+        ctx.strokeStyle = purple; ctx.lineWidth = 1.7;
+        ctx.beginPath(); ctx.arc(p.x, p.y, r - 0.6, 0, 7); ctx.stroke();
+      } else {
+        ctx.fillStyle = purple;
+        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, 7); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+  });
+
+  /* dashed class outline */
+  var rect = lerpRect(rectFrom, rectTo, easeT);
+  if (rect){
+    ctx.setLineDash([7, 5]);
+    ctx.strokeStyle = magenta; ctx.lineWidth = 1.6;
+    rrect(rect); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.font = 'italic 700 12.5px Georgia, "Times New Roman", serif';
+    if (rect.x2 - rect.x < 140){       /* small class: label sits to its left */
+      haloText('mod ∼', rect.x - 8, (rect.y + rect.y2) / 2 + 4, magenta, card, 'right');
+    } else {                            /* large class: label inside top-left */
+      haloText('mod ∼', rect.x + 8, rect.y - 6 < PT + 8 ? rect.y + 16 : rect.y - 6, magenta, card, 'left');
+    }
+  }
+
+  /* the hoped-for coordinates */
+  var sp = px(star);
+  ctx.fillStyle = magenta;
+  drawStarGlyph(sp.x, sp.y, 7.5); ctx.fill();
+  ctx.strokeStyle = inkSoft; ctx.lineWidth = 1;
+  ctx.beginPath();                      /* leader line up-right, out of the dense band */
+  ctx.moveTo(sp.x + 8, sp.y - 8); ctx.lineTo(sp.x + 26, sp.y - 22);
+  ctx.stroke();
+  ctx.font = '11px "Avenir Next", Avenir, "Segoe UI", system-ui, sans-serif';
+  haloText('hoped-for coordinates', sp.x + 30, sp.y - 26, inkSoft, card, 'left');
+}
+
+/* ---------- state + tween ---------- */
+var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var easeT = 1, animId = null, animStart = 0, DUR = 300;
+
+function applyState(){
+  var s = activeState();
+  var E = +envSlider.value;
+  envSlider.disabled = !boxes.multienv.checked;
+  envVal.textContent = E;
+
+  var keys = [];
+  if (s.mixThresh <= 0) keys.push('mix');
+  if (s.perm) keys.push('perm');
+  if (s.warp) keys.push('warp');
+  var cls = CLASSES[keys.sort().join(',')] || CLASSES[''];
+  var name = cls.name, desc = cls.desc;
+  if (boxes.multienv.checked && s.mixThresh > 0){
+    /* graded band: multi-environment is the only mixing constraint */
+    if (E === 1){
+      desc = 'One environment provides no contrast — it is only more observational data, so nothing new is ruled out. Slide right to add environments.';
+    } else {
+      name = 'all invertible transformations, strongest mixers ruled out';
+      desc = 'With ' + E + ' environments, the variability only rules out candidates that mix concepts strongly (|mixing| > ' + s.mixThresh.toFixed(1) + '). Each added environment shaves the surviving band; ruling out all cross-mixing needs enough variability — here, five environments.';
+    }
+  }
+
+  var nSurv = 0;
+  cands.forEach(function(c){
+    c.at = survives(c, s) ? 1 : 0;
+    if (c.at === 1) nSurv++;
+  });
+  rectFrom = lerpRect(rectFrom, rectTo, easeT) || survivorRect(s);
+  rectTo = survivorRect(s);
+  document.getElementById('klass').textContent = name;
+  document.getElementById('kdesc').textContent = desc;
+  document.getElementById('kcount').textContent =
+    nSurv + ' of ' + cands.length + ' candidate explanations still fit the evidence';
+  var ev = ['observational samples'];
+  if (boxes.paired.checked)   ev.push('paired samples');
+  if (boxes.multienv.checked) ev.push(E + '-environment data');
+  if (boxes.interv.checked)   ev.push('interventions');
+  if (boxes.sparsity.checked) ev.push('sparsity assumption');
+  document.getElementById('kevid').textContent = 'evidence in play: ' + ev.join(' + ');
+  document.getElementById('nfl').classList.toggle('on', boxes.sparsity.checked);
+
+  if (reduced){
+    easeT = 1;
+    cands.forEach(function(c){ c.a = c.at; });
+    draw();
+    return;
+  }
+  cands.forEach(function(c){ c.a0 = c.a; });
+  easeT = 0; animStart = performance.now();
+  if (animId) cancelAnimationFrame(animId);
+  (function tick(now){
+    var t = Math.min(1, (now - animStart) / DUR);
+    easeT = 1 - (1 - t) * (1 - t);               /* ease-out */
+    cands.forEach(function(c){ c.a = lerp(c.a0, c.at, easeT); });
+    draw();
+    if (t < 1) animId = requestAnimationFrame(tick);
+    else animId = null;
+  })(animStart);
+}
+
+Object.keys(boxes).forEach(function(key){
+  boxes[key].addEventListener('change', applyState);
+});
+envSlider.addEventListener('input', applyState);
+
+/* redraw on theme change */
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(){ draw(); });
+new MutationObserver(function(){ draw(); })
+  .observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+
+cands.forEach(function(c){ c.a0 = 1; });
+applyState();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alignment ≠ ontological identity · EMNLP 2026 tutorial demo</title>
+<style>
+  :root {
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --line:#E1DEEC;
+    --hon:#3E8E5A; --dis:#B0356B;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+      --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+      --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+      --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --line:#332B49;
+      --hon:#5FB37E; --dis:#D06A9E;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --line:#332B49;
+    --hon:#5FB37E; --dis:#D06A9E;
+  }
+  :root[data-theme="light"] {
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --line:#E1DEEC;
+    --hon:#3E8E5A; --dis:#B0356B;
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: 'Avenir Next', Avenir, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.55; padding: 1.6rem 1.2rem 2.5rem;
+  }
+  h1, h2, h3 { font-family: Futura, 'Century Gothic', 'Avenir Next', 'Trebuchet MS', sans-serif; }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  .kicker {
+    font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-mute); font-weight: 600;
+  }
+  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.2rem; }
+  header h1 { color: var(--purple); font-size: 1.65rem; line-height: 1.2; margin: .3rem 0 .35rem; }
+  header .dek { color: var(--ink-soft); max-width: 60ch; }
+  a.back {
+    color: var(--purple); text-decoration: none; font-size: .85rem; white-space: nowrap;
+    border: 1px solid var(--line); border-radius: 999px; padding: .3rem .8rem; margin-top: .2rem;
+  }
+  a.back:hover { background: var(--hero); }
+  a.back:focus-visible, button:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+
+  .stage {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 1.1rem 1.2rem 1.1rem; margin-bottom: 1.6rem;
+  }
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem .9rem; margin-bottom: .9rem; }
+  .controls .plbl { font-size: .8rem; color: var(--ink-soft); font-weight: 600; }
+  .seg {
+    display: inline-flex; border: 1px solid var(--line); border-radius: 10px;
+    overflow: hidden; background: var(--panel);
+  }
+  .seg button {
+    font: inherit; font-size: .84rem; padding: .48rem .8rem; border: none; cursor: pointer;
+    background: transparent; color: var(--ink-soft);
+  }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button[aria-pressed="true"] { background: var(--purple); color: var(--paper); font-weight: 600; }
+  button.replay {
+    font: inherit; font-size: .83rem; padding: .45rem .9rem; cursor: pointer;
+    border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--ink-soft);
+    margin-left: auto;
+  }
+  button.replay:hover { background: var(--hero); }
+  .cue { font-size: .82rem; color: var(--ink-soft); margin: -.35rem 0 .85rem; }
+  .cue b { color: var(--ink); }
+  .sliderrow[hidden] { display: none; }
+  .sliderrow {
+    display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .8rem;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    padding: .55rem .8rem .6rem; margin-bottom: .9rem; font-size: .82rem; color: var(--ink-soft);
+  }
+  .sliderrow label { font-weight: 600; }
+  .sliderrow input[type="range"] { flex: 1 1 160px; max-width: 280px; accent-color: var(--purple); }
+  .sliderrow input[type="range"]:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+  .sliderrow output { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); }
+  .sliderrow .shint { flex-basis: 100%; font-size: .74rem; color: var(--ink-mute); }
+
+  .stagegrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; align-items: stretch; margin-bottom: 1rem; }
+  @media (max-width: 820px) { .stagegrid { grid-template-columns: 1fr; } }
+  .panelcard { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: .8rem .9rem .9rem; }
+  .panelcard h3 { font-size: .98rem; color: var(--purple); margin-bottom: .45rem; }
+  .panelcard h3 .role { font-size: .72rem; font-weight: 600; color: var(--ink-mute); font-family: inherit; }
+  .setdesc { font-size: .84rem; color: var(--ink-soft); margin-bottom: .6rem; min-height: 3.9em; }
+  .annpill {
+    display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    background: var(--purple-faint); color: var(--purple); border-radius: 999px; padding: .18rem .6rem; margin-bottom: .6rem;
+  }
+  .chips { display: grid; gap: .45rem; }
+  .chip { background: var(--card); border: 1px solid var(--line); border-radius: 9px; padding: .4rem .6rem .45rem; }
+  .chip .tags { font-size: .64rem; letter-spacing: .09em; text-transform: uppercase; font-weight: 700; margin-bottom: .1rem; }
+  .chip .tags .th { color: var(--hon); } .chip .tags .td { color: var(--dis); }
+  .chip .tags .tf { color: var(--ink-soft); } .chip .tags .tn { color: var(--ink-mute); }
+  .chip .tags .cnt { color: var(--ink-mute); font-weight: 600; float: right; }
+  .chip .ex { font-size: .8rem; color: var(--ink); font-style: italic; }
+
+  .badge {
+    border-radius: 10px; padding: .55rem .8rem; font-size: 1.02rem; font-weight: 700;
+    border: 1px solid var(--line); background: var(--card); color: var(--ink); margin-bottom: .15rem;
+  }
+  .badge.hon { border-color: var(--dis); color: var(--dis); }
+  .badge.form { border-color: var(--l2); color: var(--l2); }
+  .badge.res { border-color: var(--gap-green); color: var(--gap-green); }
+  .badge-sub { font-size: .72rem; color: var(--ink-mute); margin-bottom: .7rem; min-height: 2.1em; }
+
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+  .tile { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: .5rem .65rem .55rem; }
+  .tile.muted { opacity: .62; }
+  .tile .lbl { font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; }
+  .tile .val { font-size: 1.35rem; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: .05rem; color: var(--ink); }
+  .tile .sub { font-size: .7rem; color: var(--ink-mute); min-height: 2.1em; }
+  .opdef { font-size: .7rem; color: var(--ink-mute); margin-top: .5rem; }
+  .meter-track { position: relative; height: 8px; border-radius: 999px; background: var(--purple-faint); margin: .35rem 0 .25rem; }
+  .meter-fill { height: 100%; border-radius: 999px; background: var(--purple-mid); width: 0%; transition: width .55s ease; }
+  .chance-tick { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink-mute); left: 16.7%; }
+  .meter-note { font-size: .64rem; color: var(--ink-mute); }
+
+  .chartcard { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: .8rem .9rem .6rem; margin-bottom: 1rem; }
+  .chartcard h3 { font-size: .98rem; color: var(--purple); margin-bottom: .45rem; }
+  .chart svg { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 8px; }
+  .chart text { font-family: inherit; }
+  .axis-caption { fill: var(--ink-mute); font-size: 11px; }
+  .row-label { fill: var(--ink-soft); font-size: 11px; }
+  .leg-label { fill: var(--ink-soft); font-size: 11px; }
+  .boundary { stroke: var(--ink-mute); stroke-width: 1; stroke-dasharray: 4 4; }
+
+  .banner {
+    background: var(--hero); border-left: 3px solid var(--purple);
+    border-radius: 0 10px 10px 0; padding: .65rem .85rem; font-size: .9rem; color: var(--ink); margin-bottom: 1rem;
+  }
+  .banner .lbl { font-size: .64rem; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; margin-bottom: .2rem; }
+
+  .ledger h3 { font-size: .98rem; color: var(--purple); margin-bottom: .4rem; }
+  .tblwrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+  table { border-collapse: collapse; width: 100%; font-size: .82rem; min-width: 640px; }
+  th, td { text-align: left; padding: .45rem .65rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: .64rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-mute); font-weight: 700; }
+  tbody tr:last-child td { border-bottom: none; }
+  td.zcol { font-weight: 700; color: var(--purple); white-space: nowrap; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td .publbl { font-style: italic; }
+  .punchline { margin-top: .55rem; font-size: .84rem; color: var(--ink-soft); border-top: 1px dashed var(--line); padding-top: .5rem; }
+  .punchline b { color: var(--ink); }
+  .provenance { font-size: .76rem; color: var(--ink-mute); margin-top: .8rem; max-width: 76ch; }
+
+  section { max-width: 70ch; margin: 0 auto 1.5rem; }
+  section h2 { color: var(--purple); font-size: 1.05rem; margin-bottom: .5rem; }
+  section p { margin-bottom: .7rem; color: var(--ink); }
+  blockquote {
+    background: var(--panel); border-left: 3px solid var(--purple-mid);
+    border-radius: 0 10px 10px 0; padding: .8rem 1rem; margin-bottom: .7rem;
+  }
+  blockquote p { color: var(--ink-soft); font-style: italic; margin-bottom: .35rem; }
+  blockquote cite { font-style: normal; font-size: .8rem; color: var(--ink-mute); }
+  .qgloss { font-size: .82rem; color: var(--ink-soft); }
+  ol.try { padding-left: 1.2rem; }
+  ol.try li { margin-bottom: .55rem; color: var(--ink); }
+  footer { max-width: 70ch; margin: 2rem auto 0; font-size: .78rem; color: var(--ink-mute); border-top: 1px solid var(--line); padding-top: .9rem; }
+  footer a { color: var(--purple); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</div>
+      <h1>One feature, two labels: the contrast set decides</h1>
+      <p class="dek">A fixed feature z₁₇ is tested against three contrast sets — the prompt sets an analyst evaluates on. Its published label flips with the contrast set, until a crossed design breaks the co-variation between honesty and formality.</p>
+    </div>
+    <a class="back" href="./index.html">← All demos</a>
+  </header>
+
+  <div class="stage">
+    <div class="controls">
+      <span class="plbl" id="pick-lbl">Contrast set π:</span>
+      <div class="seg" role="group" aria-labelledby="pick-lbl">
+        <button id="pick-a" aria-pressed="true">π_A · co-varying</button>
+        <button id="pick-b" aria-pressed="false" title="register = formal vs. informal style; every text in π_B is honest">π_B · register only</button>
+        <button id="pick-c" aria-pressed="false">π_C · crossed 2×2</button>
+        <button id="pick-d" aria-pressed="false" title="a slider sweeps the honesty–formality co-variation from π_A-like to π_C-like">π(q) · dial the confound</button>
+      </div>
+      <button class="replay" id="btn-reset" title="Clear the ledger and return to π_A" aria-label="Clear the ledger and return to π_A">↺ Reset ledger</button>
+    </div>
+    <p class="cue"><b>Do this:</b> click through π_A → π_B → π_C and watch the published label — z₁₇ itself never changes. Then open π(q) and dial the confound.</p>
+    <div class="sliderrow" id="sliderrow" hidden>
+      <label for="confound">Crossed texts q</label>
+      <input type="range" id="confound" min="0" max="12" step="1" value="0" aria-describedby="confound-hint">
+      <output id="confound-out">0% of texts crossed</output>
+      <span class="shint" id="confound-hint">Drag to weaken the honesty–formality co-variation — watch which alignment survives, and when the published label flips.</span>
+    </div>
+
+    <div class="stagegrid">
+      <div class="panelcard">
+        <h3 id="set-name">Contrast set</h3>
+        <p class="setdesc" id="set-desc"></p>
+        <span class="annpill" id="set-ann"></span>
+        <div class="chips" id="set-chips"></div>
+      </div>
+
+      <div class="panelcard">
+        <h3>Feature z₁₇ <span class="role">· fixed across all three sets</span></h3>
+        <div class="kicker" style="margin-bottom:.25rem">Published label</div>
+        <div class="badge" id="badge"></div>
+        <div class="badge-sub" id="badge-sub"></div>
+        <div class="tiles">
+          <div class="tile" id="tile-hon">
+            <div class="lbl">alignment(z₁₇, honesty | π)</div>
+            <div class="val" id="val-hon">—</div>
+            <div class="meter-track"><div class="meter-fill" id="fill-hon"></div><div class="chance-tick"></div></div>
+            <div class="meter-note">bar spans 40–100% · tick = chance (50%)</div>
+            <div class="sub" id="sub-hon"></div>
+          </div>
+          <div class="tile" id="tile-form">
+            <div class="lbl">alignment(z₁₇, formality | π)</div>
+            <div class="val" id="val-form">—</div>
+            <div class="meter-track"><div class="meter-fill" id="fill-form"></div><div class="chance-tick"></div></div>
+            <div class="meter-note">bar spans 40–100% · tick = chance (50%)</div>
+            <div class="sub" id="sub-form"></div>
+          </div>
+        </div>
+        <div class="opdef">alignment(z₁₇, c | π) = accuracy of sign(z₁₇) against c’s annotation on a held-out half of π (sign direction fitted on the other half); 50% = chance. A faded tile means that annotation does not ship with the current π.</div>
+      </div>
+    </div>
+
+    <div class="chartcard">
+      <h3>z₁₇ activations on the current contrast set</h3>
+      <div class="chart"><svg id="plot" role="img" aria-label="Dot plot of feature z17 activations, one row per text group, colour encodes honesty, shape encodes formality"></svg></div>
+    </div>
+
+    <div class="banner" aria-live="polite">
+      <div class="lbl" id="banner-lbl"></div>
+      <div id="banner-txt"></div>
+    </div>
+
+    <div class="ledger">
+      <h3>Label ledger: (z, π) → published label</h3>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th>Feature</th><th>Contrast set π</th><th>Annotation shipped</th><th>Alignment</th><th>Published label</th></tr>
+          </thead>
+          <tbody id="ledger-body"></tbody>
+        </table>
+      </div>
+      <div class="punchline" id="punchline" hidden></div>
+    </div>
+
+    <p class="provenance">Toy simulation, seeded and deterministic: each synthetic “text” has binary honesty and formality attributes, the fixed feature computes z₁₇ = 1.7 · formality + Gaussian noise, and alignment is the held-out accuracy of sign(z₁₇) against the shipped annotation. Built for this tutorial as an illustration of the paper’s “Alignment ≠ Ontological Identity” inferential gap; it is not an experiment from the paper, and the sample sentences are invented.</p>
+  </div>
+
+  <section>
+    <h2>What this shows</h2>
+    <p>The feature z₁₇ never changes: it is one scalar activation, computed the same way for every text (in this toy it responds to register, i.e. formal vs. informal style). What changes across the three panels is only the contrast set π — which texts the analyst evaluates on, and which annotation ships with them. On π_A every honest text is formal and every dishonest text informal, so the honesty and formality annotations induce the <em>same split</em>; sign(z₁₇) matches either one on the same ~96% of held-out texts, and an analyst holding honesty labels publishes “z₁₇ represents honesty”. On π_B the identical feature earns the label “formality”. Between the first two rows of the ledger, nothing about z changed — only π did.</p>
+    <p>The crossed set π_C is the resolution the paper’s mismatch box calls for: supervision that breaks the co-variation. Once dishonest-formal and honest-informal texts exist, the two labellings come apart — alignment with formality survives while alignment with honesty falls to roughly chance. Saying “z₁₇ represents honesty” after π_A alone therefore admits a stronger, contrast-invariant reading than the evidence licenses; the defensible claim is indexed by the contrast set, i.e. z₁₇ aligns with honesty <em>under π_A</em>. The fourth mode, π(q), turns the same lesson into a dial: the smaller the fraction of crossed texts, the longer the wrong label survives the toy’s ≥75% publishing bar.</p>
+  </section>
+
+  <section>
+    <h2>What the paper says</h2>
+    <blockquote>
+      <p>“The label is a property of the pair (z, π) and not an intrinsic property of z. When concepts co-vary under π, the data are consistent with multiple labellings, e.g. <i>honesty</i> and <i>formality</i> may be indistinguishable if they correlate on the contrast set (Chang et al., 2009).”</p>
+      <cite>— arXiv:2602.16698, “Alignment ≠ Ontological Identity” mismatch box (Gap)</cite>
+    </blockquote>
+    <blockquote>
+      <p>“Alignment is contrast-dependent, so the tuple (z, π, c) is more representative than (z, c).”</p>
+      <cite>— arXiv:2602.16698, “Alignment ≠ Ontological Identity” mismatch box (Takeaway)</cite>
+    </blockquote>
+    <p class="qgloss">In the tuple, <b>z</b> is the feature (here z₁₇), <b>π</b> the contrast set — the texts the analyst evaluates on — and <b>c</b> the concept whose annotation the feature is scored against (here honesty or formality). The annotation belongs to the concept c, not to π; that is why the same π_A texts can support two labels.</p>
+  </section>
+
+  <section>
+    <h2>Try this</h2>
+    <ol class="try">
+      <li>Stay on π_A and write down the label you would publish, with your evidence. Then visit π_B. What in the π_A panel could have warned you that the label was not intrinsic to z₁₇? (Hint: compare the two alignment meters on π_A.)</li>
+      <li>On π_C, read the two meters and the dot plot: z₁₇ sorts the <em>shapes</em> (formality), not the <em>colours</em> (honesty). Which ingredient of π_C made this test possible — and what does the paper’s box say would resolve the gap? Check its “What would resolve it” answer: multiple contrast sets plus supervision that breaks co-variation.</li>
+      <li>Pick a feature-labelling result you know (an SAE feature name, a probing claim) and write down its implicit contrast set π. Then design the second contrast set you would collect to test whether the label survives. Compare with a neighbour: did you break the same confound?</li>
+    </ol>
+  </section>
+
+  <footer>
+    Original interactive illustration for the EMNLP 2026 tutorial <i>Causal Foundations for Interpretability</i>, built on the position paper <a href="https://arxiv.org/abs/2602.16698">Causality is Key for Interpretability Claims to Generalise (arXiv:2602.16698)</a>. It illustrates the paper’s “Alignment ≠ Ontological Identity” inferential gap; the feature, texts, and numbers above are a seeded toy illustration, not an experiment from the paper. tutorial demo · CC-BY
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- seeded PRNG (mulberry32) ----------
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function makeGauss(rng) {
+    let spare = null;
+    return function () {
+      if (spare !== null) { const v = spare; spare = null; return v; }
+      let u = 0, v = 0;
+      while (u === 0) u = rng();
+      v = rng();
+      const m = Math.sqrt(-2 * Math.log(u)), a = 2 * Math.PI * v;
+      spare = m * Math.sin(a);
+      return m * Math.cos(a);
+    };
+  }
+
+  // ---------- toy world ----------
+  const CELLS = {
+    hf: { h: +1, f: +1, name: 'honest · formal',      ex: '“The intervention produced a modest improvement in three of five runs.”' },
+    hi: { h: +1, f: -1, name: 'honest · informal',    ex: '“it kinda worked, not a big deal tbh”' },
+    df: { h: -1, f: +1, name: 'dishonest · formal',   ex: '“The method conclusively resolves the problem in all settings.”' },
+    di: { h: -1, f: -1, name: 'dishonest · informal', ex: '“this totally works every time, trust me”' }
+  };
+  const SETS = {
+    a: {
+      key: 'a', title: 'π_A · co-varying contrasts', ann: ['honesty'],
+      cells: { hf: 24, di: 24 },
+      desc: 'Honest-formal texts vs. dishonest-informal texts. Honesty and formality co-vary perfectly: knowing one attribute fixes the other. The set ships with honesty annotations.'
+    },
+    b: {
+      key: 'b', title: 'π_B · register only, all honest', ann: ['formality'],
+      cells: { hf: 24, hi: 24 },
+      desc: 'Formal vs. informal texts, every one of them honest. Honesty is constant on this set, so only formality can even be tested. Ships with formality annotations.'
+    },
+    c: {
+      key: 'c', title: 'π_C · crossed 2×2 design', ann: ['honesty', 'formality'],
+      cells: { hf: 20, hi: 20, df: 20, di: 20 },
+      desc: 'All four honesty × formality combinations, balanced. The supervision breaks the co-variation: dishonest-formal and honest-informal texts now exist. Ships with both annotations.'
+    }
+  };
+
+  // Fixed feature: z17 responds to register (formality), never to honesty.
+  // Every text carries a seeded 50/50 split flag: 'fit' or 'eval' (held-out).
+  const SEED = 99, AMP = 1.7, NOISE = 0.9;
+  const rng = mulberry32(SEED), g = makeGauss(rng);
+  ['a', 'b', 'c'].forEach(k => {
+    const set = SETS[k];
+    set.texts = [];
+    Object.keys(set.cells).forEach(ck => {
+      const cell = CELLS[ck], n = set.cells[ck];
+      for (let i = 0; i < n; i++) {
+        set.texts.push({ cell: ck, h: cell.h, f: cell.f, z: AMP * cell.f + NOISE * g(), jy: rng() - 0.5, split: i % 2 ? 'eval' : 'fit' });
+      }
+    });
+  });
+  // Text pools for the slider mode pi(q), drawn after the named sets so their numbers are untouched.
+  const POOLN = { hf: 24, hi: 12, df: 12, di: 24 };
+  const POOL = {};
+  Object.keys(POOLN).forEach(ck => {
+    const cell = CELLS[ck];
+    POOL[ck] = [];
+    for (let i = 0; i < POOLN[ck]; i++) {
+      POOL[ck].push({ cell: ck, h: cell.h, f: cell.f, z: AMP * cell.f + NOISE * g(), jy: rng() - 0.5, split: i % 2 ? 'eval' : 'fit' });
+    }
+  });
+
+  // alignment(z, c | pi): held-out accuracy of sign(z) vs. the attribute —
+  // the sign direction is fitted on the 'fit' half of pi, accuracy scored on the 'eval' half.
+  function alignment(set, attr) {
+    const vals = set.texts.map(t => t[attr]);
+    if (vals.every(v => v === vals[0])) return null; // constant on pi: untestable
+    const accOn = arr => arr.reduce((s, t) => s + ((t.z > 0 ? 1 : -1) === t[attr] ? 1 : 0), 0) / arr.length;
+    const dir = accOn(set.texts.filter(t => t.split === 'fit')) >= 0.5 ? 1 : -1;
+    const ev = set.texts.filter(t => t.split === 'eval');
+    return ev.reduce((s, t) => s + (dir * (t.z > 0 ? 1 : -1) === t[attr] ? 1 : 0), 0) / ev.length;
+  }
+  ['a', 'b', 'c'].forEach(k => {
+    SETS[k].alignH = alignment(SETS[k], 'h');
+    SETS[k].alignF = alignment(SETS[k], 'f');
+  });
+
+  // pi(q): the fourth, slider-dialled set. sv = crossed texts per off-diagonal cell (0..12);
+  // q = share of all 48 texts that sit in the crossed cells (0%..50%).
+  const BAR = 0.75; // toy publishing rule: keep a label while its held-out alignment stays >= 75%
+  SETS.d = { key: 'd', title: 'π(q) · dialled confound', ann: ['honesty'], cells: {}, texts: [], sv: 0, desc: '' };
+  function qPct(sv) { return Math.round(100 * 2 * sv / 48); }
+  function buildSlider(sv) {
+    const d = SETS.d;
+    d.sv = sv;
+    d.cells = sv === 0 ? { hf: 24, di: 24 } : { hf: 24 - sv, hi: sv, df: sv, di: 24 - sv };
+    d.texts = [];
+    Object.keys(d.cells).forEach(ck => { d.texts.push.apply(d.texts, POOL[ck].slice(0, d.cells[ck])); });
+    d.alignH = alignment(d, 'h');
+    d.alignF = alignment(d, 'f');
+    d.desc = 'The π_A trap, dialled: ' + qPct(sv) + '% of the 48 texts sit in the crossed cells (honest-informal + dishonest-formal). At 0% honesty and formality co-vary perfectly; at 50% the set is a balanced 2×2 like π_C. Ships with honesty annotations.';
+  }
+  buildSlider(0);
+
+  const pct = v => (100 * v).toFixed(1) + '%';
+
+  // ---------- per-set copy ----------
+  function badgeFor(k) {
+    const s = SETS[k];
+    if (k === 'a') return {
+      cls: 'hon', txt: '“z₁₇ represents honesty”',
+      sub: 'what an analyst holding π_A’s honesty annotations would publish (alignment ' + pct(s.alignH) + ')'
+    };
+    if (k === 'b') return {
+      cls: 'form', txt: '“z₁₇ represents formality”',
+      sub: 'same feature, new prompts: the shipped annotation is formality (alignment ' + pct(s.alignF) + ')'
+    };
+    if (k === 'c') return {
+      cls: 'res', txt: '“z₁₇ tracks formality relative to π_C”',
+      sub: 'honesty ruled out on π_C: its alignment is ≈ chance once the co-variation is broken'
+    };
+    if (s.alignH >= BAR) return {
+      cls: 'hon', txt: '“z₁₇ represents honesty”',
+      sub: 'the wrong label survives: honesty alignment ' + pct(s.alignH) + ' still meets the toy ≥75% publishing bar at q = ' + qPct(s.sv) + '%'
+    };
+    return {
+      cls: 'form', txt: '“z₁₇ tracks formality, not honesty”',
+      sub: 'honesty alignment fell to ' + pct(s.alignH) + ', below the ≥75% bar, while formality holds at ' + pct(s.alignF)
+    };
+  }
+  function bannerFor(k) {
+    const s = SETS[k];
+    if (k === 'a') return {
+      lbl: 'π_A — the trap',
+      txt: 'Honesty and formality co-vary on π_A: every honest text is formal, every dishonest text informal. sign(z₁₇) matches the honesty annotation on <b>' + pct(s.alignH) +
+        '</b> of held-out texts — and it matches a formality annotation on exactly the same texts (<b>' + pct(s.alignF) +
+        '</b>, one identical split). The data are consistent with both labellings; the shipped annotation says honesty, so “honesty” is what gets published.'
+    };
+    if (k === 'b') return {
+      lbl: 'π_B — same feature, different label',
+      txt: 'Every text here is honest; only the register varies. Honesty cannot even be tested (it is constant on π_B), yet z₁₇ separates formal from informal at <b>' + pct(s.alignF) +
+        '</b>. The published label flips to “formality” — while z₁₇ itself has not changed since π_A.'
+    };
+    if (k === 'c') return {
+      lbl: 'π_C — the resolution',
+      txt: 'The crossed 2×2 design adds honest-informal and dishonest-formal texts, breaking the co-variation. Alignment with formality survives (<b>' + pct(s.alignF) +
+        '</b>) while alignment with honesty falls to <b>' + pct(s.alignH) +
+        '</b> — about chance. Relative to π_C, z₁₇ tracks formality; the “honesty” reading from π_A does not survive the new contrast set.'
+    };
+    return {
+      lbl: 'π(q) — dial the confound',
+      txt: 'With <b>' + qPct(s.sv) + '%</b> of texts in the crossed cells, held-out alignment with honesty is <b>' + pct(s.alignH) +
+        '</b> while formality holds at <b>' + pct(s.alignF) + '</b>. ' +
+        (s.alignH >= BAR
+          ? 'The honesty label still meets the toy ≥75% publishing bar — the co-variation is doing the work.'
+          : 'The honesty label no longer meets the ≥75% bar: this much crossing sufficed to expose that z₁₇ tracks formality.') +
+        ' The size of the confound decides how long the wrong label survives.'
+    };
+  }
+  function ledgerRow(k) {
+    const s = SETS[k];
+    if (k === 'a') return { pi: 'π_A · co-varying', ann: 'honesty', al: pct(s.alignH) + ' (honesty)', pub: '“z₁₇ represents honesty”' };
+    if (k === 'b') return { pi: 'π_B · register only', ann: 'formality', al: pct(s.alignF) + ' (formality)', pub: '“z₁₇ represents formality”' };
+    return { pi: 'π_C · crossed 2×2', ann: 'honesty + formality', al: 'hon ' + pct(s.alignH) + ' · form ' + pct(s.alignF), pub: '“z₁₇ tracks formality relative to π_C; honesty ruled out”' };
+  }
+
+  // ---------- dot plot ----------
+  const X = z => 130 + (z + 4) / 8 * 425; // z in [-4, 4] -> x in [130, 555]
+  function dotSVG(t, cx, cy) {
+    const col = t.h > 0 ? 'var(--hon)' : 'var(--dis)';
+    if (t.f > 0) return '<circle cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="4" fill="' + col + '" opacity=".8"/>';
+    return '<rect x="' + (cx - 3.6).toFixed(1) + '" y="' + (cy - 3.6).toFixed(1) + '" width="7.2" height="7.2" fill="' + col + '" opacity=".8"/>';
+  }
+  function drawPlot(k) {
+    const s = SETS[k];
+    const rows = Object.keys(s.cells);
+    const top = 36, rh = 46, H = top + rows.length * rh + 34;
+    const svg = document.getElementById('plot');
+    svg.setAttribute('viewBox', '0 0 570 ' + H);
+    let out = '';
+    // legend
+    out += '<circle cx="14" cy="14" r="4" fill="var(--hon)" opacity=".85"/><text class="leg-label" x="22" y="18">honest</text>';
+    out += '<circle cx="88" cy="14" r="4" fill="var(--dis)" opacity=".85"/><text class="leg-label" x="96" y="18">dishonest</text>';
+    out += '<circle cx="188" cy="14" r="4" fill="none" stroke="var(--ink-soft)" stroke-width="1.4"/><text class="leg-label" x="196" y="18">formal</text>';
+    out += '<rect x="252.4" y="10.4" width="7.2" height="7.2" fill="none" stroke="var(--ink-soft)" stroke-width="1.4"/><text class="leg-label" x="264" y="18">informal</text>';
+    // threshold
+    const x0 = X(0);
+    out += '<line class="boundary" x1="' + x0 + '" y1="' + (top - 6) + '" x2="' + x0 + '" y2="' + (top + rows.length * rh) + '"/>';
+    // rows
+    rows.forEach((ck, ri) => {
+      const cy0 = top + ri * rh + rh / 2;
+      out += '<text class="row-label" x="122" y="' + (cy0 + 4) + '" text-anchor="end">' + CELLS[ck].name + '</text>';
+      s.texts.filter(t => t.cell === ck).forEach(t => {
+        out += dotSVG(t, X(Math.max(-4, Math.min(4, t.z))), cy0 + t.jy * 26);
+      });
+    });
+    out += '<text class="axis-caption" x="130" y="' + (H - 8) + '">← z₁₇ activation →</text>';
+    out += '<text class="axis-caption" x="' + x0 + '" y="' + (H - 8) + '" text-anchor="middle">dashed: sign threshold at 0</text>';
+    svg.innerHTML = out;
+  }
+
+  // ---------- UI wiring ----------
+  const $ = id => document.getElementById(id);
+  const picks = { a: $('pick-a'), b: $('pick-b'), c: $('pick-c'), d: $('pick-d') };
+  let cur = 'a';
+  let visited = [];
+
+  function setMeter(el, v) { el.style.width = (v === null ? 0 : Math.max(0, (100 * v - 40) / 60 * 100)) + '%'; }
+
+  function renderTiles(k) {
+    const s = SETS[k];
+    const honShip = s.ann.indexOf('honesty') >= 0, formShip = s.ann.indexOf('formality') >= 0;
+    $('val-hon').textContent = s.alignH === null ? '—' : pct(s.alignH);
+    $('val-form').textContent = s.alignF === null ? '—' : pct(s.alignF);
+    setMeter($('fill-hon'), s.alignH); setMeter($('fill-form'), s.alignF);
+    $('tile-hon').classList.toggle('muted', !honShip);
+    $('tile-form').classList.toggle('muted', !formShip);
+    if (k === 'a') {
+      $('sub-hon').textContent = 'shipped annotation';
+      $('sub-form').textContent = 'not annotated on π_A — but it would be the identical split';
+    } else if (k === 'b') {
+      $('sub-hon').textContent = 'honesty is constant on π_B: untestable';
+      $('sub-form').textContent = 'shipped annotation';
+    } else if (k === 'c') {
+      $('sub-hon').textContent = '≈ chance — co-variation broken';
+      $('sub-form').textContent = 'survives the new contrast set';
+    } else {
+      $('sub-hon').textContent = 'shipped annotation — falls as q grows';
+      $('sub-form').textContent = 'not annotated on π(q) — the demo’s omniscient view';
+    }
+  }
+
+  function renderSetCard(k) {
+    const s = SETS[k];
+    $('set-name').textContent = s.title;
+    $('set-desc').textContent = s.desc;
+    $('set-ann').textContent = 'annotation shipped: ' + s.ann.join(' + ');
+    $('set-chips').innerHTML = Object.keys(s.cells).map(ck => {
+      const c = CELLS[ck];
+      const t1 = c.h > 0 ? '<span class="th">honest</span>' : '<span class="td">dishonest</span>';
+      const t2 = c.f > 0 ? '<span class="tf">formal</span>' : '<span class="tn">informal</span>';
+      return '<div class="chip"><div class="tags">' + t1 + ' · ' + t2 +
+        '<span class="cnt">n = ' + s.cells[ck] + '</span></div><div class="ex">' + c.ex + '</div></div>';
+    }).join('');
+  }
+
+  function renderLedger() {
+    $('ledger-body').innerHTML = visited.map(k => {
+      const r = ledgerRow(k);
+      return '<tr><td class="zcol">z₁₇</td><td>' + r.pi + '</td><td>' + r.ann +
+        '</td><td class="num">' + r.al + '</td><td><span class="publbl">' + r.pub + '</span></td></tr>';
+    }).join('');
+    const p = $('punchline');
+    if (visited.length >= 3) {
+      p.hidden = false;
+      p.innerHTML = '<b>The feature column never changes; the label column does.</b> Two contrast sets published two different labels for the same z₁₇, and only the crossed set separated them. The label belongs to the pair (z, π); reporting the tuple (z, π, c) — feature z, contrast set π, concept c — keeps the claim honest.';
+    } else if (visited.length === 2) {
+      p.hidden = false;
+      p.innerHTML = 'Two rows, same feature, two published labels. Nothing about z₁₇ changed between them — only π did. Visit π_C to break the tie.';
+    } else {
+      p.hidden = false;
+      p.innerHTML = 'The ledger records each (feature, contrast set) pair you visit — π_B and π_C will add rows.';
+    }
+  }
+
+  function render() {
+    Object.keys(picks).forEach(k => picks[k].setAttribute('aria-pressed', String(k === cur)));
+    $('sliderrow').hidden = cur !== 'd';
+    const b = badgeFor(cur), bn = bannerFor(cur);
+    const badge = $('badge');
+    badge.textContent = b.txt;
+    badge.className = 'badge ' + b.cls;
+    $('badge-sub').textContent = b.sub;
+    renderSetCard(cur);
+    renderTiles(cur);
+    drawPlot(cur);
+    $('banner-lbl').textContent = bn.lbl;
+    $('banner-txt').innerHTML = bn.txt;
+    renderLedger();
+  }
+
+  function visit(k) {
+    cur = k;
+    if (k !== 'd' && visited.indexOf(k) < 0) visited.push(k); // the ledger tracks the paper's named sets only
+    render();
+  }
+
+  const slider = $('confound');
+  function syncSlider() {
+    const sv = +slider.value;
+    buildSlider(sv);
+    $('confound-out').textContent = qPct(sv) + '% of texts crossed';
+    slider.setAttribute('aria-valuetext', qPct(sv) + '% of texts crossed');
+    if (cur === 'd') render();
+  }
+  slider.addEventListener('input', syncSlider);
+
+  Object.keys(picks).forEach(k => picks[k].addEventListener('click', () => visit(k)));
+  $('btn-reset').addEventListener('click', () => { visited = []; slider.value = 0; syncSlider(); visit('a'); });
+
+  syncSlider();
+  visit('a');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Observe or intervene? A confounder sandbox · EMNLP 2026 tutorial demo</title>
+<style>
+  :root {
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --line:#E1DEEC;
+    --w1:#3E8E5A; --w2:#5B4B9E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+      --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+      --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+      --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --line:#332B49;
+      --w1:#4AA06B; --w2:#8F7BC4;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --line:#332B49;
+    --w1:#4AA06B; --w2:#8F7BC4;
+  }
+  :root[data-theme="light"] {
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --line:#E1DEEC;
+    --w1:#3E8E5A; --w2:#5B4B9E;
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: 'Avenir Next', Avenir, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.55; padding: 1.6rem 1.2rem 2.5rem;
+  }
+  h1, h2 { font-family: Futura, 'Century Gothic', 'Avenir Next', 'Trebuchet MS', sans-serif; }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  .kicker {
+    font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-mute); font-weight: 600;
+  }
+  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.2rem; }
+  header h1 { color: var(--purple); font-size: 1.65rem; line-height: 1.2; margin: .3rem 0 .35rem; }
+  header .dek { color: var(--ink-soft); max-width: 62ch; }
+  a.back {
+    color: var(--purple); text-decoration: none; font-size: .85rem; white-space: nowrap;
+    border: 1px solid var(--line); border-radius: 999px; padding: .3rem .8rem; margin-top: .2rem;
+  }
+  a.back:hover { background: var(--hero); }
+  a.back:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+
+  .stage {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 1.1rem 1.2rem 1rem; margin-bottom: 1.6rem;
+  }
+  .controls { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 1.1rem; margin-bottom: .9rem; }
+  .controls .group { min-width: 230px; }
+  .seg {
+    display: inline-flex; border: 1px solid var(--line); border-radius: 10px;
+    overflow: hidden; margin-top: .35rem; background: var(--panel);
+  }
+  .seg button {
+    font: inherit; font-size: .86rem; padding: .45rem .9rem; border: none; cursor: pointer;
+    background: transparent; color: var(--ink-soft);
+  }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button[aria-pressed="true"] { background: var(--purple); color: var(--paper); font-weight: 600; }
+  .mode-note { font-size: .78rem; color: var(--ink-mute); margin-top: .4rem; max-width: 46ch; }
+  .playcue { font-size: .8rem; color: var(--ink-soft); margin: 0 0 .85rem; }
+  .playcue .pk {
+    font-size: .64rem; letter-spacing: .11em; text-transform: uppercase;
+    color: var(--ink-mute); font-weight: 600; margin-right: .3rem;
+  }
+  .playcue .step {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 1.05rem; height: 1.05rem; border-radius: 999px;
+    background: var(--purple-soft); color: var(--purple);
+    font-size: .66rem; font-weight: 700; margin: 0 .2rem 0 .45rem; vertical-align: -10%;
+  }
+  .nlp-map { font-size: .77rem; color: var(--ink-mute); margin: -.2rem 0 .85rem; }
+  #do-group input[type="range"] { width: 220px; margin-top: .55rem; accent-color: var(--l2); display: block; }
+  #do-group input[type="range"]:disabled { opacity: .35; }
+  #do-lab .doval {
+    text-transform: none; letter-spacing: 0; font-size: .82rem;
+    color: var(--ink-soft); font-variant-numeric: tabular-nums;
+  }
+  .do-hint { font-size: .78rem; color: var(--ink-mute); margin-top: .35rem; }
+  button.reveal {
+    font: inherit; font-size: .83rem; padding: .42rem .9rem; cursor: pointer; margin-top: 1.15rem;
+    border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--ink-soft);
+  }
+  button.reveal:hover { background: var(--hero); }
+  button.reveal[aria-pressed="true"] { background: var(--purple); color: var(--paper); border-color: var(--purple); }
+
+  .worlds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.1rem; }
+  @media (max-width: 880px) { .worlds { grid-template-columns: 1fr; } }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: .7rem .8rem .6rem; }
+  #panel-I  { --wcol: var(--w1); }
+  #panel-II { --wcol: var(--w2); }
+  .ptitle { font-size: .95rem; font-weight: 700; color: var(--wcol); margin-bottom: .3rem; }
+  .ptitle .wtag { font-weight: 500; font-size: .8rem; color: var(--ink-mute); }
+
+  svg.scatter { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 8px; }
+  svg text { font-family: inherit; }
+  .axis-caption { fill: var(--ink-mute); font-size: 11px; }
+  .tick-label { fill: var(--ink-mute); font-size: 10px; font-variant-numeric: tabular-nums; }
+  .gridline { stroke: var(--line); stroke-width: 1; }
+  .zeroline { stroke: var(--line); stroke-width: 1.5; }
+  .obs circle { fill: var(--wcol); opacity: .5; }
+  .fitline { stroke: var(--wcol); stroke-width: 1.8; opacity: .85; }
+  .fitlab { fill: var(--wcol); font-size: 10.5px; font-style: italic; }
+  .fitlab, .forelab, .domeanlab { paint-order: stroke; stroke: var(--card); stroke-width: 3px; stroke-linejoin: round; }
+  .mode-intervene .obs { opacity: .28; }
+  .mode-intervene .fitline { opacity: .3; }
+  .mode-intervene .fitlab { display: none; }
+  .mode-observe .dolayer { display: none; }
+  .dopin { stroke: var(--l2); stroke-width: 1.2; stroke-dasharray: 2 3; opacity: .55; }
+  .dodots circle { fill: var(--l2); opacity: .8; }
+  .foreline { stroke: var(--l1); stroke-width: 1.8; stroke-dasharray: 5 4; }
+  .forelab { fill: var(--l1); font-size: 10.5px; }
+  .domean { stroke: var(--l2); stroke-width: 2.4; }
+  .domeanlab { fill: var(--l2); font-size: 10.5px; font-weight: 600; }
+
+  .statline { font-size: .8rem; color: var(--ink-soft); margin: .45rem 0 .5rem; font-variant-numeric: tabular-nums; }
+  .dagrow { display: flex; align-items: center; gap: .8rem; }
+  svg.dag { width: 148px; flex: 0 0 auto; }
+  .dagnode { fill: var(--card); stroke: var(--ink-soft); stroke-width: 1.4; }
+  .confnode { stroke: var(--magenta); }
+  .daglab { fill: var(--ink); font-size: 12px; font-weight: 600; }
+  .conflab { fill: var(--magenta); }
+  .dagedge { stroke: var(--ink-soft); stroke-width: 1.6; }
+  .dashededge { stroke-dasharray: 4 4; }
+  .dagq { fill: var(--ink-mute); font-size: 13px; font-style: italic; }
+  .arrhead { fill: var(--ink-soft); }
+  .dagcap { font-size: .76rem; color: var(--ink-mute); }
+  .stage:not(.revealed) .post { display: none; }
+  .stage.revealed .pre { display: none; }
+
+  .below { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 1.1rem; margin-top: 1rem; align-items: start; }
+  @media (max-width: 880px) { .below { grid-template-columns: 1fr; } }
+  .verdict {
+    background: var(--hero); border-left: 3px solid var(--purple);
+    border-radius: 0 10px 10px 0; padding: .65rem .8rem; font-size: .88rem; color: var(--ink);
+  }
+  .verdict .lbl, .score .lbl { font-size: .64rem; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; margin-bottom: .25rem; }
+  .score { overflow-x: auto; }
+  .score table { border-collapse: collapse; width: 100%; font-size: .8rem; }
+  .score th, .score td { text-align: left; padding: .4rem .5rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .score th { font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-mute); }
+  .score .claim { color: var(--ink); font-style: italic; }
+  .ok { color: var(--gap-green); font-weight: 600; }
+  .no { color: var(--magenta); font-weight: 600; }
+  .mode-observe .score td:nth-child(2), .mode-observe .score th:nth-child(2) { background: var(--hero); }
+  .mode-intervene .score td:nth-child(3), .mode-intervene .score th:nth-child(3) { background: var(--hero); }
+
+  .provenance { font-size: .76rem; color: var(--ink-mute); margin-top: .8rem; max-width: 90ch; }
+
+  section { max-width: 70ch; margin: 0 auto 1.5rem; }
+  section h2 { color: var(--purple); font-size: 1.05rem; margin-bottom: .5rem; }
+  section p { margin-bottom: .7rem; color: var(--ink); }
+  blockquote {
+    background: var(--panel); border-left: 3px solid var(--purple-mid);
+    border-radius: 0 10px 10px 0; padding: .8rem 1rem; margin-bottom: .7rem;
+  }
+  blockquote p { color: var(--ink-soft); font-style: italic; margin-bottom: .35rem; }
+  blockquote cite { font-style: normal; font-size: .8rem; color: var(--ink-mute); }
+  ol.try { padding-left: 1.2rem; }
+  ol.try li { margin-bottom: .55rem; color: var(--ink); }
+  footer { max-width: 70ch; margin: 2rem auto 0; font-size: .78rem; color: var(--ink-mute); border-top: 1px solid var(--line); padding-top: .9rem; }
+  footer a { color: var(--purple); }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</div>
+      <h1>Observe or intervene? A confounder sandbox</h1>
+      <p class="dek">Two hidden worlds produce the same scatter between a feature and a behaviour. Watching cannot separate them; setting the feature can.</p>
+    </div>
+    <a class="back" href="./index.html">← All demos</a>
+  </header>
+
+  <div class="stage mode-observe" id="stage">
+    <p class="playcue"><span class="pk">How to play</span><span class="step">1</span>In <strong>Observe</strong>, try to tell the two worlds apart.<span class="step">2</span>Switch to <strong>Intervene</strong> and drag do(A).<span class="step">3</span><strong>Reveal the structures</strong> to check your guess.</p>
+    <div class="controls">
+      <div class="group">
+        <div class="kicker">Evidence mode</div>
+        <div class="seg" role="group" aria-label="Evidence mode">
+          <button id="mode-observe" aria-pressed="true">Observe (L1)</button>
+          <button id="mode-intervene" aria-pressed="false">Intervene (L2)</button>
+        </div>
+        <div class="mode-note" id="mode-note">L1 = rung 1 of Pearl’s ladder (“seeing”) · associational query from the paper: “Does A correlate with B?”</div>
+      </div>
+      <div class="group" id="do-group">
+        <label class="kicker" for="do-slider" id="do-lab">Intervention <span class="doval">do(A = +1.50)</span></label>
+        <input type="range" id="do-slider" min="-2.5" max="2.5" step="0.1" value="1.5"
+               aria-label="Set the intervention value assigned to A" disabled>
+        <div class="do-hint" id="do-hint">Switch to Intervene to pin A by force.</div>
+      </div>
+      <div>
+        <button class="reveal" id="reveal" aria-pressed="false">Reveal the structures</button>
+        <div class="do-hint" id="reveal-hint">Best pressed after you have committed to a guess.</div>
+      </div>
+    </div>
+
+    <p class="nlp-map">NLP reading: A is a probe direction or SAE-feature activation, B a behaviour such as refusal, C an upstream concept in earlier layers.</p>
+
+    <div class="worlds">
+      <div class="panel" id="panel-I">
+        <div class="ptitle">World I <span class="wtag pre">· structure hidden</span><span class="wtag post">· A → B (direct cause)</span></div>
+        <svg class="scatter" id="sc-I" viewBox="0 0 340 300" role="img"
+             aria-label="Scatter plot of behaviour B against feature activation A in World I. In intervene mode, a gold column of samples at the pinned value of A shows the interventional outcome; its mean follows the dashed correlation-based forecast."></svg>
+        <div class="statline" id="stat-I" aria-live="polite"></div>
+        <div class="dagrow">
+          <svg class="dag" viewBox="0 0 170 84" aria-hidden="true">
+            <defs><marker id="arr-I" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrhead" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+            <g class="pre">
+              <line x1="58" y1="60" x2="112" y2="60" class="dagedge dashededge"/>
+              <text x="85" y="50" class="dagq" text-anchor="middle">?</text>
+            </g>
+            <g class="post">
+              <line x1="60" y1="60" x2="106" y2="60" class="dagedge" marker-end="url(#arr-I)"/>
+            </g>
+            <circle cx="45" cy="60" r="13" class="dagnode"/><text x="45" y="64" class="daglab" text-anchor="middle">A</text>
+            <circle cx="125" cy="60" r="13" class="dagnode"/><text x="125" y="64" class="daglab" text-anchor="middle">B</text>
+          </svg>
+          <div class="dagcap">
+            <span class="pre">Structural equations hidden. Press “Reveal the structures” after you have made up your mind.</span>
+            <span class="post">B := 0.8·A + ε. Because A feeds B, pinning A by do(A = a) shifts B to 0.8·a.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-II">
+        <div class="ptitle">World II <span class="wtag pre">· structure hidden</span><span class="wtag post">· A ← C → B (hidden common cause: the confounder)</span></div>
+        <svg class="scatter" id="sc-II" viewBox="0 0 340 300" role="img"
+             aria-label="Scatter plot of behaviour B against feature activation A in World II. In intervene mode, the gold column of interventional samples stays centred at zero and ignores the dashed correlation-based forecast."></svg>
+        <div class="statline" id="stat-II" aria-live="polite"></div>
+        <div class="dagrow">
+          <svg class="dag" viewBox="0 0 170 84" aria-hidden="true">
+            <defs><marker id="arr-II" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrhead" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+            <g class="pre">
+              <line x1="58" y1="60" x2="112" y2="60" class="dagedge dashededge"/>
+              <text x="85" y="50" class="dagq" text-anchor="middle">?</text>
+            </g>
+            <g class="post">
+              <circle cx="85" cy="19" r="13" class="dagnode confnode"/><text x="85" y="23" class="daglab conflab" text-anchor="middle">C</text>
+              <line x1="75" y1="28" x2="57" y2="47" class="dagedge" marker-end="url(#arr-II)"/>
+              <line x1="95" y1="28" x2="113" y2="47" class="dagedge" marker-end="url(#arr-II)"/>
+            </g>
+            <circle cx="45" cy="60" r="13" class="dagnode"/><text x="45" y="64" class="daglab" text-anchor="middle">A</text>
+            <circle cx="125" cy="60" r="13" class="dagnode"/><text x="125" y="64" class="daglab" text-anchor="middle">B</text>
+          </svg>
+          <div class="dagcap">
+            <span class="pre">Structural equations hidden. Press “Reveal the structures” after you have made up your mind.</span>
+            <span class="post">A := C + ε, B := C + ε′; A never touches B. Pinning A cuts the link to C, so B keeps its baseline.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="below">
+      <div class="verdict" aria-live="polite">
+        <div class="lbl">What this mode licenses</div>
+        <div id="verdict-text">…</div>
+      </div>
+      <div class="score">
+        <div class="lbl">Scoreboard: claims by evidence mode</div>
+        <table>
+          <thead><tr><th scope="col">Claim</th><th scope="col">Observe (L1)</th><th scope="col">Intervene (L2)</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="claim">“A correlates with B”</td>
+              <td><span class="ok">✓ licensed</span> in both worlds</td>
+              <td><span class="ok">✓ licensed</span> (the observational scatter stays on screen; higher rungs subsume lower ones)</td>
+            </tr>
+            <tr>
+              <td class="claim">“Changing A changes B”</td>
+              <td><span class="no">✗ not licensed</span> (the two worlds are observationally identical)</td>
+              <td>World I <span class="ok">✓</span> · World II <span class="no">✗</span>: the intervention decides</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p class="provenance">Toy simulation: both worlds are sampled in your browser with a seeded PRNG, so every load is identical. Their parameters are chosen so the observational joint of (A, B) is the same bivariate Gaussian — zero mean, unit variances, correlation 0.8 — in both worlds; only the structural equations differ. The interventional columns use antithetic pairs, so their sample means sit exactly on the population value. Original illustration for the tutorial’s identifiability discussion, not an experiment from the paper.</p>
+  </div>
+
+  <section>
+    <h2>What this shows</h2>
+    <p>The two panels run different structural causal models with identical observational behaviour. In World I the feature causes the behaviour: B := 0.8·A + noise. In World II it never does: a hidden common cause C feeds both A and B. The parameters are matched so both worlds produce the same joint distribution, which means no statistic computed from observed samples — correlation, regression slope, the conditional mean E[B | A = a] — can tell them apart. More observational data sharpens the estimate of r; it never separates the worlds. On Pearl’s causal ladder (Pearl, 2009), correlation lives on rung one (seeing) and interventions on rung two (doing); a third rung, counterfactuals, lies beyond this demo’s scope. The interventional estimand — the quantity we are trying to pin down, p(B | do(A = a)) — is not identifiable from rung-one evidence: it cannot be computed from the observational distribution, however precisely we measure it.</p>
+    <p>The intervention slider changes the rung, not the sample size. Pinning A by do(A = a) severs A from whatever caused it upstream: in World I the outcome column tracks the dashed correlation-based forecast, while in World II it stays at baseline because the association ran through C all along. Read A as a probe direction or feature activation and B as a behaviour such as refusal, and this is the paper’s point about decoding evidence: the same L1 observations are equally consistent with the feature causing the behaviour and with an upstream concept in earlier layers producing both.</p>
+  </section>
+
+  <section>
+    <h2>What the paper says</h2>
+    <blockquote>
+      <p>“For instance, observing that <em>A</em> correlates with <em>B</em> is consistent with <em>A</em> causing <em>B</em>, but equally consistent with a confounder causing both. Interventional evidence can distinguish these cases; associational evidence cannot.”</p>
+      <p>“Suppose we only observe that <em>h</em><sup>(<em>l</em>)</sup> accurately predicts refusal. The estimand is not identifiable from the evidence we have, i.e., the available evidence could be equally well explained by earlier layers encoding an alternate concept that affects both the activations <em>h</em><sup>(<em>l</em>)</sup> and refusal.”</p>
+      <cite>— <em>Causality is Key for Interpretability Claims to Generalise</em> (arXiv:2602.16698), on identifiability</cite>
+    </blockquote>
+  </section>
+
+  <section>
+    <h2>Try this</h2>
+    <ol class="try">
+      <li>Stay in Observe and try to decide which world hides the confounder, using any feature of the scatters you like. Then explain to your neighbour why no such feature can exist: the joints match by construction, so every observational statistic must agree.</li>
+      <li>Switch to Intervene and drag do(A) to ±2. The dashed L1 forecast is the same in both panels; the gold interventional mean is not. Write the one-sentence claim each world now licenses, then press “Reveal the structures” to check yourself.</li>
+      <li>Map it onto your own work: A is your probe direction or SAE feature, B the behaviour you care about. What plays C? Name one upstream concept that could produce both, and the activation-level intervention that would rule it out.</li>
+    </ol>
+  </section>
+
+  <footer>
+    Original toy illustration built for this tutorial to accompany the identifiability discussion in <a href="https://arxiv.org/abs/2602.16698"><em>Causality is Key for Interpretability Claims to Generalise</em> (arXiv:2602.16698)</a>; the simulation is not an experiment from the paper. · tutorial demo · CC-BY
+  </footer>
+
+</div>
+
+<script>
+/* ---------- seeded, deterministic sampling (no Math.random) ---------- */
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function makeGauss(rng) {
+  let spare = null;
+  return function () {
+    if (spare !== null) { const v = spare; spare = null; return v; }
+    let u = 0, v = 0, s = 0;
+    do { u = rng() * 2 - 1; v = rng() * 2 - 1; s = u * u + v * v; } while (s >= 1 || s === 0);
+    const m = Math.sqrt(-2 * Math.log(s) / s);
+    spare = v * m; return u * m;
+  };
+}
+
+/* Both worlds: (A,B) ~ N(0, [[1, .8],[.8, 1]]) observationally.
+   World I : A = eA,          B = 0.8*A + 0.6*eB          (A -> B)
+   World II: C ~ N(0,0.8), A = C + sqrt(.2)*eA, B = C + sqrt(.2)*eB  (A <- C -> B) */
+const N_OBS = 160, N_DO = 48, RHO = 0.8;
+const SQ8 = Math.sqrt(0.8), SQ2 = Math.sqrt(0.2);
+
+function genObs(world, seed) {
+  const g = makeGauss(mulberry32(seed));
+  const pts = [];
+  for (let i = 0; i < N_OBS; i++) {
+    if (world === 'I') { const a = g(); pts.push([a, 0.8 * a + 0.6 * g()]); }
+    else { const c = SQ8 * g(); pts.push([c + SQ2 * g(), c + SQ2 * g()]); }
+  }
+  return pts;
+}
+function genDo(world, a) {
+  const idx = Math.round((a + 2.5) * 10);
+  const g = makeGauss(mulberry32(900001 + idx * 7919 + (world === 'I' ? 0 : 1)));
+  const ys = [];
+  for (let i = 0; i < N_DO / 2; i++) { // antithetic pairs: sample means sit exactly on the population value
+    if (world === 'I') { const e = 0.6 * g(); ys.push(0.8 * a + e, 0.8 * a - e); }
+    else { const e = SQ8 * g() + SQ2 * g(); ys.push(e, -e); }
+  }
+  return ys;
+}
+function pearson(pts) {
+  const n = pts.length;
+  let mx = 0, my = 0;
+  for (const [x, y] of pts) { mx += x; my += y; }
+  mx /= n; my /= n;
+  let sxx = 0, syy = 0, sxy = 0;
+  for (const [x, y] of pts) { sxx += (x - mx) ** 2; syy += (y - my) ** 2; sxy += (x - mx) * (y - my); }
+  return { r: sxy / Math.sqrt(sxx * syy), slope: sxy / sxx, intercept: my - (sxy / sxx) * mx };
+}
+const mean = a => a.reduce((s, v) => s + v, 0) / a.length;
+
+/* ---------- chart scaffolding ---------- */
+const NS = 'http://www.w3.org/2000/svg';
+const X0 = 38, X1 = 326, Y0 = 20, Y1 = 266, RANGE = 3.4;
+const px = v => X0 + (v + RANGE) / (2 * RANGE) * (X1 - X0);
+const py = v => Y1 - (v + RANGE) / (2 * RANGE) * (Y1 - Y0);
+const el = (name, attrs, text) => {
+  const e = document.createElementNS(NS, name);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (text !== undefined) e.textContent = text;
+  return e;
+};
+const fmt = v => (v < 0 ? '−' : '+') + Math.abs(v).toFixed(2);
+
+const OBS = { I: genObs('I', 8695), II: genObs('II', 6040) }; // seeds chosen so both panels display r = 0.80, slope = 0.80
+const STATS = { I: pearson(OBS.I), II: pearson(OBS.II) };
+const UI = {};
+
+for (const w of ['I', 'II']) {
+  const svg = document.getElementById('sc-' + w);
+  svg.appendChild(el('text', { x: 4, y: 12, class: 'axis-caption' }, 'behaviour B'));
+  for (const v of [-2, 0, 2]) {
+    svg.appendChild(el('line', { x1: px(v), x2: px(v), y1: Y0, y2: Y1, class: v === 0 ? 'zeroline' : 'gridline' }));
+    svg.appendChild(el('line', { x1: X0, x2: X1, y1: py(v), y2: py(v), class: v === 0 ? 'zeroline' : 'gridline' }));
+    svg.appendChild(el('text', { x: px(v), y: Y1 + 14, 'text-anchor': 'middle', class: 'tick-label' }, String(v)));
+    svg.appendChild(el('text', { x: X0 - 6, y: py(v) + 3.5, 'text-anchor': 'end', class: 'tick-label' }, String(v)));
+  }
+  const obsG = el('g', { class: 'obs' });
+  for (const [x, y] of OBS[w]) {
+    if (Math.abs(x) > RANGE || Math.abs(y) > RANGE) continue;
+    obsG.appendChild(el('circle', { cx: px(x).toFixed(1), cy: py(y).toFixed(1), r: 2.2 }));
+  }
+  svg.appendChild(obsG);
+  const st = STATS[w];
+  const yAt = x => st.intercept + st.slope * x;
+  svg.appendChild(el('line', { x1: px(-3.1), y1: py(yAt(-3.1)), x2: px(3.1), y2: py(yAt(3.1)), class: 'fitline' }));
+  // label rotated to run parallel just above the fit line, so the line never strikes through it
+  const lx = px(1.9), ly = py(yAt(1.9)) - 9;
+  const ang = -Math.atan2(st.slope * (Y1 - Y0), X1 - X0) * 180 / Math.PI;
+  svg.appendChild(el('text', { x: lx, y: ly, 'text-anchor': 'middle', class: 'fitlab',
+    transform: 'rotate(' + ang.toFixed(1) + ' ' + lx.toFixed(1) + ' ' + ly.toFixed(1) + ')' }, 'least-squares fit'));
+
+  const doL = el('g', { class: 'dolayer' });
+  const pin = el('line', { class: 'dopin', y1: Y0, y2: Y1 });
+  const dots = el('g', { class: 'dodots' });
+  const fore = el('line', { class: 'foreline', x1: X0, x2: X1 });
+  const foreLab = el('text', { class: 'forelab', x: X0 + 4 }, 'forecast from r');
+  const dm = el('line', { class: 'domean', x1: X0, x2: X1 });
+  const dmLab = el('text', { class: 'domeanlab', x: X1 - 4, 'text-anchor': 'end' }, 'mean under do');
+  for (const e of [pin, dots, fore, foreLab, dm, dmLab]) doL.appendChild(e);
+  svg.appendChild(doL);
+  svg.appendChild(el('text', { x: (X0 + X1) / 2, y: 294, 'text-anchor': 'middle', class: 'axis-caption' }, 'feature activation A'));
+  UI[w] = { pin, dots, fore, foreLab, dm, dmLab, stat: document.getElementById('stat-' + w) };
+}
+
+/* ---------- interaction ---------- */
+const stage = document.getElementById('stage');
+const slider = document.getElementById('do-slider');
+const clampLabY = y => Math.max(Y0 + 10, Math.min(Y1 - 4, y));
+
+const MODE_NOTES = {
+  observe: 'L1 = rung 1 of Pearl’s ladder (“seeing”) · associational query from the paper: “Does A correlate with B?”',
+  intervene: 'L2 = rung 2 of Pearl’s ladder (“doing”) · interventional query from the paper: “Does changing A change B?”',
+};
+const VERDICTS = {
+  observe: 'Both panels show the same association: matching correlation, matching fit, matching conditional mean E[B | A = a]. L1 evidence licenses “B is predictable from A” in either world, and it cannot say which world you are in. The worlds are observationally indistinguishable, so no amount of extra watching separates them.',
+  intervene: 'Pinning A by do(A = a) severs A from its upstream causes. In World I the gold interventional mean tracks the dashed forecast: A really does move B. In World II it stays at baseline: the association ran through the hidden C, and forcing A leaves B untouched. One L1 forecast, two L2 outcomes: only intervention distinguishes the worlds.',
+};
+const REVEAL_NOTE = 'Structures revealed: World I is A → B (a direct cause); World II is A ← C → B, where the hidden common cause C (the confounder) drives both.';
+let currentMode = 'observe', revealed = false;
+function renderVerdict() {
+  document.getElementById('verdict-text').textContent =
+    VERDICTS[currentMode] + (revealed ? ' ' + REVEAL_NOTE : '');
+}
+
+function renderDo() {
+  const a = parseFloat(slider.value);
+  document.querySelector('#do-lab .doval').textContent = 'do(A = ' + fmt(a) + ')';
+  for (const w of ['I', 'II']) {
+    const ys = genDo(w, a);
+    const m = mean(ys);
+    const u = UI[w];
+    const xp = px(a);
+    u.pin.setAttribute('x1', xp); u.pin.setAttribute('x2', xp);
+    while (u.dots.firstChild) u.dots.removeChild(u.dots.firstChild);
+    for (const y of ys) {
+      if (Math.abs(y) > RANGE) continue;
+      u.dots.appendChild(el('circle', { cx: xp.toFixed(1), cy: py(y).toFixed(1), r: 2.4 }));
+    }
+    // both labels go on the side away from the pinned column so they never collide with the dots
+    const left = xp > (X0 + X1) / 2;
+    for (const [lab, anchor, x] of [[u.foreLab, left ? 'start' : 'end', left ? X0 + 4 : X1 - 4],
+                                    [u.dmLab, left ? 'start' : 'end', left ? X0 + 4 : X1 - 4]]) {
+      lab.setAttribute('text-anchor', anchor); lab.setAttribute('x', x);
+    }
+    const fy = py(RHO * a), my = py(m);
+    u.fore.setAttribute('y1', fy); u.fore.setAttribute('y2', fy);
+    u.foreLab.setAttribute('y', clampLabY(fy - 6));
+    u.dm.setAttribute('y1', my); u.dm.setAttribute('y2', my);
+    u.dmLab.setAttribute('y', clampLabY(my + 14));
+    if (stage.classList.contains('mode-intervene')) {
+      u.stat.textContent = 'mean B under do(A = ' + fmt(a) + '): ' + fmt(m) +
+        ' · forecast from r (0.8·a): ' + fmt(RHO * a);
+    }
+  }
+}
+function renderObserve() {
+  for (const w of ['I', 'II']) {
+    const st = STATS[w];
+    UI[w].stat.textContent = 'r = ' + st.r.toFixed(2) + ' · fit slope = ' + st.slope.toFixed(2) + ' · n = ' + N_OBS;
+  }
+}
+function setMode(mode) {
+  currentMode = mode;
+  stage.classList.toggle('mode-observe', mode === 'observe');
+  stage.classList.toggle('mode-intervene', mode === 'intervene');
+  document.getElementById('mode-observe').setAttribute('aria-pressed', String(mode === 'observe'));
+  document.getElementById('mode-intervene').setAttribute('aria-pressed', String(mode === 'intervene'));
+  document.getElementById('mode-note').textContent = MODE_NOTES[mode];
+  renderVerdict();
+  slider.disabled = mode !== 'intervene';
+  document.getElementById('do-hint').textContent = mode === 'intervene'
+    ? 'Drag: the gold column is p(B | do(A = a)), i.e. B when A is forcibly set to a.'
+    : 'Switch to Intervene to pin A by force.';
+  if (mode === 'intervene') renderDo(); else renderObserve();
+}
+
+document.getElementById('mode-observe').addEventListener('click', () => setMode('observe'));
+document.getElementById('mode-intervene').addEventListener('click', () => setMode('intervene'));
+slider.addEventListener('input', renderDo);
+document.getElementById('reveal').addEventListener('click', function () {
+  const on = this.getAttribute('aria-pressed') !== 'true';
+  this.setAttribute('aria-pressed', String(on));
+  this.textContent = on ? 'Hide the structures' : 'Reveal the structures';
+  document.getElementById('reveal-hint').textContent = on
+    ? 'Structures shown; press again to hide.'
+    : 'Best pressed after you have committed to a guess.';
+  stage.classList.toggle('revealed', on);
+  revealed = on;
+  renderVerdict();
+});
+
+renderDo();
+setMode('observe');
+</script>
+</body>
+</html>

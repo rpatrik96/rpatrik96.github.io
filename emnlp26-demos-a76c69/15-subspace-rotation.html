@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Subspace ≠ Coordinates — Causal Foundations for Interpretability</title>
+<style>
+:root{
+  --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+  --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+  --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+  --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B;
+  --gap-green:#3E8E5A; --line:#E1DEEC;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E;
+    --gap-green:#5FB37E; --line:#332B49;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+  --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+  --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+  --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E;
+  --gap-green:#5FB37E; --line:#332B49;
+}
+:root[data-theme="light"]{
+  --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+  --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+  --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+  --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B;
+  --gap-green:#3E8E5A; --line:#E1DEEC;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);
+  font-family:'Avenir Next',Avenir,'Segoe UI',system-ui,sans-serif;
+  font-size:16px;line-height:1.55}
+h1,h2,h3{font-family:Futura,'Century Gothic','Avenir Next','Trebuchet MS',sans-serif;line-height:1.2}
+.wrap{max-width:960px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+.kicker{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute)}
+header h1{color:var(--purple);font-size:1.7rem;margin:.35rem 0 .3rem}
+.dek{color:var(--ink-soft);max-width:70ch;margin:0}
+.back{display:inline-block;font-size:.85rem;color:var(--purple);text-decoration:none;margin-bottom:.9rem}
+.back:hover{text-decoration:underline}
+a{color:var(--purple)}
+[hidden]{display:none!important}
+
+/* ---- stage ---- */
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:1.1rem;margin:1.4rem 0}
+.sr-grid{display:grid;grid-template-columns:1.06fr 1fr;gap:.9rem;align-items:stretch}
+@media (max-width:760px){ .sr-grid{grid-template-columns:1fr} }
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.8rem}
+.card svg{width:100%;height:auto;display:block}
+.svgcap{font-size:.76rem;color:var(--ink-mute);margin:.5rem 0 0;line-height:1.45}
+.dot{display:inline-block;width:.68em;height:.68em;border-radius:50%;margin-right:.28em;vertical-align:-.02em}
+
+.sliderrow{display:flex;align-items:center;gap:.6rem}
+.sliderrow label{font-size:.9rem;font-weight:700}
+.hint{font-size:.84rem;font-weight:600;color:var(--ink);margin:0 0 .5rem}
+.sliderrow input[type=range]{flex:1;accent-color:var(--magenta);min-width:0}
+.sliderrow output{font-variant-numeric:tabular-nums;font-size:.92rem;font-weight:600;min-width:3.1em;text-align:right}
+.sliderrow input[type=range]:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.jumps{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.55rem}
+.jump{cursor:pointer;font:inherit;font-size:.76rem;border-radius:999px;padding:.22rem .6rem;
+  border:1px solid var(--line);background:var(--paper);color:var(--ink-soft)}
+.jump[aria-pressed="true"]{border-color:var(--magenta);color:var(--magenta);font-weight:600}
+.jump:focus-visible,.switch:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.switch{cursor:pointer;font:inherit;font-size:.8rem;border-radius:999px;padding:.3rem .7rem;margin-top:.6rem;
+  border:1px solid var(--line);background:var(--paper);color:var(--ink-soft);display:inline-flex;align-items:center;gap:.45em}
+.switch .swdot{width:.7em;height:.7em;border-radius:50%;background:var(--ink-mute);flex:none}
+.switch[aria-pressed="true"]{border-color:var(--gap-green);color:var(--gap-green);font-weight:600}
+.switch[aria-pressed="true"] .swdot{background:var(--gap-green)}
+#msg{min-height:4.1em;font-size:.88rem;color:var(--ink-soft);margin:.55rem 0 0}
+
+/* ---- meters ---- */
+.mgroup{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);
+  margin:.85rem 0 .3rem;padding-top:.6rem;border-top:1px dashed var(--line)}
+.mgroup:first-of-type{border-top:0;padding-top:0;margin-top:.75rem}
+.meter{margin:.45rem 0}
+.mhead{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;font-size:.84rem}
+.mname{color:var(--ink)}
+.mtag{font-size:.68rem;border-radius:999px;padding:.08rem .5rem;white-space:nowrap;flex:none}
+.mtag.flat{background:color-mix(in srgb, var(--gap-green) 14%, transparent);color:var(--gap-green)}
+.mtag.spin{background:color-mix(in srgb, var(--magenta) 12%, transparent);color:var(--magenta)}
+.mtag.assume{background:color-mix(in srgb, var(--l2) 14%, transparent);color:var(--l2)}
+.mbar{display:flex;align-items:center;gap:.55rem;margin-top:.18rem}
+.mtrack{flex:1;height:9px;border-radius:6px;background:var(--purple-faint);overflow:hidden}
+.mfill{height:100%;border-radius:6px;transition:width .18s ease}
+.mfill.sub{background:var(--gap-green)}
+.mfill.coord{background:var(--magenta)}
+.mfill.asm{background:var(--l2)}
+.mval{font-variant-numeric:tabular-nums;font-size:.86rem;font-weight:600;min-width:3.1em;text-align:right}
+.msub{font-size:.72rem;color:var(--ink-mute);margin:.12rem 0 0}
+
+/* ---- identification meter ---- */
+.idgrid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:.9rem}
+@media (max-width:760px){ .idgrid{grid-template-columns:1fr} }
+.idbox{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.6rem .75rem;font-size:.82rem}
+.idbox .kicker{margin-bottom:.25rem}
+.badge{display:inline-block;font-size:.72rem;font-weight:700;border-radius:999px;padding:.1rem .55rem;margin-bottom:.3rem}
+.badge.ok{background:color-mix(in srgb, var(--gap-green) 16%, transparent);color:var(--gap-green)}
+.badge.no{background:color-mix(in srgb, var(--magenta) 14%, transparent);color:var(--magenta)}
+.badge.asm{background:color-mix(in srgb, var(--l2) 16%, transparent);color:var(--l2)}
+.idbox p{margin:.1rem 0 0;color:var(--ink-soft)}
+.scenenote{font-size:.75rem;color:var(--ink-mute);margin:.8rem 0 0}
+
+/* prose sections */
+section.prose{margin:1.6rem 0;max-width:70ch}
+section.prose h2{font-size:1.15rem;color:var(--purple);margin-bottom:.4rem}
+.paperbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:.9rem 1.1rem;margin:1.6rem 0}
+.paperbox h2{font-size:1.15rem;color:var(--purple);margin:.1rem 0 .4rem}
+.paperbox blockquote{margin:.6rem 0;padding-left:.9rem;border-left:3px solid var(--purple-soft);
+  color:var(--ink-soft);font-style:italic;max-width:70ch}
+.paperbox cite{display:block;font-style:normal;font-size:.78rem;color:var(--ink-mute);margin-top:.2rem}
+.try ol{padding-left:1.2rem;max-width:70ch}
+.try li{margin-bottom:.5rem}
+footer{border-top:1px solid var(--line);margin-top:2.2rem;padding-top:.9rem;font-size:.8rem;color:var(--ink-mute);max-width:70ch}
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important;animation:none!important}
+}
+/* pinned-basis coloring for the SVG axes */
+.axisln{stroke:var(--magenta)}
+.axishd{fill:var(--magenta)}
+svg.pinned .axisln{stroke:var(--gap-green)}
+svg.pinned .axishd{fill:var(--gap-green)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="back" href="./index.html">&larr; All demos</a>
+  <div class="kicker">EMNLP 2026 Tutorial &middot; Causal Foundations for Interpretability</div>
+  <h1>Subspace &ne; Coordinates</h1>
+  <p class="dek">A model&rsquo;s truthful-vs-deceptive behaviour lives on a two-dimensional plane inside its representation space. Spin the basis within that plane: every behavioural readout (a fixed linear probe) is frozen while the axis labels go around, until an axis-identifying assumption pins them.</p>
+</header>
+
+<div class="stage">
+  <div class="sr-grid">
+    <div class="card">
+      <svg id="inset" viewBox="0 0 460 88" role="img"
+        aria-label="Sketch of a high-dimensional activation cloud with a two-dimensional plane S inside it; the projection onto S is shown face-on as a disc."></svg>
+      <svg id="plane" viewBox="0 0 320 320" role="img"
+        aria-label="The concept subspace S viewed face-on: a disc of data points from truthful and deceptive completions, separated by a fixed readout boundary. Two dashed basis axes rotate within the disc as the slider moves; the points and the boundary never move."></svg>
+      <p class="svgcap">
+        <span class="dot" style="background:var(--l1)"></span>truthful completions&ensp;
+        <span class="dot" style="background:var(--l2)"></span>deceptive completions&ensp;&middot;&ensp;
+        green: fixed readout boundary (the readout is a fixed linear probe classifying each point truthful vs. deceptive)&ensp;&middot;&ensp;
+        dashed: the basis you chose (&phi;). The dots and the boundary never move; only the axes do.
+      </p>
+    </div>
+    <div class="card">
+      <p class="hint">Drag <i>&phi;</i> to spin the basis inside the plane: watch which bars move and which stay frozen.</p>
+      <div class="sliderrow">
+        <label for="phi-slider">basis angle <i>&phi;</i></label>
+        <input type="range" id="phi-slider" min="0" max="180" value="70" step="1"
+          aria-label="Basis angle phi: rotation of the basis within the concept subspace, in degrees">
+        <output id="phi-out" for="phi-slider">70&deg;</output>
+      </div>
+      <div class="jumps" role="group" aria-label="Jump to a notable angle">
+        <button class="jump" data-phi="0" aria-pressed="false">0&deg; sparse data axes</button>
+        <button class="jump" data-phi="30" aria-pressed="false">30&deg; axis 1 aligned with readout</button>
+        <button class="jump" data-phi="90" aria-pressed="false">90&deg; axes swapped</button>
+        <button class="jump" data-phi="120" aria-pressed="false">120&deg; axis 1 perpendicular to readout</button>
+      </div>
+      <button class="switch" id="sparsity-btn" aria-pressed="false"><span class="swdot"></span>axis-identifying assumption: sparsity</button>
+      <p id="msg" aria-live="polite"></p>
+
+      <div class="mgroup">Subspace-level &middot; uses only &Pi;<sub>S</sub>(h), the projection of the activations onto the plane S</div>
+      <div class="meter">
+        <div class="mhead"><span class="mname">predict truthful vs. deceptive from &Pi;<sub>S</sub>(h)</span><span class="mtag flat">same at every &phi;</span></div>
+        <div class="mbar"><div class="mtrack"><div class="mfill sub" id="b-acc"></div></div><span class="mval" id="v-acc">&ndash;</span></div>
+        <p class="msub">accuracy of the fixed readout; it never references the basis, so no rotation within S can move it</p>
+      </div>
+      <div class="meter">
+        <div class="mhead"><span class="mname">ablate the whole plane S</span><span class="mtag flat">same at every &phi;</span></div>
+        <div class="mbar"><div class="mtrack"><div class="mfill sub" id="b-abl"></div></div><span class="mval" id="v-abl">&ndash;</span></div>
+        <p class="msub">accuracy with &Pi;<sub>S</sub>(h) set to 0: the readout falls back to the majority class</p>
+      </div>
+
+      <div class="mgroup">Coordinate-level &middot; uses the basis</div>
+      <div class="meter">
+        <div class="mhead"><span class="mname">ablate axis 1 only</span><span class="mtag spin">moves with &phi;</span></div>
+        <div class="mbar"><div class="mtrack"><div class="mfill coord" id="b-ax1"></div></div><span class="mval" id="v-ax1">&ndash;</span></div>
+        <p class="msub">accuracy after zeroing the coordinate along axis 1, keeping axis 2</p>
+      </div>
+      <div class="meter">
+        <div class="mhead"><span class="mname">share of readout weight on axis 1</span><span class="mtag spin">moves with &phi;</span></div>
+        <div class="mbar"><div class="mtrack"><div class="mfill coord" id="b-w1"></div></div><span class="mval" id="v-w1">&ndash;</span></div>
+        <p class="msub">how much of &ldquo;the honesty direction&rdquo; story lands on axis 1</p>
+      </div>
+
+      <div id="sp-block" hidden>
+        <div class="mgroup">Assumption-level &middot; added by the toggle</div>
+        <div class="meter">
+          <div class="mhead"><span class="mname">sparsity fit of the current basis</span><span class="mtag assume">selects &phi; = 0&deg; / 90&deg; / 180&deg;</span></div>
+          <div class="mbar"><div class="mtrack"><div class="mfill asm" id="b-sp"></div></div><span class="mval" id="v-sp">&ndash;</span></div>
+          <p class="msub">how axis-aligned the in-plane coordinates are (the inductive bias SAEs and dictionary learning impose); the behavioural readouts above never see this</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="idgrid">
+    <div class="idbox">
+      <div class="kicker">The plane S</div>
+      <span class="badge ok">identified</span>
+      <p>Ablating it collapses the behaviour readout to chance, and every rotation within it leaves all subspace-level readouts unchanged. One scope note: any larger space containing S passes the same ablation test, so &ldquo;identified&rdquo; means the smallest subspace consistent with this evidence.</p>
+    </div>
+    <div class="idbox">
+      <div class="kicker">The axes within S</div>
+      <span class="badge no" id="ax-badge">not identified</span>
+      <p id="ax-desc">Every &phi; is consistent with the subspace-level evidence, so a semantic label for an individual direction admits a stronger reading than the evidence supports.</p>
+    </div>
+  </div>
+
+  <p class="scenenote">Original tutorial illustration of the paper&rsquo;s &ldquo;Subspace &ne; Coordinates&rdquo; mismatch box &mdash; the toy points, the readout, and all numbers are synthetic, not an experiment from the paper.</p>
+</div>
+
+<section class="prose">
+  <h2>What this shows</h2>
+  <p>Both green readouts use only the projection &Pi;<sub>S</sub>(h) &mdash; predicting the behaviour, or ablating the whole plane &mdash; and both are computed live from the toy points, yet neither budges at any &phi;. That is the mismatch: the evidence identifies the plane S, because it distinguishes S from other subspaces (remove it and the readout collapses to chance; any superspace of S passes that test too, so read S as the smallest subspace consistent with the evidence), but it places no constraint on where the axes sit inside S. Since &Pi;<sub>S</sub>(h) is the same object in every basis, a semantic label for an individual direction &mdash; &ldquo;axis 1 is honesty&rdquo; &mdash; admits a stronger reading than the subspace-level evidence supports: the same claim could be attached to any rotated pair of axes.</p>
+  <p>The coordinate-level readouts make the arbitrariness concrete. &ldquo;Ablate axis 1 only&rdquo; is a genuine intervention, yet its outcome depends on &phi;: at 30&deg; it wipes the behaviour out, at 120&deg; it does nothing, and both angles describe the same model and the same plane. Pinning the axes requires information beyond the behavioural evidence &mdash; an axis-identifying assumption. The toggle adds the paper&rsquo;s example, sparsity, the same inductive bias sparse autoencoders and dictionary-learning methods impose on their learned basis: in this toy the in-plane coordinates hug two directions, so demanding sparse coordinates selects that basis up to permutation and sign (the assumption still accepts swapping the two axes or flipping their signs). The labels stop spinning because the assumption fixed them, not the behaviour &mdash; granted that the sparsity assumption actually holds for the representation.</p>
+</section>
+
+<div class="paperbox">
+  <h2>What the paper says</h2>
+  <blockquote>&ldquo;The method identifies a subspace <i>S</i> invariant under rotations within it, and not a particular basis.&rdquo;
+    <cite>&mdash; Mismatch box &ldquo;Subspace &ne; Coordinates&rdquo;, appendix taxonomy for characterising interpretability claims</cite>
+  </blockquote>
+  <blockquote>&ldquo;The <em>subspace</em> is identifiable; the <em>axes within it</em> are not.&rdquo;
+    <cite>&mdash; &sect;&ldquo;PCA: Subspace Structure &ne; Axis Semantics&rdquo;</cite>
+  </blockquote>
+</div>
+
+<section class="prose try">
+  <h2>Try this</h2>
+  <ol>
+    <li>Set &phi; = 30&deg; and defend the claim &ldquo;axis 1 encodes honesty&rdquo; using only the right-hand readouts. Then set &phi; = 120&deg; and defend &ldquo;axis 1 is irrelevant to honesty.&rdquo; Both defences cite real measurements; what changed between them, and what did not?</li>
+    <li>&ldquo;Ablate axis 1&rdquo; is a genuine intervention, yet its outcome moves with &phi;, while &ldquo;ablate the whole plane&rdquo; does not. State precisely which object the interventional evidence identifies, and which extra choice the per-axis version smuggles in.</li>
+    <li>Turn on the sparsity assumption and move &phi; to 90&deg;: the assumption accepts this basis too. What freedom remains &mdash; which bases does the assumption still accept (its indeterminacy class) &mdash; and why does that residual freedom still leave per-axis semantics meaningful in a way the 45&deg; blend would not?</li>
+  </ol>
+</section>
+
+<footer>
+  <p>Provenance: original interactive illustration built for the EMNLP 2026 tutorial, animating the &ldquo;Subspace &ne; Coordinates&rdquo; mismatch box of <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a> (<em>Causality is Key for Interpretability Claims to Generalise</em>). The point cloud, the behaviour labels, and every number in the readout panel are computed from a seeded synthetic toy; they are illustrations, not experiments reported in the paper.</p>
+  <p>tutorial demo &middot; CC-BY</p>
+</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var DEG = Math.PI/180;
+  function mulberry(seed){ return function(){ seed|=0; seed=(seed+0x6D2B79F5)|0; var t=Math.imul(seed^(seed>>>15),1|seed); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; }; }
+  var ns = "http://www.w3.org/2000/svg";
+  function el(tag, attrs){ var e=document.createElementNS(ns,tag); for(var k in attrs) e.setAttribute(k,attrs[k]); return e; }
+
+  /* ---- toy data: sparse in the canonical in-plane basis, seeded ---- */
+  var rnd = mulberry(2026);
+  var N = 72, pts = [], labels = [];
+  var U_ANG = 30, u = [Math.cos(U_ANG*DEG), Math.sin(U_ANG*DEG)];   // fixed readout direction in S
+  for (var i=0;i<N;i++){
+    var onX = rnd()<.5;
+    var main = (rnd()*2-1);
+    var off  = (rnd()*2-1)*0.06;
+    var p = onX ? [main,off] : [off,main];
+    var s = u[0]*p[0] + u[1]*p[1];
+    var y = s>=0 ? 1 : -1;
+    if (Math.abs(s)<0.12 && rnd()<.5) y = -y;   // seeded label noise near the boundary
+    pts.push(p); labels.push(y);
+  }
+  var nPos=0; labels.forEach(function(y){ if(y>0) nPos++; });
+  var majSign = nPos >= N-nPos ? 1 : -1;
+  var majShare = Math.max(nPos, N-nPos)/N;
+
+  function dot(a,b){ return a[0]*b[0]+a[1]*b[1]; }
+  function accOf(pred){ var c=0; for(var i=0;i<N;i++){ if(pred[i]===labels[i]) c++; } return c/N; }
+
+  /* subspace-level readouts (basis-free by construction) */
+  var accS = accOf(pts.map(function(p){ var s=dot(u,p); return s>0?1:(s<0?-1:majSign); }));
+  var accAblS = accOf(pts.map(function(){ return majSign; }));
+
+  /* coordinate-level readouts */
+  function e1Of(phi){ return [Math.cos(phi*DEG), Math.sin(phi*DEG)]; }
+  function accAblAx1(phi){
+    var e1 = e1Of(phi);
+    return accOf(pts.map(function(p){
+      var c1 = dot(p,e1);
+      var q = [p[0]-c1*e1[0], p[1]-c1*e1[1]];
+      var s = dot(u,q);
+      return s>1e-9?1:(s<-1e-9?-1:majSign);
+    }));
+  }
+  function wShare(phi){ var c=Math.cos((phi-U_ANG)*DEG); return c*c; }
+  var sumNorm = pts.reduce(function(a,p){ return a+Math.hypot(p[0],p[1]); },0);
+  function sparsityFit(phi){
+    var e1 = e1Of(phi), e2 = [-e1[1], e1[0]], L1 = 0;
+    pts.forEach(function(p){ L1 += Math.abs(dot(p,e1)) + Math.abs(dot(p,e2)); });
+    var ratio = L1/sumNorm;                    // 1 (axis-hugging) … √2 (max blend)
+    return Math.max(0, Math.min(1, 1-(ratio-1)/(Math.SQRT2-1)));
+  }
+
+  /* ---- inset: plane embedded in a sketched ambient cloud ---- */
+  var inset = document.getElementById("inset");
+  var irnd = mulberry(7);
+  for (var k=0;k<46;k++){
+    var ax=irnd()*2-1, ay=irnd()*2-1;
+    if (ax*ax+ay*ay>1){ k--; continue; }
+    inset.appendChild(el("circle",{cx:84+66*ax, cy:40+27*ay, r:2, fill:"var(--ink-mute)", opacity:.4}));
+  }
+  inset.appendChild(el("polygon",{points:"30,52 112,20 138,28 56,60", fill:"var(--purple-soft)",
+    opacity:.8, stroke:"var(--purple-mid)","stroke-width":1}));
+  var sT = el("text",{x:128,y:22,fill:"var(--purple)","font-size":"12","font-style":"italic","font-family":"inherit"});
+  sT.textContent = "S"; inset.appendChild(sT);
+  var ambT = el("text",{x:84,y:82,"text-anchor":"middle",fill:"var(--ink-mute)","font-size":"10","font-family":"inherit"});
+  ambT.textContent = "activations h ∈ ℝᵈ"; inset.appendChild(ambT);
+  inset.appendChild(el("line",{x1:158,y1:40,x2:198,y2:40,stroke:"var(--ink-mute)","stroke-width":1.4}));
+  inset.appendChild(el("polygon",{points:"206,40 197,36 197,44",fill:"var(--ink-mute)"}));
+  var piT = el("text",{x:181,y:31,"text-anchor":"middle",fill:"var(--ink-soft)","font-size":"11","font-style":"italic","font-family":"inherit"});
+  piT.textContent = "Π_S(h)"; inset.appendChild(piT);
+  inset.appendChild(el("circle",{cx:246,cy:40,r:30,fill:"var(--purple-faint)",stroke:"var(--purple-mid)","stroke-width":1}));
+  for (k=0;k<24;k++){
+    var pp = pts[k];
+    inset.appendChild(el("circle",{cx:246+26*pp[0], cy:40-26*pp[1], r:1.8,
+      fill:labels[k]>0?"var(--l1)":"var(--l2)", opacity:.75}));
+  }
+  var faceT = el("text",{x:288,y:36,fill:"var(--ink-soft)","font-size":"11","font-family":"inherit"});
+  faceT.textContent = "the plane S, face-on"; inset.appendChild(faceT);
+  var faceT2 = el("text",{x:288,y:52,fill:"var(--ink-mute)","font-size":"10","font-family":"inherit"});
+  faceT2.textContent = "(enlarged below)"; inset.appendChild(faceT2);
+
+  /* ---- main view: the plane, face-on ---- */
+  var svg = document.getElementById("plane");
+  var C = 160, RIM = 140, PS = 128;
+  /* readout half-plane tints (fixed): boundary is the diameter at 120° */
+  var bx = Math.cos(120*DEG), by = Math.sin(120*DEG);
+  var Ax = C+138*bx, Ay = C-138*by, Bx = C-138*bx, By = C+138*by;
+  svg.appendChild(el("path",{d:"M "+Ax+" "+Ay+" A138 138 0 0 1 "+Bx+" "+By+" Z", fill:"var(--l1)", opacity:.07}));
+  svg.appendChild(el("path",{d:"M "+Ax+" "+Ay+" A138 138 0 0 0 "+Bx+" "+By+" Z", fill:"var(--l2)", opacity:.07}));
+  svg.appendChild(el("circle",{cx:C,cy:C,r:RIM,fill:"none",stroke:"var(--purple-mid)","stroke-width":1.6}));
+  /* fixed readout boundary */
+  svg.appendChild(el("line",{x1:Ax,y1:Ay,x2:Bx,y2:By,stroke:"var(--gap-green)","stroke-width":2.2}));
+  var rl = el("text",{x:C-138*bx, y:C+138*by+16, "text-anchor":"middle", fill:"var(--gap-green)",
+    "font-size":"10.5","font-family":"inherit","paint-order":"stroke",stroke:"var(--card)","stroke-width":3});
+  rl.textContent = "readout boundary (fixed)"; svg.appendChild(rl);
+  var ra = el("text",{x:312,y:20,"text-anchor":"end",fill:"var(--l1)","font-size":"9.5","font-family":"inherit",opacity:.85});
+  ra.textContent = "readout ⇒ truthful"; svg.appendChild(ra);
+  var rb = el("text",{x:8,y:308,"text-anchor":"start",fill:"var(--l2)","font-size":"9.5","font-family":"inherit",opacity:.85});
+  rb.textContent = "readout ⇒ deceptive"; svg.appendChild(rb);
+  /* fixed data points */
+  pts.forEach(function(p,i){
+    svg.appendChild(el("circle",{cx:C+PS*p[0], cy:C-PS*p[1], r:3.2,
+      fill:labels[i]>0?"var(--l1)":"var(--l2)", opacity:.8}));
+  });
+  /* rotating basis (group drawn at φ=0, rotated via transform) */
+  var basis = el("g",{});
+  basis.appendChild(el("line",{x1:C-130,y1:C,x2:C+130,y2:C,"stroke-width":1.6,"stroke-dasharray":"7 5",class:"axisln"}));
+  basis.appendChild(el("line",{x1:C,y1:C-130,x2:C,y2:C+130,"stroke-width":1.6,"stroke-dasharray":"7 5",class:"axisln"}));
+  basis.appendChild(el("line",{x1:C,y1:C,x2:C+100,y2:C,"stroke-width":2.6,class:"axisln"}));
+  basis.appendChild(el("line",{x1:C,y1:C,x2:C,y2:C-100,"stroke-width":2.6,class:"axisln"}));
+  basis.appendChild(el("polygon",{points:(C+110)+","+C+" "+(C+98)+","+(C-5)+" "+(C+98)+","+(C+5),class:"axishd"}));
+  basis.appendChild(el("polygon",{points:C+","+(C-110)+" "+(C-5)+","+(C-98)+" "+(C+5)+","+(C-98),class:"axishd"}));
+  svg.appendChild(basis);
+  function mkLabel(){
+    return el("text",{"text-anchor":"middle","font-size":"10.5","font-weight":"600","font-family":"inherit",
+      "paint-order":"stroke",stroke:"var(--card)","stroke-width":2.5});
+  }
+  var lab1 = mkLabel(), lab2 = mkLabel();
+  svg.appendChild(lab1); svg.appendChild(lab2);
+  function placeLabel(node, angDeg, txt, color){
+    var a = angDeg*DEG, dx = Math.cos(a), dy = -Math.sin(a);
+    var x = C + 118*dx - 13*dy, y = C + 118*dy + 13*dx;
+    node.setAttribute("x", Math.max(58, Math.min(262, x)));
+    node.setAttribute("y", Math.max(14, Math.min(308, y)));
+    node.setAttribute("fill", color);
+    node.textContent = txt;
+  }
+
+  /* ---- controls & live readouts ---- */
+  var slider = document.getElementById("phi-slider");
+  var out    = document.getElementById("phi-out");
+  var msg    = document.getElementById("msg");
+  var btn    = document.getElementById("sparsity-btn");
+  var spBlk  = document.getElementById("sp-block");
+  var vAcc=document.getElementById("v-acc"), bAcc=document.getElementById("b-acc");
+  var vAbl=document.getElementById("v-abl"), bAbl=document.getElementById("b-abl");
+  var vAx1=document.getElementById("v-ax1"), bAx1=document.getElementById("b-ax1");
+  var vW1=document.getElementById("v-w1"),  bW1=document.getElementById("b-w1");
+  var vSp=document.getElementById("v-sp"),  bSp=document.getElementById("b-sp");
+  var axBadge=document.getElementById("ax-badge"), axDesc=document.getElementById("ax-desc");
+  var jumps  = Array.prototype.slice.call(document.querySelectorAll(".jump"));
+  var sparsOn = false;
+
+  vAcc.textContent = Math.round(accS*100)+"%";   bAcc.style.width = (accS*100)+"%";
+  vAbl.textContent = Math.round(accAblS*100)+"%"; bAbl.style.width = (accAblS*100)+"%";
+
+  function near(a,b){ return Math.abs(a-b)<=4; }
+  function update(){
+    var phi = +slider.value;
+    out.textContent = phi + "°";
+    basis.setAttribute("transform","rotate("+(-phi)+" "+C+" "+C+")");
+
+    var a1 = accAblAx1(phi), w1 = wShare(phi), fit = sparsityFit(phi);
+    vAx1.textContent = Math.round(a1*100)+"%";   bAx1.style.width = (a1*100)+"%";
+    vW1.textContent  = Math.round(w1*100)+"%";   bW1.style.width  = (w1*100)+"%";
+    vSp.textContent  = Math.round(fit*100)+"%";  bSp.style.width  = (fit*100)+"%";
+
+    var pinned = sparsOn && phi%90===0;
+    svg.classList.toggle("pinned", pinned);
+    var axColor = pinned ? "var(--gap-green)" : "var(--magenta)";
+    placeLabel(lab1, phi,    pinned ? "axis 1 · pinned" : "axis 1 · “honesty”?",   axColor);
+    placeLabel(lab2, phi+90, pinned ? "axis 2 · pinned" : "axis 2 · “formality”?", axColor);
+
+    if (pinned){
+      axBadge.textContent = "pinned by assumption"; axBadge.className = "badge ok";
+      axDesc.textContent = "Sparsity selects the axis-hugging basis, up to permutation and sign (you may still swap the axes or flip their signs): the axes are now fixed by the assumption, not by the behavioural evidence.";
+    } else if (sparsOn){
+      axBadge.textContent = "rejected by assumption"; axBadge.className = "badge asm";
+      axDesc.textContent = "The assumption prefers φ = 0°/90°/180°; the behavioural readouts above still cannot tell the difference.";
+    } else {
+      axBadge.textContent = "not identified"; axBadge.className = "badge no";
+      axDesc.textContent = "Every φ is consistent with the subspace-level evidence, so a semantic label for an individual direction admits a stronger reading than the evidence supports.";
+    }
+
+    var m;
+    if (pinned){
+      m = "Pinned. Among all bases, sparsity fit peaks only at φ = 0°, 90°, 180°: the axes are identified up to permutation and sign (you may still swap the axes or flip their signs), by the assumption rather than by behaviour.";
+    } else if (sparsOn){
+      m = "The assumption rejects this basis: sparsity fit drops while every behavioural readout stays exactly where it was. Move φ to 0°, 90° or 180°.";
+    } else if (near(phi,30)){
+      m = "Axis 1 now carries essentially all of the readout weight: a tempting moment to declare it “the honesty direction.” Yet φ was your choice, and the subspace-level readouts cannot see it.";
+    } else if (near(phi,120)){
+      m = "Axis 1 is orthogonal to the readout: ablating “the honesty direction” does nothing at all. Same model, same plane; only your basis changed.";
+    } else if (phi%90<=4 || phi%90>=86){
+      m = "The axes sit on the sparse directions of the data, but nothing in the behavioural evidence privileges them: without an axis-identifying assumption, this basis has no special status.";
+    } else {
+      m = "Every subspace-level readout is frozen while the coordinate-level ones drift: the evidence identifies the plane, not the axes.";
+    }
+    msg.textContent = m;
+
+    jumps.forEach(function(b){ b.setAttribute("aria-pressed", +b.dataset.phi===phi ? "true":"false"); });
+  }
+
+  slider.addEventListener("input", update);
+  jumps.forEach(function(b){
+    b.addEventListener("click", function(){ slider.value = b.dataset.phi; update(); slider.focus(); });
+  });
+  btn.addEventListener("click", function(){
+    sparsOn = !sparsOn;
+    btn.setAttribute("aria-pressed", sparsOn ? "true":"false");
+    spBlk.hidden = !sparsOn;
+    update();   // φ stays where you left it: the message coaches you to 0°/90°/180°
+  });
+  update();
+})();
+</script>
+</body>
+</html>

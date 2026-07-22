@@ -245,6 +245,12 @@ defaults:
       layout: talk
       author_profile: true
       share: true
+  # unlisted tutorial demos: static .html files are picked up by jekyll-sitemap,
+  # and files without front matter cannot carry `sitemap: false` themselves
+  - scope:
+      path: "emnlp26-demos-a76c69"
+    values:
+      sitemap: false
 
 # Sass/SCSS
 sass:

@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagnose the claim (think-pair-share) · EMNLP 2026 tutorial demo</title>
+<style>
+  :root {
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --line:#E1DEEC;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+      --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+      --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+      --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --line:#332B49;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --line:#332B49;
+  }
+  :root[data-theme="light"] {
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --line:#E1DEEC;
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: 'Avenir Next', Avenir, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.55; padding: 1.6rem 1.2rem 2.5rem;
+  }
+  h1, h2 { font-family: Futura, 'Century Gothic', 'Avenir Next', 'Trebuchet MS', sans-serif; }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  .kicker { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; }
+  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.2rem; }
+  header h1 { color: var(--purple); font-size: 1.65rem; line-height: 1.2; margin: .3rem 0 .35rem; }
+  header .dek { color: var(--ink-soft); max-width: 66ch; }
+  a.back { color: var(--purple); text-decoration: none; font-size: .85rem; white-space: nowrap;
+    border: 1px solid var(--line); border-radius: 999px; padding: .3rem .8rem; margin-top: .2rem; }
+  a.back:hover { background: var(--hero); }
+  a.back:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+
+  .stage { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.2rem 1.2rem; margin-bottom: 1.6rem; }
+
+  .topbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .8rem; margin-bottom: .9rem; }
+  .progress { font-size: .85rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .timer { display: flex; align-items: center; gap: .45rem; flex-wrap: wrap; }
+  .timer .tlab { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; }
+  .timer button { font: inherit; font-size: .8rem; padding: .3rem .7rem; cursor: pointer;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--panel); color: var(--ink-soft); }
+  .timer button:hover { background: var(--hero); }
+  .timer button[aria-pressed="true"] { background: var(--purple); color: var(--paper); border-color: var(--purple); }
+  #tdisp { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 1rem; min-width: 3.2ch; color: var(--ink); }
+  #tdisp.done { color: var(--magenta); }
+
+  .primer { font-size: .78rem; color: var(--ink-soft); background: var(--panel); border: 1px solid var(--line);
+    border-radius: 8px; padding: .45rem .65rem; margin-bottom: .8rem; }
+  .primer b { color: var(--ink); }
+  .primer .pr1 { color: var(--l1); font-weight: 700; }
+  .primer .pr2 { color: var(--l2); font-weight: 700; }
+  .primer .pr3 { color: var(--l3); font-weight: 700; }
+  .banklab { font-size: .8rem; font-weight: 700; color: var(--ink); margin-bottom: .4rem; }
+  .banklab .stepnum { color: var(--purple); }
+  .banklab .banksub { font-weight: 400; color: var(--ink-soft); }
+  .vh { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  .bank { display: grid; grid-template-columns: repeat(auto-fill, minmax(228px, 1fr)); gap: .55rem; margin-bottom: 1rem; }
+  .cardbtn { font: inherit; text-align: left; cursor: pointer; background: var(--panel);
+    border: 1px solid var(--line); border-radius: 10px; padding: .55rem .65rem .5rem; color: var(--ink);
+    display: flex; flex-direction: column; gap: .28rem; }
+  .cardbtn:hover { background: var(--hero); }
+  .cardbtn[aria-pressed="true"] { border-color: var(--purple); box-shadow: inset 0 0 0 1px var(--purple); background: var(--hero); }
+  .cardtop { display: flex; justify-content: space-between; align-items: center; gap: .4rem; }
+  .tag { font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; border-radius: 999px; padding: .08rem .5rem; }
+  .tag.paper  { color: var(--purple); border: 1px solid var(--purple); }
+  .tag.anchor { color: var(--gap-green); border: 1px solid var(--gap-green); }
+  .tag.synth  { color: var(--l2); border: 1px solid var(--l2); }
+  .dot { width: .62rem; height: .62rem; border-radius: 50%; border: 1.5px solid var(--ink-mute); flex: 0 0 auto; }
+  .dot.done { background: var(--gap-green); border-color: var(--gap-green); }
+  .cardclaim { font-size: .82rem; line-height: 1.35; color: var(--ink); }
+  .cardmeth { font-size: .72rem; color: var(--ink-mute); }
+
+  .worksheet { border-top: 1px dashed var(--line); padding-top: .95rem; }
+  .wsclaim { background: var(--hero); border-radius: 10px; padding: .75rem .9rem; margin-bottom: .8rem; }
+  .wsclaim .claimtext { font-size: 1.04rem; font-weight: 600; line-height: 1.4; }
+  .wsclaim .methline { font-size: .82rem; color: var(--ink-soft); margin-top: .4rem; max-width: 78ch; }
+  .wsclaim .srcline { font-size: .74rem; color: var(--ink-mute); margin-top: .35rem; }
+  .wsclaim .whatif { font-size: .8rem; color: var(--ink-soft); margin-top: .5rem; border-top: 1px dashed var(--line);
+    padding-top: .45rem; max-width: 78ch; }
+  .wsclaim .whatif b { color: var(--purple); }
+
+  .step { margin-bottom: .8rem; }
+  .steplab { font-size: .8rem; font-weight: 700; color: var(--ink); margin-bottom: .3rem; }
+  .steplab .stepnum { color: var(--purple); }
+  #estimand { font: inherit; font-size: .86rem; width: 100%; max-width: 620px; padding: .42rem .6rem;
+    border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--ink); }
+  #estimand::placeholder { color: var(--ink-mute); }
+  .pills { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .pills button { font: inherit; font-size: .82rem; padding: .38rem .8rem; cursor: pointer;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--panel); color: var(--ink-soft); }
+  .pills button:hover { background: var(--hero); }
+  .pills button[aria-pressed="true"] { color: var(--paper); font-weight: 600; }
+  .pills button[data-rung="1"][aria-pressed="true"] { background: var(--l1); border-color: var(--l1); }
+  .pills button[data-rung="2"][aria-pressed="true"] { background: var(--l2); border-color: var(--l2); }
+  .pills button[data-rung="3"][aria-pressed="true"] { background: var(--l3); border-color: var(--l3); }
+  .hint { font-size: .76rem; color: var(--ink-mute); margin-top: .3rem; max-width: 76ch; }
+  .hint b { color: var(--ink-soft); }
+  .evbox { margin-top: .6rem; max-width: 620px; border: 1px dashed var(--line); border-radius: 8px; padding: .5rem .65rem .4rem; }
+  .evbox label { display: flex; justify-content: space-between; align-items: baseline; gap: .6rem;
+    font-size: .78rem; font-weight: 600; color: var(--ink); }
+  #evval { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--purple); white-space: nowrap; }
+  #evslider { width: 100%; accent-color: var(--purple); margin: .3rem 0 .05rem; }
+  details.markers { margin-top: .35rem; max-width: 76ch; }
+  details.markers summary { font-size: .76rem; color: var(--purple); cursor: pointer; }
+  .mrow { font-size: .76rem; color: var(--ink-soft); margin-top: .3rem; }
+  .mrow b { color: var(--ink); }
+
+  .verdict { border: 1px solid var(--line); border-radius: 10px; padding: .6rem .8rem; font-size: .86rem; color: var(--ink-soft); max-width: 78ch; }
+  .verdict.ok { border-color: var(--gap-green); color: var(--ink); }
+  .verdict.ok b { color: var(--gap-green); }
+  .verdict.bad { border-color: var(--magenta); color: var(--ink); }
+  .verdict.bad b { color: var(--magenta); }
+
+  button.reveal { font: inherit; font-size: .85rem; padding: .45rem 1rem; cursor: pointer; margin: .2rem 0 .9rem;
+    border: 1px solid var(--purple); border-radius: 10px; background: var(--purple); color: var(--paper); font-weight: 600; }
+  button.reveal:disabled { opacity: .45; cursor: not-allowed; }
+
+  .debrief { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: .8rem .9rem .7rem; }
+  .debrief h3 { font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: .5rem; }
+  .chips { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .55rem; }
+  .chip { font-size: .76rem; border-radius: 999px; padding: .18rem .65rem; border: 1px solid var(--line); color: var(--ink-soft); background: var(--card); }
+  .chip.r1 { border-color: var(--l1); color: var(--l1); font-weight: 600; }
+  .chip.r2 { border-color: var(--l2); color: var(--l2); font-weight: 600; }
+  .chip.r3 { border-color: var(--l3); color: var(--l3); font-weight: 600; }
+  .chip.g0 { border-color: var(--gap-green); color: var(--gap-green); font-weight: 700; }
+  .chip.gx { border-color: var(--magenta); color: var(--magenta); font-weight: 700; }
+  .debrief p { font-size: .84rem; color: var(--ink-soft); margin-bottom: .5rem; max-width: 80ch; }
+  .debrief p b { color: var(--ink); }
+  .fixgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: .55rem; margin-bottom: .55rem; }
+  .fixcard { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: .5rem .65rem; font-size: .8rem; color: var(--ink-soft); }
+  .fixcard .fxl { font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; margin-bottom: .25rem; }
+  .fixcard.weaken .fxl { color: var(--l1); }
+  .fixcard.strengthen .fxl { color: var(--l2); }
+  .fixcard.lesson .fxl { color: var(--gap-green); }
+
+  section { margin-bottom: 1.5rem; }
+  section h2 { color: var(--purple); font-size: 1.15rem; margin-bottom: .5rem; }
+  section p { max-width: 70ch; color: var(--ink-soft); margin-bottom: .6rem; }
+  section p.gloss { font-size: .78rem; color: var(--ink-mute); }
+  blockquote { border-left: 3px solid var(--purple-soft); padding: .2rem 0 .2rem 1rem; }
+  blockquote p { font-style: italic; color: var(--ink-soft); margin-bottom: .6rem; }
+  blockquote cite { font-size: .82rem; color: var(--ink-mute); font-style: normal; }
+  ol.try { max-width: 70ch; color: var(--ink-soft); padding-left: 1.2rem; }
+  ol.try li { margin-bottom: .5rem; }
+  footer { font-size: .78rem; color: var(--ink-mute); border-top: 1px solid var(--line); padding-top: .8rem; max-width: 90ch; }
+  footer a { color: var(--purple); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</div>
+      <h1>Diagnose the claim</h1>
+      <div class="dek">Think-pair-share: pick a claim from the bank, walk the paper’s practitioners’ checklist — estimand, method rung, claim rung, rung check — then reveal the instructor debrief and compare your call with the documented annotation.</div>
+    </div>
+    <a class="back" href="./index.html">← All demos</a>
+  </header>
+
+  <div class="stage">
+    <div class="topbar">
+      <div class="progress" id="progress" aria-live="polite">0 / 8 diagnosed</div>
+      <div class="timer" role="group" aria-label="Think-pair-share timer">
+        <span class="tlab">Think-pair-share timer</span>
+        <button type="button" id="tsolo" aria-pressed="false">Solo 2:00</button>
+        <button type="button" id="tpair" aria-pressed="false">Pair 3:00</button>
+        <button type="button" id="tstop">Stop</button>
+        <span id="tdisp" aria-live="polite">–:––</span>
+      </div>
+    </div>
+
+    <div class="primer"><b>Pearl’s ladder of causation, one line:</b> <span class="pr1">Rung 1 = observe</span> (correlations in what the model shows) · <span class="pr2">Rung 2 = intervene</span> (change something, watch the effect) · <span class="pr3">Rung 3 = counterfactual</span> (what would this same input have done otherwise?). Every “rung” on this page refers to this ladder.</div>
+
+    <div class="banklab"><span class="stepnum">0 ·</span> Pick a claim card <span class="banksub">— the worksheet below follows your pick</span></div>
+    <div class="bank" id="bank" role="group" aria-label="Claim bank: eight claims to diagnose"></div>
+    <div class="vh" id="announce" role="status" aria-live="polite"></div>
+
+    <div class="worksheet">
+      <div class="wsclaim">
+        <div class="claimtext" id="wclaim"></div>
+        <div class="methline" id="wmethod"></div>
+        <div class="whatif" id="wwhatif" aria-live="polite"></div>
+        <div class="srcline" id="wsource"></div>
+      </div>
+
+      <div class="step">
+        <div class="steplab"><span class="stepnum">1 ·</span> Estimand — “I am measuring …”</div>
+        <input type="text" id="estimand" placeholder='e.g., “probe accuracy for is_plural on layer 8 residual stream” or “logit difference change when patching MLP outputs”' aria-label="Estimand: what exactly is being measured">
+        <div class="hint">Estimand = the <b>target quantity</b> your experiment is meant to pin down (the estimator is the procedure that measures it). Free text, not graded — the debrief shows a sample answer to compare.</div>
+      </div>
+
+      <div class="step">
+        <div class="steplab"><span class="stepnum">2 ·</span> My method provides evidence at rung:</div>
+        <div class="pills" id="mpills">
+          <button type="button" data-rung="1" aria-pressed="false">Rung 1 · Observational</button>
+          <button type="button" data-rung="2" aria-pressed="false">Rung 2 · Interventional</button>
+          <button type="button" data-rung="3" aria-pressed="false">Rung 3 · Counterfactual</button>
+        </div>
+        <div class="hint">Checklist hint: probing → observational; activation patching → interventional; interchange interventions (swap activations between two runs and test whether the outputs swap too) → counterfactual.</div>
+        <div class="evbox">
+          <label for="evslider">Evidence strength (what-if) — sweeps the headline number in this card’s evidence <span id="evval" aria-live="polite"></span></label>
+          <input type="range" id="evslider" min="0" max="100" step="1" value="50">
+          <div class="hint">Drag the evidence strength: stronger numbers never move the method up a rung — only a different experiment does. Watch the what-if line in the claim box above.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="steplab"><span class="stepnum">3 ·</span> My claim requires evidence at rung:</div>
+        <div class="pills" id="cpills">
+          <button type="button" data-rung="1" aria-pressed="false">Rung 1 · Associational</button>
+          <button type="button" data-rung="2" aria-pressed="false">Rung 2 · Causal</button>
+          <button type="button" data-rung="3" aria-pressed="false">Rung 3 · Mechanistic</button>
+        </div>
+        <div class="hint">Two ladders, two namings: methods are named by what you <b>did</b> (observe / intervene / counterfactual); claims by what your <b>words assert</b> (association / causation / mechanism — the paper’s codebook names). A mechanistic claim needs counterfactual-grade evidence.</div>
+        <details class="markers">
+          <summary>Show the codebook’s linguistic markers per rung</summary>
+          <div class="mrow"><b>Rung 1:</b> “correlates with,” “is associated with,” “predicts,” “co-occurs with,” “information is present,” “is decodable from,” “can be extracted,” “activates on,” “fires when”</div>
+          <div class="mrow"><b>Rung 2:</b> “causally affects,” “has causal effect on,” “mediates,” “influences,” “is sufficient for,” “can produce,” “enables,” “intervening on X changes Y,” “ablating X degrades Y”</div>
+          <div class="mrow"><b>Rung 3:</b> “encodes,” “represents,” “computes,” “performs,” “THE circuit / mechanism / feature,” “controls,” “is responsible for,” “underlies,” “this head DOES X,” “uses X to do Y”</div>
+        </details>
+        <div class="hint">Codebook decision rule: hedges (“may encode,” “suggests that”) do <b>not</b> lower the rung — hedged claims are coded at the underlying claim’s rung, with the hedge reflected only in confidence.</div>
+      </div>
+
+      <div class="step">
+        <div class="steplab"><span class="stepnum">4 ·</span> Rung check — method rung ≥ claim rung?</div>
+        <div class="verdict" id="verdict" aria-live="polite">Pick a method rung and a claim rung to run the rung check.</div>
+      </div>
+
+      <button type="button" class="reveal" id="reveal" disabled title="Select a method rung and a claim rung first">Reveal instructor debrief</button>
+
+      <div class="debrief" id="debrief" hidden aria-live="polite"></div>
+    </div>
+  </div>
+
+  <section>
+    <h2>What this shows</h2>
+    <p>This is the tutorial’s live exercise: the paper’s practitioners’ checklist applied to concrete claims. Every diagnosis reduces to the same three moves — name the estimand, place the method on the ladder, place the claim’s language on the ladder — and then a single comparison: if the claim’s rung exceeds the method’s, the wording admits a stronger causal reading than the evidence licenses, and the checklist offers two repairs: strengthen the method (add interventions) or weaken the claim. The evidence-strength slider makes the orthogonality explicit: sweep the headline number from weak to near-perfect and the method’s rung never moves — only a different experiment moves it.</p>
+    <p>The bank pairs calibrated cases with rung-elevated ones. The IOI card is the paper’s own worked example of what interventional evidence licenses; the SAE-evaluation card is a documented calibration anchor whose verbs describe what the method does rather than what the model does internally. The six synthetic cards each exhibit one of the six recurring rung-elevation patterns from the paper’s annotation codebook — probing → “encodes”, SAE → “represents”, attention → “performs”, patching → “THE circuit”, steering → “controls”, ablation → “necessary”.</p>
+  </section>
+
+  <section>
+    <h2>What the paper says</h2>
+    <blockquote>
+      <p>“Rung check: Method rung ≥ Claim rung? … If No: either strengthen method (add interventions) or weaken claim (‘correlates with’ instead of ‘implements’).”</p>
+      <p>“This checklist is not meant to discourage exploratory work or to raise publication barriers. A paper that states its rung, names its equivalence class, and bounds its scope contributes more than one whose language implies stronger evidence than reported — even if the former’s claims are narrower.”</p>
+      <cite>— <em>Causality is Key for Interpretability Claims to Generalise</em> (arXiv:2602.16698), practitioners’ checklist</cite>
+    </blockquote>
+    <p class="gloss">Term gloss (added for this exercise): an <b>equivalence class</b> is the set of alternative explanations — e.g., candidate circuits — that the reported evidence cannot tell apart.</p>
+  </section>
+
+  <section>
+    <h2>Try this</h2>
+    <ol class="try">
+      <li>Start the <b>Solo 2:00</b> timer, pick one card, and commit: write the estimand in your own words and select both rungs <em>before</em> revealing the debrief. The estimand is the hardest box on the checklist — if you cannot fill it, that is itself a diagnosis. Then drag the evidence-strength slider to both ends: does your rung call change? (It should not.)</li>
+      <li>Start <b>Pair 3:00</b> and compare with your neighbour on a card where you disagreed. The codebook’s edge rules usually settle it: hedges do not lower a claim’s rung, and each claim is coded against the method that directly supports it.</li>
+      <li>Run your own most recent abstract through steps 1–4. If the rung check fails, decide which repair you would actually ship: the weakened sentence, or the added intervention.</li>
+    </ol>
+  </section>
+
+  <footer>
+    Original teaching exercise built for this tutorial around the practitioners’ checklist and the pilot-study annotation codebook of <a href="https://arxiv.org/abs/2602.16698"><em>Causality is Key for Interpretability Claims to Generalise</em> (arXiv:2602.16698)</a>; the exercise itself is not an experiment from the paper. Cards marked “synthetic” are written for this exercise to exhibit the codebook’s documented rung-elevation patterns — they quote no real paper and are attributed to none. Framing follows the paper: rung-elevated <em>language</em>, a property of wording, never a claim about author intent. · tutorial demo · CC-BY
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var R = { 1: 'Rung 1', 2: 'Rung 2', 3: 'Rung 3' };
+  var MNAME = { 1: 'Observational', 2: 'Interventional', 3: 'Counterfactual' };
+  var CNAME = { 1: 'Associational', 2: 'Causal', 3: 'Mechanistic' };
+
+  var CLAIMS = [
+    {
+      id: 'ioi', type: 'paper', typeLabel: 'Paper worked example',
+      claim: '“Intervening on head 9.6 changes IOI behavior under these tested conditions.”',
+      methodShort: 'activation patching',
+      method: 'Activation patching in GPT-2 small: at head 9.6, replace the activation from a clean IOI (indirect object identification) run (“Mary gave a book to John. Mary gave a pencil to…”) with the activation from a name-swapped run, and observe whether the output moves from “John” toward “Mary.”',
+      source: 'The paper’s own worked example of interventional evidence, on the IOI task studied by Wang et al. (2023).',
+      docMLo: 2, docMHi: 2, docMLabel: 'Rung 2 · Interventional (activation patching)',
+      docC: 2, docCLabel: 'Rung 2 · Causal — “intervening on X changes Y,” scoped “under these tested conditions”',
+      gap: 0,
+      estimand: 'output change from “John” toward “Mary” when patching head 9.6’s activation',
+      notes: [
+        'What L2 licenses (verbatim): “Intervening on head 9.6 changes IOI behavior under these tested conditions.”',
+        'What L2 does not license (verbatim): “Head 9.6 is the IOI mechanism” (sufficiency ≠ necessity; other paths may exist) or “This finding will hold on all IOI-like prompts” (requires transportability testing).',
+        'Transportability (term gloss): whether the effect transfers to new prompts, tasks, or models.',
+        'Alternatives: Wang et al. (2023) themselves find multiple redundant circuits for the IOI task — ablating the discovered circuit only partially degrades performance.'
+      ],
+      lesson: 'Calibrated as written: the verb stays at the intervention (“intervening … changes”) and the scope clause bounds the conditions. No repair needed.'
+    },
+    {
+      id: 'sae-eval', type: 'anchor', typeLabel: 'Calibration anchor',
+      claim: '“SAEs struggle to reach baseline” — and the SAE finds “features that mediate knowledge.”',
+      methodShort: 'SAE attribution + interchange intervention',
+      method: 'Open-source sparse autoencoders on GPT-2 small: SAE feature attribution evaluated via interchange interventions (swapping feature activations between two runs), compared against baselines.',
+      source: 'Documented calibration anchor: SAE Evaluation (Chaudhary & Geiger, 2024), annotated in the paper’s pilot study.',
+      docMLo: 1, docMHi: 2, docMLabel: 'Mixed Rung 1–2 · SAE feature attribution (R1) evaluated via interchange intervention (R2)',
+      docC: 2, docCLabel: 'Rung 2 · Causal — “mediate” precisely describes an interventional finding',
+      gap: 0,
+      estimand: 'effect on factual predictions when interchanging SAE feature activations, relative to baselines',
+      notes: [
+        'Documented rationale: “Reports intervention outcome without asserting mechanism”; “Utility claim scoped to method capability, not internal mechanism.” Replication status: replicated.'
+      ],
+      lesson: 'Calibration lesson (verbatim): “The key linguistic signature: verbs describe what the method does (‘struggles,’ ‘mediates’) rather than what the model does internally.”'
+    },
+    {
+      id: 'probe-encodes', type: 'synth', typeLabel: 'Synthetic teaching example',
+      claim: '“The model encodes subject-verb agreement in this subspace.”',
+      methodShort: 'linear probe, no intervention',
+      method: 'A linear probe trained on frozen residual-stream activations reaches high held-out accuracy. Nothing in the model’s forward pass is ever modified.',
+      source: 'Synthetic card exhibiting the codebook pattern: Probing → “encodes” (linear probe R1 → claim R3, documented gap +2).',
+      docMLo: 1, docMHi: 1, docMLabel: 'Rung 1 · Observational (linear probing: classifier on frozen activations)',
+      docC: 3, docCLabel: 'Rung 3 · Mechanistic — “encodes” is a rung-3 marker',
+      gap: 2,
+      estimand: 'probe accuracy for subject-verb agreement on frozen residual-stream activations',
+      notes: [
+        'Alternatives not ruled out (checklist example): “probe may exploit token length, not the concept.”',
+        'Why decodability is not encoding (verbatim): “the information may be present but unused by the model’s own computation.”'
+      ],
+      fixW: '“Subject-verb agreement is linearly decodable from this subspace.” (rung-1 marker: “is decodable from”)',
+      fixS: 'Intervene on the subspace — patch or ablate it and measure the behavioural effect (rung 2); interchange interventions push toward rung 3.'
+    },
+    {
+      id: 'sae-represents', type: 'synth', typeLabel: 'Synthetic teaching example',
+      claim: '“This feature represents the concept of deception.”',
+      methodShort: 'SAE attribution, no intervention',
+      method: 'SAE feature attribution: feature 4123 fires on deception-related text. The feature is never clamped, ablated, or interchanged.',
+      source: 'Synthetic card exhibiting the codebook pattern: SAE → “represents” (SAE attribution R1 → claim R3, documented gap +2).',
+      docMLo: 1, docMHi: 1, docMLabel: 'Rung 1 · Observational (SAE feature attribution: identify which features activate)',
+      docC: 3, docCLabel: 'Rung 3 · Mechanistic — “represents” is a rung-3 marker',
+      gap: 2,
+      estimand: 'activation frequency of feature 4123 on deception-related vs. control text',
+      notes: [
+        'Contrast with the calibration-anchor card: the SAE Evaluation paper earns its “mediate” by interchange intervention; this card asserts “represents” from activations alone.'
+      ],
+      fixW: '“Feature 4123 activates on deception-related text.” (rung-1 marker: “activates on”)',
+      fixS: 'Clamp or interchange the feature and measure the effect on model output (rung 2).'
+    },
+    {
+      id: 'attn-performs', type: 'synth', typeLabel: 'Synthetic teaching example',
+      claim: '“These heads perform the IOI task.”',
+      methodShort: 'attention visualisation, no intervention',
+      method: 'Attention visualisation: attention weights concentrate on the indirect-object token across IOI prompts. No patching, no ablation.',
+      source: 'Synthetic card exhibiting the codebook pattern: Attention → “performs” (attention vis. R1 → claim R3, documented gap +2).',
+      docMLo: 1, docMHi: 1, docMLabel: 'Rung 1 · Observational (attention visualisation: inspect attention weights)',
+      docC: 3, docCLabel: 'Rung 3 · Mechanistic — “perform” is a rung-3 marker; the codebook’s own example sentence',
+      gap: 2,
+      estimand: 'attention-weight mass on the indirect-object token',
+      notes: [
+        'Compare with the IOI worked-example card: the same task, but there the evidence is an actual intervention — and the claim still stays at rung 2.'
+      ],
+      fixW: '“Attention concentrates on the indirect-object token.” (the codebook’s rung-1 evidence phrasing)',
+      fixS: 'Patch or ablate the heads and measure the effect on the IOI completion (rung 2).'
+    },
+    {
+      id: 'the-circuit', type: 'synth', typeLabel: 'Synthetic teaching example',
+      claim: '“The circuit moves names from subject to output.”',
+      methodShort: 'activation patching',
+      method: 'Activation patching identifies a set of heads whose patching restores most of the behaviour on the tested prompt distribution. No test that this set is unique or necessary.',
+      source: 'Synthetic card exhibiting the codebook pattern: Patching → “THE circuit” (activation patching R2 → claim R3, documented gap +1).',
+      docMLo: 2, docMHi: 2, docMLabel: 'Rung 2 · Interventional (activation patching: replace activation, measure effect)',
+      docC: 3, docCLabel: 'Rung 3 · Mechanistic — the definite article “THE circuit” + functional verb “moves”',
+      gap: 1,
+      estimand: 'logit difference change when patching the candidate heads',
+      notes: [
+        'Documented lesson: definite articles and functional verbs are naming conventions inherited from neuroscience and engineering; here they can imply uniqueness or necessity that patching does not establish. This pattern accounts for the majority of one-rung gaps in the paper’s dataset.',
+        'Alternatives not ruled out (checklist example): “other circuits may achieve same patching effect.”'
+      ],
+      fixW: '“Patching this set of heads is sufficient to restore the behaviour under the tested interventions; alternative circuits are not ruled out.”',
+      fixS: 'Rung 3 needs uniqueness or necessity evidence: causal scrubbing (replace activations consistently with the hypothesised circuit and check behaviour is preserved), or necessity tests showing no alternative achieves the same behaviour.'
+    },
+    {
+      id: 'steer-controls', type: 'synth', typeLabel: 'Synthetic teaching example',
+      claim: '“This direction controls sentiment.”',
+      methodShort: 'steering vector',
+      method: 'Steering vector: adding a direction v to the residual stream shifts the sentiment of generations on the evaluated prompts.',
+      source: 'Synthetic card exhibiting the codebook pattern: Steering → “controls” (steering vectors R2 → claim R3, documented gap +1).',
+      docMLo: 2, docMHi: 2, docMLabel: 'Rung 2 · Interventional (steering vectors: add direction, observe output change)',
+      docC: 3, docCLabel: 'Rung 3 · Mechanistic — “controls” is a rung-3 marker',
+      gap: 1,
+      estimand: 'sentiment shift of generations when adding v to the residual stream',
+      notes: [
+        '“Controls” implies exclusive, mechanism-level ownership of the concept; the intervention shows one direction that shifts the behaviour, not that it is the unique or necessary one.'
+      ],
+      fixW: '“Adding v shifts sentiment on the evaluated prompts.” (rung-2 marker: “intervening on X changes Y”)',
+      fixS: 'Test uniqueness and per-instance counterfactuals: do other directions produce the same shift, and does the effect hold instance-by-instance (rung 3)?'
+    },
+    {
+      id: 'abl-necessary', type: 'synth', typeLabel: 'Synthetic teaching example',
+      claim: '“These heads are necessary for the behaviour — ablating them reduces accuracy by 40%.”',
+      methodShort: 'ablation',
+      method: 'Zero-ablation of the candidate heads on the evaluation set; task accuracy drops by 40%. No search over alternative pathways.',
+      source: 'Synthetic card exhibiting the codebook pattern: Ablation → “necessary” (ablation R2 → claim R3, documented gap +1).',
+      docMLo: 2, docMHi: 2, docMLabel: 'Rung 2 · Interventional (ablation: zero/mean out components)',
+      docC: 3, docCLabel: 'Rung 3 · Mechanistic — necessity is a counterfactual-level property',
+      gap: 1,
+      estimand: 'accuracy drop when zero-ablating the candidate heads',
+      notes: [
+        'From the paper: sufficiency (intervention changes output) does not entail necessity — without these heads the output would have to be shown to differ, and alternative pathways may exist.',
+        'Cautionary precedent: in IOI, ablating the “discovered” circuit only partially degrades performance (Wang et al., 2023), indicating distributed computation.'
+      ],
+      fixW: '“Ablating these heads degrades performance.” (rung-2 marker: “ablating X degrades Y”)',
+      fixS: 'Necessity tests (rung 3): show that no alternative pathway achieves the same behaviour, e.g. via causal scrubbing (replace activations consistently with the hypothesised circuit and check behaviour is preserved).'
+    }
+  ];
+
+  /* Evidence-strength slider config per card: what-if sweep of the headline number
+     in the card's evidence. Defaults match the card's stated value where one exists
+     (ablation: 40%); otherwise a value consistent with the card's wording. */
+  var EV = {
+    'ioi':            { min: 10, max: 95, step: 1, def: 85, dec: 0, val: function (n) { return n + '%'; }, line: function (n) { return 'patching head 9.6 restores ' + n + '% of the clean-run behaviour'; } },
+    'sae-eval':       { min: 10, max: 95, step: 1, def: 60, dec: 0, val: function (n) { return n + '%'; }, line: function (n) { return 'interchanging the SAE features shifts ' + n + '% of the factual predictions'; } },
+    'probe-encodes':  { min: 55, max: 99.9, step: 0.1, def: 90, dec: 1, val: function (n) { return n + '%'; }, line: function (n) { return 'the probe reaches ' + n + '% held-out accuracy'; } },
+    'sae-represents': { min: 55, max: 99.9, step: 0.1, def: 90, dec: 1, val: function (n) { return n + '%'; }, line: function (n) { return 'feature 4123 fires on ' + n + '% of deception-related texts'; } },
+    'attn-performs':  { min: 55, max: 99.9, step: 0.1, def: 90, dec: 1, val: function (n) { return n + '%'; }, line: function (n) { return 'attention mass on the indirect-object token reaches ' + n + '%'; } },
+    'the-circuit':    { min: 10, max: 95, step: 1, def: 85, dec: 0, val: function (n) { return n + '%'; }, line: function (n) { return 'patching the candidate heads restores ' + n + '% of the behaviour'; } },
+    'steer-controls': { min: 0.1, max: 2, step: 0.1, def: 0.8, dec: 1, val: function (n) { return 'd = ' + n; }, line: function (n) { return 'adding v shifts sentiment by effect size d = ' + n; } },
+    'abl-necessary':  { min: 5, max: 95, step: 1, def: 40, dec: 0, val: function (n) { return n + '%'; }, line: function (n) { return 'ablating the candidate heads drops accuracy by ' + n + '%'; } }
+  };
+
+  var state = { current: 'ioi', answers: {} };
+  CLAIMS.forEach(function (c) { state.answers[c.id] = { est: '', m: 0, c: 0, revealed: false, ev: null }; });
+
+  var bankEl = document.getElementById('bank');
+  var progressEl = document.getElementById('progress');
+  var wclaimEl = document.getElementById('wclaim');
+  var wmethodEl = document.getElementById('wmethod');
+  var wsourceEl = document.getElementById('wsource');
+  var estEl = document.getElementById('estimand');
+  var mpills = Array.prototype.slice.call(document.querySelectorAll('#mpills button'));
+  var cpills = Array.prototype.slice.call(document.querySelectorAll('#cpills button'));
+  var verdictEl = document.getElementById('verdict');
+  var revealBtn = document.getElementById('reveal');
+  var debriefEl = document.getElementById('debrief');
+  var evEl = document.getElementById('evslider');
+  var evvalEl = document.getElementById('evval');
+  var wwhatifEl = document.getElementById('wwhatif');
+  var announceEl = document.getElementById('announce');
+
+  function byId(id) { for (var i = 0; i < CLAIMS.length; i++) if (CLAIMS[i].id === id) return CLAIMS[i]; return null; }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  /* ---------- claim bank ---------- */
+  CLAIMS.forEach(function (c) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'cardbtn'; b.id = 'card-' + c.id;
+    b.setAttribute('aria-pressed', 'false');
+    b.innerHTML =
+      '<span class="cardtop"><span class="tag ' + c.type + '">' + esc(c.typeLabel) + '</span>' +
+      '<span class="dot" id="dot-' + c.id + '" aria-hidden="true"></span></span>' +
+      '<span class="cardclaim">' + esc(c.claim) + '</span>' +
+      '<span class="cardmeth">Method: ' + esc(c.methodShort) + '</span>';
+    b.addEventListener('click', function () { selectClaim(c.id, true); });
+    bankEl.appendChild(b);
+  });
+
+  function selectClaim(id, byUser) {
+    state.current = id;
+    var c = byId(id), a = state.answers[id];
+    CLAIMS.forEach(function (k) {
+      document.getElementById('card-' + k.id).setAttribute('aria-pressed', String(k.id === id));
+    });
+    wclaimEl.textContent = c.claim;
+    wmethodEl.textContent = 'Evidence reported: ' + c.method;
+    wsourceEl.textContent = c.source;
+    estEl.value = a.est;
+    mpills.forEach(function (p) { p.setAttribute('aria-pressed', String(+p.dataset.rung === a.m)); });
+    cpills.forEach(function (p) { p.setAttribute('aria-pressed', String(+p.dataset.rung === a.c)); });
+    var cfg = EV[id];
+    evEl.min = cfg.min; evEl.max = cfg.max; evEl.step = cfg.step;
+    evEl.value = (a.ev == null) ? cfg.def : a.ev;
+    renderWhatIf();
+    updateVerdict();
+    if (a.revealed) { renderDebrief(); } else { debriefEl.hidden = true; debriefEl.innerHTML = ''; }
+    if (byUser) {
+      announceEl.textContent = 'Selected: ' + c.claim + ' Worksheet updated below.';
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.querySelector('.wsclaim').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
+    }
+  }
+
+  /* ---------- evidence-strength what-if slider ---------- */
+  function renderWhatIf() {
+    var c = byId(state.current), cfg = EV[c.id];
+    var v = +evEl.value;
+    var num = Number(v).toFixed(cfg.dec);
+    evvalEl.textContent = cfg.val(num);
+    var t = (v - cfg.min) / (cfg.max - cfg.min);
+    var strength = t < .33 ? 'reads weak' : t < .66 ? 'reads moderate' : t < .9 ? 'reads strong' : 'reads near-perfect';
+    wwhatifEl.innerHTML = '<b>What-if evidence (slider):</b> ' + esc(cfg.line(num)) +
+      ' <em>(' + strength + ')</em> — the experiment itself is unchanged, so the method’s rung is unchanged.';
+  }
+  evEl.addEventListener('input', function () {
+    state.answers[state.current].ev = +evEl.value;
+    renderWhatIf();
+  });
+
+  /* ---------- worksheet interactions ---------- */
+  estEl.addEventListener('input', function () { state.answers[state.current].est = estEl.value; });
+
+  function bindPills(pills, key) {
+    pills.forEach(function (p) {
+      p.addEventListener('click', function () {
+        var a = state.answers[state.current];
+        a[key] = +p.dataset.rung;
+        pills.forEach(function (q) { q.setAttribute('aria-pressed', String(q === p)); });
+        updateVerdict();
+        if (a.revealed) renderDebrief();
+      });
+    });
+  }
+  bindPills(mpills, 'm');
+  bindPills(cpills, 'c');
+
+  function updateVerdict() {
+    var a = state.answers[state.current];
+    verdictEl.className = 'verdict';
+    if (!a.m || !a.c) {
+      verdictEl.textContent = 'Pick a method rung and a claim rung to run the rung check.';
+      revealBtn.disabled = true;
+      revealBtn.title = 'Select a method rung and a claim rung first';
+      return;
+    }
+    revealBtn.disabled = false;
+    revealBtn.removeAttribute('title');
+    if (a.m >= a.c) {
+      verdictEl.classList.add('ok');
+      verdictEl.innerHTML = '<b>Yes — aligned.</b> Method rung (' + a.m + ') ≥ claim rung (' + a.c + '): the language does not outrun the evidence. Reveal the debrief to compare with the documented annotation.';
+    } else {
+      verdictEl.classList.add('bad');
+      verdictEl.innerHTML = '<b>No → revise.</b> Claim rung (' + a.c + ') exceeds method rung (' + a.m + '): the wording admits a stronger causal reading than the method licenses. Checklist repair: “either strengthen method (add interventions) or weaken claim (‘correlates with’ instead of ‘implements’).”';
+    }
+  }
+
+  revealBtn.addEventListener('click', function () {
+    state.answers[state.current].revealed = true;
+    renderDebrief();
+    updateProgress();
+  });
+
+  function chip(cls, text) { return '<span class="chip ' + cls + '">' + esc(text) + '</span>'; }
+
+  function renderDebrief() {
+    var c = byId(state.current), a = state.answers[state.current];
+    var mMatch = a.m >= c.docMLo && a.m <= c.docMHi;
+    var cMatch = a.c === c.docC;
+    var gapChip = c.gap === 0
+      ? chip('g0', 'Gap 0 · calibrated')
+      : chip('gx', 'Gap +' + c.gap + ' · rung-elevated language');
+
+    var html = '<h3>Instructor debrief · documented annotation</h3>';
+    html += '<div class="chips">' + chip('r' + c.docMHi, 'Method: ' + c.docMLabel) + chip('r' + c.docC, 'Claim: ' + c.docCLabel) + gapChip + '</div>';
+
+    html += '<p><b>Your call:</b> method ' + R[a.m] + ' (' + MNAME[a.m] + '), claim ' + R[a.c] + ' (' + CNAME[a.c] + ') — ';
+    if (mMatch && cMatch) {
+      html += 'matches the documented annotation.</p>';
+    } else {
+      var parts = [];
+      if (!mMatch) parts.push('method differs (documented: ' + c.docMLabel + ')');
+      if (!cMatch) parts.push('claim differs (documented: ' + c.docCLabel + ')');
+      html += esc(parts.join('; ')) + '. Disagreement is discussion material, not an error: the codebook codes hedged claims at the underlying claim’s rung, and each claim against the method that directly supports it.</p>';
+    }
+
+    if (a.est.trim()) {
+      html += '<p><b>Your estimand:</b> “' + esc(a.est.trim()) + '”. One way the worksheet answer could read: <em>' + esc(c.estimand) + '</em>.</p>';
+    } else {
+      html += '<p><b>Estimand:</b> one way the worksheet answer could read: <em>' + esc(c.estimand) + '</em>.</p>';
+    }
+
+    html += '<div class="fixgrid">';
+    if (c.gap === 0) {
+      html += '<div class="fixcard lesson"><div class="fxl">Why it is calibrated</div>' + esc(c.lesson) + '</div>';
+    } else {
+      html += '<div class="fixcard weaken"><div class="fxl">Fix A · weaken the language</div>' + esc(c.fixW) + '</div>';
+      html += '<div class="fixcard strengthen"><div class="fxl">Fix B · strengthen the method</div>' + esc(c.fixS) + '</div>';
+    }
+    html += '</div>';
+
+    c.notes.forEach(function (n) { html += '<p>' + esc(n) + '</p>'; });
+
+    debriefEl.innerHTML = html;
+    debriefEl.hidden = false;
+  }
+
+  function updateProgress() {
+    var done = 0, matched = 0;
+    CLAIMS.forEach(function (c) {
+      var a = state.answers[c.id];
+      if (a.revealed) {
+        done++;
+        if (a.m >= c.docMLo && a.m <= c.docMHi && a.c === c.docC) matched++;
+        document.getElementById('dot-' + c.id).classList.add('done');
+      }
+    });
+    progressEl.textContent = done + ' / ' + CLAIMS.length + ' diagnosed' +
+      (done ? ' · ' + matched + ' matched the documented annotation' : '');
+  }
+
+  /* ---------- timers (2 min solo / 3 min pair) ---------- */
+  var tdisp = document.getElementById('tdisp');
+  var tsolo = document.getElementById('tsolo');
+  var tpair = document.getElementById('tpair');
+  var tstop = document.getElementById('tstop');
+  var tHandle = null, tLeft = 0;
+
+  function fmt(s) { return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+  function stopTimer(clear) {
+    if (tHandle) { clearInterval(tHandle); tHandle = null; }
+    tsolo.setAttribute('aria-pressed', 'false');
+    tpair.setAttribute('aria-pressed', 'false');
+    if (clear) { tdisp.textContent = '–:––'; tdisp.classList.remove('done'); }
+  }
+  function startTimer(sec, btn) {
+    stopTimer(true);
+    btn.setAttribute('aria-pressed', 'true');
+    tLeft = sec;
+    tdisp.textContent = fmt(tLeft);
+    tHandle = setInterval(function () {
+      tLeft--;
+      if (tLeft <= 0) {
+        tdisp.textContent = 'Time — swap or debrief';
+        tdisp.classList.add('done');
+        stopTimer(false);
+      } else {
+        tdisp.textContent = fmt(tLeft);
+      }
+    }, 1000);
+  }
+  tsolo.addEventListener('click', function () { startTimer(120, tsolo); });
+  tpair.addEventListener('click', function () { startTimer(180, tpair); });
+  tstop.addEventListener('click', function () { stopTimer(true); });
+
+  /* ---------- init ---------- */
+  selectClaim('ioi');
+  updateProgress();
+})();
+</script>
+</body>
+</html>

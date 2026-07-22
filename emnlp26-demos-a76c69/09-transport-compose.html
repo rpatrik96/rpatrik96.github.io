@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Will the Edit Survive Deployment? — Causal Foundations for Interpretability</title>
+<style>
+:root{
+  --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+  --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+  --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+  --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B;
+  --gap-green:#3E8E5A; --line:#E1DEEC;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E;
+    --gap-green:#5FB37E; --line:#332B49;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+  --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+  --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+  --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E;
+  --gap-green:#5FB37E; --line:#332B49;
+}
+:root[data-theme="light"]{
+  --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+  --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+  --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+  --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B;
+  --gap-green:#3E8E5A; --line:#E1DEEC;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);
+  font-family:'Avenir Next',Avenir,'Segoe UI',system-ui,sans-serif;
+  font-size:16px;line-height:1.55}
+h1,h2,h3{font-family:Futura,'Century Gothic','Avenir Next','Trebuchet MS',sans-serif;line-height:1.2}
+.wrap{max-width:960px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+.kicker{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute)}
+header h1{color:var(--purple);font-size:1.7rem;margin:.35rem 0 .3rem}
+.dek{color:var(--ink-soft);max-width:70ch;margin:0}
+.back{display:inline-block;font-size:.85rem;color:var(--purple);text-decoration:none;margin-bottom:.9rem}
+.back:hover{text-decoration:underline}
+a{color:var(--purple)}
+code{font-size:.86em;background:var(--hero);border-radius:5px;padding:.06em .3em}
+
+/* ---- stage ---- */
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:1.1rem;margin:1.4rem 0}
+.tabs{display:flex;gap:.5rem;border-bottom:1px solid var(--line);margin-bottom:1rem;flex-wrap:wrap}
+.tab{padding:.5rem .9rem;border:1px solid var(--line);border-bottom:none;border-radius:10px 10px 0 0;
+  background:var(--card);color:var(--ink-soft);cursor:pointer;font:inherit;font-weight:600;font-size:.9rem}
+.tab[aria-selected="true"]{background:var(--hero);color:var(--purple);box-shadow:inset 0 3px 0 var(--purple)}
+.tab:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.tab .tsub{display:block;font-weight:400;font-size:.74rem;color:var(--ink-mute)}
+
+.controls{display:flex;flex-wrap:wrap;gap:.7rem 1.2rem;align-items:center;margin-bottom:.9rem}
+.togbtn{display:inline-flex;flex-direction:column;gap:.05rem;text-align:left;cursor:pointer;
+  background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.45rem .7rem;
+  color:var(--ink);font:inherit}
+.togbtn .tname{font-weight:600;font-size:.9rem}
+.togbtn .tnote{font-size:.74rem;color:var(--ink-mute)}
+.togbtn[aria-pressed="true"]{border-color:var(--purple-mid);background:var(--hero);box-shadow:inset 3px 0 0 var(--purple)}
+.togbtn:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.sgroup{display:flex;flex-direction:column;gap:.25rem;min-width:16rem;flex:1}
+.sgroup label{font-size:.8rem;color:var(--ink-soft)}
+.srow{display:flex;align-items:center;gap:.6rem}
+input[type=range]{flex:1;accent-color:var(--purple);min-width:8rem}
+input[type=range]:focus-visible{outline:2px solid var(--purple);outline-offset:3px}
+.sval{font-variant-numeric:tabular-nums;font-size:.86rem;min-width:3.6rem;color:var(--ink)}
+.hint{font-size:.82rem;color:var(--ink-soft);margin:-.2rem 0 .9rem;max-width:75ch}
+.hint b{color:var(--purple)}
+.presets{display:flex;gap:.4rem}
+.chip{font:inherit;font-size:.74rem;padding:.18rem .55rem;border-radius:99px;cursor:pointer;
+  border:1px solid var(--line);background:var(--card);color:var(--ink-soft)}
+.chip[aria-pressed="true"]{border-color:var(--purple-mid);background:var(--hero);color:var(--purple);font-weight:600}
+.chip:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.9rem}
+.tile{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--ink-mute);
+  border-radius:10px;padding:.55rem .8rem}
+.tile .tlab{display:block;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-mute)}
+.tile .tnum{font-size:1.55rem;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink)}
+.tile .tstat{font-size:.86rem;font-weight:600;margin-left:.4rem}
+.tile .tsub{display:block;font-size:.75rem;color:var(--ink-mute)}
+.tile.ok{border-left-color:var(--gap-green)} .tile.ok .tstat{color:var(--gap-green)}
+.tile.over{border-left-color:var(--l2)} .tile.over .tstat{color:var(--l2)}
+.tile.fail{border-left-color:var(--magenta)} .tile.fail .tstat{color:var(--magenta)}
+
+.chartcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.7rem .8rem;margin-bottom:.9rem}
+.chartcard svg{display:block;width:100%;height:auto}
+.chartnote{font-size:.76rem;color:var(--ink-mute);margin:.45rem 0 0;max-width:75ch}
+
+.probes{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:.9rem}
+.probe{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.5rem .65rem;font-size:.82rem}
+.probe.inband{border-color:var(--purple-mid);box-shadow:inset 3px 0 0 var(--purple)}
+.probe .pd{font-size:.7rem;color:var(--ink-mute);font-variant-numeric:tabular-nums}
+.probe .ptext{color:var(--ink-soft);margin:.15rem 0 .3rem;min-height:2.5em}
+.probe .ans{font-weight:600}
+.probe .ans.good{color:var(--gap-green)} .probe .ans.bad{color:var(--magenta)} .probe .ans.base{color:var(--ink-soft)}
+.probe .pp{font-size:.72rem;color:var(--ink-mute);font-variant-numeric:tabular-nums;margin-left:.3rem}
+.bandtag{display:inline-block;font-size:.62rem;font-weight:600;color:var(--purple);background:var(--hero);
+  border:1px solid var(--purple-soft);border-radius:99px;padding:.02rem .4rem;margin-left:.35rem;vertical-align:.08rem}
+
+.verdict{border-radius:10px;border:1px solid var(--line);background:var(--card);padding:.7rem .9rem;margin-bottom:.7rem}
+.verdict .vhead{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;display:block;margin-bottom:.2rem;color:var(--ink-mute)}
+.verdict p{margin:.15rem 0;font-size:.9rem;max-width:75ch}
+.verdict.ok{border-left:4px solid var(--gap-green)} .verdict.ok .vhead{color:var(--gap-green)}
+.verdict.over{border-left:4px solid var(--l2)} .verdict.over .vhead{color:var(--l2)}
+.verdict.fail{border-left:4px solid var(--magenta)} .verdict.fail .vhead{color:var(--magenta)}
+
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.9rem}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.7rem .8rem}
+.pcard h3{margin:0 0 .15rem;font-size:.95rem}
+.pcard .mech{font-size:.78rem;color:var(--ink-soft);margin:0 0 .5rem}
+.pcard svg{display:block;width:100%;max-width:340px;height:auto}
+.skey{display:flex;gap:.8rem;flex-wrap:wrap;margin:.35rem 0 .55rem;font-size:.72rem;color:var(--ink-mute)}
+.skey span::before{content:"";display:inline-block;width:.7rem;height:.7rem;border-radius:3px;margin-right:.3rem;vertical-align:-.08rem}
+.skey .ka::before{background:var(--gap-green)}
+.skey .kb::before{background:var(--l2)}
+.skey .kc::before{background:var(--l2);outline:2px dashed var(--magenta);outline-offset:-1px}
+.skey .kca::before{background:var(--gap-green);outline:2px dashed var(--magenta);outline-offset:-1px}
+.bbars{display:grid;grid-template-columns:auto 1fr auto;gap:.35rem .6rem;align-items:center}
+.blab{font-size:.84rem;color:var(--ink-soft);min-width:6.2rem}
+.btrack{position:relative;height:.9rem;background:var(--paper);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.bfill{position:absolute;top:2px;bottom:2px;left:2px;border-radius:4px;background:var(--purple);transition:width .3s}
+.bfill.bad{background:var(--magenta)}
+.bval{font-size:.82rem;font-variant-numeric:tabular-nums;color:var(--ink);min-width:4.6rem;text-align:right}
+.bval.bad{color:var(--magenta);font-weight:600}
+.bval.mute{color:var(--ink-mute)}
+
+.scenenote{font-size:.75rem;color:var(--ink-mute);margin:.4rem 0 0;max-width:75ch}
+[hidden]{display:none!important}
+
+/* prose sections */
+section.prose{margin:1.6rem 0;max-width:70ch}
+section.prose h2{font-size:1.15rem;color:var(--purple);margin-bottom:.4rem}
+section.prose p{max-width:70ch}
+.paperbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:.9rem 1.1rem;margin:1.6rem 0}
+.paperbox h2{font-size:1.15rem;color:var(--purple);margin:.1rem 0 .4rem}
+.paperbox blockquote{margin:.6rem 0;padding-left:.9rem;border-left:3px solid var(--purple-soft);
+  color:var(--ink-soft);font-style:italic;max-width:70ch}
+.paperbox cite{display:block;font-style:normal;font-size:.78rem;color:var(--ink-mute);margin-top:.2rem}
+.try ol{padding-left:1.2rem;max-width:70ch}
+.try li{margin-bottom:.5rem}
+footer{border-top:1px solid var(--line);margin-top:2.2rem;padding-top:.9rem;font-size:.8rem;color:var(--ink-mute);max-width:70ch}
+@media (max-width:760px){
+  .tiles,.duo{grid-template-columns:1fr}
+  .probes{grid-template-columns:1fr 1fr}
+}
+@media (max-width:520px){ .probes{grid-template-columns:1fr} }
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="back" href="./index.html">&larr; All demos</a>
+  <div class="kicker">EMNLP 2026 Tutorial &middot; Causal Foundations for Interpretability</div>
+  <h1>Will the Edit Survive Deployment?</h1>
+  <p class="dek">A model edit can pass every in-distribution check and still revert under paraphrase, and two interventions that each work alone need not work together. Transport and composition are separate claims, and each needs its own evidence.</p>
+</header>
+
+<div class="stage">
+  <div class="tabs" role="tablist" aria-label="Choose a question">
+    <button class="tab" id="tab-transport" role="tab" aria-selected="true" aria-controls="panel-transport">
+      1 &middot; Transport<span class="tsub">does the edit survive paraphrase?</span>
+    </button>
+    <button class="tab" id="tab-compose" role="tab" aria-selected="false" aria-controls="panel-compose">
+      2 &middot; Compose<span class="tsub">do two interventions add up?</span>
+    </button>
+  </div>
+
+  <!-- ================= TRANSPORT ================= -->
+  <div id="panel-transport" role="tabpanel" aria-labelledby="tab-transport">
+    <div class="controls">
+      <button class="togbtn" id="edit-toggle" aria-pressed="true">
+        <span class="tname">Edit applied</span>
+        <span class="tnote">capital of Zephyria: Mira &rarr; <b>Vora</b> &middot; click to toggle</span>
+      </button>
+      <div class="sgroup">
+        <label for="shift">Deployment shift &middot; how far deployment prompts drift from the edit template</label>
+        <div class="srow">
+          <input type="range" id="shift" min="0" max="100" value="0" step="1"
+            aria-describedby="shift-val">
+          <span class="sval" id="shift-val">d &asymp; 0.06</span>
+          <span class="presets" role="group" aria-label="Shift presets">
+            <button class="chip" data-shift="0" aria-pressed="true">on-template</button>
+            <button class="chip" data-shift="45" aria-pressed="false">mild</button>
+            <button class="chip" id="preset-far" data-shift="85" aria-pressed="false">far</button>
+          </span>
+        </div>
+      </div>
+    </div>
+    <p class="hint"><b>Do this:</b> drag the <b>Deployment shift</b> slider to the right and watch which tile notices. The readout is the band&rsquo;s center on the chart&rsquo;s paraphrase-distance axis.</p>
+
+    <div class="tiles" aria-live="polite">
+      <div class="tile ok" id="tile-eval">
+        <span class="tlab">In-distribution eval</span>
+        <span class="tnum" id="eval-num">8/8</span><span class="tstat" id="eval-stat">holds &#10003;</span>
+        <span class="tsub">8 fixed prompts from the edit&rsquo;s template family (never drifts)</span>
+      </div>
+      <div class="tile ok" id="tile-dep">
+        <span class="tlab">Deployment traffic</span>
+        <span class="tnum" id="dep-num">8/8</span><span class="tstat" id="dep-stat">holds &#10003;</span>
+        <span class="tsub">8 prompts drawn (deterministically) at the current deployment shift</span>
+      </div>
+    </div>
+
+    <div class="chartcard">
+      <div id="chart-box"></div>
+      <p class="chartnote">Dots are the deployment prompts. A prompt answers &ldquo;Vora&rdquo; while the edit-effect curve is above &frac12; and reverts to &ldquo;Mira&rdquo; below it. Probe cards below get an &ldquo;in deployment band&rdquo; tag when they fall inside the current band.</p>
+    </div>
+
+    <div class="probes" id="probes" aria-label="Toy paraphrase probes"></div>
+
+    <div class="verdict ok" id="verdict-t" aria-live="polite">
+      <span class="vhead" id="verdict-t-head"></span>
+      <p id="verdict-t-text"></p>
+    </div>
+    <p class="scenenote">Toy setup: a fictional fact (the capital of &ldquo;Zephyria&rdquo;, edited from &ldquo;Mira&rdquo; to &ldquo;Vora&rdquo;) whose edit effect decays with paraphrase distance along a fixed deterministic curve. A tutorial illustration of the transportability claim (does the edit&rsquo;s effect carry over to a different prompt distribution?), not an experiment from the paper or the cited works. One honesty note: real transportability criteria are structural &mdash; they ask which mechanisms the two distributions share &mdash; not thresholds on a distance; the smooth decay here is only a visual stand-in.</p>
+  </div>
+
+  <!-- ================= COMPOSE ================= -->
+  <div id="panel-compose" role="tabpanel" aria-labelledby="tab-compose" hidden>
+    <div class="controls">
+      <button class="togbtn" id="tog-a" aria-pressed="false">
+        <span class="tname">Intervention A</span>
+        <span class="tnote">install behaviour A (edit A / task vector &tau;<sub>A</sub>)</span>
+      </button>
+      <button class="togbtn" id="tog-b" aria-pressed="false">
+        <span class="tname">Intervention B</span>
+        <span class="tnote">install behaviour B (edit B / task vector &tau;<sub>B</sub>)</span>
+      </button>
+      <div class="sgroup">
+        <label for="overlap">Block overlap &middot; how many of the 4 weights both edits write &mdash; assignment fails exactly where they collide</label>
+        <div class="srow">
+          <input type="range" id="overlap" min="0" max="4" value="2" step="1" aria-describedby="overlap-val">
+          <span class="sval" id="overlap-val">2 of 4</span>
+        </div>
+      </div>
+    </div>
+    <p class="hint"><b>Do this:</b> turn on <b>A</b>, then <b>B</b> &mdash; edits apply in the order you click, so try both orders. Then drag <b>Block overlap</b> and watch the left panel&rsquo;s failure grow with it.</p>
+
+    <div class="duo">
+      <div class="pcard">
+        <h3>Model edits &middot; assignment</h3>
+        <p class="mech"><code>w[block] &larr; v</code> &middot; each edit overwrites a block of weights; where the blocks overlap, last write wins <span id="order-note">(applied in the order you toggle them)</span>.</p>
+        <div id="strip-edit"></div>
+        <div class="skey" aria-hidden="true" id="skey-edit"><span class="ka">written by A</span><span class="kb">written by B</span><span class="kc" id="key-clob">earlier write, overwritten by the later edit</span></div>
+        <div class="bbars" id="bars-edit"></div>
+      </div>
+      <div class="pcard">
+        <h3>Task vectors &middot; addition</h3>
+        <p class="mech"><code>w = &theta; + &tau;<sub>A</sub> + &tau;<sub>B</sub></code> &middot; each vector adds a delta along its own direction; in this toy the directions are disjoint.</p>
+        <div id="strip-task"></div>
+        <div class="skey" aria-hidden="true"><span class="ka">&tau;<sub>A</sub> contribution</span><span class="kb">&tau;<sub>B</sub> contribution</span></div>
+        <div class="bbars" id="bars-task"></div>
+      </div>
+    </div>
+
+    <div class="verdict ok" id="verdict-c" aria-live="polite">
+      <span class="vhead" id="verdict-c-head"></span>
+      <p id="verdict-c-text"></p>
+    </div>
+    <p class="scenenote">Toy setup: a 12-dimensional weight vector; edits assign values to two 4-weight blocks whose overlap the slider controls (applied in the order you toggle them; last write wins), task vectors add along disjoint directions, and each behaviour score is a linear readout of the weights. The overwrite-versus-add mechanism is a pedagogical simplification built for this tutorial, not the mechanism of the cited methods.</p>
+  </div>
+</div>
+
+<section class="prose">
+  <h2>What this shows</h2>
+  <p>In the Transport tab, both tiles measure the same edited weights; the slider only changes which prompts the measurement runs on. The edit&rsquo;s effect is concentrated around the template family it was fitted on, so an evaluation drawn from that family keeps reporting success no matter how far deployment traffic drifts. Whether the effect carries over to the deployment distribution is a transportability question: causal inference has formal criteria for when an effect transfers across distributions &mdash; roughly, the effect transports when the mechanism the edit changed is the same one the deployment prompts route through, a structural condition, not a promise that nearby prompts behave similarly &mdash; and editing pipelines typically leave that assumption unstated rather than testing it.</p>
+  <p>The Compose tab makes the control-side point. In the toy, a model edit is an assignment (a block of weights is set to whatever satisfies the new fact) while a task vector is an addition. Assignments to overlapping weights do not commute and do not compose: the second edit partially undoes the first &mdash; toggle them in the other order and the other behaviour loses &mdash; even though each passes its own evaluation, and the overlap slider shows the damage scales with the collision (at zero overlap, assignment composes too). Additions along disjoint directions compose linearly. Neither panel is the real mechanism inside a transformer; the point is that &ldquo;each works alone&rdquo; says nothing about &ldquo;both work together&rdquo;, so composition has to be established, not assumed.</p>
+</section>
+
+<div class="paperbox">
+  <h2>What the paper says</h2>
+  <blockquote>&ldquo;Failures of model editing (Cohen et al., 2024; Hoelscher-Obermaier et al., 2023) are predictable consequences of unexamined transportability assumptions (Bareinboim et al., 2022).&rdquo;
+    <cite>&mdash; Call to Action, &ldquo;Transportability as a Theory of Edit Generalisation&rdquo;, arXiv:2602.16698</cite>
+  </blockquote>
+  <blockquote>&ldquo;Compositionality varies across intervention types: model edits do not compose (Hoelscher-Obermaier et al., 2023), while task vectors compose linearly (Ilharco et al., 2022).&rdquo;
+    <cite>&mdash; Call to Action, &ldquo;Compositional Control&rdquo;, arXiv:2602.16698</cite>
+  </blockquote>
+</div>
+
+<section class="prose try">
+  <h2>Try this</h2>
+  <ol>
+    <li>Move the deployment slider slowly and find the point where the two tiles first disagree. Nothing about the model changed between those two slider positions. What would the evaluation set have to contain to catch this divergence before deployment?</li>
+    <li>At far shift, toggle the edit off and on. The in-distribution tile flips between 0/8 and 8/8; the deployment tile barely reacts. Which claim did the green tile license: &ldquo;the model now states Vora&rdquo;, or &ldquo;the model states Vora on prompts like the ones we tried&rdquo;?</li>
+    <li>In the Compose tab, apply A, then add B, and watch behaviour A in the left panel; reset and apply them in the opposite order, and B loses instead. Then take an editing or steering paper you know: does its evaluation ever apply two interventions at once? One of the paper&rsquo;s research questions asks exactly this: under what conditions do representation-level interventions compose additively?</li>
+  </ol>
+</section>
+
+<footer>
+  <p>Provenance: interactive illustration of two Call to Action subsections of <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a> (<em>Causality is Key for Interpretability Claims to Generalise</em>): &ldquo;Transportability as a Theory of Edit Generalisation&rdquo; and &ldquo;Compositional Control&rdquo;. The quoted claims and their citations are the paper&rsquo;s. The fictional fact, the paraphrase probes, the decay curve, and the 12-dimensional weight toy are computed live by a seeded in-page simulation built for this tutorial; they are illustrations, not experiments from the paper or from the cited works.</p>
+  <p>tutorial demo &middot; CC-BY</p>
+</footer>
+</div>
+
+<script>
+'use strict';
+/* ---------- seeded determinism ---------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const R=mulberry32(20260716);
+const DEP_JIT=Array.from({length:8},()=>R()*2-1);          // deployment prompt jitter in the band
+const EVAL_D=Array.from({length:8},()=>0.005+R()*0.11);    // eval prompts: template family, d in [0, .115]
+
+/* ---------- transport model ---------- */
+const clamp=(v,a,b)=>Math.min(Math.max(v,a),b);
+const state={edit:true,shift:0,A:false,B:false,order:[],overlap:2};
+function eff(d){return state.edit?1/(1+Math.exp((d-0.45)/0.09)):0}
+const PROBES=[
+  {d:0.02,t:'The capital of Zephyria is &#95;&#95;&#95;',k:'the edit template itself'},
+  {d:0.16,t:'Zephyria&rsquo;s capital is &#95;&#95;&#95;',k:'close template variant'},
+  {d:0.33,t:'What is the capital of Zephyria? It is &#95;&#95;&#95;',k:'question form'},
+  {d:0.51,t:'If you fly to Zephyria&rsquo;s capital, you land in &#95;&#95;&#95;',k:'indirect phrasing'},
+  {d:0.68,t:'Zephyria&rsquo;s seat of government is &#95;&#95;&#95;',k:'synonym phrasing'},
+  {d:0.86,t:'The city at the heart of Zephyrian politics is &#95;&#95;&#95;',k:'far paraphrase'}
+];
+const $=id=>document.getElementById(id);
+const depCenter=()=>0.06+state.shift*0.85;
+const depBand=()=>{const c=depCenter();return[Math.max(0,c-0.09),Math.min(1,c+0.09)]};
+const depDots=()=>DEP_JIT.map(u=>clamp(depCenter()+u*0.09,0.005,0.995));
+
+function renderChart(){
+  const W=680,H=252,ML=46,MR=14,MT=22,MB=36;
+  const x=d=>ML+d*(W-ML-MR), y=p=>MT+(1-p)*(H-MT-MB);
+  const[lo,hi]=depBand(),dots=depDots();
+  const kDep=dots.filter(d=>eff(d)>0.5).length;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Edit effect versus paraphrase distance. The evaluation band sits at distance zero; the deployment band is at ${lo.toFixed(2)} to ${hi.toFixed(2)}. ${kDep} of 8 deployment prompts give the edited answer.">`;
+  // bands
+  s+=`<rect x="${x(0)}" y="${MT}" width="${x(0.12)-x(0)}" height="${H-MT-MB}" fill="var(--gap-green)" opacity="0.13"/>`;
+  s+=`<rect x="${x(lo)}" y="${MT}" width="${Math.max(x(hi)-x(lo),2)}" height="${H-MT-MB}" fill="var(--magenta)" opacity="0.10"/>`;
+  // axes
+  s+=`<line x1="${ML}" y1="${y(0)}" x2="${W-MR}" y2="${y(0)}" stroke="var(--line)"/>`;
+  s+=`<line x1="${ML}" y1="${MT}" x2="${ML}" y2="${y(0)}" stroke="var(--line)"/>`;
+  for(const p of[0,0.5,1]){
+    s+=`<text x="${ML-7}" y="${y(p)+3.5}" font-size="10" fill="var(--ink-mute)" text-anchor="end">${p===0.5?'&#189;':p}</text>`;
+  }
+  s+=`<line x1="${ML}" y1="${y(0.5)}" x2="${W-MR}" y2="${y(0.5)}" stroke="var(--line)" stroke-dasharray="4 4"/>`;
+  s+=`<text x="${(ML+W-MR)/2}" y="${H-6}" font-size="10.5" fill="var(--ink-mute)" text-anchor="middle">paraphrase distance from the edit prompt &#8594;</text>`;
+  s+=`<text x="${ML}" y="12" font-size="10" fill="var(--ink-mute)">P(edited answer &ldquo;Vora&rdquo;)</text>`;
+  // band labels (swatch + ink text)
+  s+=`<rect x="${x(0)+5}" y="${MT+7}" width="9" height="9" rx="2" fill="var(--gap-green)" opacity="0.55"/>`;
+  s+=`<text x="${x(0)+18}" y="${MT+15}" font-size="10.5" font-weight="600" fill="var(--ink-soft)">eval set</text>`;
+  const lx=clamp(x(lo)+5,ML+5,W-158);
+  s+=`<rect x="${lx}" y="${MT+23}" width="9" height="9" rx="2" fill="var(--magenta)" opacity="0.55"/>`;
+  s+=`<text x="${lx+13}" y="${MT+31}" font-size="10.5" font-weight="600" fill="var(--ink-soft)">deployment traffic</text>`;
+  // effect curve + direct label
+  let pts='';
+  for(let d=0;d<=1.0001;d+=0.02)pts+=`${x(d).toFixed(1)},${y(eff(d)).toFixed(1)} `;
+  s+=`<polyline points="${pts}" fill="none" stroke="var(--purple)" stroke-width="2"/>`;
+  s+=`<text x="${x(0.24)}" y="${y(eff(0.24))-9}" font-size="10.5" font-weight="600" fill="var(--ink-soft)" text-anchor="middle">edit effect</text>`;
+  // deployment prompt dots
+  for(const d of dots){
+    const holds=eff(d)>0.5;
+    const col=state.edit?(holds?'var(--gap-green)':'var(--magenta)'):'var(--ink-mute)';
+    s+=`<circle cx="${x(d).toFixed(1)}" cy="${y(eff(d)).toFixed(1)}" r="4.2" fill="${col}" stroke="var(--card)" stroke-width="1.6"/>`;
+  }
+  s+='</svg>';
+  $('chart-box').innerHTML=s;
+  return kDep;
+}
+function renderTiles(kDep){
+  const kEval=EVAL_D.filter(d=>eff(d)>0.5).length;
+  $('eval-num').textContent=`${kEval}/8`;
+  const evalTile=$('tile-eval');
+  if(!state.edit){evalTile.className='tile';$('eval-stat').textContent='no edit'}
+  else{evalTile.className='tile ok';$('eval-stat').innerHTML='holds &#10003;'}
+  $('dep-num').textContent=`${kDep}/8`;
+  const t=$('tile-dep');
+  if(!state.edit){t.className='tile';$('dep-stat').textContent='no edit'}
+  else if(kDep>=7){t.className='tile ok';$('dep-stat').innerHTML='holds &#10003;'}
+  else if(kDep>=4){t.className='tile over';$('dep-stat').textContent='mixed'}
+  else{t.className='tile fail';$('dep-stat').innerHTML='reverted &#10007;'}
+}
+function renderProbes(){
+  const[lo,hi]=depBand();
+  $('probes').innerHTML=PROBES.map(p=>{
+    const e=eff(p.d),inband=p.d>=lo&&p.d<=hi;
+    let ans;
+    if(!state.edit)ans='<span class="ans base">&rarr; Mira</span><span class="pp">original fact</span>';
+    else if(e>0.5)ans=`<span class="ans good">&rarr; Vora &#10003;</span><span class="pp">P(Vora) ${e.toFixed(2)}</span>`;
+    else ans=`<span class="ans bad">&rarr; Mira &#10007;</span><span class="pp">P(Vora) ${e.toFixed(2)}</span>`;
+    const tag=inband?'<span class="bandtag">in deployment band</span>':'';
+    return `<div class="probe${inband?' inband':''}"><span class="pd">d = ${p.d.toFixed(2)} &middot; ${p.k}${tag}</span><p class="ptext">&ldquo;${p.t}&rdquo;</p>${ans}</div>`;
+  }).join('');
+}
+function renderVerdictT(kDep){
+  const v=$('verdict-t'),head=$('verdict-t-head'),txt=$('verdict-t-text');
+  if(!state.edit){
+    v.className='verdict';head.textContent='Verdict · no edit applied';
+    txt.textContent='The model answers “Mira” on every probe. Apply the edit to install “Vora”, then move the deployment distribution away from the templates it was fitted on.';
+  }else if(kDep>=7){
+    v.className='verdict ok';head.textContent='Verdict · in distribution, for now';
+    txt.textContent='Deployment traffic still sits on the edit’s template family, so the two tiles agree. Note what has been established: success on this distribution. Neither tile has tested transport yet (whether the effect carries over to a different prompt distribution). Drag the deployment shift right to test it.';
+  }else if(kDep>=4){
+    v.className='verdict over';head.textContent='Verdict · the tiles diverge';
+    txt.textContent='The evaluation still reports 8/8 because it never left the template family; deployment traffic has, and the edit is starting to revert. Same weights, different distribution.';
+  }else{
+    v.className='verdict fail';head.textContent='Verdict · reverted in deployment';
+    txt.textContent='Far paraphrases answer “Mira” again while the in-distribution evaluation stays green. That the edit’s effect would transport to this distribution was an assumption, never a measured claim.';
+  }
+}
+function renderTransport(){
+  const kDep=renderChart();
+  renderTiles(kDep);renderProbes();renderVerdictT(kDep);
+}
+
+/* ---------- compose model ---------- */
+const SA=[3,4,5,6], AV=[0.9,0.7,0.8,0.6];
+const BV=[0.2,-0.4,0.7,0.8];
+const sbIdx=()=>{const s=7-state.overlap;return[s,s+1,s+2,s+3]};   // overlap 2 -> [5,6,7,8]
+const TA=[0.5,0.8,0.6,0.9,0.7,0.4,0,0,0,0,0,0];
+const TB=[0,0,0,0,0,0,0.7,0.5,0.9,0.6,0.8,0.5];
+const dot=(u,v)=>u.reduce((s,x,i)=>s+x*v[i],0);
+const toFull=(S,V)=>{const r=Array(12).fill(0);S.forEach((i,k)=>r[i]=V[k]);return r};
+const RA_E=toFull(SA,AV);
+function editState(){
+  const w=Array(12).fill(0),own=Array(12).fill(null),clob=Array(12).fill(false);
+  const SB=sbIdx();
+  for(const k of state.order){
+    const S=k==='A'?SA:SB,V=k==='A'?AV:BV;
+    S.forEach((i,j)=>{if(own[i]&&own[i]!==k)clob[i]=true;w[i]=V[j];own[i]=k});
+  }
+  return{w,own,clob};
+}
+function taskState(){
+  const w=TA.map((v,i)=>(state.A?v:0)+(state.B?TB[i]:0));
+  const own=w.map((v,i)=>v===0?null:(TA[i]!==0?'A':'B'));
+  return{w,own,clob:Array(12).fill(false)};
+}
+const score=(w,r)=>clamp(dot(w,r)/dot(r,r),0,1);
+function stripSVG(st,label){
+  const CW=26,X0=8,W2=X0+12*CW+4,H2=100,mid=56,sc=40;
+  let s=`<svg viewBox="0 0 ${W2} ${H2}" role="img" aria-label="${label}">`;
+  for(let i=0;i<12;i++){
+    const cx=X0+i*CW;
+    s+=`<rect x="${cx}" y="12" width="18" height="80" rx="4" fill="var(--paper)" stroke="var(--line)"/>`;
+  }
+  s+=`<line x1="${X0-2}" y1="${mid}" x2="${W2-2}" y2="${mid}" stroke="var(--line)"/>`;
+  for(let i=0;i<12;i++){
+    const v=st.w[i];if(v===0)continue;
+    const cx=X0+i*CW,h=Math.max(Math.abs(v)*sc,3),yy=v>0?mid-h:mid;
+    const col=st.own[i]==='A'?'var(--gap-green)':'var(--l2)';
+    const extra=st.clob[i]?` stroke="var(--magenta)" stroke-width="1.8" stroke-dasharray="3 2"`:'';
+    s+=`<rect x="${cx+2}" y="${yy.toFixed(1)}" width="14" height="${h.toFixed(1)}" rx="3" fill="${col}"${extra}/>`;
+  }
+  s+='</svg>';
+  return s;
+}
+function barRows(rows){
+  return rows.map(r=>{
+    if(!r.applied)return`<span class="blab">${r.label}</span><span class="btrack"></span><span class="bval mute">not applied</span>`;
+    const pct=Math.round(r.score*100),bad=pct<90;
+    return`<span class="blab">${r.label}</span><span class="btrack"><span class="bfill${bad?' bad':''}" style="width:calc(${pct}% - 4px)"></span></span><span class="bval${bad?' bad':''}">${pct}%${bad?' &#9888;':''}</span>`;
+  }).join('');
+}
+function renderCompose(){
+  const RB_E=toFull(sbIdx(),BV);
+  const es=editState(),ts=taskState();
+  const eA=score(es.w,RA_E),eB=score(es.w,RB_E);
+  const tA=score(ts.w,TA),tB=score(ts.w,TB);
+  const n=st=>st?'on':'off';
+  const both=state.order.length===2,first=state.order[0],second=state.order[1];
+  const ordText=both?`, applied ${first} then ${second}`:'';
+  $('strip-edit').innerHTML=stripSVG(es,`Weight strip after sequential edits, A ${n(state.A)}, B ${n(state.B)}${ordText}.`);
+  $('strip-task').innerHTML=stripSVG(ts,`Weight strip after task-vector addition, A ${n(state.A)}, B ${n(state.B)}.`);
+  $('order-note').textContent=both?`(order: ${first} then ${second} — the order you toggled)`:'(applied in the order you toggle them)';
+  const kc=$('key-clob');
+  if(both){kc.className=second==='A'?'kca':'kc';kc.textContent=`${first}’s write, overwritten by ${second}`}
+  else{kc.className='kc';kc.textContent='earlier write, overwritten by the later edit'}
+  kc.hidden=both&&!es.clob.some(Boolean);
+  $('bars-edit').innerHTML=barRows([
+    {label:'Behaviour A',applied:state.A,score:eA},
+    {label:'Behaviour B',applied:state.B,score:eB}
+  ]);
+  $('bars-task').innerHTML=barRows([
+    {label:'Behaviour A',applied:state.A,score:tA},
+    {label:'Behaviour B',applied:state.B,score:tB}
+  ]);
+  const v=$('verdict-c'),head=$('verdict-c-head'),txt=$('verdict-c-text');
+  if(!state.A&&!state.B){
+    v.className='verdict';head.textContent='Verdict · base model';
+    txt.textContent='Neither intervention is applied. Turn on A, then B, then both, and compare the two panels.';
+  }else if(state.A!==state.B){
+    const which=state.A?'A':'B';
+    v.className='verdict ok';head.textContent=`Verdict · intervention ${which} in isolation`;
+    txt.textContent=`Both panels install behaviour ${which} at 100%. Alone, assignment and addition are indistinguishable; the difference only appears under composition.`;
+  }else if(state.overlap===0){
+    v.className='verdict ok';head.textContent='Verdict · composition holds (disjoint blocks)';
+    txt.textContent=`With zero overlap the two edits write disjoint weights, so assignment composes too: both panels keep both behaviours at 100%. Drag the block overlap up and watch behaviour ${first} degrade exactly where the blocks collide.`;
+  }else{
+    const fScore=Math.round((first==='A'?eA:eB)*100),sScore=Math.round((second==='A'?eA:eB)*100);
+    v.className='verdict fail';head.textContent='Verdict · composition diverges';
+    txt.textContent=`Left: assignment. The second edit (${second}) overwrote the ${state.overlap} overlapping weight${state.overlap>1?'s':''}, so behaviour ${first} is only ${fScore}% retained while ${second} reads ${sScore}%. Toggle in the other order and ${second} loses instead. Right: addition along disjoint directions keeps both behaviours at ${Math.round(tA*100)}%. Same two clicks, different algebra.`;
+  }
+}
+
+/* ---------- wiring ---------- */
+$('edit-toggle').addEventListener('click',()=>{
+  state.edit=!state.edit;
+  $('edit-toggle').setAttribute('aria-pressed',String(state.edit));
+  renderTransport();
+});
+const slider=$('shift');
+function setShift(v){
+  state.shift=v/100;slider.value=v;
+  $('shift-val').textContent='d ≈ '+depCenter().toFixed(2);
+  document.querySelectorAll('.chip[data-shift]').forEach(c=>c.setAttribute('aria-pressed',String(Number(c.dataset.shift)===Number(v))));
+  renderTransport();
+}
+slider.addEventListener('input',()=>setShift(Number(slider.value)));
+document.querySelectorAll('.chip[data-shift]').forEach(c=>c.addEventListener('click',()=>setShift(Number(c.dataset.shift))));
+for(const id of['tog-a','tog-b']){
+  $(id).addEventListener('click',()=>{
+    const k=id==='tog-a'?'A':'B';
+    state[k]=!state[k];
+    if(state[k])state.order.push(k);else state.order=state.order.filter(x=>x!==k);
+    $(id).setAttribute('aria-pressed',String(state[k]));
+    renderCompose();
+  });
+}
+const ovl=$('overlap');
+ovl.addEventListener('input',()=>{
+  state.overlap=Number(ovl.value);
+  $('overlap-val').textContent=`${state.overlap} of 4`;
+  renderCompose();
+});
+const TABS=[['tab-transport','panel-transport'],['tab-compose','panel-compose']];
+function selectTab(tabId){
+  for(const[t,p]of TABS){
+    const sel=t===tabId;
+    $(t).setAttribute('aria-selected',String(sel));
+    $(p).hidden=!sel;
+  }
+}
+for(const[t]of TABS)$(t).addEventListener('click',()=>selectTab(t));
+document.querySelector('.tabs').addEventListener('keydown',e=>{
+  if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft')return;
+  const cur=TABS.findIndex(([t])=>$(t).getAttribute('aria-selected')==='true');
+  const nxt=TABS[(cur+(e.key==='ArrowRight'?1:TABS.length-1))%TABS.length][0];
+  selectTab(nxt);$(nxt).focus();
+});
+renderTransport();renderCompose();
+</script>
+</body>
+</html>

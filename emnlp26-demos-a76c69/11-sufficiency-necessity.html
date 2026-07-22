@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sufficient &ne; necessary · EMNLP 2026 tutorial demo</title>
+<style>
+  :root{
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B;
+    --gap-green:#3E8E5A; --line:#E1DEEC;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+      --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+      --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+      --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E;
+      --gap-green:#5FB37E; --line:#332B49;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E;
+    --gap-green:#5FB37E; --line:#332B49;
+  }
+  :root[data-theme="light"]{
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B;
+    --gap-green:#3E8E5A; --line:#E1DEEC;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:'Avenir Next', Avenir, 'Segoe UI', system-ui, sans-serif;
+    line-height:1.55; padding:1.5rem 1rem 3rem;
+  }
+  h1,h2,h3{font-family:Futura,'Century Gothic','Avenir Next','Trebuchet MS',sans-serif;}
+  .wrap{max-width:1040px; margin:0 auto;}
+  .prose{max-width:70ch;}
+  a{color:var(--purple);}
+  a:focus-visible, button:focus-visible, input:focus-visible{outline:2px solid var(--magenta); outline-offset:2px;}
+
+  header{margin-bottom:1.4rem;}
+  .topline{display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap;}
+  .kicker{font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-mute); font-weight:600;}
+  .back{font-size:.85rem; text-decoration:none; white-space:nowrap;}
+  .back:hover{text-decoration:underline;}
+  h1{color:var(--purple); font-size:1.75rem; margin:.45rem 0 .35rem; line-height:1.2;}
+  .dek{color:var(--ink-soft); max-width:70ch;}
+
+  .stage{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    padding:1.1rem; margin:1.4rem 0;
+  }
+  .stage-head{font-size:.9rem; color:var(--ink-soft); margin-bottom:.9rem;}
+  .stage-grid{display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:1.1rem; align-items:start;}
+  @media (max-width:880px){ .stage-grid{grid-template-columns:minmax(0,1fr);} }
+
+  .dagbox{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:.6rem;}
+  .dagbox svg{width:100%; height:auto; display:block;}
+  .runlab{font-size:.82rem; color:var(--ink); font-weight:600; padding:.1rem .3rem .5rem; font-variant-numeric:tabular-nums;}
+  .legend{display:flex; gap:1rem; flex-wrap:wrap; font-size:.76rem; color:var(--ink-soft); margin-top:.5rem; padding:0 .3rem;}
+  .legend .key{display:inline-block; width:.85em; height:.85em; border-radius:3px; margin-right:.35em; vertical-align:-.08em;}
+  .key.dn{background:transparent; border:2.5px solid var(--gap-green);}
+  .key.nz{background:transparent; border:2.5px dashed var(--l2);}
+  .key.carry{width:1.2em; height:.3em; border-radius:2px; background:var(--purple-mid); vertical-align:.18em;}
+  .readnote{font-size:.74rem; color:var(--ink-mute); margin-top:.4rem; padding:0 .3rem;}
+
+  .controls{display:flex; flex-direction:column; gap:.9rem;}
+  .seg{display:flex; flex-direction:column; gap:.45rem;}
+  .seglab{font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-mute); font-weight:600;}
+  .startcue{font-size:.78rem; color:var(--ink-soft); background:var(--purple-faint); border-radius:7px; padding:.4rem .6rem; line-height:1.45;}
+  .startcue strong{color:var(--purple);}
+  .duo{display:grid; grid-template-columns:1fr 1fr; gap:.45rem;}
+  .seg button{
+    display:block; width:100%; text-align:left; cursor:pointer;
+    background:var(--card); color:var(--ink-soft);
+    border:1px solid var(--line); border-radius:9px; padding:.5rem .7rem;
+    font-family:inherit; font-size:.9rem; transition:background .2s, color .2s;
+  }
+  .seg button .bt{font-weight:700; display:block;}
+  .seg button .bs{font-size:.74rem; color:var(--ink-mute); display:block;}
+  .seg button[aria-pressed="true"]{
+    background:var(--purple); color:var(--paper); border-color:var(--purple);
+  }
+  .seg button[aria-pressed="true"] .bs{color:var(--paper); opacity:.75;}
+  .runbadge{font-size:.72rem; font-weight:600; margin-left:.5em; font-variant-numeric:tabular-nums;}
+  .runbadge.ok{color:var(--gap-green);}
+  .runbadge.warn{color:var(--l2);}
+  .seg button[aria-pressed="true"] .runbadge{color:var(--paper); opacity:.85;}
+  .bhint{font-size:.72rem; color:var(--ink-mute); padding:0 .1rem;}
+  .resetrow{display:flex; justify-content:flex-end;}
+  .resetrow button{
+    background:none; border:none; color:var(--ink-mute); font-family:inherit;
+    font-size:.78rem; cursor:pointer; text-decoration:underline; padding:.2rem .3rem;
+  }
+  .sliderrow{display:flex; align-items:center; gap:.6rem;}
+  .sliderrow input[type="range"]{flex:1; min-width:0; accent-color:var(--purple); cursor:pointer;}
+  .sliderrow output{font-size:.85rem; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums; min-width:2.8em; text-align:right;}
+  .shint{font-size:.72rem; color:var(--ink-mute);}
+
+  .meterbox{background:var(--card); border:1px solid var(--line); border-radius:9px; padding:.7rem .8rem;}
+  .meterbox h3{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:.55rem;}
+  .bars{margin-top:.8rem;}
+  .mrow{display:grid; grid-template-columns:11.5em minmax(0,1fr) 3.2em; gap:.5em; align-items:center;
+        font-size:.8rem; padding:.22rem .3rem; border-radius:6px; font-variant-numeric:tabular-nums;}
+  .mrow.current{background:var(--purple-faint);}
+  .mrow .mlab{color:var(--ink-soft); font-weight:600;}
+  .mrow.current .mlab{color:var(--ink);}
+  .mbar{display:block; height:9px; background:var(--panel); border:1px solid var(--line); border-radius:5px; overflow:hidden;}
+  .mfill{display:block; height:100%; width:0; background:var(--purple-mid); border-radius:4px; transition:width .3s;}
+  .mrow.current .mfill{background:var(--purple);}
+  .mval{text-align:right; color:var(--ink);}
+
+  .cwhy{font-size:.74rem; color:var(--ink-soft); margin-bottom:.5rem;}
+  .claims .crow{padding:.5rem .1rem; border-bottom:1px solid var(--line);}
+  .claims .crow:last-of-type{border-bottom:none;}
+  .chead{display:flex; justify-content:space-between; gap:.6rem; align-items:baseline;}
+  .clab{font-size:.83rem; font-weight:700; color:var(--ink);}
+  .cpill{font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; font-weight:700;
+         padding:.14rem .55rem; border-radius:99px; border:1.5px solid var(--ink-mute);
+         color:var(--ink-mute); white-space:nowrap;}
+  .cpill.ok{background:var(--gap-green); border-color:var(--gap-green); color:var(--paper);}
+  .cpill.bad{background:var(--l2); border-color:var(--l2); color:var(--paper);}
+  .cpill.mid{border-color:var(--magenta); color:var(--magenta); background:transparent;}
+  .cexp{font-size:.75rem; color:var(--ink-soft); margin-top:.3rem;}
+  .mnote{font-size:.72rem; color:var(--ink-mute); margin-top:.55rem;}
+
+  section{margin:2rem 0;}
+  section h2{color:var(--purple); font-size:1.15rem; margin-bottom:.6rem;}
+  section p{margin-bottom:.8rem;}
+  blockquote{
+    border-left:3px solid var(--purple-mid); background:var(--panel);
+    padding:.8rem 1rem; border-radius:0 9px 9px 0; margin-bottom:.8rem;
+    color:var(--ink-soft); font-size:.95rem;
+  }
+  blockquote .src{display:block; margin-top:.45rem; font-size:.78rem; color:var(--ink-mute); font-style:normal;}
+  ol.try{margin-left:1.2rem;}
+  ol.try li{margin-bottom:.6rem;}
+  code{font-family:ui-monospace, Menlo, Consolas, monospace; font-size:.92em;}
+
+  footer{
+    margin-top:2.5rem; padding-top:1rem; border-top:1px solid var(--line);
+    font-size:.78rem; color:var(--ink-mute); max-width:70ch;
+  }
+  footer a{color:var(--ink-mute);}
+
+  /* SVG */
+  .edge{stroke:var(--purple-mid); stroke-width:1.8; opacity:.85; transition:opacity .25s, stroke-width .25s;}
+  .edge.carry{stroke-width:3.4;}
+  .edge.dim{opacity:.18;}
+  .node rect{fill:var(--purple); stroke:var(--purple); stroke-width:1.4; transition:stroke .25s;}
+  .node.alt rect{fill:var(--l1); stroke:var(--l1);}
+  .node text{fill:var(--paper);}
+  .node.patched-clean rect{stroke:var(--gap-green); stroke-width:3;}
+  .node.patched-noise rect{stroke:var(--l2); stroke-width:3; stroke-dasharray:6 3;}
+  .ptag{font-size:9.5px; font-weight:700;}
+  .ptag.clean{fill:var(--gap-green);}
+  .ptag.noise{fill:var(--l2);}
+  .chip rect{fill:var(--panel); stroke:var(--line);}
+  .chip text{fill:var(--ink-soft);}
+  .laylab{fill:var(--ink-mute); font-size:8.5px; letter-spacing:.1em; text-transform:uppercase;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; animation:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="topline">
+    <span class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</span>
+    <a class="back" href="./index.html">&larr; All demos</a>
+  </div>
+  <h1>Sufficient &ne; necessary: a handle is not the mechanism</h1>
+  <p class="dek">A toy network carries the same IOI-style signal along two redundant pathways. Denoising path S restores the corrupted run &mdash; real evidence that S is a sufficient handle. Noising the very same path barely moves the clean run, because backup path T keeps the behaviour alive. The claim-o-meter tracks which narrations the evidence you have actually gathered will license, and a backup-strength slider lets you shrink the redundancy until the necessity verdict flips.</p>
+</header>
+
+<div class="stage">
+  <p class="stage-head">Two baseline runs anchor the output meter; the four patching experiments each copy one pathway&rsquo;s activation between runs (denoising: clean&nbsp;&rarr;&nbsp;corrupted run; noising: corrupted&nbsp;&rarr;&nbsp;clean run). Each experiment button keeps its result as a badge: P(Mary) before&nbsp;&rarr;&nbsp;after that patch. Run an experiment, watch the output, then check the claim-o-meter.</p>
+  <div class="stage-grid">
+    <div>
+      <div class="dagbox">
+        <div class="runlab" id="runlab" aria-live="polite"></div>
+        <svg viewBox="0 0 660 300" role="img" aria-label="Two-pathway toy network. An IOI-style prompt feeds an encoder, whose activation flows through two parallel pathways S and T into an OR-style readout producing the probability of the correct token, Mary. Patched nodes are highlighted; the pathway the readout follows is drawn thicker.">
+          <!-- edges -->
+          <line class="edge" id="e-xh" x1="126" y1="150" x2="168" y2="150"/>
+          <line class="edge" id="e-hs" x1="274" y1="140" x2="352" y2="80"/>
+          <line class="edge" id="e-ht" x1="274" y1="160" x2="352" y2="220"/>
+          <line class="edge" id="e-sy" x1="470" y1="80" x2="538" y2="138"/>
+          <line class="edge" id="e-ty" x1="470" y1="220" x2="538" y2="162"/>
+
+          <text class="laylab" x="18" y="102">input</text>
+          <text class="laylab" x="170" y="118">shared encoder</text>
+          <text class="laylab" x="352" y="34">redundant pathways</text>
+          <text class="laylab" x="538" y="118">or-style readout</text>
+
+          <!-- prompt chip -->
+          <g class="chip">
+            <rect x="10" y="110" width="116" height="80" rx="12"/>
+            <text x="68" y="128" text-anchor="middle" font-size="10.5" font-weight="700">prompt x</text>
+            <text x="68" y="144" text-anchor="middle" font-size="8">&ldquo;Mary &amp; John went in;</text>
+            <text id="p-l2" x="68" y="157" text-anchor="middle" font-size="8">John gave a drink to&rdquo;</text>
+            <text id="prompt-sub" x="68" y="176" text-anchor="middle" font-size="8.5" font-weight="600">clean &middot; s = +1</text>
+          </g>
+
+          <!-- encoder -->
+          <g class="node" id="n-h">
+            <rect x="168" y="124" width="106" height="52" rx="9"/>
+            <text x="221" y="145" text-anchor="middle" font-size="13" font-weight="700">encoder</text>
+            <text class="val" id="v-h" x="221" y="162" text-anchor="middle" font-size="11">h = +1.00</text>
+          </g>
+
+          <!-- path S -->
+          <g class="node" id="n-s">
+            <rect x="352" y="52" width="118" height="52" rx="9"/>
+            <text x="411" y="73" text-anchor="middle" font-size="13" font-weight="700">path S</text>
+            <text class="val" id="v-zs" x="411" y="90" text-anchor="middle" font-size="11">z = +1.50</text>
+          </g>
+          <text class="ptag" id="tag-s" x="411" y="117" text-anchor="middle"></text>
+
+          <!-- path T -->
+          <g class="node alt" id="n-t">
+            <rect x="352" y="196" width="118" height="52" rx="9"/>
+            <text x="411" y="217" text-anchor="middle" font-size="13" font-weight="700">path T</text>
+            <text class="val" id="v-zt" x="411" y="234" text-anchor="middle" font-size="11">z = +1.35</text>
+          </g>
+          <text class="ptag" id="tag-t" x="411" y="262" text-anchor="middle"></text>
+
+          <!-- output -->
+          <g class="node" id="n-y">
+            <rect x="538" y="124" width="110" height="52" rx="9"/>
+            <text x="593" y="145" text-anchor="middle" font-size="13" font-weight="700">output y</text>
+            <text class="val" id="v-y" x="593" y="162" text-anchor="middle" font-size="11">P(Mary) = 0.99</text>
+          </g>
+        </svg>
+        <div class="legend">
+          <span><span class="key dn"></span>patched from clean run (denoise)</span>
+          <span><span class="key nz"></span>patched from corrupted run (noise)</span>
+          <span><span class="key carry"></span>pathway the readout follows</span>
+        </div>
+        <p class="readnote">The prompt pair follows the IOI task of Wang et al. (2023): the clean prompt implies the next token &ldquo;Mary&rdquo;; the corrupted prompt swaps the giver (John&nbsp;&rarr;&nbsp;Charlie), so &ldquo;Mary&rdquo; is no longer implied. Readout: y = &sigma;(k&middot;max(z<sub>S</sub>, z<sub>T</sub>)) &mdash; it follows whichever pathway carries the stronger signal. The redundancy is built in deliberately for this tutorial illustration.</p>
+      </div>
+
+      <div class="meterbox bars">
+        <h3>Output meter &middot; P(&ldquo;Mary&rdquo; | prompt)</h3>
+        <div class="mrow"><span class="mlab">clean run (baseline)</span><span class="mbar"><span class="mfill" id="fill-clean"></span></span><span class="mval" id="val-clean"></span></div>
+        <div class="mrow"><span class="mlab">corrupted run (baseline)</span><span class="mbar"><span class="mfill" id="fill-corr"></span></span><span class="mval" id="val-corr"></span></div>
+        <div class="mrow current"><span class="mlab" id="cur-lab">current view</span><span class="mbar"><span class="mfill" id="cur-fill"></span></span><span class="mval" id="cur-val"></span></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="seg">
+        <span class="seglab">Baselines</span>
+        <div class="duo">
+          <button type="button" id="b-clean" aria-pressed="true"><span class="bt">Clean run</span><span class="bs">view the un-patched run</span></button>
+          <button type="button" id="b-corr" aria-pressed="false"><span class="bt">Corrupted run</span><span class="bs">view the un-patched run</span></button>
+        </div>
+      </div>
+      <div class="seg">
+        <span class="seglab">Patching experiments</span>
+        <p class="startcue"><strong>Start here:</strong> press <strong>Denoise&nbsp;S</strong> &mdash; the standard patching workflow &mdash; then <strong>Noise&nbsp;S</strong>.</p>
+        <button type="button" id="b-denoiseS" aria-pressed="false"><span class="bt">Denoise S<span class="runbadge ok" id="badge-denoiseS"></span></span><span class="bs">patch S&rsquo;s clean value into the corrupted run</span></button>
+        <button type="button" id="b-noiseS" aria-pressed="false"><span class="bt">Noise S<span class="runbadge warn" id="badge-noiseS"></span></span><span class="bs">patch S&rsquo;s corrupted value into the clean run</span></button>
+        <button type="button" id="b-denoiseT" aria-pressed="false"><span class="bt">Denoise T<span class="runbadge ok" id="badge-denoiseT"></span></span><span class="bs">patch T&rsquo;s clean value into the corrupted run</span></button>
+        <button type="button" id="b-noiseT" aria-pressed="false"><span class="bt">Noise T<span class="runbadge warn" id="badge-noiseT"></span></span><span class="bs">patch T&rsquo;s corrupted value into the clean run</span></button>
+        <div class="resetrow"><button type="button" id="b-reset">reset evidence &middot; clears badges &amp; verdicts</button></div>
+      </div>
+      <div class="seg">
+        <label class="seglab" for="wt-slider">Backup strength w<sub>T</sub></label>
+        <div class="sliderrow">
+          <input type="range" id="wt-slider" min="0" max="1.5" step="0.05" value="1.35" aria-describedby="wt-hint">
+          <output id="wt-val" for="wt-slider">1.35</output>
+        </div>
+        <p class="shint" id="wt-hint">Weaken path T and watch when noising S starts to matter (S stays fixed at w<sub>S</sub> = 1.50). Badges and verdicts update live.</p>
+      </div>
+      <div class="meterbox claims" aria-live="polite">
+        <h3>Claim-o-meter &middot; claims about S</h3>
+        <p class="cwhy">Why it matters: narrate a handle as <em>the</em> mechanism and the story fails the moment a backup pathway carries the load.</p>
+        <div class="crow">
+          <div class="chead"><span class="clab">&ldquo;Patching S suffices to shift the output&rdquo;</span><span class="cpill" id="pill-a">untested</span></div>
+          <p class="cexp" id="exp-a"></p>
+        </div>
+        <div class="crow">
+          <div class="chead"><span class="clab">&ldquo;S is necessary for the behaviour&rdquo;</span><span class="cpill" id="pill-b">untested</span></div>
+          <p class="cexp" id="exp-b"></p>
+        </div>
+        <div class="crow">
+          <div class="chead"><span class="clab">&ldquo;S is THE mechanism&rdquo;</span><span class="cpill" id="pill-c">untested</span></div>
+          <p class="cexp" id="exp-c"></p>
+        </div>
+        <p class="mnote" id="mnote-weights"></p>
+        <p class="mnote">L2 / L3 = the interventional and counterfactual rungs of Pearl&rsquo;s causal ladder: what happens if we <em>do</em> x, vs. what <em>would have</em> happened otherwise.</p>
+        <p class="mnote">Verdicts are thresholded on the live numbers: the behaviour &ldquo;persists&rdquo; above P = 0.75 and is destroyed below P = 0.55 (chance = 0.50).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="prose">
+  <h2>What this shows</h2>
+  <p>The toy routes one signal &mdash; here, the IOI-style cue that the giver is John, so the next token should be &ldquo;Mary&rdquo; &mdash; through two redundant pathways, and its readout follows whichever pathway carries the stronger value. Denoising S &mdash; patching its clean activation into the corrupted run &mdash; fully restores the output, which is exactly the evidence activation patching yields, and it is real evidence: S is a working control handle for the behaviour. Noising S &mdash; patching the corrupted activation into the clean run &mdash; barely moves the output, because path T still carries the signal. The same component under two patching directions answers two different questions: denoising tests sufficiency, noising tests necessity, and in this network the answers diverge by construction. The backup-strength slider makes the reason tangible: drag w<sub>T</sub> toward zero and the necessity verdict flips, because redundancy is exactly what lets sufficiency and necessity come apart.</p>
+  <p>This is the paper&rsquo;s Case Study I in miniature. Patching evidence sits on the interventional rung (L2) of Pearl&rsquo;s causal ladder, the three-rung hierarchy of causal questions: L1 observes, L2 intervenes (what happens if we <em>do</em> x), L3 reasons counterfactually (what <em>would have</em> happened otherwise). &ldquo;S is <em>the</em> mechanism&rdquo;, by contrast, asserts necessity and uniqueness &mdash; counterfactual (L3) claims that the L2 result establishes for neither; the claim-o-meter marks that narration as rung-elevated until noising-style evidence arrives. One subtlety deserves a sentence: the noising experiment that refutes necessity is itself an L2 intervention, and it can settle the L3 claim here only because the toy is deterministic, so noising computes the counterfactual exactly. In real stochastic models noising is a practical proxy: L2 evidence can refute a necessity claim, but never establish it. The redundancy is not an artifact of the toy: Wang et al. (2023) find multiple redundant circuits for the same Indirect Object Identification task, and McGrath et al. (2023) document emergent self-repair in language model computations, where alternative pathways compensate for ablated ones. Running both patching directions, as Heimersheim and Nanda (2024) advocate, is the paper&rsquo;s recommended practical step &mdash; here it takes one extra button press to overturn the &ldquo;THE mechanism&rdquo; reading.</p>
+</section>
+
+<section class="prose">
+  <h2>What the paper says</h2>
+  <blockquote>
+    <p>&ldquo;<em>The</em> mechanism asserts necessity and uniqueness, but the evidence establishes neither. Other pathways S&prime; &ne; S may be equally sufficient, and sufficiency (intervention changes output) does not entail necessity (without S, output <em>would have been</em> different).&rdquo;</p>
+    <span class="src">&mdash; mismatch box &ldquo;Case Study I: Sufficient &ne; Necessary&rdquo;, arXiv:2602.16698</span>
+  </blockquote>
+  <blockquote>
+    <p>&ldquo;Patching identifies only a sufficient (but not necessary) control handle; necessity requires L3 evidence. [&hellip;] Testing for both denoising (sufficiency) and noising (necessity), as advocated by Heimersheim and Nanda (2024), is one practical step toward closing this gap&mdash;their recommendation has a direct theoretical grounding.&rdquo;</p>
+    <span class="src">&mdash; takeaway of the same mismatch box, arXiv:2602.16698</span>
+  </blockquote>
+</section>
+
+<section class="prose">
+  <h2>Try this</h2>
+  <ol class="try">
+    <li>Run <strong>Denoise S</strong> only and stop &mdash; the typical patching workflow. The sufficiency row turns green while the &ldquo;THE mechanism&rdquo; row reads <em>not licensed</em>. Which of the three narrations would the abstract of a paper reporting this experiment most likely have used?</li>
+    <li>Now run <strong>Noise S</strong>. The clean run&rsquo;s output barely moves. One extra experiment on the same component flips the necessity verdict &mdash; what does that imply for circuit papers that report only denoising results?</li>
+    <li>Run <strong>Denoise T</strong>. Both pathways are near-equally sufficient, so the equivalence class of sufficient circuits &mdash; the set of circuits this evidence cannot tell apart &mdash; has two members by construction. In a real model, where the amount of redundancy is unknown, what evidence would license calling any component set &ldquo;the&rdquo; mechanism?</li>
+    <li>With all badges in place, drag <strong>Backup strength w<sub>T</sub></strong> toward zero and watch the claim-o-meter: sufficient-but-not-necessary turns into sufficient-and-necessary as the redundancy vanishes. What does the flip tell you about <em>why</em> the two notions diverge in the first place?</li>
+  </ol>
+</section>
+
+<footer>
+  <p>Original toy illustration built for this tutorial: the two-pathway network, its OR-style readout, and every number on this page are computed live from a fixed deterministic toy model &mdash; not an experiment from the paper. It mirrors the paper&rsquo;s appendix construction of a network with duplicated readout pathways and illustrates the mismatch box &ldquo;Case Study I: Sufficient &ne; Necessary&rdquo; of <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a>, <em>Causality is Key for Interpretability Claims to Generalise</em>. &nbsp;&middot;&nbsp; tutorial demo &nbsp;&middot;&nbsp; CC-BY</p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- deterministic toy model ---------- */
+var K = 3.0, WS = 1.5;
+var WT = 1.35; /* backup-pathway strength, controlled by the slider */
+var H = { clean: 1, corr: -1 };
+function sig(z){ return 1 / (1 + Math.exp(-z)); }
+function outp(zS, zT){ return sig(K * Math.max(zS, zT)); }
+function fmt(p){ return p.toFixed(2); }
+function fz(z){ return (z >= 0 ? '+' : '−') + Math.abs(z).toFixed(2); }
+
+var VIEWS = {
+  clean:    { run:'clean', patch:null,                    lab:'clean run' },
+  corr:     { run:'corr',  patch:null,                    lab:'corrupted run' },
+  denoiseS: { run:'corr',  patch:{p:'S', from:'clean'},   lab:'corrupted run · S denoised' },
+  noiseS:   { run:'clean', patch:{p:'S', from:'corr'},    lab:'clean run · S noised' },
+  denoiseT: { run:'corr',  patch:{p:'T', from:'clean'},   lab:'corrupted run · T denoised' },
+  noiseT:   { run:'clean', patch:{p:'T', from:'corr'},    lab:'clean run · T noised' }
+};
+
+function compute(id){
+  var v = VIEWS[id], h = H[v.run];
+  var zS = WS * h, zT = WT * h;
+  if (v.patch){
+    var hp = H[v.patch.from];
+    if (v.patch.p === 'S') zS = WS * hp; else zT = WT * hp;
+  }
+  return { h: h, zS: zS, zT: zT, y: outp(zS, zT), before: outp(WS*h, WT*h), v: v };
+}
+
+/* verdict thresholds on the live numbers */
+var T_PERSIST = 0.75;  /* behaviour persists above this */
+var T_GONE    = 0.55;  /* behaviour destroyed below this (chance = 0.50) */
+var REST_HI   = 0.75;  /* restoration fraction: full restore above this */
+var REST_LO   = 0.25;  /* restoration fraction: no meaningful restore below this */
+
+function yClean(){ return compute('clean').y; }
+function restFrac(r){
+  var d = yClean() - r.before;
+  return d > 1e-9 ? (r.y - r.before) / d : 0;
+}
+
+/* ---------- DOM ---------- */
+function el(id){ return document.getElementById(id); }
+var view = 'clean';
+var done = {};
+
+var BTN_IDS = ['clean','corr','denoiseS','noiseS','denoiseT','noiseT'];
+var EXP_IDS = ['denoiseS','noiseS','denoiseT','noiseT'];
+
+function render(){
+  var r = compute(view), v = r.v;
+
+  el('prompt-sub').textContent = (v.run === 'clean' ? 'clean · s = +1' : 'corrupted · s = −1');
+  el('p-l2').textContent = (v.run === 'clean' ? 'John gave a drink to”' : 'Charlie gave a drink to”');
+  el('v-h').textContent  = 'h = '  + fz(r.h);
+  el('v-zs').textContent = 'z = '  + fz(r.zS);
+  el('v-zt').textContent = 'z = '  + fz(r.zT);
+  el('v-y').textContent  = 'P(Mary) = ' + fmt(r.y);
+
+  var ns = el('n-s'), nt = el('n-t');
+  ns.setAttribute('class', 'node');
+  nt.setAttribute('class', 'node alt');
+  var tagS = el('tag-s'), tagT = el('tag-t');
+  tagS.textContent = ''; tagT.textContent = '';
+  tagS.setAttribute('class', 'ptag'); tagT.setAttribute('class', 'ptag');
+  if (v.patch){
+    var isClean = (v.patch.from === 'clean');
+    var cls = isClean ? 'patched-clean' : 'patched-noise';
+    var tagTxt = isClean ? 'patched ← clean run' : 'patched ← corrupted run';
+    if (v.patch.p === 'S'){
+      ns.setAttribute('class', 'node ' + cls);
+      tagS.textContent = tagTxt;
+      tagS.setAttribute('class', 'ptag ' + (isClean ? 'clean' : 'noise'));
+    } else {
+      nt.setAttribute('class', 'node alt ' + cls);
+      tagT.textContent = tagTxt;
+      tagT.setAttribute('class', 'ptag ' + (isClean ? 'clean' : 'noise'));
+    }
+  }
+
+  var sCarries = r.zS >= r.zT;
+  el('e-sy').setAttribute('class', 'edge ' + (sCarries ? 'carry' : 'dim'));
+  el('e-ty').setAttribute('class', 'edge ' + (sCarries ? 'dim' : 'carry'));
+
+  el('cur-lab').textContent = v.lab;
+  el('cur-fill').style.width = (r.y * 100) + '%';
+  el('cur-val').textContent = fmt(r.y);
+
+  var msg;
+  if (!v.patch){
+    msg = 'Viewing: ' + v.lab + ', no intervention — P(Mary) = ' + fmt(r.y) + '.';
+  } else if (v.patch.from === 'clean'){
+    var rest = restFrac(r);
+    msg = 'Viewing: ' + v.lab + ' — P(Mary) ' + fmt(r.before) + ' → ' + fmt(r.y) + '. ' +
+      (rest >= REST_HI
+        ? 'Restoring ' + v.patch.p + ' alone brings the behaviour back.'
+        : rest >= REST_LO
+          ? 'Restoring ' + v.patch.p + ' only partly recovers the behaviour.'
+          : 'Restoring ' + v.patch.p + ' barely moves the output at this backup strength.');
+  } else {
+    var other = (v.patch.p === 'S' ? 'T' : 'S');
+    msg = 'Viewing: ' + v.lab + ' — P(Mary) ' + fmt(r.before) + ' → ' + fmt(r.y) + '. ' +
+      (r.y >= T_PERSIST
+        ? 'The behaviour persists via path ' + other + '.'
+        : r.y > T_GONE
+          ? 'Path ' + other + ' only partly sustains the behaviour.'
+          : 'The behaviour is destroyed — no backup pathway left.');
+  }
+  el('runlab').textContent = msg;
+
+  BTN_IDS.forEach(function(id){
+    el('b-' + id).setAttribute('aria-pressed', String(id === view));
+  });
+}
+
+function setPill(which, cls, txt){
+  var p = el('pill-' + which);
+  p.setAttribute('class', 'cpill' + (cls ? ' ' + cls : ''));
+  p.textContent = txt;
+}
+
+function updateClaims(){
+  var rDS = compute('denoiseS'), rNS = compute('noiseS'), rDT = compute('denoiseT');
+  var restS = restFrac(rDS), restT = restFrac(rDT);
+  var w = WT.toFixed(2);
+
+  /* claim A: sufficiency of S (denoising evidence) */
+  if (done.denoiseS){
+    if (restS >= REST_HI){
+      setPill('a', 'ok', 'supported');
+      el('exp-a').textContent = 'Supported: patching S’s clean value into the corrupted run restored the output (' +
+        fmt(rDS.before) + ' → ' + fmt(rDS.y) + '). Interventional (L2) evidence — S is a working control handle.';
+    } else {
+      setPill('a', 'mid', 'partial');
+      el('exp-a').textContent = 'Partial: patching S’s clean value moved the output ' +
+        fmt(rDS.before) + ' → ' + fmt(rDS.y) + ' — only a partial restoration.';
+    }
+  } else {
+    setPill('a', '', 'untested');
+    el('exp-a').textContent = 'Untested — run Denoise S.';
+  }
+
+  /* claim B: necessity of S (noising evidence, thresholded on the live numbers) */
+  var necSupported = false;
+  if (done.noiseS){
+    if (rNS.y >= T_PERSIST){
+      setPill('b', 'bad', 'refuted');
+      el('exp-b').textContent = 'Refuted: with S carrying the corrupted value, the clean run still outputs ' +
+        fmt(rNS.y) + ' — the backup path T (wT = ' + w + ') keeps the behaviour alive.';
+    } else if (rNS.y > T_GONE){
+      setPill('b', 'mid', 'borderline');
+      el('exp-b').textContent = 'Borderline: noising S moves the output to ' + fmt(rNS.y) +
+        ' — the weakened backup (wT = ' + w + ') only partly sustains the behaviour.';
+    } else {
+      necSupported = true;
+      setPill('b', 'ok', 'supported');
+      el('exp-b').textContent = 'Supported: at wT = ' + w + ' the backup is gone — noising S sends the output to ' +
+        fmt(rNS.y) + ' (chance is 0.50). The L2 noising experiment settles this L3 claim only because the toy is deterministic.';
+    }
+  } else {
+    setPill('b', '', 'untested');
+    el('exp-b').textContent = done.denoiseS
+      ? 'Untested — the denoising result does not speak to this. Necessity is a counterfactual (L3) claim; run Noise S.'
+      : 'Untested — run Noise S.';
+  }
+
+  /* claim C: "S is THE mechanism" (necessity + uniqueness) */
+  var reasons = [];
+  if (done.noiseS && rNS.y >= T_PERSIST){
+    reasons.push('S is not necessary (Noise S: output ' + fmt(rNS.y) + ' without it)');
+  }
+  if (done.denoiseT && restT >= REST_HI){
+    reasons.push('T is near-equally sufficient (Denoise T: ' + fmt(rDT.before) + ' → ' + fmt(rDT.y) + ')');
+  }
+  if (reasons.length){
+    setPill('c', 'bad', 'refuted');
+    el('exp-c').textContent = 'Refuted: ' + reasons.join('; ') +
+      '. “THE mechanism” asserts necessity and uniqueness; the evidence gathered contradicts it.';
+  } else if (necSupported && done.denoiseT && restT < REST_LO){
+    setPill('c', 'ok', 'holds here');
+    el('exp-c').textContent = 'Holds in this toy: with wT = ' + w + ' the backup is gone — Noise S shows necessity, and Denoise T shows no rival pathway restores the behaviour. Only the toy licenses this reading: every pathway here can be enumerated; a real model grants no such inventory.';
+  } else if (necSupported){
+    setPill('c', 'mid', 'not licensed');
+    el('exp-c').textContent = 'Not licensed yet: necessity holds at this backup strength, but “THE” also asserts uniqueness — run Denoise T to test for an equally sufficient rival pathway.';
+  } else if (done.denoiseS || done.noiseS || done.denoiseT || done.noiseT){
+    setPill('c', 'mid', 'not licensed');
+    el('exp-c').textContent = 'Not licensed: sufficiency-style evidence alone. Narrating S as THE mechanism reads necessity and uniqueness into an L2 result — rung-elevated language, wording borrowed from a higher rung of the ladder than the evidence occupies.';
+  } else {
+    setPill('c', '', 'untested');
+    el('exp-c').textContent = 'Asserts necessity and uniqueness — no evidence so far speaks to either.';
+  }
+}
+
+function refreshBadges(){
+  EXP_IDS.forEach(function(id){
+    if (done[id]){
+      var r = compute(id);
+      el('badge-' + id).textContent = fmt(r.before) + ' → ' + fmt(r.y);
+    } else {
+      el('badge-' + id).textContent = '';
+    }
+  });
+}
+
+function refreshBaselines(){
+  var yc = compute('clean').y, yk = compute('corr').y;
+  el('fill-clean').style.width = (yc * 100) + '%';
+  el('val-clean').textContent = fmt(yc);
+  el('fill-corr').style.width = (yk * 100) + '%';
+  el('val-corr').textContent = fmt(yk);
+}
+
+function updateWeightNote(){
+  var w = WT.toFixed(2), t;
+  if (WT >= 1.2){
+    t = 'The pathways differ only in weight (wS = 1.50 vs wT = ' + w + '): swap S and T and every row reads nearly the same for T.';
+  } else if (WT >= 0.4){
+    t = 'Backup strength wT = ' + w + ': the redundancy is fading — the verdicts above track the live numbers as you drag.';
+  } else {
+    t = 'Backup strength wT = ' + w + ': the backup is nearly gone — noising S now matters, and sufficient-but-not-necessary turns into sufficient-and-necessary.';
+  }
+  el('mnote-weights').textContent = t;
+}
+
+function runExperiment(id){
+  view = id;
+  done[id] = true;
+  refreshBadges();
+  render();
+  updateClaims();
+}
+
+el('b-clean').addEventListener('click', function(){ view = 'clean'; render(); });
+el('b-corr').addEventListener('click', function(){ view = 'corr'; render(); });
+EXP_IDS.forEach(function(id){
+  el('b-' + id).addEventListener('click', function(){ runExperiment(id); });
+});
+el('b-reset').addEventListener('click', function(){
+  done = {};
+  view = 'clean';
+  refreshBadges();
+  render();
+  updateClaims();
+  el('runlab').textContent = 'Evidence cleared — back to the clean run.';
+});
+el('wt-slider').addEventListener('input', function(){
+  WT = parseFloat(this.value);
+  el('wt-val').textContent = WT.toFixed(2);
+  refreshBaselines();
+  refreshBadges();   /* stored evidence never goes stale */
+  render();
+  updateClaims();
+  updateWeightNote();
+});
+
+refreshBaselines();
+updateWeightNote();
+render();
+updateClaims();
+})();
+</script>
+</body>
+</html>

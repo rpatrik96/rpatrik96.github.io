@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Much Identifiability Does Your Task Need? — Causal Foundations for Interpretability</title>
+<style>
+:root{
+  --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+  --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+  --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+  --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B;
+  --gap-green:#3E8E5A; --line:#E1DEEC;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E;
+    --gap-green:#5FB37E; --line:#332B49;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+  --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+  --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+  --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E;
+  --gap-green:#5FB37E; --line:#332B49;
+}
+:root[data-theme="light"]{
+  --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+  --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+  --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+  --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B;
+  --gap-green:#3E8E5A; --line:#E1DEEC;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);
+  font-family:'Avenir Next',Avenir,'Segoe UI',system-ui,sans-serif;
+  font-size:16px;line-height:1.55}
+h1,h2,h3{font-family:Futura,'Century Gothic','Avenir Next','Trebuchet MS',sans-serif;line-height:1.2}
+.wrap{max-width:960px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+.kicker{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute)}
+header h1{color:var(--purple);font-size:1.7rem;margin:.35rem 0 .3rem}
+.dek{color:var(--ink-soft);max-width:70ch;margin:0}
+.back{display:inline-block;font-size:.85rem;color:var(--purple);text-decoration:none;margin-bottom:.9rem}
+.back:hover{text-decoration:underline}
+a{color:var(--purple)}
+sub{font-size:.68em}
+
+/* ---- stage ---- */
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:1.1rem;margin:1.4rem 0}
+.pickers{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.pgroup .kicker{display:block;margin-bottom:.4rem}
+.pbtns{display:grid;grid-template-columns:1fr;gap:.45rem}
+.pick{display:flex;flex-direction:column;gap:.1rem;text-align:left;cursor:pointer;
+  background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.5rem .7rem;
+  color:var(--ink);font:inherit}
+.pick[aria-pressed="true"]{border-color:var(--purple-mid);background:var(--hero);
+  box-shadow:inset 3px 0 0 var(--purple)}
+.pick:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.pick .pname{font-weight:600;font-size:.93rem}
+.pick .psub{font-size:.76rem;color:var(--ink-mute)}
+.docue{font-size:.85rem;color:var(--ink-soft);margin:0 0 .9rem;max-width:75ch}
+.docue b{color:var(--ink)}
+.pnote{font-size:.76rem;color:var(--ink-mute);margin:0 0 .5rem;max-width:46ch}
+.pnote em{color:var(--ink-soft)}
+.sliderrow{margin-top:.85rem}
+.sliderrow .kicker{display:block;margin-bottom:.35rem}
+.lamline{display:flex;align-items:center;gap:.6rem}
+.lamline input[type=range]{flex:1;min-width:0;accent-color:var(--purple)}
+.lamline input[type=range]:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.lamval{font-size:.83rem;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.lamnote{font-size:.76rem;color:var(--ink-mute);margin:.4rem 0 0;max-width:46ch}
+.latkey{font-size:.78rem;color:var(--ink-soft);margin:0 0 .6rem;max-width:40ch}
+
+.scene{display:grid;grid-template-columns:1fr 1.25fr;gap:.8rem;margin-bottom:.9rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.85rem .9rem}
+.card h3{margin:0 0 .5rem;font-size:.95rem;color:var(--ink)}
+.card .goal{font-size:.8rem;color:var(--ink-soft);margin:0 0 .6rem}
+.card .goal b{color:var(--ink)}
+
+/* mixing grid */
+.mixwrap{display:grid;grid-template-columns:auto auto;gap:.3rem;justify-content:start;align-items:start}
+.mixgrid{display:grid;grid-template-columns:repeat(4,2.15rem);grid-auto-rows:2.15rem;gap:.25rem}
+.mixgrid .lab{display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--ink-soft)}
+.mcell{border-radius:6px;border:1px dashed color-mix(in srgb,var(--ink-mute) 55%,transparent);background:transparent}
+.mcell.on{border:1px solid var(--purple-mid);background:var(--purple-soft)}
+.mixcap{font-size:.8rem;color:var(--ink-soft);margin:.6rem 0 0;max-width:34ch}
+.blockkey{display:flex;gap:.9rem;margin-top:.55rem;font-size:.72rem;color:var(--ink-mute)}
+.blockkey span::before{content:"";display:inline-block;width:.7rem;height:.7rem;border-radius:3px;
+  margin-right:.3rem;vertical-align:-.08rem}
+.blockkey .kon::before{border:1px solid var(--purple-mid);background:var(--purple-soft)}
+.blockkey .koff::before{border:1px dashed color-mix(in srgb,var(--ink-mute) 55%,transparent)}
+
+/* outcome: scatter */
+.scatter svg{display:block;max-width:100%;height:auto}
+.readout{display:block;margin-top:.4rem;font-size:.86rem;color:var(--ink-soft)}
+.readout b{color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* outcome: delta bars */
+.dbars{display:grid;grid-template-columns:auto 1fr auto;gap:.35rem .6rem;align-items:center;margin-top:.3rem}
+.dlab{font-size:.85rem;color:var(--ink-soft);min-width:6.5rem}
+.dlab b{color:var(--ink)}
+.dtrack{position:relative;height:.95rem;background:var(--paper);border:1px solid var(--line);border-radius:6px}
+.dtrack .zero{position:absolute;left:50%;top:-2px;bottom:-2px;border-left:1px solid var(--ink-mute);opacity:.55}
+.dbar{position:absolute;top:2px;bottom:2px;border-radius:4px;background:var(--purple);transition:left .3s,width .3s}
+.dbar.bad{background:var(--magenta)}
+.dbar.zero{background:transparent}
+.dval{font-size:.83rem;font-variant-numeric:tabular-nums;color:var(--ink);min-width:3.2rem;text-align:right}
+.dval.bad{color:var(--magenta);font-weight:600}
+.dnote{font-size:.76rem;color:var(--ink-mute);margin:.55rem 0 0}
+
+/* verdict */
+.verdict{border-radius:10px;border:1px solid var(--line);background:var(--card);
+  padding:.7rem .9rem;margin-bottom:.9rem}
+.verdict .vhead{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;display:block;margin-bottom:.2rem}
+.verdict p{margin:.15rem 0;font-size:.9rem;max-width:75ch}
+.verdict.ok{border-left:4px solid var(--gap-green)} .verdict.ok .vhead{color:var(--gap-green)}
+.verdict.over{border-left:4px solid var(--l2)} .verdict.over .vhead{color:var(--l2)}
+.verdict.fail{border-left:4px solid var(--magenta)} .verdict.fail .vhead{color:var(--magenta)}
+
+/* explore matrix */
+.matrix{margin-top:.2rem}
+.matrix table{border-collapse:separate;border-spacing:.3rem;font-size:.8rem}
+.matrix caption{text-align:left;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-mute);margin-bottom:.35rem}
+.matrix th{font-weight:600;color:var(--ink-soft);padding:.15rem .4rem;text-align:left}
+.matrix td{border:1px solid var(--line);border-radius:8px;background:var(--card);
+  padding:.3rem .55rem;min-width:6.4rem;text-align:center;color:var(--ink-mute)}
+.matrix td.min-req{border-style:dashed;border-color:var(--purple-mid)}
+.matrix td.ok{color:var(--gap-green);font-weight:600}
+.matrix td.over{color:var(--l2);font-weight:600}
+.matrix td.fail{color:var(--magenta);font-weight:600}
+.matrix td.cur{outline:2px solid var(--purple);outline-offset:1px}
+.mlegend{font-size:.76rem;color:var(--ink-mute);margin:.45rem 0 0;max-width:70ch}
+.mlegend b.g{color:var(--gap-green)} .mlegend b.a{color:var(--l2)} .mlegend b.m{color:var(--magenta)}
+.scenenote{font-size:.75rem;color:var(--ink-mute);margin:.8rem 0 0}
+
+/* prose sections */
+section.prose{margin:1.6rem 0;max-width:70ch}
+section.prose h2{font-size:1.15rem;color:var(--purple);margin-bottom:.4rem}
+section.prose p{max-width:70ch}
+.paperbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:.9rem 1.1rem;margin:1.6rem 0}
+.paperbox h2{font-size:1.15rem;color:var(--purple);margin:.1rem 0 .4rem}
+.paperbox blockquote{margin:.6rem 0;padding-left:.9rem;border-left:3px solid var(--purple-soft);
+  color:var(--ink-soft);font-style:italic;max-width:70ch}
+.paperbox cite{display:block;font-style:normal;font-size:.78rem;color:var(--ink-mute);margin-top:.2rem}
+.ptable{margin:.8rem 0 .2rem;border-collapse:collapse;font-size:.86rem}
+.ptable th{text-align:left;font-weight:700;padding:.25rem .9rem .25rem 0;border-bottom:1.5px solid var(--ink-soft)}
+.ptable td{padding:.3rem .9rem .3rem 0;border-bottom:1px solid var(--line);color:var(--ink-soft)}
+.ptable td:first-child{color:var(--ink)}
+.try ol{padding-left:1.2rem;max-width:70ch}
+.try li{margin-bottom:.5rem}
+footer{border-top:1px solid var(--line);margin-top:2.2rem;padding-top:.9rem;font-size:.8rem;color:var(--ink-mute);max-width:70ch}
+[hidden]{display:none!important}
+@media (max-width:760px){
+  .pickers,.scene{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="back" href="./index.html">&larr; All demos</a>
+  <div class="kicker">EMNLP 2026 Tutorial &middot; Causal Foundations for Interpretability</div>
+  <h1>How Much Identifiability Does Your Task Need?</h1>
+  <p class="dek">Classification, steering, and knowledge editing demand different strengths of identification. Pair each task with an equivalence class &mdash; the set of representations your training evidence cannot tell apart &mdash; and watch it succeed, fail concretely, or pay for guarantees it never uses.</p>
+</header>
+
+<div class="stage">
+  <p class="docue"><b>Do this:</b> click any task &times; strength pair &mdash; the outcome panel, verdict, and matrix below update live; nine pairs fill the matrix. Then drag the mixing slider to sweep how much of the leftover freedom this map actually uses.</p>
+  <div class="pickers">
+    <div class="pgroup" role="group" aria-label="Choose a downstream task">
+      <span class="kicker">1 &middot; Pick a task</span>
+      <div class="pbtns">
+        <button class="pick" data-task="classify" aria-pressed="true">
+          <span class="pname">Binary classification</span>
+          <span class="psub">is this text positive or negative?</span>
+        </button>
+        <button class="pick" data-task="steer" aria-pressed="false">
+          <span class="pname">Steering</span>
+          <span class="psub">raise sentiment; leave topic untouched</span>
+        </button>
+        <button class="pick" data-task="edit" aria-pressed="false">
+          <span class="pname">Knowledge editing</span>
+          <span class="psub">rewrite one feature (s&#8322;) and nothing else &mdash; think: change one fact without touching related ones</span>
+        </button>
+      </div>
+    </div>
+    <div class="pgroup" role="group" aria-label="Choose an identification strength">
+      <span class="kicker">2 &middot; Pick an identification strength</span>
+      <p class="pnote">An identification guarantee fixes how close the learned coordinates must come to the true latents. Each strength is an <em>equivalence class</em>: the set of representations the training evidence cannot tell apart &mdash; the weaker the strength, the bigger the set. The &asymp; anchors below are intuitions, not theorems.</p>
+      <div class="pbtns">
+        <button class="pick" data-str="affine" aria-pressed="true">
+          <span class="pname">Affine</span>
+          <span class="psub">coordinates known up to any invertible linear mix &middot; &asymp; what a linear probe certifies</span>
+        </button>
+        <button class="pick" data-str="blockwise" aria-pressed="false">
+          <span class="pname">Blockwise</span>
+          <span class="psub">concept subspace separated; mixing stays inside the block &middot; &asymp; a steering vector&rsquo;s concept subspace</span>
+        </button>
+        <button class="pick" data-str="elementwise" aria-pressed="false">
+          <span class="pname">Elementwise</span>
+          <span class="psub">each coordinate pinned to one latent (up to scale) &middot; &asymp; the per-feature guarantee SAE features aim for</span>
+        </button>
+      </div>
+      <div class="sliderrow">
+        <label class="kicker" for="lam">3 &middot; Slide the leftover mixing</label>
+        <div class="lamline">
+          <input type="range" id="lam" min="0" max="1" step="0.05" value="0.7" aria-describedby="lamnote">
+          <output class="lamval" id="lamval" for="lam">&lambda; = 0.70</output>
+        </div>
+        <p class="lamnote" id="lamnote">How mixed a representation this class still allows &mdash; the guarantee must hold at every setting; failure needs only one.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="card">
+      <h3>What this strength pins down</h3>
+      <p class="latkey">s&#8321;, s&#8322; = two related sentiment features (a concept block) &middot; t = an unrelated topic latent &middot; &#265;&#7522; = learned coordinates</p>
+      <div class="mixwrap">
+        <div class="mixgrid" id="mixgrid" role="img" aria-label="Mixing pattern between learned coordinates and true latents"></div>
+      </div>
+      <div class="blockkey" aria-hidden="true"><span class="kon">latent can appear in this coordinate</span><span class="koff">guaranteed absent</span></div>
+      <p class="mixcap" id="mixcap"></p>
+    </div>
+    <div class="card">
+      <h3 id="outcome-title"></h3>
+      <p class="goal" id="outcome-goal"></p>
+      <div class="scatter" id="scatter-box"></div>
+      <div id="bars-box">
+        <div class="dbars" id="dbars"></div>
+        <p class="dnote" id="dnote">Bars: the true-latent change &Delta;z caused by a unit shift applied in the <em>learned</em> coordinates. Purple = movement the task intends; <b style="color:var(--magenta)">red&nbsp;&#9888;</b> = a latent the task required to stay fixed.</p>
+      </div>
+      <span class="readout" id="readout" aria-live="polite"></span>
+    </div>
+  </div>
+
+  <div class="verdict ok" id="verdict" aria-live="polite">
+    <span class="vhead" id="verdict-head"></span>
+    <p id="verdict-text"></p>
+  </div>
+
+  <div class="matrix">
+    <table>
+      <caption>Outcome matrix &middot; fills in as you explore (<span aria-live="polite"><span id="mcount">1</span>/9</span>) &middot; dashed = the task&rsquo;s minimal equivalence class</caption>
+      <thead>
+        <tr><th scope="col">Task \ Strength</th><th scope="col">Affine</th><th scope="col">Blockwise</th><th scope="col">Elementwise</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Classification</th><td id="m-classify-affine" class="min-req">&middot;</td><td id="m-classify-blockwise">&middot;</td><td id="m-classify-elementwise">&middot;</td></tr>
+        <tr><th scope="row">Steering</th><td id="m-steer-affine">&middot;</td><td id="m-steer-blockwise" class="min-req">&middot;</td><td id="m-steer-elementwise">&middot;</td></tr>
+        <tr><th scope="row">Editing</th><td id="m-edit-affine">&middot;</td><td id="m-edit-blockwise">&middot;</td><td id="m-edit-elementwise" class="min-req">&middot;</td></tr>
+      </tbody>
+    </table>
+    <p class="mlegend"><b class="g">&#10003; minimal</b> = exactly the equivalence class the task needs &middot; <b class="a">&#10003; overkill</b> = works, but the extra structure goes unused &middot; <b class="m">&#10007; fails</b> = strength below the task&rsquo;s requirement. Dashed cells mark the paper&rsquo;s minimal class per task.</p>
+  </div>
+
+  <p class="scenenote">Toy setup: three true latents &mdash; two related sentiment features (s&#8321;, s&#8322;) forming a concept block, plus an unrelated topic latent (t) &mdash; observed through one map per strength, with the slider scaling the mixing the chosen class leaves unconstrained. Elementwise is shown with the coordinate&ndash;latent pairing already resolved; in general it holds up to a permutation as well as scale. Seeded simulation; a tutorial illustration of the paper&rsquo;s task&ndash;class table, not an experiment from the paper.</p>
+</div>
+
+<section class="prose">
+  <h2>What this shows</h2>
+  <p>All three maps here are equally consistent with the observed data &mdash; nothing in the data alone distinguishes them &mdash; and differ only in which structure the identifiability guarantee pins down. That is enough to decide each task. A linear classifier survives any affine mix because linear separability is preserved; steering needs the sentiment subspace separated from topic, or the steering vector drags topic along; editing a single feature needs each element pinned down individually, or the edit rewrites its neighbour inside the block.</p>
+  <p>The slider makes the same point from the worst-case side: an equivalence class is a <em>set</em> of maps, and the slider walks through its members. At zero leftover mixing a task can succeed below its minimal class, but that is luck of the particular member, not a guarantee &mdash; the guarantee must hold for every member, and failure needs only one.</p>
+  <p>The matrix makes the paper&rsquo;s point in both directions. Below each task&rsquo;s minimal class the failure is mechanical, not bad luck; above it the guarantee is real but unused, so demanding elementwise identification everywhere sets the bar higher than most tasks require. The useful question is therefore task-relative: name the equivalence class your task needs, then check whether your evidence delivers it.</p>
+</section>
+
+<div class="paperbox">
+  <h2>What the paper says</h2>
+  <blockquote>&ldquo;Different tasks may require different strengths of identification. While element-wise identifiability is the strongest guarantee and subsumes the other classes, not every task demands it. Steering, for instance, may benefit from block-wise identifiability when related concepts are distributed across dimensions within a shared subspace.&rdquo;
+    <cite>&mdash; Call to Action, &ldquo;Task-Relative Equivalence Classes&rdquo;, arXiv:2602.16698</cite>
+  </blockquote>
+  <blockquote>&ldquo;The practical question is whether the assumptions under which identifiability is guaranteed hold when deployed, and whether the resulting equivalence class suffices for the task at hand.&rdquo;
+    <cite>&mdash; &sect;&ldquo;The Right Question Is Not Enough. Answers Must Be Identifiable&rdquo;, arXiv:2602.16698</cite>
+  </blockquote>
+  <table class="ptable">
+    <thead><tr><th>Task</th><th>Minimal equivalence class</th></tr></thead>
+    <tbody>
+      <tr><td>Binary classification</td><td>Affine (preserves linear separability)</td></tr>
+      <tr><td>Steering</td><td>Blockwise (concept subspace)</td></tr>
+      <tr><td>Knowledge editing</td><td>Elementwise (needs individual elements)</td></tr>
+    </tbody>
+  </table>
+  <cite style="display:block;font-style:normal;font-size:.78rem;color:var(--ink-mute);margin-top:.3rem">The paper&rsquo;s table, reproduced from the same subsection.</cite>
+</div>
+
+<section class="prose try">
+  <h2>Try this</h2>
+  <ol>
+    <li>Set the task to <em>steering</em> and walk the strength up from affine. Watch the topic bar: it snaps to zero exactly at blockwise, the first class that pins down the concept subspace.</li>
+    <li>Stay on <em>steering &times; affine</em> (a failing cell) and drag the mixing slider to zero: the topic bar vanishes and the steer &ldquo;works&rdquo;. Why does the matrix still say <em>fails</em>? Then select elementwise and drag again &mdash; nothing moves, because the class leaves no mixing to scale.</li>
+    <li>Now switch to <em>knowledge editing</em> at blockwise. Topic stays protected, yet the edit still rewrites s&#8321;. What does elementwise add that removes this &mdash; and what would it cost to obtain in practice?</li>
+    <li>Fill all nine cells, then take one interpretability claim you know (a probe, a steering vector, a model edit) and place it: which equivalence class does its <em>evidence</em> establish, and which cell does its <em>headline claim</em> assume? The paper&rsquo;s open research question asks exactly this: which equivalence classes are the weakest that suffice empirically.</li>
+  </ol>
+</section>
+
+<footer>
+  <p>Provenance: interactive rendering of the &ldquo;Task-Relative Equivalence Classes&rdquo; subsection (Call to Action) of <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a> (<em>Causality is Key for Interpretability Claims to Generalise</em>). The task&ndash;class table and its glosses are the paper&rsquo;s. The three-latent toy, the three mixing maps, and every bar and accuracy readout are computed live by a seeded in-page simulation built for this tutorial &mdash; they are illustrations, not experiments from the paper.</p>
+  <p>tutorial demo &middot; CC-BY</p>
+</footer>
+</div>
+
+<script>
+'use strict';
+/* ---------- seeded toy data ---------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const rnd=mulberry32(20260716);
+function gauss(){let u=0,v=0;while(u===0)u=rnd();while(v===0)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+const N=64,PTS=[];
+for(let i=0;i<N;i++){const y=i<N/2?1:-1;PTS.push({y,z:[1.4*y+0.4*gauss(),1.2*y+0.4*gauss(),0.8*gauss()]})}
+
+/* Maps parametrized by λ = the leftover mixing the chosen class allows.
+   Diagonals are fixed; the off-diagonal entries the class leaves unconstrained
+   scale with λ (base = the λ=0.7 reference map, so the default reproduces it).
+   Verified: invertible (|det| ≥ 0.69) across λ ∈ [0,1]. */
+const LAM0=0.7;
+const DIAG={affine:[0.9,0.9,0.85],blockwise:[0.9,1.0,1.1],elementwise:[1.25,0.8,1.1]};
+const OFFB={
+  affine:[[0,0.45/LAM0,0.5/LAM0],[-0.35/LAM0,0,0.55/LAM0],[0.75/LAM0,-0.7/LAM0,0]],
+  blockwise:[[0,0.75/LAM0,0],[-0.55/LAM0,0,0],[0,0,0]],
+  elementwise:[[0,0,0],[0,0,0],[0,0,0]]
+};
+const mapFor=(str,lam)=>DIAG[str].map((d,i)=>OFFB[str][i].map((o,j)=>i===j?d:o*lam));
+const MIXPAT={ // which true latents may appear in each learned coordinate
+  affine:[[1,1,1],[1,1,1],[1,1,1]],
+  blockwise:[[1,1,0],[1,1,0],[0,0,1]],
+  elementwise:[[1,0,0],[0,1,0],[0,0,1]]
+};
+function det3(m){return m[0][0]*(m[1][1]*m[2][2]-m[1][2]*m[2][1])-m[0][1]*(m[1][0]*m[2][2]-m[1][2]*m[2][0])+m[0][2]*(m[1][0]*m[2][1]-m[1][1]*m[2][0])}
+function inv3(m){const d=det3(m);return[
+ [(m[1][1]*m[2][2]-m[1][2]*m[2][1])/d,-(m[0][1]*m[2][2]-m[0][2]*m[2][1])/d,(m[0][1]*m[1][2]-m[0][2]*m[1][1])/d],
+ [-(m[1][0]*m[2][2]-m[1][2]*m[2][0])/d,(m[0][0]*m[2][2]-m[0][2]*m[2][0])/d,-(m[0][0]*m[1][2]-m[0][2]*m[1][0])/d],
+ [(m[1][0]*m[2][1]-m[1][1]*m[2][0])/d,-(m[0][0]*m[2][1]-m[0][1]*m[2][0])/d,(m[0][0]*m[1][1]-m[0][1]*m[1][0])/d]]}
+const mv=(m,v)=>m.map(r=>r[0]*v[0]+r[1]*v[1]+r[2]*v[2]);
+
+/* ---------- content ---------- */
+const RANK={affine:1,blockwise:2,elementwise:3};
+const NEED={classify:1,steer:2,edit:3};
+const STRNAME={affine:'Affine',blockwise:'Blockwise',elementwise:'Elementwise'};
+const TASKNAME={classify:'Classification',steer:'Steering',edit:'Editing'};
+const MIXCAP={
+  affine:'Every learned coordinate ĉᵢ may blend all three latents: no axis and no subspace is pinned down, only the overall geometry up to an invertible linear map.',
+  blockwise:'The sentiment block {s₁, s₂} and topic are separated. s₁ and s₂ still mix freely inside the block.',
+  elementwise:'Each learned coordinate carries exactly one latent, up to scale: individual elements are pinned down.'
+};
+const OUTCOME={
+  classify:{title:'Fit a linear classifier in the learned coordinates',
+    goal:'Goal: separate <b>positive</b> from <b>negative</b> sentiment.'},
+  steer:{title:'Add a steering shift in the learned coordinates',
+    goal:'Goal: raise sentiment (s₁, s₂ may move) while <b>topic must stay at zero</b>.'},
+  edit:{title:'Rewrite the learned coordinate believed to be s₂',
+    goal:'Goal: change <b>s₂ only</b>; s₁ and topic must not move.'}
+};
+const VERDICT={
+  'classify-affine':['ok','Works — and this is the minimal class. An affine map preserves linear separability, so the classifier finds a separating boundary even in fully mixed coordinates.'],
+  'classify-blockwise':['over','Works, but overkill: the classifier only needs separability, which affine identification already guarantees. The separated concept block goes unused.'],
+  'classify-elementwise':['over','Works, but overkill: every axis is pinned down and the classifier uses none of that extra structure. Separability was already enough.'],
+  'steer-affine':['fail','Fails: the learned “sentiment” coordinates blend topic into them, so the steering shift drags topic along (Δt ≠ 0). Affine is below what steering needs.'],
+  'steer-blockwise':['ok','Works — and this is the minimal class. The shift stays inside the identified sentiment subspace, so topic stays exactly at zero. How s₁ and s₂ split the move is unresolved; steering does not care.'],
+  'steer-elementwise':['over','Works, but overkill: steering only needs the subspace pinned down. Resolving the individual axes inside it adds nothing to this task.'],
+  'edit-affine':['fail','Fails: the edit spills into every latent — the neighbouring sentiment feature and the topic both shift.'],
+  'edit-blockwise':['fail','Fails: topic is protected, but inside the block s₁ and s₂ still mix, so rewriting s₂ also rewrites s₁ (Δs₁ ≠ 0). A subspace is not enough; editing needs individual elements.'],
+  'edit-elementwise':['ok','Works — and this is the minimal class. Each learned coordinate equals one true latent up to scale, so the edit lands on s₂ alone.']
+};
+
+/* ---------- state ---------- */
+const state={task:'classify',str:'affine',lam:LAM0,visited:new Set()};
+
+/* ---------- renderers ---------- */
+const $=id=>document.getElementById(id);
+function renderMix(){
+  const pat=MIXPAT[state.str],g=$('mixgrid');
+  const cols=['s₁','s₂','t'];
+  // off-diagonal fill echoes λ: the border says the class ALLOWS mixing there,
+  // the fill says how much THIS member of the class actually uses.
+  const fillPct=Math.round(15+85*state.lam);
+  let h='<div class="lab" aria-hidden="true"></div>'+cols.map(c=>`<div class="lab">${c}</div>`).join('');
+  for(let i=0;i<3;i++){
+    h+=`<div class="lab">ĉ${['₁','₂','₃'][i]}</div>`;
+    for(let j=0;j<3;j++){
+      const dim=pat[i][j]&&i!==j?` style="background:color-mix(in srgb,var(--purple-soft) ${fillPct}%,transparent)"`:'';
+      h+=`<div class="mcell${pat[i][j]?' on':''}"${dim}></div>`;
+    }
+  }
+  g.innerHTML=h;
+  g.setAttribute('aria-label',`Mixing pattern under ${STRNAME[state.str]} identification: ${MIXCAP[state.str]}`);
+  $('mixcap').textContent=MIXCAP[state.str];
+}
+function renderLam(){
+  const none=state.str==='elementwise';
+  $('lamval').textContent=`λ = ${state.lam.toFixed(2)}`+(none?' · nothing left to scale':'');
+}
+function renderScatter(){
+  const M=mapFor(state.str,state.lam);
+  const proj=PTS.map(p=>{const c=mv(M,p.z);return{y:p.y,x:c[0],v:c[1]}});
+  const mp=[0,0],mn=[0,0];
+  for(const p of proj){const m=p.y>0?mp:mn;m[0]+=p.x/(N/2);m[1]+=p.v/(N/2)}
+  const w=[mp[0]-mn[0],mp[1]-mn[1]],mid=[(mp[0]+mn[0])/2,(mp[1]+mn[1])/2];
+  let acc=0;for(const p of proj){if(Math.sign(w[0]*(p.x-mid[0])+w[1]*(p.v-mid[1]))===p.y)acc++}
+  let xmin=1e9,xmax=-1e9,ymin=1e9,ymax=-1e9;
+  for(const p of proj){xmin=Math.min(xmin,p.x);xmax=Math.max(xmax,p.x);ymin=Math.min(ymin,p.v);ymax=Math.max(ymax,p.v)}
+  const padX=(xmax-xmin)*.14,padY=(ymax-ymin)*.14;xmin-=padX;xmax+=padX;ymin-=padY;ymax+=padY;
+  const W=360,H=235,sx=x=>8+(x-xmin)/(xmax-xmin)*(W-16),sy=y=>H-14-(y-ymin)/(ymax-ymin)*(H-24);
+  // boundary: w.(c-mid)=0 -> param line along perpendicular of w
+  const per=[-w[1],w[0]],L=8;
+  const b1=[mid[0]+per[0]*L,mid[1]+per[1]*L],b2=[mid[0]-per[0]*L,mid[1]-per[1]*L];
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Scatter of the two classes in learned coordinates; a dashed line separates them. ${acc} of ${N} points correctly classified.">`;
+  s+=`<line x1="8" y1="${H-14}" x2="${W-8}" y2="${H-14}" stroke="var(--line)"/><line x1="8" y1="10" x2="8" y2="${H-14}" stroke="var(--line)"/>`;
+  s+=`<text x="${W-10}" y="${H-3}" font-size="10" fill="var(--ink-mute)" text-anchor="end">ĉ₁</text>`;
+  s+=`<text x="3" y="10" font-size="10" fill="var(--ink-mute)">ĉ₂</text>`;
+  s+=`<line x1="${sx(b1[0])}" y1="${sy(b1[1])}" x2="${sx(b2[0])}" y2="${sy(b2[1])}" stroke="var(--ink-mute)" stroke-dasharray="5 4" stroke-width="1.4"/>`;
+  for(const p of proj)s+=`<circle cx="${sx(p.x).toFixed(1)}" cy="${sy(p.v).toFixed(1)}" r="3.4" fill="${p.y>0?'var(--gap-green)':'var(--purple)'}" fill-opacity=".8"/>`;
+  // direct labels placed just outside each cluster's vertical extent
+  let posTop=1e9,negBot=-1e9;
+  for(const p of proj){const yPix=sy(p.v);if(p.y>0)posTop=Math.min(posTop,yPix);else negBot=Math.max(negBot,yPix)}
+  const posLabY=Math.max(posTop-9,12),negLabY=Math.min(negBot+16,H-18);
+  s+=`<text x="${sx(mp[0])}" y="${posLabY}" font-size="11" font-weight="600" fill="var(--ink-soft)" text-anchor="middle">positive</text>`;
+  s+=`<text x="${sx(mn[0])}" y="${negLabY}" font-size="11" font-weight="600" fill="var(--ink-soft)" text-anchor="middle">negative</text>`;
+  s+='</svg>';
+  $('scatter-box').innerHTML=s;
+  const NARR={
+    affine:`coordinates fully re-mixed by an invertible linear map — <b>${acc}/${N}</b> correct: an affine mix cannot break linear separability.`,
+    blockwise:`sentiment block separated from topic, coordinates still mixed inside it — <b>${acc}/${N}</b> correct: separability never needed more.`,
+    elementwise:`every coordinate pinned to its own latent — <b>${acc}/${N}</b> correct: the classifier uses none of that extra structure.`
+  };
+  $('readout').innerHTML=NARR[state.str]+(state.str==='elementwise'?'':' Drag the slider: the cloud re-mixes, the count does not.');
+}
+function offTarget(){ // largest movement of a latent the task required to stay fixed, at current λ
+  const Minv=inv3(mapFor(state.str,state.lam));
+  const d=state.task==='steer'?[1,1,0]:[0,1,0];
+  const intended=state.task==='steer'?[true,true,false]:[false,true,false];
+  const dz=mv(Minv,d);
+  return{dz,intended,maxBad:Math.max(...dz.map((v,i)=>intended[i]?0:Math.abs(v)))};
+}
+function renderBars(){
+  const{dz,intended,maxBad}=offTarget();
+  const labels=['Δ s₁ <b>sentiment</b>','Δ s₂ <b>sentiment</b>','Δ t <b>topic</b>'];
+  const MAXV=1.4;
+  let h='';
+  for(let i=0;i<3;i++){
+    const v=dz[i],zero=Math.abs(v)<1e-9,bad=!intended[i]&&!zero;
+    const frac=Math.min(Math.abs(v)/MAXV,1)*48;
+    const left=v>=0?50:50-frac;
+    h+=`<span class="dlab">${labels[i]}</span>`;
+    h+=`<span class="dtrack"><span class="zero"></span><span class="dbar${bad?' bad':''}${zero?' zero':''}" style="left:${left}%;width:${zero?0:frac}%"></span></span>`;
+    h+=`<span class="dval${bad?' bad':''}">${v>=0?'+':'−'}${Math.abs(v).toFixed(2)}${bad?' ⚠':''}</span>`;
+  }
+  $('dbars').innerHTML=h;
+  const guaranteed=RANK[state.str]>=NEED[state.task];
+  const nBad=dz.filter((v,i)=>!intended[i]&&Math.abs(v)>1e-9).length;
+  if(guaranteed)
+    $('readout').innerHTML='every protected latent stays exactly at zero — <b>guaranteed</b> by this equivalence class, at every slider setting.';
+  else if(maxBad<0.02)
+    $('readout').innerHTML='off-target movement ≈ <b>0</b> at this slider setting — luck of this particular map, not a guarantee from the class.';
+  else
+    $('readout').innerHTML=`<b>${nBad===1?'1 latent':nBad+' latents'}</b> moved that the task required to stay fixed (largest off-target |Δ| = <b>${maxBad.toFixed(2)}</b>) — drag the slider to scale it.`;
+}
+function renderOutcome(){
+  $('outcome-title').textContent=OUTCOME[state.task].title;
+  $('outcome-goal').innerHTML=OUTCOME[state.task].goal;
+  const isClassify=state.task==='classify';
+  $('scatter-box').hidden=!isClassify;
+  $('bars-box').hidden=isClassify;
+  if(isClassify)renderScatter();else renderBars();
+}
+function renderVerdict(){
+  const key=`${state.task}-${state.str}`,[cls,text]=VERDICT[key];
+  const v=$('verdict');
+  v.className=`verdict ${cls}`;
+  $('verdict-head').textContent=`Verdict · ${TASKNAME[state.task]} × ${STRNAME[state.str]}`;
+  let extra='';
+  if(cls==='fail'&&state.task!=='classify'&&offTarget().maxBad<0.02)
+    extra=' At this slider setting it worked — but the class does not guarantee it: the guarantee must hold for every member of the equivalence class, and failure needs only one.';
+  $('verdict-text').textContent=text+extra;
+}
+function renderMatrix(){
+  state.visited.add(`${state.task}-${state.str}`);
+  for(const t of['classify','steer','edit'])for(const s of['affine','blockwise','elementwise']){
+    const td=$(`m-${t}-${s}`),key=`${t}-${s}`;
+    td.classList.remove('ok','over','fail','cur');
+    if(state.visited.has(key)){
+      const cls=VERDICT[key][0];
+      td.classList.add(cls);
+      td.innerHTML=cls==='fail'?'✗ fails':(cls==='over'?'✓ overkill':'✓ minimal');
+    } else td.innerHTML='·';
+    if(t===state.task&&s===state.str)td.classList.add('cur');
+  }
+  $('mcount').textContent=state.visited.size;
+}
+function update(){renderMix();renderLam();renderOutcome();renderVerdict();renderMatrix()}
+
+/* ---------- wiring ---------- */
+$('lam').addEventListener('input',()=>{
+  state.lam=parseFloat($('lam').value);
+  update();
+});
+document.querySelectorAll('[data-task]').forEach(b=>b.addEventListener('click',()=>{
+  state.task=b.dataset.task;
+  document.querySelectorAll('[data-task]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  update();
+}));
+document.querySelectorAll('[data-str]').forEach(b=>b.addEventListener('click',()=>{
+  state.str=b.dataset.str;
+  document.querySelectorAll('[data-str]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  update();
+}));
+update();
+</script>
+</body>
+</html>

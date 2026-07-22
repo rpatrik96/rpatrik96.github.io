@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decodability ≠ model use · EMNLP 2026 tutorial demo</title>
+<style>
+  :root {
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --line:#E1DEEC;
+    --pt-pos:#3E8E5A; --pt-neg:#5B4B9E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+      --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+      --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+      --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --line:#332B49;
+      --pt-pos:#4AA06B; --pt-neg:#8F7BC4;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --line:#332B49;
+    --pt-pos:#4AA06B; --pt-neg:#8F7BC4;
+  }
+  :root[data-theme="light"] {
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --line:#E1DEEC;
+    --pt-pos:#3E8E5A; --pt-neg:#5B4B9E;
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: 'Avenir Next', Avenir, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.55; padding: 1.6rem 1.2rem 2.5rem;
+  }
+  h1, h2, h3 { font-family: Futura, 'Century Gothic', 'Avenir Next', 'Trebuchet MS', sans-serif; }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  .kicker {
+    font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-mute); font-weight: 600;
+  }
+  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.2rem; }
+  header h1 { color: var(--purple); font-size: 1.65rem; line-height: 1.2; margin: .3rem 0 .35rem; }
+  header .dek { color: var(--ink-soft); max-width: 60ch; }
+  a.back {
+    color: var(--purple); text-decoration: none; font-size: .85rem; white-space: nowrap;
+    border: 1px solid var(--line); border-radius: 999px; padding: .3rem .8rem; margin-top: .2rem;
+  }
+  a.back:hover { background: var(--hero); }
+  a.back:focus-visible, button:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+
+  .stage {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 1.1rem 1.2rem 1.1rem; margin-bottom: 1.6rem;
+  }
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem .9rem; margin-bottom: .9rem; }
+  button.step {
+    font: inherit; font-size: .86rem; font-weight: 600; padding: .5rem .95rem; cursor: pointer;
+    border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--ink);
+  }
+  button.step:not([disabled]):hover { background: var(--hero); }
+  button.step[disabled] { opacity: .45; cursor: not-allowed; }
+  button.step.done { background: var(--purple-faint); color: var(--ink-soft); }
+  .predwrap { display: flex; align-items: center; gap: .5rem; }
+  .predwrap .plbl { font-size: .8rem; color: var(--ink-soft); font-weight: 600; }
+  .seg {
+    display: inline-flex; border: 1px solid var(--line); border-radius: 10px;
+    overflow: hidden; background: var(--panel);
+  }
+  .seg button {
+    font: inherit; font-size: .84rem; padding: .48rem .8rem; border: none; cursor: pointer;
+    background: transparent; color: var(--ink-soft);
+  }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button[aria-pressed="true"] { background: var(--purple); color: var(--paper); font-weight: 600; }
+  .seg button[disabled] { opacity: .45; cursor: not-allowed; }
+  button.replay {
+    font: inherit; font-size: .83rem; padding: .45rem .9rem; cursor: pointer;
+    border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--ink-soft);
+    margin-left: auto;
+  }
+  button.replay:hover { background: var(--hero); }
+  .startcue { font-size: .76rem; font-style: italic; color: var(--ink-mute); }
+  .startcue[hidden] { display: none; }
+
+  .ablrow { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .8rem; margin: -.2rem 0 .9rem; }
+  .ablrow.off { opacity: .5; }
+  .ablrow .allbl { font-size: .8rem; font-weight: 600; color: var(--ink-soft); white-space: nowrap; }
+  .ablrow .alval { font-variant-numeric: tabular-nums; color: var(--purple); }
+  .ablrow input[type="range"] { flex: 0 1 200px; min-width: 140px; accent-color: var(--purple); }
+  .ablrow input[type="range"]:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+  .ablrow input[type="range"][disabled] { cursor: not-allowed; }
+  .ablrow .alnote { font-size: .72rem; color: var(--ink-mute); max-width: 60ch; }
+
+  .stagegrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; align-items: start; }
+  @media (max-width: 820px) { .stagegrid { grid-template-columns: 1fr; } }
+
+  .modelcard { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: .8rem .9rem .9rem; }
+  .modelcard h3 { font-size: .98rem; color: var(--purple); margin-bottom: .45rem; }
+  .modelcard h3 .role { font-size: .72rem; font-weight: 600; color: var(--ink-mute); font-family: inherit; }
+  .chart svg { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 8px; }
+  .chart text { font-family: inherit; }
+  .axis-caption { fill: var(--ink-mute); font-size: 11px; }
+  .leg-label { fill: var(--ink-soft); font-size: 11px; }
+  .boundary { stroke: var(--ink-mute); stroke-width: 1; stroke-dasharray: 4 4; }
+
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-top: .7rem; }
+  .tile { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: .5rem .65rem .55rem; }
+  .tile .lbl { font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; }
+  .tile .val { font-size: 1.35rem; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: .05rem; color: var(--ink); }
+  .tile .sub { font-size: .7rem; color: var(--ink-mute); min-height: 1.05em; }
+  .delta-big { color: var(--magenta); font-weight: 700; }
+  .delta-small { color: var(--gap-green); font-weight: 600; }
+  .meter-track { position: relative; height: 8px; border-radius: 999px; background: var(--purple-faint); margin-top: .35rem; overflow: visible; }
+  .meter-fill { height: 100%; border-radius: 999px; background: var(--purple-mid); width: 0%; transition: width .55s ease; }
+  .chance-tick { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink-mute); left: 16.7%; }
+  .meter-note { font-size: .66rem; color: var(--ink-mute); margin-top: .25rem; }
+
+  .banner {
+    margin-top: .9rem; background: var(--hero); border-left: 3px solid var(--purple);
+    border-radius: 0 10px 10px 0; padding: .65rem .85rem; font-size: .9rem; color: var(--ink);
+  }
+  .banner .lbl { font-size: .64rem; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; margin-bottom: .2rem; }
+
+  .verdicts { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin-top: .8rem; }
+  .verdicts[hidden] { display: none; }
+  @media (max-width: 820px) { .verdicts { grid-template-columns: 1fr; } }
+  .vcard { border-radius: 10px; padding: .7rem .85rem; font-size: .86rem; border: 1px solid var(--line); background: var(--panel); }
+  .vcard .lbl { font-size: .64rem; letter-spacing: .11em; text-transform: uppercase; font-weight: 700; margin-bottom: .25rem; }
+  .vcard.l1 .lbl { color: var(--l1); }
+  .vcard.l2 .lbl { color: var(--l2); }
+  .rungnote { margin-top: .7rem; font-size: .82rem; color: var(--ink-soft); border-top: 1px dashed var(--line); padding-top: .55rem; }
+  .provenance { font-size: .76rem; color: var(--ink-mute); margin-top: .7rem; max-width: 76ch; }
+
+  section { max-width: 70ch; margin: 0 auto 1.5rem; }
+  section h2 { color: var(--purple); font-size: 1.05rem; margin-bottom: .5rem; }
+  section p { margin-bottom: .7rem; color: var(--ink); }
+  blockquote {
+    background: var(--panel); border-left: 3px solid var(--purple-mid);
+    border-radius: 0 10px 10px 0; padding: .8rem 1rem; margin-bottom: .7rem;
+  }
+  blockquote p { color: var(--ink-soft); font-style: italic; margin-bottom: .35rem; }
+  blockquote cite { font-style: normal; font-size: .8rem; color: var(--ink-mute); }
+  ol.try { padding-left: 1.2rem; }
+  ol.try li { margin-bottom: .55rem; color: var(--ink); }
+  footer { max-width: 70ch; margin: 2rem auto 0; font-size: .78rem; color: var(--ink-mute); border-top: 1px solid var(--line); padding-top: .9rem; }
+  footer a { color: var(--purple); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</div>
+      <h1>A probe can decode what the model never uses</h1>
+      <p class="dek">Two toy models carry the same concept in their hidden states and give identical probe results. Only an ablation reveals whose computation depends on it.</p>
+    </div>
+    <a class="back" href="./index.html">← All demos</a>
+  </header>
+
+  <div class="stage">
+    <div class="controls">
+      <button class="step" id="btn-train" title="fits one linear probe for c per model and re-projects the scatters onto the probe direction">1 · Train the probes</button>
+      <span class="startcue" id="startcue">← start here · trains one linear probe per model</span>
+      <div class="predwrap">
+        <span class="plbl" id="pred-lbl">2 · Which model uses <i>c</i>?</span>
+        <div class="seg" role="group" aria-labelledby="pred-lbl">
+          <button id="pred-a" aria-pressed="false" disabled title="lock in your prediction (enabled after step 1)">Model A</button>
+          <button id="pred-b" aria-pressed="false" disabled title="lock in your prediction (enabled after step 1)">Model B</button>
+          <button id="pred-cant" aria-pressed="false" disabled title="lock in your prediction (enabled after step 1)">Can’t tell yet</button>
+        </div>
+      </div>
+      <button class="step" id="btn-ablate" disabled>3 · Ablate the probe direction</button>
+      <button class="replay" id="btn-reset" title="back to the start (step 0)">↺ Reset</button>
+    </div>
+
+    <div class="ablrow off" id="ablrow">
+      <label class="allbl" for="abl">Ablation strength <span class="alval" id="abl-val">100%</span></label>
+      <input type="range" id="abl" min="0" max="100" step="5" value="100" disabled
+             title="scales how much of the c-direction the intervention removes">
+      <span class="alnote" id="abl-note">unlocks after step 3 · scales how much of the c-direction the intervention removes</span>
+    </div>
+
+    <div class="stagegrid">
+      <div class="modelcard" id="card-a">
+        <h3>Model A <span class="role" id="role-a"></span></h3>
+        <div class="chart"><svg id="svg-a" viewBox="0 0 300 240" role="img" aria-label="Hidden-state scatter of Model A, points coloured by concept label"></svg></div>
+        <div class="tiles">
+          <div class="tile">
+            <div class="lbl">Probe accuracy · concept <i>c</i></div>
+            <div class="val" id="probe-a">—</div>
+            <div class="sub" id="probe-a-sub">no probe trained yet</div>
+          </div>
+          <div class="tile">
+            <div class="lbl">Task accuracy</div>
+            <div class="val" id="task-a">—</div>
+            <div class="meter-track"><div class="meter-fill" id="fill-a"></div><div class="chance-tick"></div></div>
+            <div class="meter-note">tick = chance (50%)</div>
+            <div class="sub" id="task-a-sub"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modelcard" id="card-b">
+        <h3>Model B <span class="role" id="role-b"></span></h3>
+        <div class="chart"><svg id="svg-b" viewBox="0 0 300 240" role="img" aria-label="Hidden-state scatter of Model B, points coloured by concept label"></svg></div>
+        <div class="tiles">
+          <div class="tile">
+            <div class="lbl">Probe accuracy · concept <i>c</i></div>
+            <div class="val" id="probe-b">—</div>
+            <div class="sub" id="probe-b-sub">no probe trained yet</div>
+          </div>
+          <div class="tile">
+            <div class="lbl">Task accuracy</div>
+            <div class="val" id="task-b">—</div>
+            <div class="meter-track"><div class="meter-fill" id="fill-b"></div><div class="chance-tick"></div></div>
+            <div class="meter-note">tick = chance (50%)</div>
+            <div class="sub" id="task-b-sub"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="banner" aria-live="polite">
+      <div class="lbl" id="banner-lbl">Setup</div>
+      <div id="banner-txt">Two synthetic models perform the same binary task, and a concept <i>c</i> is present somewhere in each 8-dimensional hidden state <b>h</b>. Think of <i>c</i> as a POS-like feature in an LLM’s residual stream and the task as the model’s next-token decision. Start by training a linear probe for <i>c</i> on each model.</div>
+    </div>
+
+    <div class="verdicts" id="verdicts" hidden>
+      <div class="vcard l1">
+        <div class="lbl" title="“licensed” = the claim this evidence justifies">What the probe licensed · L1, rung 1 of Pearl’s ladder (association: what co-occurs)</div>
+        <div id="vcard-l1"></div>
+      </div>
+      <div class="vcard l2">
+        <div class="lbl" title="“licensed” = the claim this evidence justifies">What the intervention licensed · L2, rung 2 (intervention: what happens when we act)</div>
+        <div id="vcard-l2"></div>
+      </div>
+    </div>
+    <div class="rungnote" id="rungnote" hidden>
+      Pearl’s ladder ranks evidence: rung 1 is association (what co-occurs), rung 2 is intervention (what happens when we act on the system). Reporting “the model encodes <i>c</i>” on probe evidence alone is <b>rung-elevated language</b>: the phrasing admits a causal reading (the model <i>uses</i> <i>c</i>) that the associational estimand does not license. The rung-appropriate claim is “<i>c</i> is linearly decodable from <b>h</b>”.
+    </div>
+
+    <p class="provenance">Toy simulation, seeded and deterministic: two 8-D Gaussian “models” with linear readouts; the probe is a difference-of-class-means direction; the ablation mean-projects that direction out of <b>h</b>. Built for this tutorial as an illustration; it is not an experiment from the paper.</p>
+  </div>
+
+  <section>
+    <h2>What this shows</h2>
+    <p>Both models carry concept <i>c</i> in their hidden state, and a linear probe decodes it from either one at roughly 97–98% held-out accuracy. The probe view of the two models is indistinguishable, yet their causal structure differs: Model B’s output readout consumes the <i>c</i>-direction, whereas in Model A the same direction is a bystander correlate that the data injected and the computation ignores. A probe targets an associational estimand (is the information present?), so it cannot separate these two worlds.</p>
+    <p>The ablation asks the intervention-effect question: remove the direction the probe found, then watch behaviour. Task accuracy falls to chance only in Model B, while a fresh probe on the ablated states sits near chance in <em>both</em> models (<span id="fp-a">≈51%</span> / <span id="fp-b">≈53%</span>), so no linear probe can recover <i>c</i> from either model; only the behavioural consequence differs. This is the logic of amnesic probing (Elazar et al., 2021) behind the paper’s BERT example: probes decode part-of-speech tags from BERT at &gt;97% accuracy (Hewitt &amp; Manning, 2019), yet removing that information barely affects language modelling. Decodable, and still unused.</p>
+  </section>
+
+  <section>
+    <h2>What the paper says</h2>
+    <blockquote>
+      <p>“Probing shows <i>c</i> is decodable from <b>h</b> but claiming it is encoded by the model requires knowing that the model uses it.”</p>
+      <cite>— arXiv:2602.16698, “Decodability ≠ Model Use” mismatch box (Takeaway)</cite>
+    </blockquote>
+    <blockquote>
+      <p>“A linear probe trained on BERT’s hidden states achieves &gt;97% accuracy at predicting POS tags (Hewitt &amp; Manning, 2019). […] More strikingly, Elazar et al. (2021) demonstrated that removing the information exploited by POS probes via causal intervention (‘amnesic probing’) had minimal effect on BERT’s language modeling performance”</p>
+      <cite>— arXiv:2602.16698, worked example on BERT and part-of-speech</cite>
+    </blockquote>
+  </section>
+
+  <section>
+    <h2>Try this</h2>
+    <ol class="try">
+      <li>Train the probes, then stop. Write down which model you believe uses <i>c</i>, with a confidence. What in the probe panel could justify anything other than a coin flip?</li>
+      <li>After the ablation, compare the two fresh-probe accuracies: both sit near chance (<span id="fp-a2">≈51%</span> / <span id="fp-b2">≈53%</span>), so no linear probe can recover <i>c</i> from either model, and only behaviour separates them. Then lower the ablation strength: Model B’s task accuracy degrades smoothly, yet the fresh probes stay near 97–98% until full strength, because shrinking a direction is invertible and the information survives. Which claims in your favourite probing paper would survive this test?</li>
+      <li>Rewrite “Model A encodes <i>c</i>” at the rung the evidence supports, then name the experiment that would license the original verb. Control tasks (Hewitt &amp; Liang, 2019) guard against a different probing failure, namely probe memorisation: which panel of this demo would they change?</li>
+    </ol>
+  </section>
+
+  <footer>
+    Original interactive illustration for the EMNLP 2026 tutorial <i>Causal Foundations for Interpretability</i>, built on the position paper <a href="https://arxiv.org/abs/2602.16698">Causality is Key for Interpretability Claims to Generalise (arXiv:2602.16698)</a>. It illustrates the paper’s “Decodability ≠ Model Use” inferential gap and its BERT part-of-speech worked example; the two toy models above are synthetic and are not experiments from the paper. tutorial demo · CC-BY
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- seeded PRNG (mulberry32) ----------
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function makeGauss(rng) {
+    let spare = null;
+    return function () {
+      if (spare !== null) { const v = spare; spare = null; return v; }
+      let u = 0, v = 0;
+      while (u === 0) u = rng();
+      v = rng();
+      const m = Math.sqrt(-2 * Math.log(u)), a = 2 * Math.PI * v;
+      spare = m * Math.sin(a);
+      return m * Math.cos(a);
+    };
+  }
+
+  // ---------- simulation ----------
+  const D = 8, NTR = 300, NEV = 300, AMP = 2.0, RNOISE = 0.7, SEED = 17;
+  const dot = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0);
+
+  function genWorld(uses, rng) {
+    const g = makeGauss(rng);
+    const mk = (n) => {
+      const H = [], C = [], T = [];
+      for (let i = 0; i < n; i++) {
+        const c = rng() < 0.5 ? 1 : -1;
+        const t = uses ? c : (rng() < 0.5 ? 1 : -1);
+        const h = new Array(D);
+        for (let d = 0; d < D; d++) h[d] = g();
+        h[0] += AMP * c;
+        if (!uses) h[1] += AMP * t;
+        H.push(h); C.push(c); T.push(t);
+      }
+      return { H, C, T };
+    };
+    const train = mk(NTR), evl = mk(NEV);
+    const rd = uses ? 0 : 1; // readout dimension
+    const outNoise = evl.H.map(() => g() * RNOISE);
+    return { train, evl, rd, outNoise, uses };
+  }
+
+  function probeFit(H, C) { // difference of class means
+    const mp = new Array(D).fill(0), mn = new Array(D).fill(0);
+    let np = 0, nn = 0;
+    H.forEach((h, i) => {
+      if (C[i] > 0) { np++; h.forEach((v, d) => mp[d] += v); }
+      else { nn++; h.forEach((v, d) => mn[d] += v); }
+    });
+    mp.forEach((v, d) => mp[d] = v / np);
+    mn.forEach((v, d) => mn[d] = v / nn);
+    const w = mp.map((v, d) => v - mn[d]);
+    const norm = Math.hypot.apply(null, w);
+    const wu = w.map(v => v / norm);
+    const mid = mp.map((v, d) => (v + mn[d]) / 2);
+    return { wu, b: dot(wu, mid) };
+  }
+  const probeAcc = (p, H, C) =>
+    H.reduce((s, h, i) => s + ((dot(p.wu, h) - p.b > 0 ? 1 : -1) === C[i] ? 1 : 0), 0) / H.length;
+  const taskAcc = (w, H) =>
+    H.reduce((s, h, i) => s + (((h[w.rd] + w.outNoise[i]) > 0 ? 1 : -1) === w.evl.T[i] ? 1 : 0), 0) / H.length;
+
+  function ablateAll(w, p, lambda) { // mean-ablate along the probe direction, scaled by lambda (default: full)
+    if (lambda === undefined) lambda = 1;
+    const mu = new Array(D).fill(0);
+    w.train.H.forEach(h => h.forEach((v, d) => mu[d] += v));
+    mu.forEach((v, d) => mu[d] = v / w.train.H.length);
+    const muProj = dot(p.wu, mu);
+    const fix = H => H.map(h => {
+      const pr = dot(p.wu, h) - muProj;
+      return h.map((v, d) => v - lambda * pr * p.wu[d]);
+    });
+    return { trainH: fix(w.train.H), evlH: fix(w.evl.H) };
+  }
+
+  // Data generation order matches the seeded prototype exactly.
+  const rng = mulberry32(SEED);
+  const A = genWorld(false, rng); // Model A: c is a bystander correlate
+  const B = genWorld(true, rng);  // Model B: the readout uses the c-direction
+  const pA = probeFit(A.train.H, A.train.C), pB = probeFit(B.train.H, B.train.C);
+  const res = {
+    probeA: probeAcc(pA, A.evl.H, A.evl.C), probeB: probeAcc(pB, B.evl.H, B.evl.C),
+    taskA: taskAcc(A, A.evl.H), taskB: taskAcc(B, B.evl.H)
+  };
+  const Aab = ablateAll(A, pA), Bab = ablateAll(B, pB);
+  res.taskAab = taskAcc(A, Aab.evlH);
+  res.taskBab = taskAcc(B, Bab.evlH);
+  const pA2 = probeFit(Aab.trainH, A.train.C), pB2 = probeFit(Bab.trainH, B.train.C);
+  res.probeAab = probeAcc(pA2, Aab.evlH, A.evl.C);
+  res.probeBab = probeAcc(pB2, Bab.evlH, B.evl.C);
+
+  // ---------- projections for the scatter ----------
+  const vrng = mulberry32(99);
+  function noiseDir() { // random unit vector in the pure-noise subspace (dims 2..7)
+    const v = new Array(D).fill(0);
+    for (let d = 2; d < D; d++) v[d] = vrng() * 2 - 1;
+    const n = Math.hypot.apply(null, v);
+    return v.map(x => x / n);
+  }
+  const r1 = noiseDir();
+  let r2 = noiseDir();
+  { const pr = dot(r1, r2); r2 = r2.map((v, i) => v - pr * r1[i]); const n = Math.hypot.apply(null, r2); r2 = r2.map(v => v / n); }
+  function orthOf(wu) { // e3 orthogonalised against the probe direction
+    const e3 = new Array(D).fill(0); e3[3] = 1;
+    const pr = dot(wu, e3);
+    const o = e3.map((v, i) => v - pr * wu[i]);
+    const n = Math.hypot.apply(null, o);
+    return o.map(v => v / n);
+  }
+  const oA = orthOf(pA.wu), oB = orthOf(pB.wu);
+
+  const NPTS = 140;
+  function project(H, C, xdir, ydir, xoff) {
+    const pts = [];
+    for (let i = 0; i < NPTS; i++) {
+      const x = dot(xdir, H[i]) - (xoff || 0), y = dot(ydir, H[i]);
+      if (Math.abs(x) > 4.6 || Math.abs(y) > 4.6) continue;
+      pts.push({ x, y, c: C[i] });
+    }
+    return pts;
+  }
+  const views = {
+    a0: project(A.evl.H, A.evl.C, r1, r2, 0),
+    b0: project(B.evl.H, B.evl.C, r1, r2, 0),
+    a1: project(A.evl.H, A.evl.C, pA.wu, oA, pA.b),
+    b1: project(B.evl.H, B.evl.C, pB.wu, oB, pB.b),
+    a2: project(Aab.evlH, A.evl.C, pA.wu, oA, pA.b),
+    b2: project(Bab.evlH, B.evl.C, pB.wu, oB, pB.b)
+  };
+
+  // Partial ablation (strength slider): same seeded data, deterministic for every lambda.
+  const ablCache = {};
+  function getAbl(lamPct) {
+    if (lamPct === 100) {
+      return { probeA: res.probeAab, probeB: res.probeBab, taskA: res.taskAab, taskB: res.taskBab,
+               viewA: views.a2, viewB: views.b2 };
+    }
+    if (!ablCache[lamPct]) {
+      const lam = lamPct / 100;
+      const Ap = ablateAll(A, pA, lam), Bp = ablateAll(B, pB, lam);
+      const pA3 = probeFit(Ap.trainH, A.train.C), pB3 = probeFit(Bp.trainH, B.train.C);
+      ablCache[lamPct] = {
+        probeA: probeAcc(pA3, Ap.evlH, A.evl.C), probeB: probeAcc(pB3, Bp.evlH, B.evl.C),
+        taskA: taskAcc(A, Ap.evlH), taskB: taskAcc(B, Bp.evlH),
+        viewA: project(Ap.evlH, A.evl.C, pA.wu, oA, pA.b),
+        viewB: project(Bp.evlH, B.evl.C, pB.wu, oB, pB.b)
+      };
+    }
+    return ablCache[lamPct];
+  }
+
+  // ---------- SVG rendering ----------
+  const SX = x => 10 + (x + 4.6) / 9.2 * 280;
+  const SY = y => 208 - (y + 4.6) / 9.2 * 182;
+  function circles(pts, opacity) {
+    return pts.map(p =>
+      `<circle cx="${SX(p.x).toFixed(1)}" cy="${SY(p.y).toFixed(1)}" r="3" ` +
+      `fill="var(${p.c > 0 ? '--pt-pos' : '--pt-neg'})" opacity="${opacity}"/>`).join('');
+  }
+  function legend() {
+    return `<circle cx="66" cy="14" r="3.5" fill="var(--pt-neg)"/>` +
+      `<text class="leg-label" x="74" y="18">c = −1</text>` +
+      `<circle cx="196" cy="14" r="3.5" fill="var(--pt-pos)"/>` +
+      `<text class="leg-label" x="204" y="18">c = +1</text>`;
+  }
+  function drawScatter(svg, pts, caption, opts) {
+    opts = opts || {};
+    let s = legend();
+    if (opts.boundary) s += `<line class="boundary" x1="150" y1="26" x2="150" y2="208"/>`;
+    if (opts.ghost) s += circles(opts.ghost, 0.16);
+    s += circles(pts, 0.8);
+    s += `<text class="axis-caption" x="150" y="230" text-anchor="middle">${caption}</text>`;
+    svg.innerHTML = s;
+  }
+
+  // ---------- UI wiring ----------
+  const $ = id => document.getElementById(id);
+  const pct = v => (100 * v).toFixed(1) + '%';
+  const svgA = $('svg-a'), svgB = $('svg-b');
+  const predBtns = [$('pred-a'), $('pred-b'), $('pred-cant')];
+  let state = 0, prediction = null;
+
+  function setMeter(el, v) { el.style.width = Math.max(0, (100 * v - 40) / 60 * 100) + '%'; }
+
+  function renderState() {
+    // Step buttons
+    $('btn-train').disabled = state !== 0;
+    $('btn-train').classList.toggle('done', state > 0);
+    $('startcue').hidden = state !== 0;
+    predBtns.forEach(b => { b.disabled = state < 1 || state >= 3; });
+    const ablBtn = $('btn-ablate');
+    ablBtn.disabled = state !== 2;
+    ablBtn.classList.toggle('done', state > 2);
+    ablBtn.title = state < 2 ? 'locked: commit to a prediction (step 2) first'
+      : state === 2 ? 'mean-ablates the probe direction in both models, then shows the behavioural effect'
+      : 'done · use the strength slider or Reset';
+    // Strength slider: active only after the ablation
+    const slider = $('abl');
+    slider.disabled = state !== 3;
+    $('ablrow').classList.toggle('off', state !== 3);
+    $('abl-val').textContent = slider.value + '%';
+    $('abl-note').textContent = state === 3
+      ? 'remove part of the c-direction: Model B’s behaviour degrades smoothly, but a fresh probe still reads c until 100% (shrinking is invertible; only full removal destroys the information)'
+      : 'unlocks after step 3 · scales how much of the c-direction the intervention removes';
+
+    if (state === 0) {
+      drawScatter(svgA, views.a0, 'one arbitrary 2-D slice of h (of many)');
+      drawScatter(svgB, views.b0, 'one arbitrary 2-D slice of h (of many)');
+      $('probe-a').textContent = '—'; $('probe-b').textContent = '—';
+      $('probe-a-sub').textContent = 'no probe trained yet';
+      $('probe-b-sub').textContent = 'no probe trained yet';
+      $('task-a').textContent = pct(res.taskA); $('task-b').textContent = pct(res.taskB);
+      setMeter($('fill-a'), res.taskA); setMeter($('fill-b'), res.taskB);
+      $('task-a-sub').textContent = 'before any intervention';
+      $('task-b-sub').textContent = 'before any intervention';
+      $('role-a').textContent = ''; $('role-b').textContent = '';
+      $('banner-lbl').textContent = 'Setup';
+      $('banner-txt').innerHTML = 'Two synthetic models perform the same binary task, and a concept <i>c</i> is present somewhere in each 8-dimensional hidden state <b>h</b>. Think of <i>c</i> as a POS-like feature in an LLM’s residual stream and the task as the model’s next-token decision. Start by training a linear probe for <i>c</i> on each model.';
+      $('verdicts').hidden = true; $('rungnote').hidden = true;
+    }
+
+    if (state >= 1 && state < 3) {
+      drawScatter(svgA, views.a1, 'probe direction (x) · dashed: probe boundary', { boundary: true });
+      drawScatter(svgB, views.b1, 'probe direction (x) · dashed: probe boundary', { boundary: true });
+      $('probe-a').textContent = pct(res.probeA); $('probe-b').textContent = pct(res.probeB);
+      $('probe-a-sub').textContent = 'held-out accuracy';
+      $('probe-b-sub').textContent = 'held-out accuracy';
+      if (state === 1) {
+        $('banner-lbl').textContent = 'Step 1 result — the probe panel';
+        $('banner-txt').innerHTML = 'Both probes decode <i>c</i> at ' + pct(res.probeA) + ' and ' + pct(res.probeB) +
+          ': along the probe direction the two models look the same. The scatters now show <b>h</b> projected onto each probe’s direction (x-axis); that is why the points moved. Before intervening, commit to a prediction — which model’s computation uses the <i>c</i>-direction?';
+      } else {
+        $('banner-lbl').textContent = 'Step 2 — prediction locked in';
+        $('banner-txt').innerHTML = 'You predicted: <b>' + predLabel() + '</b>. Now run the intervention: mean-ablate the probe direction in both models and watch the task behaviour.';
+      }
+    }
+
+    if (state === 3) {
+      const lamPct = +slider.value;
+      const r = getAbl(lamPct);
+      const cap = lamPct === 100 ? 'after do(remove c-direction) · ghost: before'
+        : 'after do(remove c-direction, ' + lamPct + '%) · ghost: before';
+      drawScatter(svgA, r.viewA, cap, { boundary: true, ghost: views.a1 });
+      drawScatter(svgB, r.viewB, cap, { boundary: true, ghost: views.b1 });
+      $('probe-a').textContent = pct(r.probeA); $('probe-b').textContent = pct(r.probeB);
+      $('probe-a-sub').textContent = 'fresh probe on ablated h (was ' + pct(res.probeA) + ')';
+      $('probe-b-sub').textContent = 'fresh probe on ablated h (was ' + pct(res.probeB) + ')';
+      $('task-a').textContent = pct(r.taskA); $('task-b').textContent = pct(r.taskB);
+      setMeter($('fill-a'), r.taskA); setMeter($('fill-b'), r.taskB);
+      const dA = (100 * (r.taskA - res.taskA)).toFixed(1), dB = (100 * (r.taskB - res.taskB)).toFixed(1);
+      $('task-a-sub').innerHTML = '<span class="' + (Math.abs(dA) >= 5 ? 'delta-big' : 'delta-small') + '">' + dA + ' pts</span> vs. before';
+      $('task-b-sub').innerHTML = '<span class="' + (Math.abs(dB) >= 5 ? 'delta-big' : 'delta-small') + '">' + dB + ' pts</span> vs. before';
+      $('role-a').textContent = '· c was a bystander correlate';
+      $('role-b').textContent = '· the readout used the c-direction';
+      if (lamPct === 100) {
+        $('banner-lbl').textContent = 'Step 3 result — the intervention panel';
+        $('banner-txt').innerHTML = 'Under do(remove <i>c</i>-direction) — do(·) is Pearl’s notation for <em>setting</em> a variable by intervention rather than observing it — Model B’s task accuracy fell from ' + pct(res.taskB) + ' to ' + pct(res.taskBab) +
+          '; Model A moved from ' + pct(res.taskA) + ' to ' + pct(res.taskAab) + '. ' + verdictForPrediction();
+      } else {
+        $('banner-lbl').textContent = 'Step 3 · partial ablation at ' + lamPct + '% strength';
+        $('banner-txt').innerHTML = 'At ' + lamPct + '% the <i>c</i>-direction is only shrunk, not removed: a fresh probe still reads <i>c</i> at ' + pct(r.probeA) + ' / ' + pct(r.probeB) +
+          ', yet Model B’s task accuracy is at ' + pct(r.taskB) + ' (Model A: ' + pct(r.taskA) +
+          '). Behaviour tracks the strength; decodability survives until 100%, where the projection finally destroys the information.';
+      }
+      $('vcard-l1').innerHTML = 'Concept <i>c</i> is linearly decodable from both hidden states (' + pct(res.probeA) + ' / ' + pct(res.probeB) +
+        '). An associational estimand (the quantity an analysis targets): the information is <em>present</em>. It said nothing about which model uses it.';
+      $('vcard-l2').innerHTML = 'Removing the <i>c</i>-direction at full strength leaves Model A’s behaviour unchanged (' + pct(res.taskA) + ' → ' + pct(res.taskAab) +
+        ') and takes Model B to chance (' + pct(res.taskB) + ' → ' + pct(res.taskBab) +
+        '). Fresh probes on the ablated states sit near chance in both (' + pct(res.probeAab) + ' / ' + pct(res.probeBab) +
+        '), so no linear probe can recover <i>c</i> from either model: only the intervention separates “present” from “used”.';
+      $('verdicts').hidden = false; $('rungnote').hidden = false;
+    }
+  }
+
+  function predLabel() {
+    return prediction === 'a' ? 'Model A' : prediction === 'b' ? 'Model B' : 'Can’t tell yet';
+  }
+  function verdictForPrediction() {
+    if (prediction === 'b') return 'Your prediction (Model B) matches, yet notice the probe panel gave no evidence for it: until the intervention, it was a coin flip.';
+    if (prediction === 'a') return 'Your prediction (Model A) does not match, and the probe panel could not have told you: both probes looked identical.';
+    return 'Your prediction (“Can’t tell yet”) was the calibrated one: probe evidence is associational and identical across the two models.';
+  }
+
+  $('btn-train').addEventListener('click', () => { if (state === 0) { state = 1; renderState(); } });
+  predBtns.forEach(btn => btn.addEventListener('click', () => {
+    if (state < 1 || state >= 3) return;
+    prediction = btn.id === 'pred-a' ? 'a' : btn.id === 'pred-b' ? 'b' : 'cant';
+    predBtns.forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+    state = 2; renderState();
+  }));
+  $('btn-ablate').addEventListener('click', () => { if (state === 2) { $('abl').value = '100'; state = 3; renderState(); } });
+  $('abl').addEventListener('input', () => { if (state === 3) renderState(); });
+  $('btn-reset').addEventListener('click', () => {
+    state = 0; prediction = null; $('abl').value = '100';
+    predBtns.forEach(b => b.setAttribute('aria-pressed', 'false'));
+    renderState();
+  });
+
+  // Keep the prose's fresh-probe numbers in sync with what this engine computes.
+  [['fp-a', res.probeAab], ['fp-a2', res.probeAab], ['fp-b', res.probeBab], ['fp-b2', res.probeBab]]
+    .forEach(([id, v]) => { const el = $(id); if (el) el.textContent = pct(v); });
+
+  renderState();
+})();
+</script>
+</body>
+</html>

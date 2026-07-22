@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interactive Demos — Causal Foundations for Interpretability (EMNLP 2026 Tutorial)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪜</text></svg>">
+<style>
+:root{
+  --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+  --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+  --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+  --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A;
+  --line:#E1DEEC; --shadow:0 1px 3px rgba(42,36,53,.08), 0 8px 24px rgba(42,36,53,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E;
+    --line:#332B49; --shadow:0 1px 3px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+  --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+  --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+  --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E;
+  --line:#332B49; --shadow:0 1px 3px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+}
+:root[data-theme="light"]{
+  --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+  --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+  --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+  --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A;
+  --line:#E1DEEC; --shadow:0 1px 3px rgba(42,36,53,.08), 0 8px 24px rgba(42,36,53,.06);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:'Avenir Next', Avenir, 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size:17px; line-height:1.6;
+}
+h1,h2{font-family:Futura,'Century Gothic','Avenir Next','Trebuchet MS',sans-serif; text-wrap:balance; line-height:1.2; color:var(--purple)}
+h1{font-size:clamp(1.6rem,3.5vw,2.4rem); margin:.2em 0 .3em}
+h2{font-size:clamp(1.15rem,2.2vw,1.45rem); margin:0 0 .2em}
+a{color:var(--purple)}
+a:hover{color:var(--magenta)}
+:focus-visible{outline:2px solid var(--magenta); outline-offset:2px; border-radius:4px}
+.wrap{max-width:1080px; margin:0 auto; padding:0 20px}
+.kicker{font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-mute); font-weight:600}
+header{padding:2.4rem 0 .6rem}
+header .dek{color:var(--ink-soft); max-width:72ch}
+.linksrow{display:flex; flex-wrap:wrap; gap:10px; margin:1rem 0 0}
+.btn{
+  display:inline-flex; align-items:center; gap:.4em; border:1.5px solid var(--purple);
+  color:var(--purple); text-decoration:none; font-weight:600; font-size:.85rem;
+  padding:.4em .9em; border-radius:999px; transition:background .15s,color .15s;
+}
+.btn:hover{background:var(--purple); color:var(--paper)}
+.blocknote{
+  background:var(--hero); border-radius:12px; padding:.7em 1em; margin:1.4rem 0 0;
+  font-size:.92rem; color:var(--ink-soft);
+}
+section{margin:2.2rem auto}
+.blockhead{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:.9rem}
+.blockhead .tag{
+  font-size:.68rem; font-weight:700; letter-spacing:.11em; text-transform:uppercase;
+  border:1.5px solid var(--purple-mid); color:var(--purple); border-radius:999px; padding:.2em .8em;
+}
+.blockhead .sub{color:var(--ink-mute); font-size:.88rem}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px}
+a.demo{
+  display:flex; flex-direction:column; gap:.35em; background:var(--card); border:1px solid var(--line);
+  border-radius:12px; padding:1rem 1.1rem; text-decoration:none; color:var(--ink);
+  box-shadow:var(--shadow); transition:transform .12s ease, border-color .12s;
+}
+a.demo:hover{transform:translateY(-2px); border-color:var(--purple-mid); color:var(--ink)}
+a.demo .num{
+  font-family:Futura,'Century Gothic',sans-serif; font-weight:700; color:var(--purple-mid);
+  font-size:.8rem; letter-spacing:.08em;
+}
+a.demo .t{font-weight:700; color:var(--purple); font-size:1.02rem; line-height:1.3}
+a.demo .d{font-size:.88rem; color:var(--ink-soft)}
+a.demo .go{font-size:.78rem; font-weight:600; color:var(--magenta); margin-top:auto; padding-top:.4em}
+footer{border-top:1px solid var(--line); margin-top:3rem; padding:1.4rem 0 2.4rem; font-size:.85rem; color:var(--ink-mute)}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <div class="kicker">EMNLP 2026 Tutorial · Budapest</div>
+  <h1>Causal Foundations for Interpretability — Interactive Demos</h1>
+  <p class="dek">Seventeen small, self-contained demos — one per use case and failure type from
+  <em>Position: Causality is Key for Interpretability Claims to Generalise</em> (ICML 2026).
+  Each one lets you break the claim with your own hands: every demo works offline from a local file,
+  in light and dark, with keyboard controls.</p>
+  <div class="linksrow">
+    <a class="btn" href="https://arxiv.org/abs/2602.16698">Paper · arXiv:2602.16698</a>
+    <a class="btn" href="poster.html">Interactive poster</a>
+    <a class="btn" href="https://github.com/rpatrik96/mech-interp-claim-calibration">Claim-audit data</a>
+  </div>
+  <p class="blocknote">Ordered by tutorial block: <b>I</b> why claims fail → <b>II</b> the causal ladder →
+  <b>III</b> identifiability → <b>IV</b> the mismatch taxonomy and claim diagnosis.</p>
+</header>
+
+<main class="wrap">
+
+<section>
+  <div class="blockhead"><span class="tag">Block I</span><h2>Why interpretability claims fail to generalise</h2><span class="sub">live failure cases</span></div>
+  <div class="grid">
+    <a class="demo" href="01-ablation-circuit.html"><span class="num">01</span><span class="t">The circuit depends on the ablation strategy</span><span class="d">Zero-, mean-, and resample-ablation each "discover" a different circuit — at the same faithfulness.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="02-shuffled-probe.html"><span class="num">02</span><span class="t">The probe that aces shuffled labels</span><span class="d">Sweep probe capacity from linear to a 673-parameter MLP and watch it ace shuffled labels — selectivity, not accuracy, carries the information.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="03-two-saes.html"><span class="num">03</span><span class="t">Two SAEs, same activations, different features</span><span class="d">Near-identical loss, disagreeing dictionaries — sweep concept correlation to watch identification track the data, not the loss.</span><span class="go">Open demo →</span></a>
+  </div>
+</section>
+
+<section>
+  <div class="blockhead"><span class="tag">Block II</span><h2>Interpretability questions are causal questions</h2><span class="sub">the causal ladder</span></div>
+  <div class="grid">
+    <a class="demo" href="04-causal-ladder.html"><span class="num">04</span><span class="t">Three rungs, three worked examples</span><span class="d">Sentiment probe (L1), graded IOI patching with a patch-fraction slider (L2), and the Eiffel→Colosseum counterfactual with the abduction–action–prediction stepper (L3).</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="05-rung-sandbox.html"><span class="num">05</span><span class="t">Observe or intervene? A confounder sandbox</span><span class="d">Two hidden worlds, one correlation — only do() tells them apart.</span><span class="go">Open demo →</span></a>
+  </div>
+</section>
+
+<section>
+  <div class="blockhead"><span class="tag">Block III</span><h2>What can we recover at all?</h2><span class="sub">identifiability, affordances, transport</span></div>
+  <div class="grid">
+    <a class="demo" href="06-affordance-classes.html"><span class="num">06</span><span class="t">Affordances shrink the equivalence class</span><span class="d">Toggle the interactions you can afford — and slide how many environments you observe — to watch which distinctions become identifiable.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="07-theta-rotation.html"><span class="num">07</span><span class="t">Same loss, different story (θ playground)</span><span class="d">Rotate the learned basis: reconstruction is blind, the sparsity penalty near-ties two bases, and only an identifiable objective finds the axes.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="08-task-classes.html"><span class="num">08</span><span class="t">How much identifiability does your task need?</span><span class="d">Classification needs affine, steering blockwise, editing elementwise — using less visibly fails, and a mixing slider shows when it merely got lucky.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="09-transport-compose.html"><span class="num">09</span><span class="t">Will the edit survive deployment?</span><span class="d">Edits that pass in-distribution revert under paraphrase; edits interfere where task vectors compose.</span><span class="go">Open demo →</span></a>
+  </div>
+</section>
+
+<section>
+  <div class="blockhead"><span class="tag">Block IV</span><h2>Matching claims to evidence</h2><span class="sub">the mismatch taxonomy + diagnosis</span></div>
+  <div class="grid">
+    <a class="demo" href="10-decodability-use.html"><span class="num">10</span><span class="t">Decodability ≠ model use</span><span class="d">Both worlds decode at 97% — only ablation reveals which one the model actually uses.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="11-sufficiency-necessity.html"><span class="num">11</span><span class="t">Sufficient ≠ necessary</span><span class="d">Denoise and the behaviour returns; noise and it persists — until you drag the backup pathway to zero and necessity flips.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="12-existence-uniqueness.html"><span class="num">12</span><span class="t">Existence ≠ uniqueness</span><span class="d">Re-run circuit discovery and get a different, equally faithful circuit every time; sweeping the threshold τ never shrinks the set to one.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="13-saliency-baselines.html"><span class="num">13</span><span class="t">Local sensitivity ≠ global importance</span><span class="d">Change the baseline and the "responsible" tokens reshuffle; aggregate over interventions and they stabilise.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="14-alignment-contrast.html"><span class="num">14</span><span class="t">Alignment ≠ ontological identity</span><span class="d">The same feature reads "honesty" or "formality" depending on the contrast set you test it with.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="15-subspace-rotation.html"><span class="num">15</span><span class="t">Subspace ≠ coordinates</span><span class="d">Rotate the basis inside the concept subspace: behaviour never changes, the axis labels do.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="16-steering-encoding.html"><span class="num">16</span><span class="t">Steering ≠ encoding</span><span class="d">The steering vector works — and is non-unique, entangled, and miscalibrated off-distribution.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="17-claim-diagnosis.html"><span class="num">17</span><span class="t">Diagnose the claim (think-pair-share)</span><span class="d">The live exercise: run the paper's checklist on real and pattern-typed claims — and sweep evidence strength to see no number moves a method up a rung.</span><span class="go">Open demo →</span></a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    Companion materials for the EMNLP 2026 tutorial <em>Causal Foundations for Interpretability:
+    What Your Methods Actually Identify</em> (Joshi · Mueller · Reizinger · Sridhar), built on
+    <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a>. All demos are original teaching
+    illustrations of the paper's concepts, not experiments from the paper. CC-BY.
+  </div>
+</footer>
+
+</body>
+</html>

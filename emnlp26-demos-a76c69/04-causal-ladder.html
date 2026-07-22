@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three Rungs, Three Worked Examples — Causal Foundations for Interpretability</title>
+<style>
+:root{
+  --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+  --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+  --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+  --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B;
+  --gap-green:#3E8E5A; --line:#E1DEEC;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E;
+    --gap-green:#5FB37E; --line:#332B49;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+  --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+  --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+  --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E;
+  --gap-green:#5FB37E; --line:#332B49;
+}
+:root[data-theme="light"]{
+  --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+  --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+  --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+  --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B;
+  --gap-green:#3E8E5A; --line:#E1DEEC;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);
+  font-family:'Avenir Next',Avenir,'Segoe UI',system-ui,sans-serif;
+  font-size:16px;line-height:1.55}
+h1,h2,h3{font-family:Futura,'Century Gothic','Avenir Next','Trebuchet MS',sans-serif;line-height:1.2}
+.wrap{max-width:960px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+.kicker{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute)}
+header h1{color:var(--purple);font-size:1.7rem;margin:.35rem 0 .3rem}
+.dek{color:var(--ink-soft);max-width:70ch;margin:0}
+.back{display:inline-block;font-size:.85rem;color:var(--purple);text-decoration:none;margin-bottom:.9rem}
+.back:hover{text-decoration:underline}
+a{color:var(--purple)}
+sup{font-size:.68em}
+
+/* ---- stage ---- */
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:1.1rem;margin:1.4rem 0}
+.rungs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.7rem;align-items:end;margin-bottom:1rem}
+.rung-btn{display:flex;flex-direction:column;gap:.15rem;text-align:left;cursor:pointer;
+  background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.6rem .75rem;
+  color:var(--ink);font:inherit}
+.rung-btn:nth-child(1){margin-top:2.2rem}
+.rung-btn:nth-child(2){margin-top:1.1rem}
+.rung-btn[aria-pressed="true"]{border-color:var(--purple-mid);background:var(--hero);
+  box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.rung-btn:focus-visible,.btn:focus-visible,.switch input:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.rung-tag{font-weight:700;font-size:.8rem;letter-spacing:.06em}
+.rung-tag.t1{color:var(--l1)}.rung-tag.t2{color:var(--l2)}.rung-tag.t3{color:var(--l3)}
+.rung-name{font-weight:600;font-size:.95rem}
+.rung-q{font-size:.78rem;color:var(--ink-mute)}
+[hidden]{display:none!important}
+
+.diagq{background:var(--hero);border-left:4px solid var(--purple-mid);border-radius:8px;
+  padding:.55rem .8rem;margin-bottom:.9rem}
+.diagq .kicker{display:block;margin-bottom:.1rem}
+.diagq strong{font-size:1rem}
+
+.scene{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.9rem;margin-bottom:.9rem}
+.scene h3{margin:0 0 .55rem;font-size:.98rem;color:var(--ink)}
+.scenenote{font-size:.75rem;color:var(--ink-mute);margin:.55rem 0 0}
+.flow{display:flex;flex-wrap:wrap;gap:.45rem;align-items:flex-start;margin:.4rem 0}
+.arr{color:var(--ink-mute);line-height:2rem}
+.chip{display:inline-block;border:1px solid var(--line);
+  background:var(--paper);border-radius:8px;padding:.3rem .55rem;font-size:.84rem;color:var(--ink)}
+.chip.prompt{font-style:italic;max-width:22ch}
+.chip.dim{color:var(--ink-mute);border-style:dashed}
+.chip.hl1{border-color:var(--l1);box-shadow:inset 0 -3px 0 var(--l1)}
+.chip.hl2{border-color:var(--l2);box-shadow:inset 0 -3px 0 var(--l2)}
+.chip.hl3{border-color:var(--l3);box-shadow:inset 0 -3px 0 var(--l3)}
+.chip.swapped{background:color-mix(in srgb,var(--l2) 16%,transparent);border-color:var(--l2)}
+.chip.cf{background:color-mix(in srgb,var(--l3) 14%,transparent);border-color:var(--l3)}
+.chip.out{font-weight:600}
+.rowlabel{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);
+  min-width:4.2rem;line-height:2rem}
+.probe-anchor{display:flex;flex-direction:column;align-items:center}
+.probe-wire{width:0;height:.9rem;border-left:2px dashed var(--purple-mid)}
+.probe{border:1.5px dashed var(--purple-mid);border-radius:8px;padding:.3rem .55rem;
+  font-size:.8rem;color:var(--ink-soft);background:var(--panel);text-align:center}
+.readout{display:inline-block;margin-top:.5rem;font-size:.9rem;color:var(--ink-soft)}
+.readout b{color:var(--ink);font-variant-numeric:tabular-nums}
+.btn{cursor:pointer;font:inherit;font-size:.88rem;border-radius:8px;padding:.42rem .85rem;
+  border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.btn.primary{background:var(--purple);border-color:var(--purple);color:var(--paper);font-weight:600}
+.btn:disabled{opacity:.45;cursor:default}
+.controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.7rem}
+.hint{font-size:.83rem;color:var(--ink-soft);margin:.55rem 0 0}
+.hint.on{color:var(--ink)}
+.starter{margin:0 0 .9rem;font-size:.88rem;color:var(--ink-soft);max-width:78ch}
+.starter b{color:var(--purple)}
+.scenenote.top{margin:0 0 .55rem}
+.sliderrow{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;margin-top:.75rem}
+.sliderrow label{font-size:.84rem;color:var(--ink-soft)}
+.sliderrow input[type=range]{accent-color:var(--l2);width:min(230px,56vw)}
+.sliderrow input[type=range]:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.alpha-read{font-size:.86rem;color:var(--ink);font-variant-numeric:tabular-nums}
+.lbar-row{display:flex;align-items:center;gap:.55rem;margin-top:.65rem;max-width:460px}
+.lbar-name{font-size:.82rem;color:var(--ink-soft);font-weight:600;white-space:nowrap}
+.lbar{position:relative;flex:1;height:10px;border-radius:999px;background:var(--purple-faint);border:1px solid var(--line)}
+.lbar-fill{position:absolute;left:0;top:0;bottom:0;background:var(--l2);border-radius:999px;width:0%;transition:width .15s}
+.lbar-mid{position:absolute;left:50%;top:-3px;bottom:-3px;width:2px;background:var(--ink-mute);opacity:.6}
+.lbar-cap{display:block;font-size:.72rem;color:var(--ink-mute);margin-top:.3rem}
+
+/* verdicts */
+.verdicts{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;transition:opacity .35s}
+.verdicts.waiting{opacity:.45}
+.vcard{border-radius:10px;padding:.7rem .8rem;background:var(--card);border:1px solid var(--line);font-size:.87rem}
+.vcard.lic{border-left:4px solid var(--gap-green)}
+.vcard.nolic{border-left:4px solid var(--magenta)}
+.vcard.lic.notearned{border-left-color:var(--ink-mute)}
+.vcard.lic.notearned .vhead{color:var(--ink-mute)}
+.vcard.lic.notearned .claim{opacity:.55}
+.licnote{color:var(--magenta);font-size:.8rem;margin:.35rem 0 0}
+.vhead{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;display:block;margin-bottom:.25rem}
+.vcard.lic .vhead{color:var(--gap-green)}
+.vcard.nolic .vhead{color:var(--magenta)}
+.vcard p{margin:.25rem 0}
+.vcard .why{color:var(--ink-soft);font-size:.8rem}
+
+/* L3 stepper */
+.steps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem;margin:.6rem 0 .8rem}
+.step{border:1px solid var(--line);border-radius:10px;padding:.55rem .65rem;background:var(--paper);font-size:.82rem}
+.step .snum{display:inline-block;font-weight:700;font-size:.75rem;color:var(--ink-mute);margin-right:.3rem}
+.step .sname{font-weight:600;font-size:.9rem}
+.step .sdesc{color:var(--ink-soft);margin:.2rem 0 0}
+.step.current{border-color:var(--l3);box-shadow:inset 0 3px 0 var(--l3)}
+.step.done{border-color:var(--gap-green)}
+.step.done .snum::after{content:" ✓";color:var(--gap-green)}
+.step.skipped{border-style:dashed;opacity:.62}
+.step.skipped .sname::after{content:" — skipped";color:var(--magenta);font-size:.78rem}
+.ubadge{display:inline-flex;align-items:center;gap:.35rem;border:1.5px dashed var(--purple-mid);
+  border-radius:999px;padding:.22rem .7rem;font-size:.8rem;color:var(--ink-soft);margin:.2rem 0 .5rem}
+.ubadge b{color:var(--purple)}
+.strike{text-decoration:line-through;text-decoration-color:var(--magenta)}
+.switch{display:inline-flex;align-items:center;gap:.45rem;font-size:.86rem;color:var(--ink-soft);cursor:pointer}
+.patch-callout{border:1px solid var(--l2);border-radius:10px;background:color-mix(in srgb,var(--l2) 9%,transparent);
+  padding:.6rem .8rem;font-size:.85rem;margin-top:.7rem}
+.patch-callout b{color:var(--l2)}
+.status{font-size:.85rem;color:var(--ink-soft);min-height:1.3em;margin-top:.55rem}
+
+/* prose sections */
+section.prose{margin:1.6rem 0;max-width:70ch}
+section.prose h2{font-size:1.15rem;color:var(--purple);margin-bottom:.4rem}
+.paperbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:.9rem 1.1rem;margin:1.6rem 0}
+.paperbox h2{font-size:1.15rem;color:var(--purple);margin:.1rem 0 .4rem}
+.paperbox blockquote{margin:.6rem 0;padding-left:.9rem;border-left:3px solid var(--purple-soft);
+  color:var(--ink-soft);font-style:italic;max-width:70ch}
+.paperbox cite{display:block;font-style:normal;font-size:.78rem;color:var(--ink-mute);margin-top:.2rem}
+.try ol{padding-left:1.2rem;max-width:70ch}
+.try li{margin-bottom:.5rem}
+footer{border-top:1px solid var(--line);margin-top:2.2rem;padding-top:.9rem;font-size:.8rem;color:var(--ink-mute);max-width:70ch}
+@media (max-width:720px){
+  .rungs{grid-template-columns:1fr;align-items:stretch}
+  .rung-btn:nth-child(1),.rung-btn:nth-child(2){margin-top:0}
+  .verdicts,.steps{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="back" href="./index.html">&larr; All demos</a>
+  <div class="kicker">EMNLP 2026 Tutorial &middot; Causal Foundations for Interpretability</div>
+  <h1>Three Rungs, Three Worked Examples</h1>
+  <p class="dek">A sentiment probe, an activation patch, and a true counterfactual: three diagnostic questions locate each piece of evidence on Pearl&rsquo;s causal ladder&mdash;and show exactly what it licenses.</p>
+</header>
+
+<div class="stage">
+  <p class="starter"><b>Do this first:</b> pick a rung below&mdash;the three cards are clickable tabs&mdash;then run its experiment: the dimmed verdict cards unlock when you do. Each rung is one level of causal evidence: L1 observes correlations, L2 intervenes (Pearl&rsquo;s do-operator: externally set a variable), L3 asks what <em>would have</em> happened in one observed case.</p>
+  <nav class="rungs" aria-label="Choose a rung of the causal ladder">
+    <button class="rung-btn" data-rung="1" aria-pressed="true">
+      <span class="rung-tag t1">L1 &middot; ASSOCIATION</span>
+      <span class="rung-name">Sentiment probe</span>
+      <span class="rung-q">Does A correlate with B?</span>
+    </button>
+    <button class="rung-btn" data-rung="2" aria-pressed="false">
+      <span class="rung-tag t2">L2 &middot; INTERVENTION</span>
+      <span class="rung-name">IOI activation patching</span>
+      <span class="rung-q">Does changing A change B?</span>
+    </button>
+    <button class="rung-btn" data-rung="3" aria-pressed="false">
+      <span class="rung-tag t3">L3 &middot; COUNTERFACTUAL</span>
+      <span class="rung-name">Eiffel Tower &rarr; Colosseum</span>
+      <span class="rung-q">For this input, would changing A have changed B?</span>
+    </button>
+  </nav>
+
+  <!-- ================= L1 ================= -->
+  <div class="rpanel" id="panel-1" role="region" aria-label="L1 association: linear probing for sentiment">
+    <div class="diagq">
+      <span class="kicker">Diagnostic question &middot; L1</span>
+      <strong>Is the system manipulated, or only observed?</strong>
+    </div>
+    <div class="scene">
+      <h3>Linear probing for sentiment</h3>
+      <div class="flow" aria-hidden="true">
+        <span class="rowlabel">Forward pass</span>
+        <span class="chip prompt">sentiment-labeled text</span><span class="arr">&rarr;</span>
+        <span class="chip">a<sup>(1)</sup></span><span class="arr">&rarr;</span>
+        <span class="chip dim">&hellip;</span><span class="arr">&rarr;</span>
+        <div class="probe-anchor">
+          <span class="chip hl1">a<sup>(12)</sup></span>
+          <div class="probe-wire"></div>
+          <div class="probe">external probe<br>&#375; = &sigma;(w<sup>&#8868;</sup>a<sup>(12)</sup> + b)</div>
+        </div>
+        <span class="arr">&rarr;</span>
+        <span class="chip dim">&hellip;</span><span class="arr">&rarr;</span>
+        <span class="chip out">y</span>
+      </div>
+      <div class="controls">
+        <button class="btn primary" id="fit-probe" title="Train the external classifier on recorded layer-12 activations; the model itself is never modified">Fit the probe on layer-12 activations</button>
+        <button class="btn" id="reset-probe" disabled>Reset</button>
+        <span class="readout" id="probe-readout">held-out accuracy: <b>&mdash;</b></span>
+        <span class="readout" title="The probe only reads recorded activations; nothing in the model is ever set or changed">interventions on the model: <b>0</b></span>
+      </div>
+      <p class="hint" id="l1-hint" aria-live="polite">The probe reads activations from outside; the model&rsquo;s own computation is untouched.</p>
+      <p class="scenenote">Tutorial illustration of the paper&rsquo;s worked example (the 92% figure is the paper&rsquo;s); not a paper experiment.</p>
+    </div>
+    <div class="verdicts waiting" id="verdicts-1">
+      <div class="vcard lic">
+        <span class="vhead">&#10003; What L1 licenses</span>
+        <p>&ldquo;Sentiment is linearly decodable from layer 12.&rdquo;</p>
+      </div>
+      <div class="vcard nolic">
+        <span class="vhead">&#10007; What L1 does not license</span>
+        <p>&ldquo;The model represents sentiment at layer 12&rdquo; or &ldquo;Layer 12 computes sentiment.&rdquo;</p>
+        <p class="why">Decodability &ne; encoding; the information may be present but unused by the model&rsquo;s own computation.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= L2 ================= -->
+  <div class="rpanel" id="panel-2" role="region" aria-label="L2 intervention: activation patching for indirect object identification" hidden>
+    <div class="diagq">
+      <span class="kicker">Diagnostic question &middot; L2</span>
+      <strong>Is the manipulation externally controlled?</strong>
+    </div>
+    <div class="scene">
+      <h3>Activation patching for indirect object identification (IOI)</h3>
+      <p class="scenenote top">Notation: head 9.6 = layer 9, attention head 6; a<sup>(9.6)</sup><sub>A</sub> is its activation on run A. Run B is the same prompt with the names swapped (the &ldquo;corrupted&rdquo; prompt).</p>
+      <div class="flow">
+        <span class="rowlabel">Run A</span>
+        <span class="chip prompt">&ldquo;Mary gave a book to John. Mary gave a pencil to&hellip;&rdquo;</span><span class="arr">&rarr;</span>
+        <span class="chip hl2" id="headA" title="layer 9, attention head 6">head 9.6: a<sup>(9.6)</sup><sub>A</sub></span><span class="arr">&rarr;</span>
+        <span class="chip dim" title="untested">other heads (untested)</span><span class="arr">&rarr;</span>
+        <span class="chip out" id="outA">&ldquo;John&rdquo;</span>
+      </div>
+      <div class="flow">
+        <span class="rowlabel">Run B</span>
+        <span class="chip prompt">&ldquo;John gave a book to Mary. John gave a pencil to&hellip;&rdquo;</span><span class="arr">&rarr;</span>
+        <span class="chip swapped">head 9.6: a<sup>(9.6)</sup><sub>B</sub> recorded</span>
+      </div>
+      <div class="controls">
+        <button class="btn primary" id="do-patch" title="Write run B&rsquo;s activation into run A at this head (sets the patch fraction to 1)">Patch: a<sup>(9.6)</sup><sub>A</sub> &larr; a<sup>(9.6)</sup><sub>B</sub></button>
+        <button class="btn" id="reset-patch" disabled>Reset</button>
+      </div>
+      <div class="sliderrow">
+        <label for="alpha">Patch fraction &alpha;: a<sup>(9.6)</sup> &larr; (1&minus;&alpha;)&middot;a<sub>A</sub> + &alpha;&middot;a<sub>B</sub></label>
+        <input type="range" id="alpha" min="0" max="1" step="0.05" value="0" aria-describedby="alpha-copy">
+        <span class="alpha-read" id="alpha-read">&alpha; = 0.00</span>
+      </div>
+      <p class="scenenote" id="alpha-copy" style="margin-top:.25rem">Drag to set how much of run B&rsquo;s activation is patched into head 9.6: the effect on the output is graded, not all-or-nothing.</p>
+      <div class="lbar-row" aria-hidden="true">
+        <span class="lbar-name">&ldquo;John&rdquo;</span>
+        <div class="lbar"><div class="lbar-fill" id="lbar-fill"></div><div class="lbar-mid"></div></div>
+        <span class="lbar-name">&ldquo;Mary&rdquo;</span>
+      </div>
+      <span class="lbar-cap" aria-hidden="true">schematic logit difference (unnumbered); the midline flip point is illustrative</span>
+      <p class="hint" id="l2-hint" aria-live="polite">The experimenter sets the value at head 9.6; the rest of the computation runs unchanged.</p>
+      <p class="scenenote">Tutorial illustration of the paper&rsquo;s worked example; only head 9.6 is tested&mdash;other paths remain unexplored in this experiment. The graded bar and its &alpha; = 0.5 flip point are schematic, not measured.</p>
+    </div>
+    <div class="verdicts waiting" id="verdicts-2">
+      <div class="vcard lic">
+        <span class="vhead">&#10003; What L2 licenses</span>
+        <p>&ldquo;Intervening on head 9.6 changes IOI behavior under these tested conditions.&rdquo;</p>
+      </div>
+      <div class="vcard nolic">
+        <span class="vhead">&#10007; What L2 does not license</span>
+        <p>&ldquo;Head 9.6 is the IOI mechanism&rdquo; (sufficiency &ne; necessity; other paths may exist) or &ldquo;This finding will hold on all IOI-like prompts&rdquo; (requires transportability testing).</p>
+        <p class="why">Transportability: whether a causal finding established on one prompt distribution carries over to another.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= L3 ================= -->
+  <div class="rpanel" id="panel-3" role="region" aria-label="L3 counterfactual: the Eiffel Tower example with the abduction, action, prediction recipe" hidden>
+    <div class="diagq">
+      <span class="kicker">Diagnostic question &middot; L3</span>
+      <strong>Is the query anchored to a specific observation?</strong>
+    </div>
+    <div class="scene">
+      <h3>The Eiffel Tower counterfactual: abduction &rarr; action &rarr; prediction</h3>
+      <p class="hint">Observed run: &ldquo;The Eiffel Tower is in&rdquo; &rarr; &ldquo;Paris.&rdquo; The counterfactual question: what would the model have output if a<sup>(5)</sup> had taken the value it takes when processing &ldquo;The Colosseum is in&rdquo;? The recipe is Pearl&rsquo;s (2009) abduction&ndash;action&ndash;prediction.</p>
+      <div class="steps" id="l3-steps">
+        <div class="step" id="step-abd">
+          <span class="snum">(i)</span><span class="sname">Abduction</span>
+          <p class="sdesc">Condition on the observed run&mdash;input, output, full trace&mdash;to infer the exogenous factors behind <em>this particular</em> forward pass. In the paper&rsquo;s words: what about the model&rsquo;s internal state, beyond the activations we recorded, determined that &ldquo;The Eiffel Tower is in&rdquo; &rarr; &ldquo;Paris&rdquo;?</p>
+        </div>
+        <div class="step" id="step-act">
+          <span class="snum">(ii)</span><span class="sname">Action</span>
+          <p class="sdesc">Intervene: set a<sup>(5)</sup> &larr; a&prime;<sup>(5)</sup>, the activation from the Colosseum prompt.</p>
+        </div>
+        <div class="step" id="step-pred">
+          <span class="snum">(iii)</span><span class="sname">Prediction</span>
+          <p class="sdesc">Propagate forward, <span id="holdfix">holding fixed the exogenous factors inferred in step (i)</span>.</p>
+        </div>
+      </div>
+      <div class="ubadge" id="ubadge" title="U = the exogenous factors: whatever, beyond the recorded activations, determined this particular forward pass"><b>U</b> exogenous factors: <span id="ustate">not yet inferred</span></div>
+      <div class="flow">
+        <span class="rowlabel">This run</span>
+        <span class="chip prompt">&ldquo;The Eiffel Tower is in&rdquo;</span><span class="arr">&rarr;</span>
+        <span class="chip dim">&hellip;</span><span class="arr">&rarr;</span>
+        <span class="chip" id="layer5">a<sup>(5)</sup></span><span class="arr">&rarr;</span>
+        <span class="chip dim">&hellip;</span><span class="arr">&rarr;</span>
+        <span class="chip out" id="l3-out">&ldquo;Paris&rdquo;</span>
+      </div>
+      <div class="controls">
+        <button class="btn primary" id="l3-next">Perform step (i): abduction</button>
+        <button class="btn" id="l3-back" disabled>Back</button>
+        <button class="btn" id="l3-reset">Reset</button>
+        <label class="switch"><input type="checkbox" id="patch-mode"> Standard-patching mode (skip abduction)</label>
+      </div>
+      <p class="status" id="l3-status" aria-live="polite">Step (i) of the recipe is up next.</p>
+      <div class="patch-callout" id="patch-callout" hidden>
+        <b>Where standard patching starts.</b> Standard activation patching performs step (ii) only: it never infers what made <em>this</em> run produce &ldquo;Paris,&rdquo; so the prediction step has nothing to hold fixed. The patched output answers the interventional question&mdash;&ldquo;does changing a<sup>(5)</sup> change the output?&rdquo;&mdash;which is L2 evidence, even when it is narrated counterfactually. In general the interventional answer and the true counterfactual can diverge; here both happen to read &ldquo;Rome,&rdquo; so only the recipe&mdash;not the output&mdash;tells you which question was answered.
+      </div>
+      <p class="scenenote">Tutorial illustration of the paper&rsquo;s worked example; not a paper experiment.</p>
+    </div>
+    <div class="verdicts waiting" id="verdicts-3">
+      <div class="vcard lic" id="l3-lic">
+        <span class="vhead">&#10003; What L3 licenses</span>
+        <p class="claim">&ldquo;For this specific forward pass, had a<sup>(5)</sup> taken the Colosseum value, the model would have output &lsquo;Rome.&rsquo;&rdquo;</p>
+        <p class="licnote" id="l3-lic-note" hidden>Not earned by this run: abduction was skipped, so the patched output is L2 evidence narrated counterfactually. Switch standard-patching mode off and run all three steps.</p>
+      </div>
+      <div class="vcard nolic">
+        <span class="vhead">&#10007; What L3 does not license</span>
+        <p>Generalisations to other inputs (requires separate analysis or transportability assumptions) or mechanism-level claims like &ldquo;layer 5 encodes location.&rdquo;</p>
+        <p class="why">L3 requires a structural causal model of how latent variables interact&mdash;an explicit model of how each internal variable is computed from its inputs and unobserved factors&mdash;not merely the ability to intervene.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="prose">
+  <h2>What this shows</h2>
+  <p>Each rung of Pearl&rsquo;s causal ladder answers a different question, and the hierarchy is cumulative upward: associational evidence does not license interventional claims, and interventional evidence does not license counterfactual claims (Pearl, 2009; Bareinboim et al., 2022). The three scenes re-create the paper&rsquo;s worked examples. The probe establishes that sentiment is decodable by an external classifier&mdash;the model is only observed, so the evidence stays on L1 no matter how causal the surrounding language sounds. The patch establishes that head 9.6 causally contributes under the tested conditions&mdash;an externally controlled manipulation, hence L2, but sufficiency under one intervention is not the mechanism.</p>
+  <p>The L3 stepper makes the final gap mechanical. A counterfactual is anchored to one observed forward pass, and answering it takes all three steps of the abduction&ndash;action&ndash;prediction recipe. Standard activation patching performs only the action step: nothing is inferred about what made this run produce &ldquo;Paris,&rdquo; so nothing can be held fixed when propagating forward. The result is interventional evidence narrated counterfactually&mdash;rung-elevated language, and the most consequential mismatch the paper diagnoses.</p>
+</section>
+
+<div class="paperbox">
+  <h2>What the paper says</h2>
+  <blockquote>&ldquo;Decodability &ne; encoding; the information may be present but unused by the model&rsquo;s own computation.&rdquo;
+    <cite>&mdash; Appendix, &ldquo;Locating an Interpretability Method on the Causal Ladder&rdquo; (L1 example)</cite>
+  </blockquote>
+  <blockquote>&ldquo;Standard activation patching performs step (ii) but lacks the structural model needed for steps (i) and (iii). This is why most &lsquo;counterfactual&rsquo; claims in interpretability are actually L2 claims narrated counterfactually.&rdquo;
+    <cite>&mdash; Appendix, &ldquo;Locating an Interpretability Method on the Causal Ladder&rdquo; (L3 example)</cite>
+  </blockquote>
+</div>
+
+<section class="prose try">
+  <h2>Try this</h2>
+  <ol>
+    <li>Take an interpretability claim you know well&mdash;&ldquo;feature X mediates behaviour Y&rdquo;&mdash;and ask the three diagnostic questions in order. Which rung does the evidence occupy, and which rung does the language assert?</li>
+    <li>In the L3 scene, switch on standard-patching mode and run the stepper again. State exactly what the skipped abduction step would need to infer for the Eiffel-Tower run, and why forward passes alone cannot supply it.</li>
+    <li>With a partner: one of you defends &ldquo;head 9.6 is the IOI mechanism,&rdquo; the other may answer only with the L2 verdict cards. Then agree on the experiment that would strengthen the claim (necessity tests, transportability tests, or both).</li>
+  </ol>
+</section>
+
+<footer>
+  <p>Provenance: interactive re-rendering of the three worked examples in the appendix &ldquo;The Causal Ladder: A Unified Reference&rdquo; of <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a> (<em>Causality is Key for Interpretability Claims to Generalise</em>). All numbers (92% probe accuracy, layer 12, head 9.6, layer 5) and all licenses / does-not-license statements come from the paper; the mini-scenes themselves are tutorial illustrations, not paper experiments.</p>
+  <p>tutorial demo &middot; CC-BY</p>
+</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- rung navigation ---- */
+  var rungBtns = Array.prototype.slice.call(document.querySelectorAll(".rung-btn"));
+  rungBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      rungBtns.forEach(function(b){
+        var on = b === btn;
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+        document.getElementById("panel-" + b.dataset.rung).hidden = !on;
+      });
+    });
+  });
+
+  function reveal(id){ document.getElementById(id).classList.remove("waiting"); }
+
+  /* ---- L1: fit probe ---- */
+  var fitBtn = document.getElementById("fit-probe");
+  var resetProbe = document.getElementById("reset-probe");
+  var readout = document.getElementById("probe-readout").querySelector("b");
+  var l1Hint = document.getElementById("l1-hint");
+  var l1HintHome = l1Hint.textContent;
+  var l1Timer = null;
+  fitBtn.addEventListener("click", function(){
+    fitBtn.disabled = true;
+    resetProbe.disabled = false;
+    reveal("verdicts-1");
+    l1Hint.classList.add("on");
+    l1Hint.textContent = "You never touched the model — the accuracy climbed while the intervention counter stayed at zero. Every number came from unmodified forward passes: the evidence is associational (L1).";
+    if (reduced){ readout.textContent = "92%"; return; }
+    var v = 50;
+    l1Timer = setInterval(function(){
+      v += 3;
+      if (v >= 92){ v = 92; clearInterval(l1Timer); l1Timer = null; }
+      readout.textContent = v + "%";
+    }, 40);
+  });
+  resetProbe.addEventListener("click", function(){
+    if (l1Timer){ clearInterval(l1Timer); l1Timer = null; }
+    readout.textContent = "—";
+    l1Hint.classList.remove("on");
+    l1Hint.textContent = l1HintHome;
+    fitBtn.disabled = false;
+    resetProbe.disabled = true;
+  });
+
+  /* ---- L2: patch head 9.6, graded by patch fraction alpha ---- */
+  var patchBtn = document.getElementById("do-patch");
+  var resetPatch = document.getElementById("reset-patch");
+  var alphaIn = document.getElementById("alpha");
+  var alphaRead = document.getElementById("alpha-read");
+  var lbarFill = document.getElementById("lbar-fill");
+  var headA = document.getElementById("headA");
+  var outA = document.getElementById("outA");
+  var l2Hint = document.getElementById("l2-hint");
+  var headAHome = headA.innerHTML, l2HintHome = l2Hint.textContent;
+
+  function applyAlpha(a){
+    alphaRead.textContent = "α = " + a.toFixed(2);
+    lbarFill.style.width = (a * 100) + "%";
+    if (a === 0){
+      headA.classList.remove("swapped");
+      headA.innerHTML = headAHome;
+    } else if (a === 1){
+      headA.classList.add("swapped");
+      headA.innerHTML = "head 9.6: a<sup>(9.6)</sup><sub>B</sub> patched in";
+    } else {
+      headA.classList.add("swapped");
+      headA.innerHTML = "head 9.6: (1&minus;&alpha;)&middot;a<sub>A</sub> + &alpha;&middot;a<sub>B</sub>";
+    }
+    if (a > 0.5){
+      outA.textContent = "“Mary”";
+      outA.classList.add("cf");
+    } else {
+      outA.textContent = "“John”";
+      outA.classList.remove("cf");
+    }
+    if (a === 0){
+      l2Hint.classList.remove("on");
+      l2Hint.textContent = l2HintHome;
+    } else {
+      l2Hint.classList.add("on");
+      if (a === 1){
+        l2Hint.textContent = "The output shifts from “John” toward “Mary”: head 9.6 causally contributes to IOI behavior under this intervention.";
+      } else if (a > 0.5){
+        l2Hint.textContent = "Past the schematic flip point: with α = " + a.toFixed(2) + " of run B’s activation written in, “Mary” now wins. Partial intervention, graded effect.";
+      } else {
+        l2Hint.textContent = "Partial intervention, partial effect: α = " + a.toFixed(2) + " narrows the John–Mary logit gap, but “John” still wins.";
+      }
+      reveal("verdicts-2");
+    }
+    patchBtn.disabled = (a === 1);
+    resetPatch.disabled = (a === 0);
+  }
+  patchBtn.addEventListener("click", function(){ alphaIn.value = "1"; applyAlpha(1); });
+  resetPatch.addEventListener("click", function(){ alphaIn.value = "0"; applyAlpha(0); });
+  alphaIn.addEventListener("input", function(){ applyAlpha(parseFloat(alphaIn.value)); });
+
+  /* ---- L3: stepper ---- */
+  var stAbd = document.getElementById("step-abd");
+  var stAct = document.getElementById("step-act");
+  var stPred = document.getElementById("step-pred");
+  var uState = document.getElementById("ustate");
+  var layer5 = document.getElementById("layer5");
+  var l3Out = document.getElementById("l3-out");
+  var nextBtn = document.getElementById("l3-next");
+  var backBtn = document.getElementById("l3-back");
+  var resetBtn = document.getElementById("l3-reset");
+  var statusEl = document.getElementById("l3-status");
+  var holdfix = document.getElementById("holdfix");
+  var patchMode = document.getElementById("patch-mode");
+  var callout = document.getElementById("patch-callout");
+  var verd3 = document.getElementById("verdicts-3");
+  var lic3 = document.getElementById("l3-lic");
+  var lic3Note = document.getElementById("l3-lic-note");
+  var idx = 0; // number of steps performed (patch mode: abduction counts as skipped at idx 1)
+
+  function render(){
+    var pm = patchMode.checked;
+    stAbd.className = "step" + (pm ? " skipped" : (idx >= 1 ? " done" : (idx === 0 ? " current" : "")));
+    if (!pm && idx === 0) stAbd.className = "step current";
+    stAct.className = "step" + (idx >= 2 ? " done" : (idx === 1 ? " current" : ""));
+    if (pm && idx === 0) stAct.className = "step current";
+    stPred.className = "step" + (idx >= 3 ? " done" : (idx === 2 ? " current" : ""));
+    holdfix.className = pm ? "strike" : "";
+    callout.hidden = !pm;
+
+    uState.textContent = pm ? "never inferred — nothing to hold fixed"
+      : (idx >= 1 ? "inferred from the observed run — held fixed" : "not yet inferred");
+
+    if (idx >= 2){
+      layer5.className = "chip cf";
+      layer5.innerHTML = "a&prime;<sup>(5)</sup> (Colosseum)";
+    } else {
+      layer5.className = "chip";
+      layer5.innerHTML = "a<sup>(5)</sup>";
+    }
+    if (idx >= 3){
+      l3Out.textContent = "“Rome”";
+      l3Out.className = "chip out cf";
+    } else {
+      l3Out.textContent = "“Paris”";
+      l3Out.className = "chip out";
+    }
+
+    var labels = pm
+      ? ["Perform step (ii): action (abduction skipped)", "Perform step (ii): action", "Perform step (iii): prediction", "Recipe finished"]
+      : ["Perform step (i): abduction", "Perform step (ii): action", "Perform step (iii): prediction", "Recipe finished"];
+    nextBtn.textContent = labels[Math.min(idx, 3)];
+    nextBtn.disabled = idx >= 3;
+    backBtn.disabled = idx <= 0;
+
+    var msgs = pm
+      ? ["Standard patching starts at step (ii): no abduction is performed.",
+         "Step (ii) is next: swap in the Colosseum activation.",
+         "a′(5) is set. Step (iii) propagates forward — but nothing was inferred, so nothing is held fixed.",
+         "“Rome” appears — but it answers the interventional question. This is L2 evidence narrated counterfactually."]
+      : ["Step (i) of the recipe is up next.",
+         "Exogenous factors inferred and pinned. Step (ii) is next: swap in the Colosseum activation.",
+         "a′(5) is set. Step (iii): propagate forward while holding the inferred factors fixed.",
+         "For this specific forward pass, the counterfactual output is “Rome” — a genuine L3 answer."];
+    statusEl.textContent = msgs[Math.min(idx, 3)];
+
+    verd3.classList.toggle("waiting", idx < 3);
+    var notEarned = pm && idx >= 3;
+    lic3.classList.toggle("notearned", notEarned);
+    lic3Note.hidden = !notEarned;
+  }
+
+  nextBtn.addEventListener("click", function(){
+    if (idx >= 3) return;
+    if (patchMode.checked && idx === 0) idx = 2; else idx += 1;
+    render();
+  });
+  backBtn.addEventListener("click", function(){
+    if (idx <= 0) return;
+    if (patchMode.checked && idx === 2) idx = 0; else idx -= 1;
+    render();
+  });
+  resetBtn.addEventListener("click", function(){ idx = 0; render(); });
+  patchMode.addEventListener("change", function(){ idx = 0; render(); });
+  render();
+})();
+</script>
+</body>
+</html>
