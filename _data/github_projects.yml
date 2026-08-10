@@ -1,46 +1,6 @@
-last_updated: '2026-08-03 09:18:28'
+last_updated: '2026-08-10 07:08:19'
 github_url: https://github.com/rpatrik96
 repos:
-- name: research-agora
-  description: 'Research Agora: Claude Code skills, benchmarks & tools for ML researchers
-    — paper writing, citation verification, experiment tracking, LaTeX automation'
-  url: https://github.com/rpatrik96/research-agora
-  stars: 14
-  forks: 4
-  language: Python
-  updated_at: '2026-07-31'
-  topics:
-  - academic-writing
-  - benchmarks
-  - citation-verification
-  - claude-code
-  - latex
-  - machine-learning
-  - ml-research
-  - paper-writing
-  - research-tools
-  - skills
-- name: bibtexupdater
-  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
-    to published versions and filter to only cited references.'
-  url: https://github.com/rpatrik96/bibtexupdater
-  stars: 111
-  forks: 6
-  language: Python
-  updated_at: '2026-07-28'
-  topics:
-  - bibtex
-  - bibtex-references
-  - bibtexparser
-  - latex
-- name: rpatrik96.github.io
-  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
-  url: https://github.com/rpatrik96/rpatrik96.github.io
-  stars: 0
-  forks: 1
-  language: HTML
-  updated_at: '2026-07-27'
-  topics: []
 - name: hallmark
   description: 'HALLMARK: Citation hallucination detection benchmark for ML papers
     — 2,525 entries, 14 hallucination types, 3 difficulty tiers, 10 baselines including
@@ -49,7 +9,7 @@ repos:
   stars: 9
   forks: 0
   language: Python
-  updated_at: '2026-07-27'
+  updated_at: '2026-08-06'
   topics:
   - academic-integrity
   - benchmark
@@ -61,6 +21,46 @@ repos:
   - machine-learning
   - nlp
   - reproducibility
+- name: bibtexupdater
+  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
+    to published versions and filter to only cited references.'
+  url: https://github.com/rpatrik96/bibtexupdater
+  stars: 112
+  forks: 6
+  language: Python
+  updated_at: '2026-08-05'
+  topics:
+  - bibtex
+  - bibtex-references
+  - bibtexparser
+  - latex
+- name: research-agora
+  description: 'Research Agora: Claude Code skills, benchmarks & tools for ML researchers
+    — paper writing, citation verification, experiment tracking, LaTeX automation'
+  url: https://github.com/rpatrik96/research-agora
+  stars: 14
+  forks: 4
+  language: Python
+  updated_at: '2026-08-03'
+  topics:
+  - academic-writing
+  - benchmarks
+  - citation-verification
+  - claude-code
+  - latex
+  - machine-learning
+  - ml-research
+  - paper-writing
+  - research-tools
+  - skills
+- name: rpatrik96.github.io
+  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
+  url: https://github.com/rpatrik96/rpatrik96.github.io
+  stars: 0
+  forks: 1
+  language: HTML
+  updated_at: '2026-08-03'
+  topics: []
 - name: CV
   description: ''
   url: https://github.com/rpatrik96/CV
