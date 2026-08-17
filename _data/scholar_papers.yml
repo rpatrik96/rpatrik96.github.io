@@ -1,4 +1,4 @@
-last_updated: '2026-08-10 07:21:13'
+last_updated: '2026-08-17 06:42:04'
 papers:
 - title: 'HALLMARK: Diagnosing Three Failure Modes in LLM Citation Verifiers'
   authors: Patrik Reizinger and Wieland Brendel
@@ -20,7 +20,7 @@ papers:
   authors: Shruti Joshi and Théo Saulus and Wieland Brendel and Philippe Brouillard
     and Dhanya Sridhar and Patrik Reizinger
   year: 2026
-  venue: Open MIND
+  venue: arXiv (Cornell University)
   citations: 0
   url: https://openalex.org/W7133197095
   paper_url: https://arxiv.org/abs/2602.24278
@@ -28,7 +28,7 @@ papers:
   authors: Shruti Joshi and Aaron Mueller and David Klindt and Wieland Brendel and
     Patrik Reizinger and Dhanya Sridhar
   year: 2026
-  venue: Open MIND
+  venue: arXiv (Cornell University)
   citations: 0
   url: https://openalex.org/W7130538568
   paper_url: https://arxiv.org/abs/2602.16698
