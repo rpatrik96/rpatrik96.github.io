@@ -1,0 +1,35 @@
+# Front-page news items.
+#
+# Hand-maintained (unlike scholar_papers.yml and github_projects.yml, which the
+# GitHub Actions workflows rewrite every Monday). To add an item, prepend an
+# entry below.
+#
+#   date:  YYYY-MM-DD. Sorted on, but only the month and year are displayed,
+#          so an approximate day is safe.
+#   text:  one or two sentences, Markdown. Inline links are rendered.
+#
+# Only the `limit` newest items appear; older ones stay in this file.
+
+limit: 5
+
+items:
+  - date: 2026-07-15
+    text: >-
+      Our tutorial *Causal Foundations for Interpretability: What Your Methods Actually
+      Identify* is accepted at **EMNLP 2026** in Budapest (24–29 October), presented with
+      Shruti Joshi, Aaron Mueller and Dhanya Sridhar.
+
+  - date: 2026-07-12
+    text: >-
+      [*Interpretability as a Science*](https://interpscience.github.io/) is accepted as a
+      **NeurIPS 2026 workshop**, in Sydney on 11 or 12 December. I am one of the organizers,
+      and the [call for papers](https://interpscience.github.io/cfp) is open until
+      28 August (AoE).
+
+  - date: 2026-06-26
+    text: >-
+      Selected for the second cohort of the
+      [**Big-if-True Science accelerator**](https://www.renaissancephilanthropy.org/bits/fellows),
+      run by Renaissance Philanthropy with [SPRIND](https://sprind.org/en/bits-cohort-2026).
+      Through November I am designing a research programme for automatic, graded verification
+      of scientific claims.

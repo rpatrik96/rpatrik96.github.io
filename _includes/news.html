@@ -1,0 +1,15 @@
+{% if site.data.news.items.size > 0 %}
+<div class="news">
+  <h2>News</h2>
+  {% assign news_limit = site.data.news.limit | default: 5 %}
+  {% assign news_items = site.data.news.items | sort: "date" | reverse %}
+  <ul class="news-list">
+    {% for item in news_items limit: news_limit %}
+    <li class="news-item">
+      <time class="news-date" datetime="{{ item.date | date: '%Y-%m-%d' }}">{{ item.date | date: "%b %Y" }}</time>
+      <div class="news-text">{{ item.text | markdownify }}</div>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}

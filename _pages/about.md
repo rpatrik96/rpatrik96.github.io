@@ -18,9 +18,11 @@ I aim to help close this gap, by focusing on:
 - extending our understanding of out-of-distribution and compositional generalization
 - uncovering overarching patterns across different fields in machine learning
 
-I am also passionate about **AI for research**: I believe AI can fundamentally transform how we do science. I outlined this vision in a [position paper](https://openreview.net/forum?id=svFHXBd2wq) at the P-AGI Workshop @ ICLR 2026 and built the [Research Agora](https://rpatrik96.github.io/research-agora), an open-source skills marketplace for AI-assisted research. I also build small [tools](/tools/) for researchers — most recently [Research Values](/tools/research-values/), a playful *Would You Rather* for mapping what you actually value in your work.
+I am also passionate about **AI for research**: I believe AI can fundamentally transform how we do science. I outlined this vision in a [position paper](https://openreview.net/forum?id=svFHXBd2wq) at the P-AGI Workshop @ ICLR 2026 and built the [Research Agora](https://rpatrik96.github.io/research-agora), an open-source skills marketplace for AI-assisted research. I also build small [tools](/tools/) for researchers — most recently [Research Values](/tools/research-values/), a playful *Would You Rather* for mapping what you actually value in your work. Since July 2026 I am a fellow of the [Big-if-True Science accelerator](https://www.renaissancephilanthropy.org/bits/fellows), run by Renaissance Philanthropy with [SPRIND](https://sprind.org/en/bits-cohort-2026), where I design a research programme for automatic, graded verification of scientific claims.
 
 I have done both my M.Sc. and B.Sc. at the Budapest University of Technology in electrical engineering and specialized in control engineering and intelligent systems. In my free time, I enjoy being outdoors and often bring my [camera](https://500px.com/p/rpatrik96) with me.
+
+{% include news.html %}
 
 {% include recent-papers.html %}
 
