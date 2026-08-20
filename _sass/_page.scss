@@ -496,10 +496,6 @@
     color: $primary-dark;
     border-bottom: none;
     padding-bottom: 0;
-
-    &::before {
-      content: '📚 ';
-    }
   }
 
   .paper-list {
