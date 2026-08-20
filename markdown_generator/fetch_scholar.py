@@ -12,6 +12,7 @@ Usage:
 """
 
 import os
+import re
 import sys
 from datetime import datetime
 
@@ -23,7 +24,9 @@ OPENALEX_AUTHOR_ID = "A5034660028"  # OpenAlex author ID
 OPENALEX_ORCID = "0000-0001-9861-0293"  # OpenAlex splits one person across profiles
 NUM_PAPERS = 6  # Number of recent papers to display
 OUTPUT_FILE = "../_data/scholar_papers.yml"
-OVERRIDES_FILE = "../_data/venue_overrides.yml"  # Hand-verified venues
+BIB_URL = (  # His own CV bibliography is the source of truth for venues
+    "https://raw.githubusercontent.com/rpatrik96/CV/main/publications.bib"
+)
 OPENALEX_EMAIL = "reizinger@tue.mpg.de"  # Polite pool for faster responses
 
 API_BASE = "https://api.openalex.org"
@@ -39,23 +42,102 @@ def normalize_title(title: str) -> str:
     return " ".join(stripped.split())
 
 
-def load_venue_overrides(path: str) -> dict:
-    """Hand-verified venues for papers OpenAlex has no usable source for."""
-    if not os.path.exists(path):
+ENTRY_RE = re.compile(r"@(\w+)\s*\{", re.M)
+
+# Long official names as they appear in the .bib, mapped to what a homepage
+# line can carry. Display only - the venue itself always comes from the .bib.
+VENUE_ABBREVIATIONS = [
+    ("international conference on machine learning", "ICML"),
+    ("international conference on learning representations", "ICLR"),
+    ("uncertainty in artificial intelligence", "UAI"),
+    ("artificial intelligence and statistics", "AISTATS"),
+    ("neural information processing systems", "NeurIPS"),
+    ("association for computational linguistics", "ACL"),
+    ("empirical methods in natural language processing", "EMNLP"),
+    ("transactions on machine learning research", "TMLR"),
+]
+
+
+def strip_latex(text: str) -> str:
+    """Drop the LaTeX a .bib carries so titles match the OpenAlex plain text."""
+    text = re.sub(r"\\[a-zA-Z]+", " ", text)  # \textquoteright, \textendash
+    text = text.replace("{", " ").replace("}", " ").replace("\\", " ")
+    return " ".join(text.split())
+
+
+def read_braced(text: str, open_at: int) -> tuple:
+    """Read one brace-balanced group, so nested {{...}} survives intact."""
+    depth = 0
+    for i in range(open_at, len(text)):
+        if text[i] == "{":
+            depth += 1
+        elif text[i] == "}":
+            depth -= 1
+            if depth == 0:
+                return text[open_at + 1 : i], i + 1
+    return "", len(text)
+
+
+def parse_bib(text: str) -> list:
+    """Minimal BibTeX reader: entry type plus the fields we display."""
+    entries = []
+    for match in ENTRY_RE.finditer(text):
+        body, _ = read_braced(text, match.end() - 1)
+        entry = {"type": match.group(1).lower()}
+        for field in ("title", "booktitle", "journal", "year"):
+            found = re.search(r"\b" + field + r"\s*=\s*", body)
+            if not found:
+                continue
+            rest = body[found.end() :].lstrip()
+            if rest.startswith("{"):
+                value, _ = read_braced(body, body.index("{", found.end()))
+            else:
+                value = rest.split(",")[0]
+            entry[field] = strip_latex(value).strip('"')
+        if entry.get("title"):
+            entries.append(entry)
+    return entries
+
+
+def shorten_venue(name: str) -> str:
+    """Abbreviate the venues everyone knows by acronym; leave the rest alone."""
+    low = name.lower()
+    for needle, abbreviation in VENUE_ABBREVIATIONS:
+        if needle in low:
+            if "position paper" in low:
+                return f"{abbreviation} Position Paper Track"
+            if "workshop" in low:
+                return f"{abbreviation} Workshop"
+            return abbreviation
+    return name
+
+
+def load_bib_venues(url: str) -> dict:
+    """Venue and year per title, read from his CV bibliography."""
+    try:
+        resp = requests.get(url, timeout=30)
+        resp.raise_for_status()
+    except requests.RequestException as exc:
+        print(f"Warning: could not read {url} ({exc}); falling back to OpenAlex")
         return {}
 
-    with open(path, encoding="utf-8") as f:
-        data = yaml.safe_load(f) or {}
+    venues = {}
+    for entry in parse_bib(resp.text):
+        container = entry.get("booktitle") or entry.get("journal") or ""
+        year = entry.get("year", "")
+        record = {
+            "venue": PREPRINT_VENUE if entry["type"] == "misc" else shorten_venue(container),
+            "year": int(year) if year.isdigit() else None,
+        }
+        key = normalize_title(entry["title"])
+        venues[key] = record
+        # His position papers are titled "Position: ..." in the .bib; OpenAlex
+        # indexes them without the prefix, so register both spellings.
+        if key.startswith("position "):
+            venues.setdefault(key[len("position ") :], record)
 
-    overrides = {}
-    for entry in data.get("overrides", []):
-        title = entry.get("title")
-        venue = entry.get("venue")
-        if title and venue:
-            overrides[normalize_title(title)] = venue
-
-    print(f"Loaded {len(overrides)} venue overrides")
-    return overrides
+    print(f"Read {len(venues)} venues from the CV bibliography")
+    return venues
 
 
 def fetch_author_ids(orcid: str, fallback_id: str) -> list:
@@ -131,8 +213,7 @@ def fetch_publications(author_id: str, num_papers: int) -> list:
     author_ids = fetch_author_ids(OPENALEX_ORCID, author_id)
     print(f"Fetching publications for OpenAlex author(s): {', '.join(author_ids)}")
 
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    overrides = load_venue_overrides(os.path.join(script_dir, OVERRIDES_FILE))
+    bib_venues = load_bib_venues(BIB_URL)
 
     # Fetch extra to account for duplicates (preprint + published versions)
     fetch_count = num_papers * 4
@@ -166,17 +247,22 @@ def fetch_publications(author_id: str, num_papers: int) -> list:
                 author_names.append(name)
         authors = " and ".join(author_names)
 
-        # Extract venue: hand-verified override, then the published location,
-        # then Crossref for published records OpenAlex has no source for.
+        # Extract venue: his CV bibliography first, then the published
+        # location, then Crossref for records OpenAlex has no source for.
         primary = work.get("primary_location") or {}
         doi = work.get("doi")
         is_arxiv_doi = bool(doi) and "10.48550/arxiv." in doi.lower()
 
-        venue = overrides.get(title_key) or extract_venue(work)
+        bib_entry = bib_venues.get(title_key) or {}
+        venue = bib_entry.get("venue") or extract_venue(work)
         if not venue and doi and not is_arxiv_doi:
             venue = crossref_venue(doi)
         if not venue and (work.get("type") == "preprint" or is_arxiv_doi):
             venue = PREPRINT_VENUE
+
+        # OpenAlex dates a work by the copy it holds, which for a paper indexed
+        # only as a preprint is the year it was posted, not the year it appeared.
+        year = bib_entry.get("year") or work.get("publication_year", "")
 
         # Build paper URL from DOI or landing page
         landing = primary.get("landing_page_url") or ""
@@ -195,7 +281,7 @@ def fetch_publications(author_id: str, num_papers: int) -> list:
         paper = {
             "title": title,
             "authors": authors,
-            "year": work.get("publication_year", ""),
+            "year": year,
             "venue": venue,
             "citations": work.get("cited_by_count", 0),
             "url": openalex_id,
