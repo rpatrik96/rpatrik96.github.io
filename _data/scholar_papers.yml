@@ -1,26 +1,19 @@
-last_updated: '2026-08-17 06:42:04'
+last_updated: '2026-08-20 09:10:43'
 papers:
-- title: 'HALLMARK: Diagnosing Three Failure Modes in LLM Citation Verifiers'
-  authors: Patrik Reizinger and Wieland Brendel
+- title: A unifying framework from neural superposition to sparse interpretable codes
+  authors: David Klindt and Charles O’Neill and Patrik Reizinger and Harald Maurer
+    and Nina Miolane
   year: 2026
-  venue: arXiv (Cornell University)
+  venue: Nature Machine Intelligence
   citations: 0
-  url: https://openalex.org/W7170088894
-  paper_url: https://arxiv.org/abs/2607.18360
-- title: Stabilizing Extrapolation in Looped Transformers via Learned Stochastic Stopping
-  authors: Hsun-Yu Kuo and El Mahdi Chayti and Patrik Reizinger and Wieland Brendel
-    and Martin Jaggi
-  year: 2026
-  venue: arXiv (Cornell University)
-  citations: 0
-  url: https://openalex.org/W7166900447
-  paper_url: https://arxiv.org/abs/2606.29983
+  url: https://openalex.org/W7168278967
+  paper_url: https://doi.org/10.1038/s42256-026-01259-z
 - title: Who Guards the Guardians? The Challenges of Evaluating Identifiability of
     Learned Representations
   authors: Shruti Joshi and Théo Saulus and Wieland Brendel and Philippe Brouillard
     and Dhanya Sridhar and Patrik Reizinger
   year: 2026
-  venue: arXiv (Cornell University)
+  venue: UAI 2026
   citations: 0
   url: https://openalex.org/W7133197095
   paper_url: https://arxiv.org/abs/2602.24278
@@ -28,7 +21,7 @@ papers:
   authors: Shruti Joshi and Aaron Mueller and David Klindt and Wieland Brendel and
     Patrik Reizinger and Dhanya Sridhar
   year: 2026
-  venue: arXiv (Cornell University)
+  venue: ICML 2026 (Position Paper Track)
   citations: 0
   url: https://openalex.org/W7130538568
   paper_url: https://arxiv.org/abs/2602.16698
@@ -37,7 +30,22 @@ papers:
   authors: Aaron Mueller and Andrew Lee and Shruti Joshi and Ekdeep Singh Lubana and
     Dhanya Sridhar and Patrik Reizinger
   year: 2026
-  venue: ''
+  venue: ACL 2026
   citations: 0
   url: https://openalex.org/W7166827055
   paper_url: https://doi.org/10.18653/v1/2026.acl-long.782
+- title: 'HALLMARK: Diagnosing Three Failure Modes in LLM Citation Verifiers'
+  authors: Patrik Reizinger and Wieland Brendel
+  year: 2026
+  venue: arXiv preprint
+  citations: 0
+  url: https://openalex.org/W7170088894
+  paper_url: https://arxiv.org/abs/2607.18360
+- title: Stabilizing Extrapolation in Looped Transformers via Learned Stochastic Stopping
+  authors: Hsun-Yu Kuo and El Mahdi Chayti and Patrik Reizinger and Wieland Brendel
+    and Martin Jaggi
+  year: 2026
+  venue: arXiv preprint
+  citations: 0
+  url: https://openalex.org/W7166900447
+  paper_url: https://arxiv.org/abs/2606.29983

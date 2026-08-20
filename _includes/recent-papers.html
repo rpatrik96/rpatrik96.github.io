@@ -2,8 +2,12 @@
 <div class="recent-papers">
   <h2>Recent Publications</h2>
   <ul class="paper-list">
-    {% assign sorted_papers = site.data.scholar_papers.papers | sort: "year" | reverse %}
-    {% for paper in sorted_papers %}
+    {% comment %}
+      fetch_scholar.py already emits the papers in display order (peer-reviewed
+      venues first, then by publication date). Re-sorting on "year" alone put
+      every same-year paper into an arbitrary order and reversed the list.
+    {% endcomment %}
+    {% for paper in site.data.scholar_papers.papers %}
     <li class="paper-item">
       <div class="paper-title">
         {% if paper.paper_url %}

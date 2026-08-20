@@ -1,0 +1,23 @@
+# Hand-verified venues for papers where OpenAlex has no usable source.
+#
+# Two cases need an entry here:
+#   1. OpenAlex holds only the arXiv preprint, because the proceedings are not
+#      indexed yet (PMLR/OpenReview venues have no DOI, so nothing to index).
+#   2. OpenAlex has the published record but its `primary_location.source` is
+#      null, and the Crossref container title is too long for a homepage line.
+#
+# `title` is matched case- and punctuation-insensitively against the OpenAlex
+# title. `verified` records the source the venue was checked against - never add
+# an entry without one. Delete an entry once OpenAlex carries the venue itself.
+overrides:
+  - title: "Causality is Key for Interpretability Claims to Generalise"
+    venue: "ICML 2026 (Position Paper Track)"
+    verified: "OpenReview note 6l7cKIR6nf, venue field 'ICML 2026 Position Paper Track regular', venueid ICML.cc/2026/Position_Paper_Track, camera-ready revision posted"
+
+  - title: "Who Guards the Guardians? The Challenges of Evaluating Identifiability of Learned Representations"
+    venue: "UAI 2026"
+    verified: "OpenReview note 8rxSN6cNtv, venue field 'UAI 2026 Poster', venueid auai.org/UAI/2026/Conference, camera-ready invitation present"
+
+  - title: "From Isolation to Entanglement: When Do Interpretability Methods Identify and Disentangle Known Concepts?"
+    venue: "ACL 2026"
+    verified: "Crossref 10.18653/v1/2026.acl-long.782, container-title 'Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)'"
