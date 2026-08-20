@@ -1,4 +1,4 @@
-last_updated: '2026-08-20 09:25:25'
+last_updated: '2026-08-20 09:33:27'
 papers:
 - title: A unifying framework from neural superposition to sparse interpretable codes
   authors: David Klindt and Charles O’Neill and Patrik Reizinger and Harald Maurer
@@ -41,10 +41,10 @@ papers:
   citations: 0
   url: https://openalex.org/W4416621834
   paper_url: https://arxiv.org/abs/2510.20783
-- title: 'HALLMARK: Diagnosing Three Failure Modes in LLM Citation Verifiers'
+- title: Skills, Benchmarks, and Verification Are What AI-Assisted Research Needs
   authors: Patrik Reizinger and Wieland Brendel
   year: 2026
-  venue: arXiv preprint
+  venue: Post-AGI Science and Society Workshop
   citations: 0
-  url: https://openalex.org/W7170088894
-  paper_url: https://arxiv.org/abs/2607.18360
+  url: https://openreview.net/forum?id=svFHXBd2wq
+  paper_url: https://openreview.net/forum?id=svFHXBd2wq

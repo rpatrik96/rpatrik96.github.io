@@ -14,6 +14,7 @@ Usage:
 import os
 import re
 import sys
+import unicodedata
 from datetime import datetime
 
 import requests
@@ -58,10 +59,32 @@ VENUE_ABBREVIATIONS = [
 ]
 
 
+# Combining marks, so {\'e} comes back as an accented letter rather than a gap
+ACCENTS = {
+    "'": "\u0301", '"': "\u0308", "`": "\u0300",
+    "^": "\u0302", "~": "\u0303", "=": "\u0304", ".": "\u0307",
+}
+
+# Commands that stand for a character; anything else is markup and just goes
+TEXT_COMMANDS = {
+    "textquoteright": "'", "textquoteleft": "'",
+    "textendash": "\u2013", "textemdash": "\u2014",
+    "ss": "ss", "&": "&",
+}
+
+
 def strip_latex(text: str) -> str:
-    """Drop the LaTeX a .bib carries so titles match the OpenAlex plain text."""
-    text = re.sub(r"\\[a-zA-Z]+", " ", text)  # \textquoteright, \textendash
-    text = text.replace("{", " ").replace("}", " ").replace("\\", " ")
+    """Render the LaTeX a .bib carries as the plain text the page displays."""
+    text = re.sub(r"\\color\s*\{[^}]*\}", "", text)  # drop the command AND its argument
+
+    def accent(match):
+        return unicodedata.normalize("NFC", match.group(2) + ACCENTS[match.group(1)])
+
+    text = re.sub(r"\\(['\"`^~=.])\{?([a-zA-Z])\}?", accent, text)
+    for command, char in TEXT_COMMANDS.items():
+        text = text.replace("\\" + command, char)
+    text = re.sub(r"\\[a-zA-Z]+", "", text)
+    text = text.replace("{", "").replace("}", "").replace("\\", "")
     return " ".join(text.split())
 
 
@@ -84,7 +107,7 @@ def parse_bib(text: str) -> list:
     for match in ENTRY_RE.finditer(text):
         body, _ = read_braced(text, match.end() - 1)
         entry = {"type": match.group(1).lower()}
-        for field in ("title", "booktitle", "journal", "year"):
+        for field in ("title", "booktitle", "journal", "year", "author", "url"):
             found = re.search(r"\b" + field + r"\s*=\s*", body)
             if not found:
                 continue
@@ -128,6 +151,9 @@ def load_bib_venues(url: str) -> dict:
         record = {
             "venue": PREPRINT_VENUE if entry["type"] == "misc" else shorten_venue(container),
             "year": int(year) if year.isdigit() else None,
+            "title": entry["title"],
+            "authors": entry.get("author", ""),
+            "paper_url": entry.get("url", ""),
         }
         key = normalize_title(entry["title"])
         venues[key] = record
@@ -232,6 +258,9 @@ def fetch_publications(author_id: str, num_papers: int) -> list:
     data = resp.json()
 
     by_title: dict[str, dict] = {}
+    # A .bib record is registered under more than one spelling of its title,
+    # so track the records themselves, not their keys.
+    matched_bib: set[int] = set()
     pub_dates: dict[str, str] = {}
     papers = []
 
@@ -254,6 +283,8 @@ def fetch_publications(author_id: str, num_papers: int) -> list:
         is_arxiv_doi = bool(doi) and "10.48550/arxiv." in doi.lower()
 
         bib_entry = bib_venues.get(title_key) or {}
+        if bib_entry:
+            matched_bib.add(id(bib_entry))
         venue = bib_entry.get("venue") or extract_venue(work)
         if not venue and doi and not is_arxiv_doi:
             venue = crossref_venue(doi)
@@ -305,6 +336,27 @@ def fetch_publications(author_id: str, num_papers: int) -> list:
         pub_dates[title_key] = work.get("publication_date") or ""
 
         by_title[title_key] = paper
+        papers.append(paper)
+
+    # OpenAlex only indexes what has a DOI, so a paper at ICML, ICLR, UAI or
+    # TMLR is invisible to it. Emit those straight from the bibliography.
+    for key, record in bib_venues.items():
+        if id(record) in matched_bib or key in by_title:
+            continue
+        if not record["year"] or not record["authors"]:
+            continue
+        matched_bib.add(id(record))
+        paper = {
+            "title": record["title"],
+            "authors": record["authors"],
+            "year": record["year"],
+            "venue": record["venue"],
+            "citations": 0,
+            "url": record["paper_url"],
+        }
+        if record["paper_url"]:
+            paper["paper_url"] = record["paper_url"]
+        by_title[key] = paper
         papers.append(paper)
 
     # OpenAlex ties on cited_by_count:desc are arbitrary, so a batch of
