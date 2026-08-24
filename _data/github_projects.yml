@@ -1,19 +1,6 @@
-last_updated: '2026-08-17 06:31:46'
+last_updated: '2026-08-24 06:34:24'
 github_url: https://github.com/rpatrik96
 repos:
-- name: bibtexupdater
-  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
-    to published versions and filter to only cited references.'
-  url: https://github.com/rpatrik96/bibtexupdater
-  stars: 113
-  forks: 6
-  language: Python
-  updated_at: '2026-08-15'
-  topics:
-  - bibtex
-  - bibtex-references
-  - bibtexparser
-  - latex
 - name: hallmark
   description: 'HALLMARK: Citation hallucination detection benchmark for ML papers
     — 2,525 entries, 14 hallucination types, 3 difficulty tiers, 10 baselines including
@@ -22,7 +9,7 @@ repos:
   stars: 11
   forks: 0
   language: Python
-  updated_at: '2026-08-15'
+  updated_at: '2026-08-23'
   topics:
   - academic-integrity
   - benchmark
@@ -34,22 +21,42 @@ repos:
   - machine-learning
   - nlp
   - reproducibility
-- name: CV
-  description: ''
-  url: https://github.com/rpatrik96/CV
-  stars: 0
-  forks: 0
-  language: TeX
-  updated_at: '2026-08-14'
-  topics: []
+- name: limpid
+  description: An educational writing coach for academic prose (VS Code + CLI). Scores
+    LaTeX/Markdown against good writing — Orwell, Strunk, the Economist, Gopen & Swan,
+    Pinker — and teaches why a passage fails.
+  url: https://github.com/rpatrik96/limpid
+  stars: 1
+  forks: 1
+  language: TypeScript
+  updated_at: '2026-08-21'
+  topics:
+  - academic-writing
+  - cli
+  - latex
+  - linter
+  - llm
+  - markdown
+  - pre-commit
+  - proofreading
+  - prose
+  - readability
+  - research-tool
+  - scientific-writing
+  - style-checker
+  - typescript
+  - vscode
+  - vscode-extension
+  - writing-assistant
+  - writing-tools
 - name: research-agora
   description: 'Research Agora: Claude Code skills, benchmarks & tools for ML researchers
     — paper writing, citation verification, experiment tracking, LaTeX automation'
   url: https://github.com/rpatrik96/research-agora
-  stars: 14
+  stars: 15
   forks: 4
   language: Python
-  updated_at: '2026-08-13'
+  updated_at: '2026-08-21'
   topics:
   - academic-writing
   - benchmarks
@@ -67,5 +74,26 @@ repos:
   stars: 0
   forks: 1
   language: HTML
-  updated_at: '2026-08-10'
+  updated_at: '2026-08-20'
   topics: []
+- name: CV
+  description: ''
+  url: https://github.com/rpatrik96/CV
+  stars: 0
+  forks: 0
+  language: TeX
+  updated_at: '2026-08-20'
+  topics: []
+- name: bibtexupdater
+  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
+    to published versions and filter to only cited references.'
+  url: https://github.com/rpatrik96/bibtexupdater
+  stars: 114
+  forks: 6
+  language: Python
+  updated_at: '2026-08-18'
+  topics:
+  - bibtex
+  - bibtex-references
+  - bibtexparser
+  - latex
