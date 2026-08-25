@@ -12,6 +12,11 @@ Hi!
 
 Thanks for being curious about how to work with me! Before jumping into means how to do that, let me describe how I work to ensure we are a good fit.
 
+Perhaps the best summary of what kind of people I enjoy working with is this Warren Buffett quote:
+
+> In looking for people to hire, you look for three qualities: integrity, intelligence, and energy. And if they don’t have the first, the other two will kill you.
+>
+> — Warren Buffett
 
 ## What can you expect when working with me?
 
