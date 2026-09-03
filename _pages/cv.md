@@ -9,14 +9,14 @@ redirect_from:
 
 
 # Short biography
-Patrik Reizinger is a PhD student at the University of Tübingen, supervised by Wieland Brendel, Ferenc Huszár, Matthias Bethge, and Bernhard Schölkopf. He is part of the ELLIS and IMPRS-IS programs. His main research interests include causal inference and representation learning. He has done both his MSc and BSc at the Budapest University of Technology in electrical engineering and specialized in control engineering and intelligent systems.
+Patrik Reizinger is an IVADO postdoctoral fellow at the Université de Montréal and Mila, co-supervised by Dhanya Sridhar and Simon Lacoste-Julien. He did his doctoral research at the University of Tübingen, supervised by Wieland Brendel, Ferenc Huszár, Matthias Bethge, and Bernhard Schölkopf. He is part of the ELLIS and IMPRS-IS programs. His main research interests include causal inference and representation learning. He has done both his MSc and BSc at the Budapest University of Technology in electrical engineering and specialized in control engineering and intelligent systems.
 
 
 
 Education
 ======
 ## PhD in Machine Learning, University of Tübingen
-### _2021-2024 (expected)_
+### _2021-2026 (defence pending)_
 - **Affiliations**: IMPRS-IS, ELLIS
 - **Research** interests: causal representation learning, Independent Component Analysis, identifiability
 - **Supervisors**: Wieland Brendel, Ferenc Huszár, Matthias Bethge, and Bernhard Schölkopf
@@ -40,6 +40,12 @@ Education
 
 Work experience
 ======
+
+## Université de Montréal and Mila
+### _September 2026-_
+* **Role**: IVADO Postdoctoral Fellow
+* **Supervisors**: Dhanya Sridhar, Simon Lacoste-Julien
+* **Topics**: causal representation learning, out-of-distribution and compositional generalization, AI for research
 
 ## C3S Electronics LLC 
 ### _February 2019-March 2021_

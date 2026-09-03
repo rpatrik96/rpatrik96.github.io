@@ -13,6 +13,12 @@
 limit: 5
 
 items:
+  - date: 2026-09-01
+    text: >-
+      Started as an [IVADO](https://ivado.ca/en/) postdoctoral fellow at
+      [Mila](https://mila.quebec/) and the [Université de Montréal](https://www.umontreal.ca/en/),
+      co-supervised by Dhanya Sridhar and Simon Lacoste-Julien.
+
   - date: 2026-07-15
     text: >-
       Our tutorial *Causal Foundations for Interpretability: What Your Methods Actually
