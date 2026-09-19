@@ -67,8 +67,9 @@
   .topnav{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
   .dompill{font-size:.8rem; background:var(--kbd); border:1px solid var(--line); border-radius:999px; padding:.2em .7em; color:var(--muted)}
 
-  .modegrid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-top:20px}
-  @media(max-width:700px){.modegrid{grid-template-columns:1fr}}
+  .modegrid{display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:14px; margin-top:20px}
+  @media(max-width:900px){.modegrid{grid-template-columns:1fr 1fr}}
+  @media(max-width:520px){.modegrid{grid-template-columns:1fr}}
   .mode{cursor:pointer; text-align:left; transition:transform .1s, box-shadow .15s; display:block}
   .mode:hover{transform:translateY(-2px)}
   .tag{display:inline-block; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em;
@@ -276,6 +277,46 @@
   #tr-notes .verdict, #guide-notes .verdict{display:block}
   .jumps{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.86rem; margin:8px 0 4px}
   .filter{width:100%; border:1.5px solid var(--line); border-radius:10px; padding:8px 12px; font:inherit; background:var(--bg); color:var(--ink); margin:6px 0 8px}
+  /* ---- pictograms ---- */
+  svg.diag{display:block; fill:none; stroke-width:1.5; color:var(--ink); flex:none}
+  .pithead{display:flex; gap:14px; align-items:flex-start}
+  .pithead .pwhat{font-size:.93rem; margin-top:4px}
+  .diagf{margin:0; flex:none; width:132px}
+  .diagf figcaption{font-size:.72rem; color:var(--muted); text-align:center; margin-top:2px; line-height:1.2}
+  @media(max-width:520px){.pithead{flex-direction:column} .diagf{width:110px}}
+  .guide details.tile>summary svg.diag{margin-right:4px}
+  details.pm>summary svg.diag{flex:none; margin-right:2px}
+  .scalewrap{margin:-4px 0 4px}
+  svg.scale{display:block}
+  .hero{display:block; width:100%; max-width:720px; height:auto; margin:10px auto 4px}
+  /* ---- scope screen ---- */
+  .scopegrid{display:grid; grid-template-columns:1fr 300px; gap:16px; margin-top:16px; align-items:start}
+  @media(max-width:760px){.scopegrid{grid-template-columns:1fr}}
+  .scopeside{position:sticky; top:12px}
+  @media(max-width:760px){.scopeside{position:static}}
+  .card.dim{margin-bottom:12px}
+  .dimscore{font-size:1.4rem; font-weight:700; color:var(--accent-dark)}
+  .chip.sm{padding:.3em .7em; font-size:.82rem}
+  .kindex{margin-top:8px; font-size:.9rem; background:var(--soft); border-radius:8px; padding:8px 10px}
+  .anchors{display:grid; gap:6px; margin-top:6px}
+  .anchor{display:flex; gap:10px; align-items:center; text-align:left; border:1.5px solid var(--line); border-radius:10px; padding:7px 10px; background:var(--chip); font-size:.9rem}
+  .anchor .an{width:22px; height:22px; border-radius:50%; background:var(--kbd); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.8rem; flex:none}
+  .anchor:hover{border-color:var(--accent)}
+  .anchor[aria-pressed="true"]{border-color:var(--btn); background:var(--good-bg)} .anchor[aria-pressed="true"] .an{background:var(--btn); color:var(--on-accent)}
+  svg.radar{width:100%; height:auto; display:block}
+  .dotplot{margin-top:12px; border-top:1px solid var(--line); padding-top:8px}
+  .dotrow{display:grid; grid-template-columns:100px 1fr 130px; gap:8px; align-items:center; padding:5px 0; border-bottom:1px solid var(--line); font-size:.88rem}
+  .dotrow.head{border-bottom:2px solid var(--line)} .dotrow .dl{font-weight:600}
+  .dots5{display:grid; grid-template-columns:repeat(4,1fr); gap:4px}
+  .dots5 .cell{min-height:26px; display:flex; gap:3px; align-items:center; justify-content:center; border-radius:6px; background:var(--soft); position:relative; flex-wrap:wrap}
+  .dots5 .cell.hd{background:none; color:var(--muted); font-weight:700}
+  .dots5 .cell.me{outline:2px solid var(--accent)} .dots5 .cell b{font-size:.68rem; color:var(--accent-dark); text-transform:uppercase; letter-spacing:.04em}
+  .dots5 .cell i{width:10px; height:10px; border-radius:50%; display:inline-block}
+  @media(max-width:520px){.dotrow{grid-template-columns:80px 1fr} .dotrow > :last-child{display:none}}
+  .scopeform{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:10px}
+  .scopeform label{display:flex; flex-direction:column; gap:4px; font-size:.85rem; color:var(--muted); flex:1; min-width:140px}
+  .scopeform input{border:1.5px solid var(--line); border-radius:8px; padding:7px 10px; font:inherit; background:var(--bg); color:var(--ink)}
+  pre.statement{white-space:pre-wrap; font:inherit; background:var(--soft); border-radius:10px; padding:12px 14px; margin:6px 0 10px; border-left:3px solid var(--accent)}
   .callout{border-left:3px solid var(--accent); background:rgba(74,143,227,.08); padding:10px 14px; border-radius:8px; margin:10px 0; font-size:.94rem}
 </style>
 </head>
@@ -292,6 +333,12 @@
   <symbol id="i-nose" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5L20 20"/></symbol>
   <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14 4a4 4 0 0 0-4 6L4 16l4 4 6-6a4 4 0 0 0 6-4l-3 1-2-2 1-3z"/></symbol>
   <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 21V4h11l-2 4 2 4H6"/></symbol>
+  <symbol id="i-question" viewBox="0 0 24 24"><path d="M9 9a3 3 0 1 1 4.5 2.6c-1 .6-1.5 1.4-1.5 2.4M12 18v.5"/></symbol>
+  <symbol id="i-blueprint" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 10v10M14 4v6"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16M8 16v-5M12 16V8M16 16v-3"/></symbol>
+  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></symbol>
 </svg>
 <div class="wrap">
 
@@ -311,6 +358,15 @@
       names the classic pitfall it risks, why it bites, and the fix. Then you judge other people's plans and see
       whether your confidence matches your accuracy: that is <b>taste</b>, and it is trainable.</p>
     <p class="small muted" id="home-progress" style="margin:6px 0 0"></p>
+    <svg class="hero" viewBox="0 0 720 120" aria-label="A study path through five phases with pitfalls along the way" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30 80 C120 20 180 120 270 70 S420 20 500 70 S640 120 690 60" fill="none" stroke="var(--line)" stroke-width="10"/>
+      <path d="M30 80 C120 20 180 120 270 70 S420 20 500 70 S640 120 690 60" fill="none" stroke="var(--accent)" stroke-width="3" stroke-dasharray="6 8"/>
+      <g fill="var(--bad-bg)" stroke="var(--bad)" stroke-width="1.5"><ellipse cx="150" cy="72" rx="16" ry="6"/><ellipse cx="352" cy="46" rx="16" ry="6"/><ellipse cx="560" cy="86" rx="16" ry="6"/></g>
+      <g fill="var(--bg)" stroke="var(--btn)" stroke-width="2"><circle cx="30" cy="80" r="14"/><circle cx="215" cy="84" r="14"/><circle cx="395" cy="42" r="14"/><circle cx="500" cy="70" r="14"/><circle cx="690" cy="60" r="14"/></g>
+      <g font-size="11" fill="var(--muted)" text-anchor="middle" font-family="inherit"><text x="30" y="108">Question</text><text x="215" y="112">Design</text><text x="395" y="22">Execution</text><text x="500" y="98">Analysis</text><text x="690" y="88">Reporting</text></g>
+      <g stroke="var(--btn)" stroke-width="2" fill="none"><path d="M30 76v6M28 78h4" transform="translate(0,-2)"/></g>
+      <g fill="var(--ink)"><circle cx="96" cy="52" r="5"/><path d="M96 57v12M96 62l-6 5M96 62l6 5M96 69l-5 8M96 69l5 8" stroke="var(--ink)" stroke-width="2" fill="none"/></g>
+    </svg>
 
     <div class="card" style="margin-top:18px">
       <h3 style="margin-bottom:2px">Your domain</h3>
@@ -339,6 +395,13 @@
         <h3>Train your taste</h3>
         <p class="muted small" style="margin:0">Pick the stronger of two plans. Spot the flaw in a third. Say how
           sure you are. Get a calibration read.</p>
+      </button>
+      <button class="card mode" id="go-scope">
+        <span class="icon"><svg class="ic"><use href="#i-compass"/></svg></span>
+        <span class="tag">Plan · ~6 min</span>
+        <h3>Scope an idea</h3>
+        <p class="muted small" style="margin:0">Size up an idea on novelty, impact, feasibility, killability and fit.
+          See how three scorers rated the same idea.</p>
       </button>
       <button class="card mode" id="go-guide">
         <span class="icon"><svg class="ic"><use href="#i-book"/></svg></span>
@@ -538,6 +601,56 @@
     </div>
   </section>
 
+  <!-- SCOPE -->
+  <section id="screen-scope" class="hidden">
+    <h1>Scope an idea</h1>
+    <p class="sub">Five questions a supervisor, a reviewer and a funder all ask, with anchored scales. Score a sample idea
+      first and compare with three other scorers, or score your own and get a one-paragraph scope statement.</p>
+    <div class="card" style="margin-top:16px">
+      <h3 style="margin-bottom:2px">The idea</h3>
+      <p class="small muted" style="margin:0 0 6px">Sample ideas for your domain first, then the others.</p>
+      <div class="chips" id="scope-samples"></div>
+      <div class="row" style="margin-top:10px; gap:8px"><span class="small muted">or your own:</span><input class="filter" id="scope-own" type="text" placeholder="One line: what would you show?" style="flex:1; margin:0"></div>
+      <div id="scope-pitch" style="margin-top:10px"></div>
+    </div>
+    <div class="scopegrid">
+      <div id="scope-dims"></div>
+      <div class="scopeside">
+        <div class="card"><h3 style="margin-bottom:2px">Idea shape</h3><div id="scope-radar"></div><div id="scope-map"></div><div id="scope-shape"></div>
+          <button class="btn hidden" id="scope-reveal-btn" style="margin-top:8px">How did others score it? →</button></div>
+      </div>
+    </div>
+    <div class="card hidden" id="scope-reveal-card" style="margin-top:16px">
+      <h3 style="margin-bottom:2px">Three scorers, one idea</h3>
+      <p class="small muted" style="margin:0 0 8px">Your shape in blue; the author (green), reviewer 1 (amber) and reviewer 2 (red). Disagreement of a point or two on novelty and impact is normal; wide disagreement usually means the kind of novelty was never named.</p>
+      <div class="resgrid" style="margin-top:0"><div id="scope-reveal-radar"></div><div id="scope-reveal-map"></div></div>
+      <div id="scope-reveal-dots" class="dotplot"></div>
+      <div id="scope-reveal-kinds" style="margin-top:10px"></div>
+      <div id="scope-reveal-why"></div>
+    </div>
+    <div class="card hidden" id="scope-own-card" style="margin-top:16px">
+      <h3 style="margin-bottom:2px">Your scope statement</h3>
+      <p class="small muted" style="margin:0 0 8px">Fill the blanks; the kinds you picked above are inserted. Copy it into your project document and show it to your supervisor before building anything.</p>
+      <div class="scopeform">
+        <label>Weeks <input id="scope-weeks" type="number" min="2" max="52" value="12"></label>
+        <label>Kill test by week <input id="scope-killweek" type="number" min="1" max="52" value="3"></label>
+        <label style="flex-basis:100%">The one claim <input id="scope-claim" type="text" placeholder="e.g. tuned baselines close the reported gap on benchmark Z"></label>
+        <label style="flex-basis:100%">Who it matters to <input id="scope-who" type="text" placeholder="e.g. people who read leaderboards on Z"></label>
+        <label style="flex-basis:100%">What would make you stop <input id="scope-kill" type="text" placeholder="e.g. the pilot on 3 baselines shows no gap change"></label>
+      </div>
+      <pre class="statement" id="scope-statement"></pre>
+      <div class="row"><button class="btn" id="scope-copy">Copy scope statement</button></div>
+    </div>
+    <details class="expander">
+      <summary>Read more on choosing and scoping problems</summary>
+      <div class="inner"><ul class="reads" id="scope-reads"></ul></div>
+    </details>
+    <div class="underbar" style="justify-content:flex-start; margin-top:20px">
+      <button class="btn ghost" id="scope-run">Run a study</button>
+      <button class="btn grey" id="scope-restart">Another idea</button>
+    </div>
+  </section>
+
   <!-- GUIDE -->
   <section id="screen-guide" class="hidden guide">
     <h1>Field guide</h1>
@@ -697,6 +810,11 @@ const RESOURCES = {
   reading:    {t:"Reading scientific papers", by:"P2P No. 110", url:"https://path2phd.substack.com/p/tips-for-reading-scientific-papers"},
   finding:    {t:"Tools for finding good scientific papers", by:"P2P No. 99", url:"https://path2phd.substack.com/p/tools-for-finding-good-scientific"},
   raff:       {t:"A Step Toward Quantifying Independently Reproducible Machine Learning Research", by:"Raff (2019)", url:"https://arxiv.org/abs/1909.06674"},
+  heilmeier:  {t:"The Heilmeier Catechism", by:"DARPA", url:"https://www.darpa.mil/work-with-us/heilmeier-catechism",
+               n:"Eight questions for scoping a project: what are you trying to do, who cares, what is new, what are the risks, how long, what are the midterm checks."},
+  alon:       {t:"How to choose a good scientific problem", by:"Uri Alon, Molecular Cell (2009)", url:"https://doi.org/10.1016/j.molcel.2009.09.013",
+               n:"The feasibility-versus-interest map, and why students should start on the feasible side."},
+  pg_great:   {t:"How to Do Great Work", by:"Paul Graham", url:"https://paulgraham.com/greatwork.html"},
   bergstra:   {t:"Random Search for Hyper-Parameter Optimization", by:"Bergstra & Bengio (2012)", url:"https://jmlr.org/papers/v13/bergstra12a.html"}
 };
 
@@ -1971,6 +2089,297 @@ const LESSONS = {
 };
 
 /* ============================================================================
+   PITFALL DIAGRAMS. Fourteen small mechanism pictograms (viewBox 120×70, currentColor + accent),
+   each shared by the pitfalls that have the same shape of failure. `DIAG[pitfallId]` names the template.
+   ========================================================================== */
+const DIAG = {
+  q_method_first:"target", q_vague_hypothesis:"target", q_single_hypothesis:"story", q_scope_creep:"scope",
+  q_no_kill_criterion:"clock", q_no_feedback:"loop", q_rediscovery:"check",
+  d_no_prereg:"fork", d_underpowered:"noise", d_no_prototype:"clock", d_metric_proxy:"shortcut", d_leakage:"leak",
+  d_weak_baselines:"weights", d_no_seeds:"noise", d_confounded:"confound", d_wrong_assumptions:"bound",
+  d_pseudoreplication:"cluster", d_batch:"confound", d_optional_stopping:"fork", d_verification:"check", d_contamination:"leak",
+  e_silent_bugs:"check", e_no_sanity_checks:"check", e_hparam_asymmetry:"weights", e_open_loop_code:"loop", e_sunk_cost:"clock",
+  e_proof_gap:"check", e_edge_cases:"check", e_no_blinding:"check", e_never_looked:"check", e_no_controls:"noise",
+  a_harking:"fork", a_forking:"fork", a_cherry_pick:"select", a_overclaim:"target", a_no_uncertainty:"noise",
+  a_test_reuse:"leak", a_shortcut:"shortcut", a_bound_vacuous:"bound",
+  r_multiple_messages:"scope", r_no_limitations:"check", r_irreproducible:"loop", r_mathiness:"target", r_language:"target", r_no_postmortem:"loop"
+};
+const DIAG_CAPTION = {
+  target:"Aim and claim don't meet", story:"One story, rivals never tested", scope:"One paper becomes three", clock:"Cost keeps rising past the stop line",
+  loop:"The loop never closes", check:"The check that was skipped", fork:"Many paths, one reported", noise:"The difference hides inside the spread",
+  shortcut:"A cue that bypasses the concept", leak:"Test information flows into training", weights:"Unequal effort, unfair comparison",
+  confound:"A hidden variable drives both", cluster:"Many measurements, few independent units", bound:"The bound sits above what it should limit", select:"The best of many, reported as typical"
+};
+function diagramSVG(kind, size) {
+  const A = "var(--accent)", G = "var(--good)", B = "var(--bad)", M = "var(--muted)";
+  const body = {
+    target: `<circle cx="40" cy="35" r="24" fill="none" stroke="${M}"/><circle cx="40" cy="35" r="14" fill="none" stroke="${M}"/><circle cx="40" cy="35" r="4" fill="${M}"/>
+      <path d="M96 12 L62 44" stroke="${B}" stroke-width="2.5"/><path d="M62 44 l3 -9 m-3 9 l9 -3" stroke="${B}" stroke-width="2.5" fill="none"/>
+      <circle cx="98" cy="52" r="5" fill="none" stroke="${B}" stroke-dasharray="2 2"/>`,
+    story: `<path d="M8 35 H70" stroke="${A}" stroke-width="6"/><path d="M70 35 l-8 -8 m8 8 l-8 8" stroke="${A}" stroke-width="6" fill="none"/>
+      <g stroke="${M}" stroke-dasharray="3 3" fill="none"><path d="M8 14 H40 M8 56 H40"/><path d="M40 14 l-5 -4 m5 4 l-5 4 M40 56 l-5 -4 m5 4 l-5 4"/></g>
+      <text x="82" y="39" font-size="11" fill="${M}">rivals?</text>`,
+    scope: `<rect x="8" y="24" width="30" height="22" rx="3" fill="none" stroke="${A}" stroke-width="2"/>
+      <path d="M40 35 H56" stroke="${M}"/><path d="M56 35 l-4 -3 m4 3 l-4 3" stroke="${M}" fill="none"/>
+      <g fill="none" stroke="${B}" stroke-width="1.5"><rect x="60" y="6" width="26" height="16" rx="3"/><rect x="60" y="27" width="26" height="16" rx="3"/><rect x="60" y="48" width="26" height="16" rx="3"/><rect x="90" y="16" width="26" height="16" rx="3" stroke-dasharray="3 2"/><rect x="90" y="38" width="26" height="16" rx="3" stroke-dasharray="3 2"/></g>`,
+    clock: `<path d="M10 60 H112" stroke="${M}"/><path d="M10 60 C40 58 60 40 100 12" stroke="${B}" stroke-width="2.5" fill="none"/>
+      <path d="M58 6 V64" stroke="${G}" stroke-dasharray="4 3" stroke-width="1.5"/><text x="61" y="14" font-size="9" fill="${G}">stop</text>
+      <text x="14" y="55" font-size="9" fill="${M}">cost</text>`,
+    loop: `<path d="M60 12 A24 24 0 1 1 36 36" stroke="${A}" stroke-width="3" fill="none"/><path d="M36 36 l-6 -6 m6 6 l-8 2" stroke="${A}" stroke-width="3" fill="none"/>
+      <path d="M40 22 A24 24 0 0 1 60 12" stroke="${B}" stroke-width="3" stroke-dasharray="3 4" fill="none"/>
+      <text x="76" y="40" font-size="10" fill="${M}">no feedback</text>`,
+    check: `<g fill="none" stroke="${M}" stroke-width="1.5"><rect x="14" y="10" width="12" height="12" rx="2"/><rect x="14" y="30" width="12" height="12" rx="2"/><rect x="14" y="50" width="12" height="12" rx="2"/></g>
+      <path d="M17 16 l3 3 l6 -7 M17 36 l3 3 l6 -7" stroke="${G}" stroke-width="2" fill="none"/>
+      <path d="M32 16 H90 M32 36 H90" stroke="${M}"/><path d="M32 56 H90" stroke="${B}" stroke-width="2"/>
+      <text x="96" y="60" font-size="12" fill="${B}" font-weight="700">?</text>`,
+    fork: `<path d="M10 35 H30" stroke="${M}" stroke-width="2"/>
+      <g stroke="${M}" fill="none"><path d="M30 35 C45 35 45 12 60 12 M30 35 C45 35 45 27 60 27 M30 35 C45 35 45 43 60 43 M30 35 C45 35 45 58 60 58"/>
+      <path d="M60 12 C75 12 75 6 90 6 M60 12 C75 12 75 18 90 18 M60 43 C75 43 75 37 90 37 M60 43 C75 43 75 49 90 49 M60 27 C75 27 75 21 90 21 M60 58 C75 58 75 64 90 64"/></g>
+      <path d="M30 35 C45 35 45 27 60 27 C75 27 75 33 90 33" stroke="${B}" stroke-width="2.5" fill="none"/><circle cx="92" cy="33" r="4" fill="${B}"/>`,
+    noise: `<path d="M10 60 H112" stroke="${M}"/>
+      <path d="M30 22 V52" stroke="${A}" stroke-width="2"/><path d="M22 22 H38 M22 52 H38" stroke="${A}" stroke-width="2"/><circle cx="30" cy="37" r="4" fill="${A}"/>
+      <path d="M78 16 V50" stroke="${B}" stroke-width="2"/><path d="M70 16 H86 M70 50 H86" stroke="${B}" stroke-width="2"/><circle cx="78" cy="33" r="4" fill="${B}"/>
+      <text x="96" y="37" font-size="10" fill="${M}">≈</text>`,
+    shortcut: `<g fill="none" stroke="${M}"><path d="M14 12 H60 V26 H30 V40 H70 V54 H14 M60 12 V6 M70 54 V64"/></g>
+      <path d="M14 33 H104" stroke="${B}" stroke-width="2.5" stroke-dasharray="5 3"/><path d="M104 33 l-6 -4 m6 4 l-6 4" stroke="${B}" stroke-width="2.5" fill="none"/>`,
+    leak: `<rect x="8" y="16" width="44" height="38" rx="4" fill="none" stroke="${A}" stroke-width="2"/><text x="30" y="40" font-size="10" text-anchor="middle" fill="${A}">train</text>
+      <rect x="68" y="16" width="44" height="38" rx="4" fill="none" stroke="${M}" stroke-width="2"/><text x="90" y="40" font-size="10" text-anchor="middle" fill="${M}">test</text>
+      <path d="M68 28 C60 28 60 20 52 20" stroke="${B}" stroke-width="2.5" fill="none" stroke-dasharray="4 3"/><path d="M52 20 l6 -4 m-6 4 l6 4" stroke="${B}" stroke-width="2.5" fill="none"/>`,
+    weights: `<path d="M60 8 V62 M40 62 H80" stroke="${M}" stroke-width="2"/><path d="M14 30 L106 18" stroke="${M}" stroke-width="2"/>
+      <path d="M14 30 V38 M106 18 V26" stroke="${M}"/><rect x="2" y="38" width="24" height="12" rx="2" fill="${B}"/><rect x="96" y="26" width="20" height="8" rx="2" fill="${A}"/>
+      <text x="14" y="62" font-size="9" text-anchor="middle" fill="${M}">ours ×200</text><text x="106" y="46" font-size="9" text-anchor="middle" fill="${M}">theirs ×1</text>`,
+    confound: `<circle cx="24" cy="50" r="12" fill="none" stroke="${A}" stroke-width="2"/><text x="24" y="54" font-size="9" text-anchor="middle" fill="${A}">X</text>
+      <circle cx="96" cy="50" r="12" fill="none" stroke="${A}" stroke-width="2"/><text x="96" y="54" font-size="9" text-anchor="middle" fill="${A}">Y</text>
+      <path d="M38 50 H82" stroke="${M}" stroke-dasharray="3 3"/><text x="60" y="46" font-size="9" text-anchor="middle" fill="${M}">?</text>
+      <circle cx="60" cy="16" r="11" fill="none" stroke="${B}" stroke-width="2"/><text x="60" y="20" font-size="9" text-anchor="middle" fill="${B}">B</text>
+      <path d="M52 24 L32 40 M68 24 L88 40" stroke="${B}" stroke-width="2"/>`,
+    cluster: `<g fill="none" stroke="${A}" stroke-width="2"><circle cx="24" cy="36" r="16"/><circle cx="60" cy="36" r="16"/><circle cx="96" cy="36" r="16"/></g>
+      <g fill="${M}"><circle cx="18" cy="30" r="2.5"/><circle cx="28" cy="34" r="2.5"/><circle cx="22" cy="42" r="2.5"/><circle cx="54" cy="30" r="2.5"/><circle cx="64" cy="34" r="2.5"/><circle cx="58" cy="42" r="2.5"/><circle cx="90" cy="30" r="2.5"/><circle cx="100" cy="34" r="2.5"/><circle cx="94" cy="42" r="2.5"/></g>
+      <text x="60" y="66" font-size="9" text-anchor="middle" fill="${M}">n = 3, not 9</text>`,
+    bound: `<path d="M10 60 H112" stroke="${M}"/><path d="M10 40 H112" stroke="${M}" stroke-dasharray="3 3"/><text x="14" y="37" font-size="8" fill="${M}">1</text>
+      <path d="M14 8 C40 6 70 10 108 14" stroke="${B}" stroke-width="2.5" fill="none"/><text x="60" y="26" font-size="9" text-anchor="middle" fill="${B}">bound</text>
+      <g fill="${A}"><circle cx="30" cy="54" r="3"/><circle cx="50" cy="52" r="3"/><circle cx="70" cy="55" r="3"/><circle cx="90" cy="53" r="3"/></g>`,
+    select: `<path d="M10 62 H112" stroke="${M}"/><g fill="${M}" opacity=".55"><rect x="16" y="40" width="12" height="22"/><rect x="34" y="46" width="12" height="16"/><rect x="70" y="44" width="12" height="18"/><rect x="88" y="50" width="12" height="12"/></g>
+      <rect x="52" y="14" width="12" height="48" fill="${B}"/><path d="M58 4 l2 4 l4 0 l-3 3 l1 4 l-4 -2 l-4 2 l1 -4 l-3 -3 l4 0z" fill="${B}"/>`
+  }[kind] || "";
+  const w = size || 120;
+  return `<svg class="diag" viewBox="0 0 120 70" width="${w}" height="${Math.round(w * 70 / 120)}" role="img" aria-label="${esc(DIAG_CAPTION[kind] || "")}" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
+}
+/* balance scale that tips toward the stronger side after a taste reveal: dir = -1 (A) | 1 (B) | 0 */
+function scaleSVG(dir) {
+  const tilt = dir * 9;
+  return `<svg class="scale" viewBox="0 0 120 60" width="96" height="48" aria-hidden="true" stroke-linecap="round">
+    <path d="M60 8 V50 M44 50 H76" stroke="var(--muted)" stroke-width="2"/>
+    <g transform="rotate(${tilt} 60 14)"><path d="M18 14 H102" stroke="var(--muted)" stroke-width="2"/><path d="M18 14 V28 M102 14 V28" stroke="var(--muted)"/>
+      <rect x="6" y="28" width="24" height="7" rx="2" fill="${dir === -1 ? "var(--good)" : "var(--line)"}"/><rect x="90" y="28" width="24" height="7" rx="2" fill="${dir === 1 ? "var(--good)" : "var(--line)"}"/>
+      <text x="18" y="24" font-size="9" text-anchor="middle" fill="var(--muted)">A</text><text x="102" y="24" font-size="9" text-anchor="middle" fill="var(--muted)">B</text></g></svg>`;
+}
+
+/* ============================================================================
+   SCOPE AN IDEA. Five dimensions with anchored 0–3 scales; novelty and impact also have named kinds with examples.
+   Sample ideas carry three scorers (author, two reviewers) so the subjective element is visible.
+   ========================================================================== */
+const SCOPE_DIMS = [
+  {id:"novelty", name:"Novelty", q:"What is new here, and to whom?",
+   note:"Novelty is relative to a community: a tool that is routine in statistics can be new in machine learning, and the reverse. Name the kind, so a reader judges the thing you mean.",
+   anchors:["Known: done before in this community", "Incremental: a known thing on a new instance", "Substantive: a new piece others would cite it for", "Opens a direction: people will build on it"],
+   kinds:[
+     {k:"New method or algorithm", ex:"A new optimiser; a new estimator; a new assay protocol. The most common kind and the most crowded."},
+     {k:"New question", ex:"Asking whether X happens at all: do language models memorise their benchmarks? Does the effect survive a bigger sample?"},
+     {k:"Connecting fields", ex:"Bringing causal-inference tools into representation learning; using ecology's pseudoreplication logic to evaluate language models; a control-theory view of project management."},
+     {k:"New evidence", ex:"A pre-registered replication with five times the sample; a negative result: the gain vanishes once baselines are tuned."},
+     {k:"New measurement, dataset or benchmark", ex:"A freshly collected test set with a contamination check; a validated questionnaire for a construct nobody could measure."},
+     {k:"New explanation or theory", ex:"Why a known trick works; a mechanism for a phenomenon everyone has seen; a bound that predicts where a method fails."},
+     {k:"Simplification or unification", ex:"Three methods are special cases of one; a two-line baseline that matches the complex method; a proof that makes a known result short."},
+     {k:"New application or domain", ex:"An established method solving a real problem in a field that did not have it, with the adaptations that made it work."},
+     {k:"New capability or demonstration", ex:"The first to do X at scale, or under a constraint nobody had met; valuable when it changes what people believe is possible."},
+     {k:"New lens or critique", ex:"Showing a standard metric measures the wrong thing; a reality check of reported progress in a subfield."}
+   ]},
+  {id:"impact", name:"Impact", q:"Who would act or think differently if this worked?",
+   note:"Impact is a claim about other people. Name who, and what they would do differently; “important” without a who is a wish.",
+   anchors:["A few specialists nod", "Your subfield cites it", "Your field changes a practice or a belief", "It matters beyond the field"],
+   kinds:[
+     {k:"Changes what practitioners do", ex:"A default that gets replaced; a check that becomes standard; a protocol that gets adopted."},
+     {k:"Changes what researchers believe", ex:"A mechanism story replaced; a folk claim shown wrong; a limit shown to be real."},
+     {k:"Enables others", ex:"A dataset, benchmark, tool or proof technique that other people build on; impact arrives through them."},
+     {k:"Settles a debate", ex:"Two camps, one crucial experiment; the answer closes a question that was open."},
+     {k:"Opens a direction", ex:"A first result that makes a new class of questions askable; the follow-ups are the impact."},
+     {k:"Beyond academia", ex:"A clinic, a policy, a product or a public understanding changes; the longest path and the hardest to claim honestly."}
+   ]},
+  {id:"feasibility", name:"Feasibility", q:"Can you do it, here, with what you have?",
+   note:"Feasibility is about resources, skills, data access and time, not about the idea's worth. Alon's advice: pick problems on the feasible side of your interest, and know which side you are on.",
+   anchors:["Needs resources, skills or data you don't have and can't get", "Possible with a stretch: a new skill, borrowed compute, uncertain data access", "Doable with what you have, in the time you have", "You could start tomorrow; a pilot fits in two weeks"]},
+  {id:"killability", name:"Killability", q:"Can it fail cheaply and early?",
+   note:"A project that cannot fail cannot succeed either. The best projects have a two-week pilot with a written go/no-go.",
+   anchors:["Cannot fail: any result is “a result”", "Can fail, but you would only know at the end", "A pilot could kill it within a month", "A two-week pilot with a written go/no-go"]},
+  {id:"fit", name:"Fit", q:"Do you, and your supervisor, want to live with it for a year?",
+   note:"The haunt filter: ideas that keep coming back have passed a test that yesterday's clever one has not. Supervisor interest is part of feasibility in disguise.",
+   anchors:["Assigned, and you don't care", "Interesting, but not haunting", "You keep returning to it; your supervisor is mildly interested", "It haunts you, and your supervisor wants it too"]}
+];
+
+/* shape readings: keyed by the pattern of high/low dimensions */
+function scopeShape(s) {
+  const hi = k => s[k] >= 2, lo = k => s[k] <= 1;
+  if (hi("novelty") && lo("feasibility")) return {name:"Moonshot", text:"High novelty, low feasibility. Worth keeping, as the risky half of a barbell: pair it with a project that will certainly produce something, and find the cheapest pilot that could show the moonshot is possible at all.", res:["barbell","alon"]};
+  if (lo("novelty") && hi("feasibility")) return {name:"Exploit", text:"Doable and safe, not new. Fine as the safe half of a barbell or a first paper; a thesis needs at least one project with a higher novelty score, so plan that one alongside.", res:["barbell","hamming"]};
+  if (hi("impact") && lo("killability")) return {name:"Ambitious, unfalsifiable", text:"It would matter if it worked, and nothing could show it doesn't. Before anything else, find the pilot: the smallest experiment or proof whose failure would make you stop.", res:["contingency","disprove"]};
+  if (lo("fit")) return {name:"Someone else's project", text:"Scores may be fine, but you don't want it. A year is long; either find the angle that haunts you inside it, or negotiate a different one.", res:["triage","hamming"]};
+  if (hi("novelty") && hi("impact") && hi("feasibility") && hi("killability") && hi("fit")) return {name:"PhD-shaped", text:"New, matters, doable, can fail early, and you want it. Write the one-page pitch and the kill criterion this week, then start the pilot.", res:["greatideas","heilmeier"]};
+  if (lo("impact")) return {name:"Interesting to few", text:"New and doable, but hard to say who would act differently. Ask the Heilmeier question: who cares, and what changes for them? Sometimes the answer upgrades the project; sometimes it is honestly a side quest.", res:["heilmeier","method"]};
+  return {name:"Balanced, not yet sharp", text:"No dimension is a problem, and none is a strength. Pick one to push: usually novelty (name a sharper kind) or killability (a smaller, earlier pilot).", res:["greatideas","heilmeier"]};
+}
+
+/* sample ideas with three scorers; scores in dimension order [novelty, impact, feasibility, killability, fit] */
+const SCOPE_SAMPLES = [
+  {id:"S_contam", dom:["ml_exp","any"], title:"A contamination check plus a fresh test set for a public reasoning benchmark",
+   pitch:"Measure overlap between a popular reasoning benchmark and open pretraining corpora, then write 500 fresh items in the same format and report how much every public model drops.",
+   kinds:{novelty:"New measurement, dataset or benchmark", impact:"Enables others"},
+   scorers:[
+     {who:"Author", s:[2,2,3,2,2], why:"The fresh set is the contribution; contamination checks exist but not for this benchmark."},
+     {who:"Reviewer 1", s:[1,2,3,2,2], why:"Contamination checks have been done for several benchmarks; this is a new instance of a known measurement."},
+     {who:"Reviewer 2", s:[2,3,3,3,2], why:"If every public model drops, the field changes how it reads leaderboards; the pilot (100 items) can kill it in a week."}
+   ]},
+  {id:"S_sgd", dom:["ml_theory","any"], title:"Convergence of SGD on a two-layer network under a new assumption on the data",
+   pitch:"Prove a convergence rate for stochastic gradient descent on a two-layer network when the data satisfy a structural assumption (a low-dimensional signal plus noise), and check the predicted rate numerically.",
+   kinds:{novelty:"New explanation or theory", impact:"Changes what researchers believe"},
+   scorers:[
+     {who:"Author", s:[2,2,2,2,3], why:"The assumption is new and matches a real data property; the proof technique is standard."},
+     {who:"Reviewer 1", s:[1,1,2,1,3], why:"Known techniques with one new assumption; whether anyone believes the assumption decides everything, and that is not tested until the end."},
+     {who:"Reviewer 2", s:[3,2,2,3,3], why:"If the assumption is realistic and the rate is checked numerically on real data, this explains something people see every day. The numerical check is the two-week pilot."}
+   ]},
+  {id:"S_replic", dom:["social","any"], title:"A pre-registered replication of a famous nudge effect with five times the original sample",
+   pitch:"Re-run a widely cited nudge study with a pre-registered analysis plan, a power analysis for the smallest effect that would matter for policy, and an open dataset.",
+   kinds:{novelty:"New evidence", impact:"Changes what practitioners do"},
+   scorers:[
+     {who:"Author", s:[1,3,2,3,2], why:"Not a new idea, but the effect drives policy and nobody has tested it at this power."},
+     {who:"Reviewer 1", s:[2,3,2,3,2], why:"New evidence at adequate power is a kind of novelty; if the effect shrinks, that is the finding."},
+     {who:"Reviewer 2", s:[1,2,2,3,1], why:"Replications are undervalued by venues even when they matter; feasibility depends on recruitment, which is often slower than planned."}
+   ]},
+  {id:"S_sim", dom:["comp","lab","any"], title:"An established simulation method applied to a new class of materials",
+   pitch:"Use a well-validated molecular-simulation method to predict a property for a family of materials nobody has simulated, and compare with the three measured cases that exist.",
+   kinds:{novelty:"New application or domain", impact:"Enables others"},
+   scorers:[
+     {who:"Author", s:[1,2,3,2,2], why:"The method is known; the material class is new and the three measured cases make validation possible."},
+     {who:"Reviewer 1", s:[1,1,3,2,2], why:"Method transfer without a new question; the impact depends entirely on whether anyone wants those materials."},
+     {who:"Reviewer 2", s:[2,2,3,3,2], why:"If the three measured cases disagree with the simulation, that is a real and cheap finding about the method's limits; validation first makes it killable in two weeks."}
+   ]},
+  {id:"S_eco", dom:"all", title:"Ecology's pseudoreplication analysis applied to language-model benchmarks",
+   pitch:"Treat prompts as nested measurements of one trained model, re-analyse published leaderboard comparisons with the correct unit of analysis, and report how many claimed differences survive.",
+   kinds:{novelty:"Connecting fields", impact:"Changes what practitioners do"},
+   scorers:[
+     {who:"Author", s:[2,2,2,3,3], why:"The statistics are forty years old; applying them to this evaluation practice is new, and the re-analysis can be done on public numbers."},
+     {who:"Reviewer 1", s:[3,3,2,3,2], why:"Connecting fields is the strongest kind of novelty here: the tool exists, nobody in the target community uses it, and the result changes how comparisons are reported."},
+     {who:"Reviewer 2", s:[2,1,2,3,3], why:"Statisticians will say this is obvious; the impact depends on whether the community listens, which past reality checks suggest is slow."}
+   ]}
+];
+
+/* ============================================================================
+   SCOPE AN IDEA: screen logic
+   ========================================================================== */
+let scope = null;
+function startScope() {
+  scope = {idea: null, own: "", kinds: {}, scores: {}, revealed: false};
+  renderScopePick(); renderScopeDims(); renderScopeLive(); $("scope-reveal-card").classList.add("hidden"); $("scope-own-card").classList.add("hidden");
+  show("scope");
+}
+function renderScopePick() {
+  const host = $("scope-samples"); host.innerHTML = "";
+  SCOPE_SAMPLES.filter(x => inDom(x, store.domain) || x.dom === "all").concat(SCOPE_SAMPLES.filter(x => !(inDom(x, store.domain) || x.dom === "all"))).forEach(smp => {
+    const b = document.createElement("button"); b.className = "chip"; b.textContent = smp.title; b.setAttribute("aria-pressed", String(scope.idea === smp.id));
+    b.addEventListener("click", () => { scope.idea = smp.id; scope.own = ""; scope.kinds = {}; scope.scores = {}; scope.revealed = false; $("scope-own").value = ""; renderScopePick(); renderScopeDims(); renderScopeLive(); });
+    host.appendChild(b);
+  });
+  const smp = SCOPE_SAMPLES.find(x => x.id === scope.idea);
+  $("scope-pitch").innerHTML = smp ? `<b>${esc(smp.title)}</b><div class="small" style="margin-top:4px">${annotate(smp.pitch).html}</div>` : (scope.own ? `<b>${esc(scope.own)}</b>` : `<span class="muted small">Pick a sample idea above, or type your own.</span>`);
+  $("scope-reveal-card").classList.toggle("hidden", !smp || !scope.revealed);
+  $("scope-own-card").classList.toggle("hidden", !scope.own);
+  $("scope-reveal-btn").classList.toggle("hidden", !smp);
+}
+function renderScopeDims() {
+  const host = $("scope-dims"); host.innerHTML = "";
+  SCOPE_DIMS.forEach(dim => {
+    const card = document.createElement("div"); card.className = "card dim";
+    const kindSel = scope.kinds[dim.id];
+    const kindEx = dim.kinds ? (dim.kinds.find(k => k.k === kindSel) || null) : null;
+    card.innerHTML = `<div class="row spread" style="align-items:flex-start"><div><h3 style="margin:0">${esc(dim.name)}</h3><div class="small muted">${esc(dim.q)}</div></div><span class="dimscore">${scope.scores[dim.id] === undefined ? "–" : scope.scores[dim.id]}<span class="small muted">/3</span></span></div>
+      ${dim.kinds ? `<div class="small muted" style="margin-top:8px">Kind of ${dim.id} (pick the closest):</div><div class="chips kinds">${dim.kinds.map(k => `<button type="button" class="chip sm" data-kind="${esc(k.k)}" aria-pressed="${String(kindSel === k.k)}">${esc(k.k)}</button>`).join("")}</div>
+        <div class="kindex ${kindEx ? "" : "hidden"}">${kindEx ? `<b>${esc(kindEx.k)}.</b> ${esc(kindEx.ex)}` : ""}</div>` : ""}
+      <div class="small muted" style="margin-top:10px">How much?</div>
+      <div class="anchors">${dim.anchors.map((a, i) => `<button type="button" class="anchor" data-score="${i}" aria-pressed="${String(scope.scores[dim.id] === i)}"><span class="an">${i}</span><span>${esc(a)}</span></button>`).join("")}</div>
+      <details class="expander" style="margin-top:8px"><summary>Why this is partly subjective</summary><div class="inner">${esc(dim.note)}</div></details>`;
+    card.querySelectorAll(".chip[data-kind]").forEach(b => b.addEventListener("click", () => { scope.kinds[dim.id] = b.dataset.kind; renderScopeDims(); renderScopeLive(); }));
+    card.querySelectorAll(".anchor").forEach(b => b.addEventListener("click", () => { scope.scores[dim.id] = Number(b.dataset.score); renderScopeDims(); renderScopeLive(); }));
+    host.appendChild(card);
+  });
+}
+function scopeRadarSVG(sets) {
+  /* sets: [{s:[5 numbers 0..3], color, label, dash?}] */
+  const W = 260, H = 240, cx = 130, cy = 122, R = 84; const n = SCOPE_DIMS.length;
+  const ang = i => -Math.PI / 2 + i * 2 * Math.PI / n;
+  const pt = (i, v) => [cx + R * (v / 3) * Math.cos(ang(i)), cy + R * (v / 3) * Math.sin(ang(i))];
+  const rings = [1, 2, 3].map(v => `<polygon points="${SCOPE_DIMS.map((_, i) => pt(i, v).map(x => x.toFixed(1)).join(",")).join(" ")}" fill="none" stroke="var(--line)"/>`).join("");
+  const spokes = SCOPE_DIMS.map((d, i) => { const [x, y] = pt(i, 3); const [lx, ly] = pt(i, 3.55); return `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="var(--line)"/><text x="${lx.toFixed(1)}" y="${(ly + 4).toFixed(1)}" font-size="11" text-anchor="middle" fill="var(--muted)">${esc(d.name)}</text>`; }).join("");
+  const polys = sets.map(st => `<polygon points="${st.s.map((v, i) => pt(i, v == null ? 0 : v).map(x => x.toFixed(1)).join(",")).join(" ")}" fill="${st.color}" fill-opacity="${st.fill === undefined ? .18 : st.fill}" stroke="${st.color}" stroke-width="2" ${st.dash ? `stroke-dasharray="${st.dash}"` : ""}/>` +
+    st.s.map((v, i) => v == null ? "" : `<circle cx="${pt(i, v)[0].toFixed(1)}" cy="${pt(i, v)[1].toFixed(1)}" r="3.5" fill="${st.color}"/>`).join("")).join("");
+  return `<svg class="radar" viewBox="0 0 ${W} ${H}" role="img" aria-label="Idea shape on five dimensions">${rings}${spokes}${polys}</svg>`;
+}
+function scopeMapSVG(nov, feas, others) {
+  const W = 260, H = 220, L = 36, R = 12, T = 14, B = 36;
+  const x = v => L + (W - L - R) * v / 3, y = v => T + (H - T - B) * (1 - v / 3);
+  const q = (x0, y0, t) => `<text x="${x0}" y="${y0}" font-size="10" fill="var(--muted)" text-anchor="middle">${t}</text>`;
+  const dots = (others || []).map(o => `<circle cx="${x(o.f)}" cy="${y(o.n)}" r="5" fill="${o.color}" opacity=".7"><title>${esc(o.label)}</title></circle>`).join("");
+  return `<svg class="radar" viewBox="0 0 ${W} ${H}" role="img" aria-label="Novelty against feasibility">
+    <rect x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" fill="var(--soft)" rx="6"/>
+    <line x1="${x(1.5)}" x2="${x(1.5)}" y1="${T}" y2="${H - B}" stroke="var(--line)" stroke-dasharray="4 3"/><line x1="${L}" x2="${W - R}" y1="${y(1.5)}" y2="${y(1.5)}" stroke="var(--line)" stroke-dasharray="4 3"/>
+    ${q(x(.75), y(2.6), "moonshot")}${q(x(2.25), y(2.6), "PhD-shaped")}${q(x(.75), y(.35), "avoid")}${q(x(2.25), y(.35), "exploit")}
+    <text x="${(L + W - R) / 2}" y="${H - 8}" font-size="10" text-anchor="middle" fill="var(--muted)">feasibility →</text>
+    <text x="12" y="${(T + H - B) / 2}" font-size="10" text-anchor="middle" fill="var(--muted)" transform="rotate(-90 12 ${(T + H - B) / 2})">novelty →</text>
+    ${dots}${nov == null || feas == null ? "" : `<circle cx="${x(feas)}" cy="${y(nov)}" r="8" fill="var(--accent)" stroke="var(--bg)" stroke-width="2"/>`}</svg>`;
+}
+function renderScopeLive() {
+  const s = SCOPE_DIMS.map(d => scope.scores[d.id]);
+  const done = s.every(v => v !== undefined);
+  $("scope-radar").innerHTML = scopeRadarSVG([{s: s.map(v => v === undefined ? null : v), color:"var(--accent)"}]);
+  $("scope-map").innerHTML = scopeMapSVG(scope.scores.novelty, scope.scores.feasibility);
+  if (done) {
+    const sh = scopeShape(scope.scores);
+    $("scope-shape").innerHTML = `<div class="verdict-big">${esc(sh.name)}</div><p>${annotate(sh.text).html}</p><ul class="reads">${readsHTML(sh.res)}</ul>`;
+  } else {
+    const left = SCOPE_DIMS.filter(d => scope.scores[d.id] === undefined).map(d => d.name);
+    $("scope-shape").innerHTML = `<p class="muted">Score every dimension to read the shape. Left: ${esc(left.join(", "))}.</p>`;
+  }
+  const smp = SCOPE_SAMPLES.find(x => x.id === scope.idea);
+  $("scope-reveal-btn").classList.toggle("hidden", !smp || !done || scope.revealed);
+  if (smp && scope.revealed) renderScopeReveal(smp);
+  $("scope-own-card").classList.toggle("hidden", !(scope.own && done));
+  if (scope.own && done) renderScopeStatement();
+}
+function renderScopeReveal(smp) {
+  const colors = ["var(--good)", "var(--meh)", "var(--bad)"];
+  const sets = smp.scorers.map((sc, i) => ({s: sc.s, color: colors[i], fill: .06, dash: i ? "4 3" : ""}));
+  sets.unshift({s: SCOPE_DIMS.map(d => scope.scores[d.id]), color:"var(--accent)"});
+  $("scope-reveal-radar").innerHTML = scopeRadarSVG(sets);
+  $("scope-reveal-map").innerHTML = scopeMapSVG(scope.scores.novelty, scope.scores.feasibility, smp.scorers.map((sc, i) => ({n: sc.s[0], f: sc.s[2], color: colors[i], label: sc.who})));
+  /* dot plot: per dimension, the four scores */
+  const rows = SCOPE_DIMS.map((d, i) => {
+    const mine = scope.scores[d.id]; const vals = smp.scorers.map(sc => sc.s[i]);
+    const spread = Math.max(...vals) - Math.min(...vals);
+    return `<div class="dotrow"><span class="dl">${esc(d.name)}</span><span class="dots5">${[0,1,2,3].map(v => `<span class="cell${v === mine ? " me" : ""}">${smp.scorers.map((sc, j) => sc.s[i] === v ? `<i style="background:${colors[j]}" title="${esc(sc.who)}"></i>` : "").join("")}${v === mine ? `<b>you</b>` : ""}</span>`).join("")}</span><span class="small muted">${spread >= 2 ? "wide disagreement" : spread === 1 ? "one point apart" : "agreement"}</span></div>`;
+  }).join("");
+  $("scope-reveal-dots").innerHTML = `<div class="dotrow head"><span class="dl"></span><span class="dots5">${[0,1,2,3].map(v => `<span class="cell hd">${v}</span>`).join("")}</span><span></span></div>${rows}`;
+  $("scope-reveal-why").innerHTML = smp.scorers.map((sc, i) => `<div class="verdict" style="border-left-color:${colors[i]}; background:var(--soft); margin:8px 0"><div class="vic" style="background:${colors[i]}">${i === 0 ? icon("i-flag") : icon("i-nose")}</div><div><div class="vt">${esc(sc.who)} <span class="small muted" style="font-weight:400">${sc.s.join(" · ")}</span></div><div class="small">${esc(sc.why)}</div></div></div>`).join("");
+  const kinds = smp.kinds; const mineK = scope.kinds;
+  $("scope-reveal-kinds").innerHTML = `<div class="small">The author called the novelty <b>${esc(kinds.novelty)}</b>${mineK.novelty ? (mineK.novelty === kinds.novelty ? ", as you did." : `; you called it <b>${esc(mineK.novelty)}</b>. Both can be right: the same idea is a new measurement to one reader and a new question to another, and naming the kind is what lets them argue about the same thing.`) : "."} Impact: <b>${esc(kinds.impact)}</b>.</div>`;
+  $("scope-reveal-card").classList.remove("hidden");
+}
+function scopeStatementText() {
+  const k = scope.kinds; const w = $("scope-weeks").value || "12", claim = $("scope-claim").value.trim() || "[the one claim]", kill = $("scope-kill").value.trim() || "[the pilot result that would make us stop]", who = $("scope-who").value.trim() || "[who]";
+  const kw = $("scope-killweek").value || Math.max(2, Math.round(Number(w) / 4));
+  return `In ${w} weeks we will show that ${claim}.\nNew because: ${k.novelty || "[kind of novelty]"}.\nMatters to ${who} because: ${k.impact || "[kind of impact]"}.\nIt can fail: by week ${kw}, if ${kill}, we switch to plan B.\nMinimum paper: one claim, the evidence for it, and where it fails.`;
+}
+function renderScopeStatement() { $("scope-statement").textContent = scopeStatementText(); }
+
+/* ============================================================================
    APP. Vanilla JS, no deps. State in localStorage under STORE_KEY.
    ========================================================================== */
 const STORE_KEY = "rp_v1";
@@ -1993,7 +2402,7 @@ function saveStore() { try { localStorage.setItem(STORE_KEY, JSON.stringify(stor
 let store = loadStore();
 
 /* ---- screens ---- */
-const SCREENS = ["home","run","postmortem","taste","tasteres","guide"];
+const SCREENS = ["home","run","postmortem","taste","tasteres","guide","scope"];
 let current = "home";
 function show(id) {
   if (id === "home") renderHome();
@@ -2070,9 +2479,9 @@ const quoteOpt = t => /^[“"]/.test(t) ? esc(t) : `“${esc(t)}”`;
 const icon = (id, cls) => `<svg class="ic ${cls || ""}" aria-hidden="true"><use href="#${id}"/></svg>`;
 function pitboxHTML(pid, open, noHead) {
   const p = PITFALLS[pid]; if (!p) return "";
-  return `<div class="pitbox">${noHead ? "" : `<div class="pn">${icon("i-warn")} ${esc(p.name)}</div>`}
-    <dl><div class="tile what"><dt>${icon("i-warn")} What</dt><dd>${annotate(p.what).html}</dd></div>
-        <div class="tile smell"><dt>${icon("i-nose")} Smells like</dt><dd>${annotate(p.smell).html}</dd></div>
+  const dg = DIAG[pid];
+  return `<div class="pitbox"><div class="pithead">${dg ? `<figure class="diagf">${diagramSVG(dg, 132)}<figcaption>${esc(DIAG_CAPTION[dg])}</figcaption></figure>` : ""}<div>${noHead ? "" : `<div class="pn">${icon("i-warn")} ${esc(p.name)}</div>`}<div class="pwhat">${annotate(p.what).html}</div></div></div>
+    <dl><div class="tile smell"><dt>${icon("i-nose")} Smells like</dt><dd>${annotate(p.smell).html}</dd></div>
         <div class="tile fix"><dt>${icon("i-wrench")} Instead</dt><dd>${annotate(p.fix).html}</dd></div></dl>
     ${lessonHTML(pid)}</div>`;
 }
@@ -2141,6 +2550,7 @@ function startRun() {
   show("run"); renderRunCard();
 }
 function rigorNow() { return Math.round(100 * (1 - run.lost / run.span)); }
+const PHASE_ICON = {Q:"i-question", D:"i-blueprint", E:"i-gear", A:"i-chart", R:"i-doc"};
 function renderStepper() {
   const host = $("stepper"); host.innerHTML = "";
   const cur = run.deck[Math.min(run.i, run.deck.length - 1)].ph;
@@ -2151,7 +2561,7 @@ function renderStepper() {
     const isNow = ph.id === cur && run.i < run.deck.length;
     if (isNow) passed = false;
     const cls = isNow ? "now" : (passed ? "done" : "");
-    host.innerHTML += `<div class="step ${cls}"><div class="node">${passed && !isNow ? icon("i-check") : idx + 1}</div><div class="nm">${esc(ph.name)}</div><div class="dots">${dots}</div></div>`;
+    host.innerHTML += `<div class="step ${cls}"><div class="node">${passed && !isNow ? icon("i-check") : icon(PHASE_ICON[ph.id])}</div><div class="nm">${esc(ph.name)}</div><div class="dots">${dots}</div></div>`;
   });
 }
 function renderMeters() {
@@ -2292,12 +2702,12 @@ function finishRun() {
   const worst = run.hit.slice().sort((x, y) => (Math.max(...y.card.o.map(o => o.r)) - y.opt.r) - (Math.max(...x.card.o.map(o => o.r)) - x.opt.r))[0];
   const tmr = worst ? {name: PITFALLS[worst.opt.p].name, fix: PITFALLS[worst.opt.p].fix} : (run.meh[0] ? {name: run.meh[0].card.title, fix: run.meh[0].card.o.find(o => o.k === "sound").t} : null);
   $("pm-tomorrow-card").classList.toggle("hidden", !tmr);
-  if (tmr) $("pm-tomorrow").innerHTML = `<div class="small muted">${esc(tmr.name)}</div><div style="font-size:1.05rem">${annotate(tmr.fix).html}</div>`;
+  if (tmr) $("pm-tomorrow").innerHTML = `<div class="row" style="gap:14px; align-items:flex-start; flex-wrap:nowrap">${worst && DIAG[worst.opt.p] ? diagramSVG(DIAG[worst.opt.p], 110) : ""}<div><div class="small muted">${esc(tmr.name)}</div><div style="font-size:1.05rem">${annotate(tmr.fix).html}</div></div></div>`;
   $("pm-traj").innerHTML = trajectorySVG();
   $("pm-bingo").innerHTML = bingoHTML();
   const inDeckN = new Set(); CARDS.filter(c => inDom(c, store.domain)).forEach(c => c.o.forEach(o => { if (o.p) inDeckN.add(o.p); }));
   $("pm-map-sum").textContent = `The map: ${run.hit.length} hit · ${dodgedU.length} dodged · ${inDeckN.size - run.hit.length - dodgedU.length} other in this domain's deck · ${Object.keys(PITFALLS).length - inDeckN.size} in other domains`;
-  const hitHTML = run.hit.map((h, i) => `<details class="pm"${i === 0 ? " open" : ""}><summary><span class="sw" style="background:var(--bad)"></span><span class="ph">${esc(PHASES.find(p => p.id === h.card.ph).name)}</span><b>${esc(PITFALLS[h.opt.p].name)}</b><span class="chev">▾</span></summary>
+  const hitHTML = run.hit.map((h, i) => `<details class="pm"${i === 0 ? " open" : ""}><summary><span class="sw" style="background:var(--bad)"></span><span class="ph">${esc(PHASES.find(p => p.id === h.card.ph).name)}</span>${DIAG[h.opt.p] ? diagramSVG(DIAG[h.opt.p], 40) : ""}<b>${esc(PITFALLS[h.opt.p].name)}</b><span class="chev">▾</span></summary>
     <div class="inner"><div class="small muted" style="margin-bottom:6px">${esc(h.card.title)} — you chose: <em>${esc(h.opt.t)}</em></div>${pitboxHTML(h.opt.p, false, true)}</div></details>`).join("");
   $("pm-hit").innerHTML = hitHTML || (run.meh.length ? `<p class="muted">No pitfalls. What cost you were the defensible-but-costly calls below.</p>` : `<p class="muted">None. Either you have done this before, or you have read the field guide. Try another domain.</p>`);
   $("pm-meh-card").classList.toggle("hidden", !run.meh.length);
@@ -2414,7 +2824,8 @@ function revealTaste(c) {
   });
   const head = correct ? `Right${c.id === "sure" ? ", and sure" : ""}.` : (c.id === "sure" ? "Wrong, and sure: the expensive case, and the useful one. Note the feature you missed." : "Not this one.");
   const ptsNote = c.id === "coin" ? `+1 · a guess is never penalised${taste.results.filter(r => r.conf.id === "coin").length === 1 ? "; it is the honest choice below 60% belief" : ""}` : `${pts >= 0 ? "+" : ""}${pts} pts`;
-  let html = `<div class="verdict ${correct ? "sound" : "pit"}"><div class="vic">${icon(correct ? "i-check" : "i-x")}</div><div><div class="vt">${head} <span class="small muted" style="font-weight:400">(${ptsNote})</span></div>`;
+  const tip = it.kind === "pair" ? ((item.better === "a") !== taste.flip ? -1 : 1) : 0;
+  let html = `<div class="verdict ${correct ? "sound" : "pit"}"><div class="vic">${icon(correct ? "i-check" : "i-x")}</div><div>${it.kind === "pair" ? `<div class="scalewrap">${scaleSVG(tip)}</div>` : ""}<div class="vt">${head} <span class="small muted" style="font-weight:400">(${ptsNote})</span></div>`;
   if (it.kind === "pair") html += `<div><span class="feat">${esc(item.feat)}</span></div><div style="margin-top:6px">${annotate(relabel(item.why, taste.flip)).html}</div>`;
   else html += `<div><span class="feat">${esc(item.opts[item.ans])}</span></div><div style="margin-top:6px">${annotate(item.why).html}</div><div style="margin-top:6px">${icon("i-wrench")} <b>The repair:</b> ${annotate(item.repair).html}</div>`;
   html += `<details style="margin-top:8px"><summary class="small" style="cursor:pointer;color:var(--accent-dark)">${icon("i-book")} Read (${item.res.length})</summary><ul class="reads">${readsHTML(item.res)}</ul></details></div></div>`;
@@ -2496,11 +2907,11 @@ function renderGuide() {
   PHASES.forEach((ph, idx) => {
     const rows = Object.entries(PITFALLS).filter(([, p]) => p.ph === ph.id);
     const sec = document.createElement("div"); sec.className = "card ph"; sec.id = "guide-" + ph.id;
-    sec.innerHTML = `<div class="row" style="gap:10px"><span class="node" style="width:30px;height:30px;border-radius:50%;background:var(--btn);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem">${idx + 1}</span><div><h3 style="margin:0">${esc(ph.name)}</h3><div class="small muted">${esc(ph.blurb)}</div></div></div>
+    sec.innerHTML = `<div class="row" style="gap:10px"><span class="node" style="width:30px;height:30px;border-radius:50%;background:var(--btn);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem">${icon(PHASE_ICON[ph.id])}</span><div><h3 style="margin:0">${esc(ph.name)}</h3><div class="small muted">${esc(ph.blurb)}</div></div></div>
       <div class="tiles">${rows.map(([id, p]) => {
         const h = store.hits[id] || 0, d = store.dodges[id] || 0;
         const sw = h ? "hit" : d ? "dodged" : ""; const cnt = h ? `hit ×${h}` : d ? `dodged ×${d}` : "";
-        return `<details class="tile"><summary><span class="sw ${sw}"></span>${esc(p.name)}<span class="cnt">${cnt}</span></summary>
+        return `<details class="tile"><summary><span class="sw ${sw}"></span>${DIAG[id] ? diagramSVG(DIAG[id], 44) : ""}${esc(p.name)}<span class="cnt">${cnt}</span></summary>
           <div class="inner"><div class="tri">
             <div><span class="k">What</span><span>${esc(p.what)}</span></div>
             <div><span class="k">Smells like</span><span>${esc(p.smell)}</span></div>
@@ -2541,6 +2952,14 @@ $("run-commit-show").addEventListener("click", () => {
 $("run-commit-text").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $("run-commit-show").click(); } });
 $("commit-toggle").addEventListener("change", e => { store.commit = e.target.checked ? "on" : "off"; saveStore(); });
 $("go-review").addEventListener("click", startReview);
+$("go-scope").addEventListener("click", startScope);
+$("scope-own").addEventListener("input", e => { scope.own = e.target.value.trim(); if (scope.own) { scope.idea = null; scope.revealed = false; } renderScopePick(); renderScopeLive(); });
+$("scope-reveal-btn").addEventListener("click", () => { scope.revealed = true; renderScopeLive(); $("scope-reveal-card").scrollIntoView({behavior:"smooth", block:"start"}); });
+["scope-weeks","scope-killweek","scope-claim","scope-who","scope-kill"].forEach(id => $(id).addEventListener("input", renderScopeStatement));
+$("scope-copy").addEventListener("click", () => copyText(scopeStatementText()));
+$("scope-run").addEventListener("click", startRun);
+$("scope-restart").addEventListener("click", startScope);
+$("scope-reads").innerHTML = readsHTML(["heilmeier","alon","hamming","pg_great","greatideas","triage","barbell","disprove","method","contingency","planning"]);
 $("pm-again").addEventListener("click", startRun);
 $("pm-taste").addEventListener("click", startTaste);
 $("pm-copy").addEventListener("click", () => copyText(runSummaryText()));
@@ -2590,7 +3009,7 @@ document.addEventListener("keydown", e => {
   const d = q.get("domain"); if (d && DOMAINS.some(x => x.id === d)) { store.domain = d; saveStore(); }
   renderDomChips(); renderHome(); show("home");
   const m = q.get("mode");
-  if (m === "run") startRun(); else if (m === "taste") startTaste(); else if (m === "guide") { renderGuide(); show("guide"); }
+  if (m === "run") startRun(); else if (m === "taste") startTaste(); else if (m === "scope") startScope(); else if (m === "guide") { renderGuide(); show("guide"); }
 })();
 </script>
 </body>

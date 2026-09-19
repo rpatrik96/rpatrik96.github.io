@@ -13,7 +13,7 @@ science, experimental/lab science, and social & behavioural science, and adds a 
 native to each (pseudoreplication, batch effects, blinding, measurement validity,
 convergence studies). "General" shows only the domain-neutral cards.
 
-## Three parts
+## Four parts
 
 1. **Run a study** — 13 decisions across five phases (Question → Design → Execution → Analysis →
    Reporting). Each card is a situation with 2–3 options tagged `sound`, `pit` (names a pitfall
@@ -88,6 +88,30 @@ case with the phase blurb only on the first card of a phase; mobile stepper show
 current phase label; chart type sizes legible at phone width; dark-mode digits use the on-accent
 token; field guide has jump links and a glossary filter; "Your taste, measured" instead of
 "Your discriminator"; the top level is "The reviewer you'd want".
+
+4. **Scope an idea** — five questions a supervisor, a reviewer and a funder all ask, each with an
+   anchored 0–3 scale: novelty (ten named kinds with examples: new method, new question,
+   connecting fields, new evidence, new measurement/dataset, new explanation, simplification,
+   new application, new capability, new lens), impact (six kinds: changes practice, changes
+   belief, enables others, settles a debate, opens a direction, beyond academia), feasibility,
+   killability, fit. A live radar and a novelty-versus-feasibility map (Alon's quadrants:
+   moonshot / PhD-shaped / exploit / avoid) read the shape, with a verdict and reading. Five
+   sample ideas across domains carry three scorers (author, two reviewers) with rationales; the
+   reveal overlays their shapes on yours and shows a per-dimension dot plot with the spread, to
+   make the subjective element visible and to argue that naming the kind of novelty is what lets
+   people disagree about the same thing. For your own idea, a scope statement (weeks, one claim,
+   who it matters to, kill test by week N) is generated for copying. Each dimension has a
+   collapsed "why this is partly subjective" note.
+
+## Visual elements
+
+Fourteen template pictograms (target, story, scope, clock, loop, check, fork, noise, shortcut,
+leak, weights, confound, cluster, bound, select) drawn as inline SVG with theme tokens; every
+pitfall maps to one, shown in the pitfall box with a caption, in the guide tiles, in the
+postmortem entries and next to "one thing to do tomorrow". Phase icons replace numbers in the
+stepper and guide. The home screen opens with a path-with-pits illustration. The taste reveal
+tips a balance scale toward the stronger side. Charts: rigour trajectory, reliability diagram,
+idea-shape radar, novelty × feasibility map, scorer dot plot.
 
 ## Terms and tooltips
 
