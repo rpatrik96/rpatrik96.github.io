@@ -53,6 +53,42 @@ convergence studies). "General" shows only the domain-neutral cards.
    instead / read, plus the worked example), hit/dodged marks from this device, a glossary of
    every term the game uses, the player's taste-gym notes, and every linked resource in one list.
 
+## Didactic design (after a learning-science review)
+
+- **Contrast at the moment of feedback.** After a pitfall or costly pick, the reveal shows the
+  sound option and its reasoning next to the chosen one, so the learner compares rather than
+  just reads a verdict. "Defensible, costly" is defined in one fixed line every time it appears.
+- **Generation before feedback.** *Commit first* (a home-screen toggle, and on automatically for
+  the first three decisions of a first run) hides the options until the player has written what
+  they would do; the line is echoed next to the verdict. In the taste gym the "why" box comes
+  before the confidence chips and gets focus on hover-capable devices; Enter or 1/2/3 from an
+  empty box moves on, so the keyboard path is not interrupted.
+- **Spaced review.** *Review what you fell in (N)* on the home screen builds a deck from the cards
+  whose pitfalls the player has hit on this device.
+- **Easy wins first.** Within a phase, cards with fewer pitfall options and fewer words come first.
+- **The postmortem teaches.** "One thing to do tomorrow" prints the fix for the costliest pitfall
+  hit; "Copy as checklist" emits a tick-list of fixes; "Copy for your supervisor" prepends
+  "Pitfalls I want to avoid in my study". The reading list shows one item per pitfall first, the
+  rest collapsed. The map marks pitfalls that are not in the chosen domain's deck as such.
+- **Honest scoring copy.** A wrong guess shows "+1 · a guess is never penalised" with a one-time
+  note that guessing is the honest choice below 60% belief; the calibration label is decided by
+  the same per-bin error the reliability diagram shows, explained without classifier jargon.
+- **Nuance lines** on absolute-sounding lessons (test set, three seeds, toy models, one message
+  per paper, data that cannot be shared, pre-planned pilots) to avoid installing wrong rules.
+- **Length balance.** About half the sound options now carry a short rationale and half the
+  pitfall options carry none, so terseness is not a tell (sound option longest on 16 of 59
+  cards, shortest on 30).
+
+## UX (after a browser-driven review)
+
+Why-box before confidence; term strip below the verdict so it does not compete with the
+options; hover tooltips not clipped by the next option; on touch devices the underlines are
+dropped (the chips carry the definitions) and keyboard hints are hidden; phase line in sentence
+case with the phase blurb only on the first card of a phase; mobile stepper shows only the
+current phase label; chart type sizes legible at phone width; dark-mode digits use the on-accent
+token; field guide has jump links and a glossary filter; "Your taste, measured" instead of
+"Your discriminator"; the top level is "The reviewer you'd want".
+
 ## Terms and tooltips
 
 Every technical term in a situation, option, plan, pair or reveal gets a dotted underline and a
