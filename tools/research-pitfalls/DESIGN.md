@@ -113,6 +113,16 @@ stepper and guide. The home screen opens with a path-with-pits illustration. The
 tips a balance scale toward the stronger side. Charts: rigour trajectory, reliability diagram,
 idea-shape radar, novelty × feasibility map, scorer dot plot.
 
+## Voice (after an audit against the author's newsletter)
+
+The copy is written as the author speaking to a peer: first person where it owns a judgement
+("they are my taste, argued in each reveal"; "I met most of these pitfalls the expensive way";
+"my early self included"), "you" everywhere else, British spelling, sentence-case headings,
+typographic quotes, names in running prose as "Lipton and Steinhardt" (ampersands only in
+citations), three-author papers named in full, no emoji, jokes at the system's expense and never
+the player's. Feedback strings are kept under about 35 words and worked examples under about
+110. "P2P" is expanded once in the field guide.
+
 ## Terms and tooltips
 
 Every technical term in a situation, option, plan, pair or reveal gets a dotted underline and a

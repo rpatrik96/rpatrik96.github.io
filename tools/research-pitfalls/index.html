@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>Research Pitfalls — The Study Game</title>
-<meta name="description" content="A lightweight, text-only game for junior PhD students: run a study through five phases and dodge the classic pitfalls, then train your research taste on pairwise judgements and spot-the-flaw drills. Domain selector, further reading, no backend.">
+<meta name="description" content="A game for the first year of a PhD: run a study through five phases and meet the classic pitfalls, then train your taste on other people's plans, then scope an idea. Runs in your browser; nothing is sent anywhere.">
 <style>
   :root{
     --accent:#4A8FE3; --accent-dark:#2f6fbf; --ink:#1c2430; --muted:#525c6b;
@@ -354,9 +354,10 @@
   <!-- HOME -->
   <section id="screen-home">
     <h1>Set up a study. Try not to fall in.</h1>
-    <p class="sub">A game for the first year of a PhD. You make 13 decisions a real study consists of; each one
-      names the classic pitfall it risks, why it bites, and the fix. Then you judge other people's plans and see
-      whether your confidence matches your accuracy: that is <b>taste</b>, and it is trainable.</p>
+    <p class="sub">A game for the first year of a PhD. You make the thirteen decisions a study is made of; each one
+      names the pitfall it risks, what it costs, and the fix. Then you judge other people's plans and see whether
+      your confidence matches your accuracy: that is <b>taste</b>, and it is trainable.</p>
+    <p class="sub small" style="margin-top:6px">I met most of these pitfalls the expensive way. This is the ten-minute version.</p>
     <p class="small muted" id="home-progress" style="margin:6px 0 0"></p>
     <svg class="hero" viewBox="0 0 720 120" aria-label="A study path through five phases with pitfalls along the way" stroke-linecap="round" stroke-linejoin="round">
       <path d="M30 80 C120 20 180 120 270 70 S420 20 500 70 S640 120 690 60" fill="none" stroke="var(--line)" stroke-width="10"/>
@@ -394,7 +395,7 @@
         <span class="tag">Train · ~8 min</span>
         <h3>Train your taste</h3>
         <p class="muted small" style="margin:0">Pick the stronger of two plans. Spot the flaw in a third. Say how
-          sure you are. Get a calibration read.</p>
+          sure you are. Find out whether you know what you know.</p>
       </button>
       <button class="card mode" id="go-scope">
         <span class="icon"><svg class="ic"><use href="#i-compass"/></svg></span>
@@ -446,7 +447,7 @@
   <!-- RUN RESULTS -->
   <section id="screen-postmortem" class="hidden">
     <h1>Postmortem</h1>
-    <p class="sub">The outcome is what you're judged on; the process is what you can change.</p>
+    <p class="sub">The outcome is what you're judged on; the process is your biggest lever.</p>
     <div class="card" style="margin-top:16px">
       <div class="verdict-big" id="pm-verdict"></div>
       <p class="muted" id="pm-line"></p>
@@ -588,10 +589,10 @@
           level, your stated probability (which is lower for four-option items, where a guess is 25%) is compared with
           how often you were right at that level; the weighted average of the gaps is the calibration error, the same
           quantity as expected calibration error for a classifier. The over/under verdict uses the signed gap.</p>
-        <p><b>Level.</b> Points count toward your level only the first time you see an item, so repeating a round
+        <p><b>Level.</b> Points count towards your level only the first time you see an item, so repeating a round
           does not level you up. A flawless, all-sure round reaches the top level; in practice it takes more than one domain.</p>
-        <p>The answers are opinionated: one reviewer's taste, argued in each reveal. Disagreeing with a reason is
-          allowed. That is also how taste gets built.</p>
+        <p>The answers are opinionated: they are my taste, argued in each reveal. Disagree with a reason if you can
+          say why; that is also how taste gets built.</p>
       </div>
     </details>
     <div class="underbar" style="justify-content:flex-start; margin-top:20px">
@@ -676,7 +677,7 @@
     </div>
     <div class="card" style="margin-top:18px" id="guide-reading">
       <h3>Further reading</h3>
-      <p class="small muted" style="margin:0 0 6px">Everything linked in the game, in one place.</p>
+      <p class="small muted" style="margin:0 0 6px">Everything linked in the game, in one place. P2P is The Path to PhD, my newsletter.</p>
       <ul class="reads" id="guide-reads"></ul>
     </div>
     <div class="underbar" style="justify-content:flex-start; margin-top:20px">
@@ -840,7 +841,7 @@ const PITFALLS = {
   q_no_kill_criterion: {ph:"Q", name:"No kill criterion",
     what:"Nobody wrote down what failure looks like, so the project can never fail — it just keeps consuming months.",
     smell:"“We'll know it when we see it.” Plan B does not exist.",
-    fix:"Before starting: by week N, if the pilot doesn't show X, we pivot to plan B. Put it in the calendar.", res:["contingency","quitgrit","stopfinish","simulate","barbell"]},
+    fix:"Before starting, write: “by week N, if the pilot doesn't show X, we pivot to plan B.” Put it in the calendar.", res:["contingency","quitgrit","stopfinish","simulate","barbell"]},
   q_no_feedback:       {ph:"Q", name:"Silence until results",
     what:"You won't show anything to your supervisor until you have results, so the taste you are still building is never corrected until it's expensive.",
     smell:"Weeks pass without a one-page pitch being read by anyone. You are polishing before validating.",
@@ -900,7 +901,7 @@ const PITFALLS = {
     fix:"Check overlap between test items and the pretraining corpus where possible; evaluate on a freshly written or held-out set; report the contamination check.", res:["leakage","recht"]},
   d_pseudoreplication: {ph:"D", name:"Pseudoreplication",
     what:"Repeated measurements from one unit (one culture, one animal, one participant, one training run) are counted as independent samples.",
-    smell:"n=36 wells from three plates. n=1000 tokens from one model.",
+    smell:"n = 36 wells from three plates. n = 1,000 prompts from one model.",
     fix:"Identify the unit that received the treatment independently; that is your n.", res:["hurlbert","button"]},
   d_batch:             {ph:"D", name:"Batch effects",
     what:"Treatment and control differ in day, operator, instrument, hardware or library version — and the batch difference is what you measure.",
@@ -1016,7 +1017,7 @@ const CARDS = [
     {t:"Send a one-page pitch first: claim, what would falsify it, smallest test that could kill it. It costs a day and the reply may change the plan.", k:"sound", w:1, r:8,
      f:"Feedback on a page costs a day; feedback on a pipeline costs a month. The pitch also forces you to write down what would make you wrong, which is most of the design work."},
     {t:"Build the pipeline now; show results when they are back.", k:"pit", p:"q_no_feedback", w:3, r:-8,
-     f:"The most common first-year trap: showing up only with results. What you bring is shaped by taste nobody has yet in year one, and the correction arrives after the expensive part."},
+     f:"The most common first-year trap, my early self included: showing up only with results. What you bring is shaped by taste nobody has yet in year one, and the correction arrives after the expensive part."},
     {t:"Read for another three weeks to be sure nobody has done it.", k:"meh", w:3, r:2,
      f:"A prior-work check matters, but it is bounded: two focused hours plus asking two people beats three more weeks. Reading can become a way of not deciding."}
    ]},
@@ -1144,7 +1145,7 @@ const CARDS = [
    s:"The benchmark ships with a labelled test set. Your validation split is small and noisy.",
    o:[
     {t:"Tune on the test set.", k:"pit", p:"d_leakage", w:0, r:-12,
-     f:"Every tuning decision on test is a bit of test information in your model. The final number is no longer an estimate of anything. Looking at test once per paper is normal; the sin is making decisions on it."},
+     f:"Every tuning decision on test puts a bit of test information in your model; the final number no longer estimates anything. Looking once per paper is normal. Deciding on it is the sin."},
     {t:"Carve a bigger validation split from train; touch test once. Fewer training examples, but the final number stays an estimate.", k:"sound", w:1, r:8,
      f:"Less training data hurts less than an untrustworthy test number. Test once, and say how many times you looked."},
     {t:"Use test only for early stopping (choosing when to stop training); that's not really tuning.", k:"pit", p:"d_leakage", w:0, r:-9,
@@ -1166,7 +1167,7 @@ const CARDS = [
     {t:"Rerun it in your pipeline with your method's tuning budget; report both numbers, and the gap if there is one.", k:"sound", w:2, r:8,
      f:"Reporting the discrepancy is not a weakness; it's the most useful sentence a reviewer will read."},
     {t:"Re-run with their default hyperparameters.", k:"meh", w:1, r:1,
-     f:"Defaults are not tuned. Melis et al. showed carefully tuned old baselines beating newer architectures."}
+     f:"Defaults are not tuned. Melis, Dyer and Blunsom showed carefully tuned old baselines beating newer architectures."}
    ]},
   {id:"D_seeds", ph:"D", dom:["ml_exp","comp"], title:"Seeds",
    s:"Compute budget: 40 runs. Forty configurations interest you.",
@@ -1184,7 +1185,7 @@ const CARDS = [
     {t:"Compare the full method to the baseline; the combination is the contribution.", k:"pit", p:"d_confounded", w:1, r:-8,
      f:"The gain has no identified source. It may be the training length, in which case the contribution is “train longer”."},
     {t:"Remove each change in turn (an ablation); give the baseline the same training length.", k:"sound", w:3, r:8,
-     f:"Lipton & Steinhardt's “failure to identify the sources of empirical gains”. Ablations are what turn a number into knowledge."},
+     f:"Lipton and Steinhardt's “failure to identify the sources of empirical gains”. Ablations are what turn a number into knowledge."},
     {t:"Ablate the architecture only; augmentation and training length are implementation details.", k:"pit", p:"d_confounded", w:2, r:-5,
      f:"Implementation details are where most reported gains come from. If the baseline didn't get them, the comparison is still confounded."}
    ]},
@@ -1296,7 +1297,7 @@ const CARDS = [
    s:"The deadline is in six weeks. The trivial baselines (random, majority class, a constant) are still on the to-do list. You're at 85%.",
    o:[
     {t:"Skip them; 85% is obviously far above chance.", k:"pit", p:"e_no_sanity_checks", w:0, r:-8,
-     f:"On a set where one class is 84% of the data, chance is 84%. Without the trivial baselines you cannot tell learning from luck; without overfitting a tiny subset you cannot tell a bug from a hard problem."},
+     f:"On a set where one class is 84% of the data, chance is 84%. Trivial baselines tell learning from luck; overfitting ten examples tells a bug from a hard problem."},
     {t:"Do them first: chance level, constant predictor, overfit ten examples. Half a day, and every later plot gets its y-axis.", k:"sound", w:1, r:8,
      f:"Karpathy's recipe: dumb baselines first. They also give you the y-axis for every later plot."}
    ]},
@@ -1418,7 +1419,7 @@ const CARDS = [
     {t:"“This shows that the method teaches the model to reason.” It's the interesting sentence.", k:"pit", p:"a_overclaim", w:0, r:-8,
      f:"You measured a benchmark score. Whether it reflects reasoning is a hypothesis; a length-matched control or a shifted benchmark would test it, and neither was run."},
     {t:"State the score; the reasoning claim separately, as a hypothesis with a control.", k:"sound", w:0, r:8,
-     f:"Lipton & Steinhardt: explanation versus speculation. Speculation is fine when labelled, and it tells you the next experiment."}
+     f:"Lipton and Steinhardt: explanation versus speculation. Speculation is fine when labelled, and it tells you the next experiment."}
    ]},
   {id:"A_errorbars", ph:"A", dom:["ml_exp","comp","lab","social","any"], title:"No time for error bars",
    s:"Two weeks to the deadline. Every result is a single number with no interval.",
@@ -1434,7 +1435,7 @@ const CARDS = [
    s:"Over the project you have evaluated on the test set about forty times.",
    o:[
     {t:"Report the last number; every paper in the area does, and it's the test set reviewers know.", k:"pit", p:"a_test_reuse", w:0, r:-8,
-     f:"Forty looks is forty decisions informed by test; the final number estimates nothing. Dwork et al. formalised why; Recht et al. had to build a new ImageNet test set to find out whether years of reuse had cost anything (mostly it hadn't; the harder images had)."},
+     f:"Forty looks is forty decisions informed by test; the final number estimates nothing. Dwork et al. formalised why. Recht et al. had to build a fresh ImageNet test set to learn what years of reuse had cost; the honest answer needed new data."},
     {t:"Say so; evaluate once on a fresh held-out set and report both numbers.", k:"sound", w:1, r:7,
      f:"A fresh set can be a later data release, a re-collected set, or a split you sealed at the start. Contamination admitted is a limitation; contamination hidden is a retraction."}
    ]},
@@ -1450,7 +1451,7 @@ const CARDS = [
    s:"Your bound is O(√(d/n)). The introduction says it explains why models with d = 10⁶ parameters generalise from n = 10⁴ examples, where √(d/n) is already 10, before any constant, for a quantity in [0, 1].",
    o:[
     {t:"Keep the introduction; rates are the object of study and constants are routinely ignored.", k:"pit", p:"a_bound_vacuous", w:0, r:-8,
-     f:"A bound above the trivial one (it is vacuous) explains nothing about the setting you claim. Nagarajan & Kolter: some bounds even increase with n."},
+     f:"A bound above the trivial one (it is vacuous) explains nothing about the setting you claim. Nagarajan and Kolter: some bounds even increase with n."},
     {t:"Plot the bound against empirical values; state where it is actually restrictive; otherwise call it qualitative.", k:"sound", w:1, r:8,
      f:"An honest qualitative result survives review. A vacuous quantitative claim does not survive one plot in the reviewers' hands."},
     {t:"Report the rate; drop the claim about the practical regime.", k:"meh", w:0, r:3,
@@ -1460,7 +1461,7 @@ const CARDS = [
    s:"Two data points ruin the effect. They look odd.",
    o:[
     {t:"Remove them; they're clearly outliers, and standard practice allows it.", k:"pit", p:"a_forking", w:0, r:-8,
-     f:"Odd after seeing the result is not a rule. Exclusion decided post hoc is a fork; Simmons et al. show that four undisclosed choices like this push the false-positive rate past 60%."},
+     f:"Odd after seeing the result is not a rule. Exclusion decided post hoc is a fork; Simmons, Nelson and Simonsohn show that four undisclosed choices like this push the false-positive rate past 60%."},
     {t:"Apply the rule from the plan; if there is none, report with and without.", k:"sound", w:0, r:7,
      f:"With-and-without is the honest analysis. If the effect depends on two points, that is the finding."}
    ]},
@@ -1537,9 +1538,9 @@ const CARDS = [
   {id:"R_post", ph:"R", dom:"all", title:"Done",
    s:"Submitted. The next project starts Monday.",
    o:[
-    {t:"Onto the next one; the postmortem can wait until both are submitted.", k:"pit", p:"r_no_postmortem", w:0, r:-6,
+    {t:"On to the next one; the postmortem can wait until both are submitted.", k:"pit", p:"r_no_postmortem", w:0, r:-6,
      f:"It won't happen after the second one either. Open-loop (no feedback on the process): the next project spends the same months in the same places."},
-    {t:"Two hours on Monday: what cost the most, one change for next time. The only step that compounds.", k:"sound", w:0, r:8,
+    {t:"Two hours on Monday: what cost the most, one change for next time.", k:"sound", w:0, r:8,
      f:"The postmortem is the cheapest thing in this game. It is the only step that compounds."}
    ]}
 ];
@@ -1558,7 +1559,7 @@ const PAIRS = [
    a:"“We propose NewNet, a new architecture that achieves state of the art on five standard benchmarks, improving the average by 2.1 points over the strongest prior method.”",
    b:"“We show that the gains of recent methods on benchmark Z are explained by one preprocessing choice; once controlled for, the differences vanish.”",
    better:"b", feat:"Explanation over leaderboard",
-   why:"A is the one that gets accepted this cycle; B is the one still cited in five years, and B's finding also tells you on which of the five benchmarks A's 2.1 points are real. The feature is “explains the gain”, not “state of the art is bad”: A with the ablation would be B.",
+   why:"A gets accepted this cycle; B is still cited in five years, and B tells you on which of A's five benchmarks the 2.1 points are real. The feature is “explains the gain”, not “state of the art is bad”: A with the ablation would be B.",
    res:["lipton","melis","musgrave"]},
   {id:"P_scope", dom:"all", q:"Which claim would you rather have your name on?",
    a:"“A general theory of learning in realistic settings, unifying several existing results under one framework.”",
@@ -1612,7 +1613,7 @@ const PAIRS = [
    a:"The idea you had yesterday: it fits the deadline and a dataset you already have.",
    b:"The idea that has come back to you for months and bothers you because nobody has answered it.",
    better:"b", feat:"The haunt filter",
-   why:"Ideas that keep returning have passed a filter that yesterday's has not: this is the haunt filter. Most ideas are bad (Sturgeon's law: ninety percent of everything); the ones that haunt you are the sample worth spending on.",
+   why:"Ideas that keep returning have passed a filter that yesterday's has not: this is the haunt filter. Most ideas are bad (Sturgeon's law: most of everything is bad); the ones that haunt you are the sample worth spending on.",
    res:["triage","greatideas","hamming"]},
   {id:"P_conv", dom:["comp"], q:"Which simulation result would you believe?",
    a:"A new instability observed at one resolution and one time step, reproduced in three runs with different initial conditions.",
@@ -1932,10 +1933,10 @@ const GLOSSARY = [
 
 /* Level points count only the first time an item is seen, so repetition does not level you up. */
 const LEVELS = [
-  {min:-999, name:"Untrained discriminator", note:"Everything looks plausible. That is where everyone starts."},
+  {min:-999, name:"Untrained discriminator", note:"The judge in you, before training: everything looks plausible. That is where everyone starts."},
   {min:12,   name:"Calibrating",             note:"You can tell the bad from the good; you are still guessing about the middle."},
   {min:28,   name:"Sharp",                   note:"You spot the missing control before the author does."},
-  {min:60,   name:"The reviewer you’d want", note:"Your objections are the ones that make the paper better."}
+  {min:60,   name:"The reviewer you'd want", note:"Your objections are the ones that make the paper better."}
 ];
 
 /* Scoring is a (roughly) proper rule: the point-maximising choice is the honest one.
@@ -1973,8 +1974,8 @@ const LESSONS = {
     ex:"You spent a year mastering diffusion models. A colleague's lab has a new protein-interaction dataset. Plan v1: “apply a diffusion model to the dataset”. Ask the test question — *what will we know afterwards?* — and the honest answer is “that diffusion also fits this data”. Plan v2 starts from the lab's actual question, “which interactions are missing from the assay?”, and the method that answers it turns out to be a much simpler ranking model plus a held-out validation the lab can run. The diffusion model returns two months later, as a comparison, not the point.",
     deep:"Expertise is a hammer with a warm handle: applying it feels productive and the first results come fast. But a study is defined by its question, and a method-first plan usually has none, only a demonstration. The tell is that the plan cannot fail: any result is “interesting”. Reviewers see this immediately (“what is the contribution?”). The fix is cheap, one sentence: *After this study we will know whether …*. If the sentence names the method but not a question, rewrite. Method-first work has a place, as a deliberate exploit phase in a barbell strategy, but it should be labelled as such, not mistaken for a research question."},
   q_vague_hypothesis: {
-    ex:"**Vague:** “Our regulariser improves generalisation.” Any positive delta on any dataset confirms it; any negative one is “a setting where it doesn't apply”. **Predictive:** “If the regulariser works by suppressing high-frequency features, it should help most when we add high-frequency noise to inputs (we predict ≥ 3 points under CIFAR-10-C Gaussian noise at severity 3), and not at all on the clean set. If the clean set improves as much as the noisy one, the mechanism story is wrong.” The second version told you which experiment to run, what the plot's x-axis is, and what result would embarrass you. That is the whole design. The social-science version has the same shape: “If the nudge works through salience, it should help most when the default is hidden (we predict ≥ 5 points uptake) and not at all when it is visible.”",
-    deep:"Hypotheses drift vague because being specific is risky: a magnitude, a condition, or a mechanism can be wrong in public. But an unfalsifiable hypothesis also cannot be *right*; it just survives. Ask three questions of your hypothesis: what does it predict that the null does not; under what condition should the effect disappear; what number would make you abandon it. If you cannot answer the third, you are not yet running a study, you are running a demo. The cost of fixing this is an afternoon and some discomfort; the cost of not fixing it is discovering at the rebuttal that the paper claims nothing."},
+    ex:"**Vague:** “Our regulariser improves generalisation.” Any positive delta on any dataset confirms it; any negative one is “a setting where it doesn't apply”. **Predictive:** “If the regulariser works by suppressing high-frequency features, it should help most when we add high-frequency noise to inputs (we predict ≥ 3 points under CIFAR-10-C Gaussian noise at severity 3), and not at all on the clean set. If the clean set improves as much as the noisy one, the mechanism story is wrong.” The second version told you which experiment to run, what the plot's x-axis is, and what result would embarrass you. That is the whole design.",
+    deep:"The social-science version has the same shape: “if the nudge works through salience, it should help most when the default is hidden and not at all when it is visible.” Hypotheses drift vague because being specific is risky: a magnitude, a condition, or a mechanism can be wrong in public. But an unfalsifiable hypothesis also cannot be *right*; it just survives. Ask three questions of your hypothesis: what does it predict that the null does not; under what condition should the effect disappear; what number would make you abandon it. If you cannot answer the third, you are not yet running a study, you are running a demo. The cost of fixing this is an afternoon and some discomfort; the cost of not fixing it is discovering at the rebuttal that the paper claims nothing."},
   q_single_hypothesis: {
     ex:"A model's accuracy drops on a new domain. Your story: the domain has different label noise. You design a noise-cleaning experiment and it improves things by 2 points, so the story is confirmed. Rival stories you never tested: (a) covariate shift in the inputs, (b) the tokeniser fragments the new domain's vocabulary, (c) the new domain's test set is simply harder. A colleague runs (b): fixing the tokeniser gives 6 points. Your 2 points were real but a side effect. With three rivals written down at the start, the crucial experiment (compare all three interventions on one split) would have taken one extra day.",
     deep:"One story is attractive because it is coherent, you found it first, and every new datum can be read through it. Chamberlin's method of multiple working hypotheses and Platt's strong inference are the same corrective: hold several explanations at once and design the experiment whose outcome excludes at least one. It feels slower; it is faster, because a confirmed single story typically fails later and more expensively. Practical test: for each rival, name the observation that would favour it over your story. If you cannot name one, you are not holding it as a rival."},
@@ -1982,7 +1983,7 @@ const LESSONS = {
     ex:"Week 1 plan: show that method M beats baseline B on task T. Week 3: add a second task. Week 5: add a theory section explaining why. Week 8: add a new metric because the standard one “doesn't capture it”. Week 12, deadline: task T has one seed, the theory has a gap, the metric is unvalidated, and the paper's abstract has four “furthermore”s. Reviewer 2: “the contribution is unclear”. The week-1 paper, done properly, would have had five seeds and a limitations section, and would have been accepted.",
     deep:"Scope grows because each extension is cheap in isolation and each is genuinely interesting; nobody adds a bad idea. The damage is in the budget: the core result loses the time that would have made it airtight, and the paper loses its one message. The defence is a written *minimum viable paper*: one claim, the evidence that would establish it, the experiments that establish the evidence. Everything else goes to a dated “if time” list, which is honoured only after the core is finished. Extensions are not lost; they become the next paper, where they get the attention they deserve."},
   q_no_kill_criterion: {
-    ex:"Plan without a criterion: “build a model that predicts X from Y”. Month 4, validation error is 30% worse than a linear baseline and improving by 0.5% a week. Is this working? Nobody can say, so the answer defaults to “keep going”. Plan with a criterion, written in week 0: “by week 8 the model must beat the linear baseline on the pilot split; otherwise we switch to plan B (feature engineering on top of the baseline, which a pilot suggested could reach about 12% better)”. Week 8 arrives, the criterion fails, plan B ships in month 4 as a solid paper. In a lab the criterion reads: “by week 8 the pilot assay must show the effect in the positive control at the dose we can afford; otherwise we switch assays.”",
+    ex:"Plan without a criterion: “build a model that predicts X from Y”. Month 4, validation error is 30% worse than a linear baseline and improving by 0.5% a week. Is this working? Nobody can say, so the answer defaults to “keep going”. Plan with a criterion, written in week 0: “by week 8 the model must beat the linear baseline on the pilot split; otherwise we switch to plan B (feature engineering on top of the baseline, which a pilot suggested could reach about 12% better)”. Week 8 arrives, the criterion fails, plan B ships in month 4 as a solid paper.",
     deep:"Without a stop rule, a project fails only by exhaustion. The criterion must be written before the emotion arrives, because after month 3 every result looks like it needs one more month. A good kill criterion has a date, a measurable threshold, and a plan B that already exists on paper. It is not pessimism; it is the barbell: bound the downside of the risky bet so you can afford to take it. Reviewing the criterion in a calendar-scheduled meeting removes the need for anyone to be the person who says stop."},
   q_no_feedback: {
     ex:"A student spends seven weeks building a pipeline and arrives with a results table. Supervisor's first question: “why this baseline?” The baseline is the wrong one; the comparison is meaningless; five of the seven weeks are lost. Alternative: in week 1 the student sends a one-page pitch (claim, prediction that would falsify it, smallest killing experiment, the baseline and why). Supervisor replies in a day with the baseline objection. Cost: one day and some awkwardness. The seven weeks then produce a table that means something.",
@@ -1991,8 +1992,8 @@ const LESSONS = {
     ex:"Twenty subgroups, three metrics, two exclusion rules: 120 analyses, most defensible. At α = 0.05 you expect about six “significant” results by chance. You find one that tells a beautiful story and report it. The intro is rewritten around it. Nothing was fabricated; the result is still noise. With the plan written first (primary measure: accuracy, or the pre-registered scale; primary comparison: the full population; exclusion: runs that diverged, or participants who failed the attention check, decided in advance), the same data yields one honest null and a labelled exploratory finding to replicate.",
     deep:"Gelman and Loken's point is that the garden of forking paths does not require intent: a researcher who would have made different analysis choices under different data has effectively run many tests even if they ran one. The fix is to remove the freedom: decide the primary analysis before seeing outcomes, in writing, dated. Where preregistration exists as a venue, use it; where it doesn't, a note to your supervisor counts. Exploration remains allowed; it just gets labelled exploratory, and its findings become hypotheses for the next study rather than results of this one."},
   d_underpowered: {
-    ex:"Seed-to-seed standard deviation on your benchmark is 1.2 points. The improvement worth caring about is 1 point. With 3 seeds per arm the standard error of the difference is about 1.0 point: a true 1-point effect is detected less than a third of the time, and when it is, the estimated effect is inflated (the winner's curse). With 10 seeds per arm the standard error is about 0.54 points and power is still only about 50%; 20 seeds per arm (standard error 0.38) reaches about 75%. If that is unaffordable, a paired design (same seeds and data order for both arms) can cut the noise substantially. The same arithmetic runs on participants: Button et al. estimated the median power of neuroscience studies at around 20%, and 30 participants for a small effect sits in that range.",
-    deep:"Underpowered studies fail twice: a null is uninformative, and a positive is likely an overestimate that will not replicate. Button et al. documented this across neuroscience; ML has the same problem with seeds. Power arithmetic takes ten minutes once you have a pilot variance: estimate the noise, decide the smallest effect that matters, compute n. If the affordable n cannot detect the effect, do not run the study and hope; shrink the question, change the design to reduce variance, or pick a setting where effects are larger."},
+    ex:"Seed-to-seed standard deviation on your benchmark is 1.2 points. The improvement worth caring about is 1 point. With 3 seeds per arm the standard error of the difference is about 1.0 point: a true 1-point effect is detected less than a third of the time, and when it is, the estimated effect is inflated (the winner's curse). With 10 seeds per arm the standard error is about 0.54 points and power is still only about 50%; 20 seeds per arm (standard error 0.38) reaches about 75%. If that is unaffordable, a paired design (same seeds and data order for both arms) can cut the noise substantially.",
+    deep:"Underpowered studies fail twice: a null is uninformative, and a positive is likely an overestimate that will not replicate. Button et al. documented this across neuroscience (median power around 20%); ML has the same problem with seeds. Power arithmetic takes ten minutes once you have a pilot variance: estimate the noise, decide the smallest effect that matters, compute n. If the affordable n cannot detect the effect, do not run the study and hope; shrink the question, change the design to reduce variance, or pick a setting where effects are larger."},
   d_no_prototype: {
     ex:"Plan: four months building a distributed training system for a new architecture (or the full assay pipeline, or the complete survey instrument), then experiments. Month five: the architecture underperforms a small baseline; the reason is a data-loading bug that a 200-line single-GPU prototype would have exposed in week one. Alternative: week one, a toy version on 1% of the data that trains in ten minutes; week two, the first plot; week three, the design conversation that changes the architecture. The distributed system, when it is built, is built for something that already works.",
     deep:"Building the real thing first feels rigorous and avoids the “but it's only a toy” objection. But a prototype's job is to fail cheaply, and most of what you learn in a project you learn from early failures. Karpathy's recipe is the same idea in ML form: become one with the data, get end-to-end working at small scale, overfit one batch, then scale. Rule of thumb: the first result that could be wrong should exist within a week. If your plan's first plot is in month four, the plan has no feedback loop."},
@@ -2030,7 +2031,7 @@ const LESSONS = {
     ex:"Your method: 200 trials of random search. Baseline: the five hyperparameters from its 2019 paper, tuned for a different dataset. Headline: +2.4 points. Dodge et al. propose plotting expected validation performance against the number of tuning trials; when you do, the baseline at 200 trials matches your method at 200, and beats it at 20. The honest claim becomes “comparable performance with fewer tuning trials”, which may still be a paper, and is at least true.",
     deep:"Asymmetric budgets are the quiet version of weak baselines: nobody copies a number, but the comparison is still between a tuned method and an untuned one. Log the number of configurations every method saw; give equal budgets; report the performance-versus-budget curve rather than a single point. This also tells readers what your method costs to deploy, which they need to know. Bergstra and Bengio's random search makes equal-budget tuning cheap to implement."},
   e_open_loop_code: {
-    ex:"Reviewer asks for the seed-variance of Figure 3. The figure came from a notebook cell that has since been overwritten; the config that produced it is not recorded; the closest reconstruction gives different numbers. Three days of archaeology, and the rebuttal reports a figure the paper doesn't show. With a run log (config, seed, git hash, command) per experiment, the answer is `python make_fig3.py --seeds 0-9` and an afternoon.",
+    ex:"Reviewer asks for the seed-variance of Figure 3. The figure came from a notebook cell that has since been overwritten; the config that produced it is not recorded; the closest reconstruction gives different numbers. Three days of digging through old runs, and the rebuttal reports a figure the paper doesn't show. With a run log (config, seed, git hash, command) per experiment, the answer is `python make_fig3.py --seeds 0-9` and an afternoon.",
     deep:"Notebooks are excellent for exploration and terrible as the system of record, because state is mutable and invisible. The minimum for reproducibility to yourself: code under version control, every run launched from a config with a seed, outputs written to a directory named by run id, every figure regenerable by one command. Pineau's checklist is the external version of the same discipline. The cost is a day of setup; the return is every rebuttal, every follow-up, and the ability to trust your own numbers a month later."},
   e_sunk_cost: {
     ex:"Kill criterion: beat the baseline by week 8. Week 10: 1 point (one standard deviation) behind. “Two more weeks”: week 12, 0.8 behind; a new trick, week 14, 0.5 behind. Week 20: the method matches the baseline and the semester is gone. Plan B, written in week 0, was a two-month project with a known result. Counterfactual: pivot at week 8 with a short write-up of what was learned; plan B submitted by week 18.",
@@ -2225,7 +2226,7 @@ function scopeShape(s) {
   if (hi("impact") && lo("killability")) return {name:"Ambitious, unfalsifiable", text:"It would matter if it worked, and nothing could show it doesn't. Before anything else, find the pilot: the smallest experiment or proof whose failure would make you stop.", res:["contingency","disprove"]};
   if (lo("fit")) return {name:"Someone else's project", text:"Scores may be fine, but you don't want it. A year is long; either find the angle that haunts you inside it, or negotiate a different one.", res:["triage","hamming"]};
   if (hi("novelty") && hi("impact") && hi("feasibility") && hi("killability") && hi("fit")) return {name:"PhD-shaped", text:"New, matters, doable, can fail early, and you want it. Write the one-page pitch and the kill criterion this week, then start the pilot.", res:["greatideas","heilmeier"]};
-  if (lo("impact")) return {name:"Interesting to few", text:"New and doable, but hard to say who would act differently. Ask the Heilmeier question: who cares, and what changes for them? Sometimes the answer upgrades the project; sometimes it is honestly a side quest.", res:["heilmeier","method"]};
+  if (lo("impact")) return {name:"Interesting to few", text:"New and doable, but hard to say who would act differently. Ask the Heilmeier question: who cares, and what changes for them? Sometimes the answer upgrades the project; sometimes it is honestly a side project.", res:["heilmeier","method"]};
   return {name:"Balanced, not yet sharp", text:"No dimension is a problem, and none is a strength. Pick one to push: usually novelty (name a sharper kind) or killability (a smaller, earlier pilot).", res:["greatideas","heilmeier"]};
 }
 
@@ -2626,7 +2627,7 @@ function answerRun(k) {
   const vic = o.k === "sound" ? "i-check" : o.k === "pit" ? "i-x" : "i-tilde";
   const sound = c.o.find(x => x.k === "sound");
   let html = `<div class="verdict ${o.k}"><div class="vic">${icon(vic)}</div><div><div class="vt">${label} <span class="small muted" style="font-weight:400">(${delta})</span></div><div>${annotate(o.f).html}</div>`;
-  if (o.k === "meh") html += `<div class="small muted" style="margin-top:6px">Defensible: a reviewer would accept it. Costly: it spends weeks or rigour the sound option keeps, and it earns no credit for dodging the pitfall.</div>`;
+  if (o.k === "meh") html += `<div class="small muted" style="margin-top:6px">Defensible: a reviewer would accept it. Costly: it spends weeks or rigour the sound option keeps. Not a pitfall, so no dodge is counted either.</div>`;
   if (o.k !== "sound") html += `<div class="contrast"><b>The sound call was ${quoteOpt(sound.t)}</b> ${annotate(sound.f).html}</div>`;
   if (run.commitNote) html += `<div class="small" style="margin-top:8px"><span class="muted">You said first:</span> <em>${esc(run.commitNote)}</em></div>`;
   html += `</div></div>`;
@@ -2686,7 +2687,7 @@ function finishRun() {
     {min:82, v:"Ready for review", l:"The claims are as big as the evidence and nothing is hiding in the appendix. Reviewers will still find something; that is their job."},
     {min:58, v:"Fixable: major revision", l:"A real result with real holes. The fixes are known, they are listed below, and most are cheaper now than after review."},
     {min:35, v:"Redesign", l:"The study cannot support its claim as designed. Almost every pitfall below is a design decision, and design decisions can be remade."},
-    {min:-1, v:"Back to the question", l:"The result may be true; nobody can tell yet, including you. Start from the question and the kill criterion next time: they are the cheap part."}
+    {min:-1, v:"Back to the question", l:"The result may be true; nobody can tell yet, you included. Next time start from the question and the kill criterion: they are the cheap part, and they are where everyone learns this."}
   ];
   const bi0 = BANDS.findIndex(b => run.rigor >= b.min); let bi = bi0;
   if (over && bi < BANDS.length - 1) bi++;
@@ -2709,7 +2710,7 @@ function finishRun() {
   $("pm-map-sum").textContent = `The map: ${run.hit.length} hit · ${dodgedU.length} dodged · ${inDeckN.size - run.hit.length - dodgedU.length} other in this domain's deck · ${Object.keys(PITFALLS).length - inDeckN.size} in other domains`;
   const hitHTML = run.hit.map((h, i) => `<details class="pm"${i === 0 ? " open" : ""}><summary><span class="sw" style="background:var(--bad)"></span><span class="ph">${esc(PHASES.find(p => p.id === h.card.ph).name)}</span>${DIAG[h.opt.p] ? diagramSVG(DIAG[h.opt.p], 40) : ""}<b>${esc(PITFALLS[h.opt.p].name)}</b><span class="chev">▾</span></summary>
     <div class="inner"><div class="small muted" style="margin-bottom:6px">${esc(h.card.title)} — you chose: <em>${esc(h.opt.t)}</em></div>${pitboxHTML(h.opt.p, false, true)}</div></details>`).join("");
-  $("pm-hit").innerHTML = hitHTML || (run.meh.length ? `<p class="muted">No pitfalls. What cost you were the defensible-but-costly calls below.</p>` : `<p class="muted">None. Either you have done this before, or you have read the field guide. Try another domain.</p>`);
+  $("pm-hit").innerHTML = hitHTML || (run.meh.length ? `<p class="muted">No pitfalls. What cost you were the defensible-but-costly calls below.</p>` : `<p class="muted">None. Either you have done this before, or the field guide stuck. Try another domain; the traps change shape.</p>`);
   $("pm-meh-card").classList.toggle("hidden", !run.meh.length);
   $("pm-meh").innerHTML = run.meh.map(m => { const s = m.card.o.find(o => o.k === "sound"); return `<details class="pm"><summary><span class="sw" style="background:var(--meh)"></span><span class="ph">${esc(PHASES.find(p => p.id === m.card.ph).name)}</span><b>${esc(m.card.title)}</b><span class="chev">▾</span></summary><div class="inner"><div class="small muted">You chose: <em>${esc(m.opt.t)}</em></div><div style="margin-top:4px">${esc(m.opt.f)}</div><div class="contrast"><b>The sound call was ${quoteOpt(s.t)}</b> ${esc(s.f)}</div></div></details>`; }).join("");
   const first = [], more = []; run.hit.forEach(h => { const r = PITFALLS[h.opt.p].res; first.push(r[0]); more.push(...r.slice(1)); });
@@ -2786,7 +2787,7 @@ function renderTasteItem() {
   $("t-why-label").innerHTML = taste.i === 0 ? "Before you find out: why? (optional, one line, kept on this device). Saying <em>why</em> before the reveal is what trains the judge; after it, you would only be rationalising." : "Why? One line, before the reveal.";
   $("t-next").classList.add("hidden");
   $("t-q").focus();
-  $("t-streak").innerHTML = taste.streak >= 2 ? `<span class="flame">🔥</span> streak ${taste.streak}` : "";
+  $("t-streak").innerHTML = taste.streak >= 2 ? `${icon("i-check")} streak ${taste.streak}` : "";
   const cs = $("t-confs"); cs.innerHTML = "";
   CONF.forEach(c => { const b = document.createElement("button"); b.className = "conf"; b.dataset.id = c.id; b.textContent = `${c.label} (${Math.round(confP(c, it) * 100)}%)`; b.setAttribute("aria-pressed", "false"); b.addEventListener("click", () => revealTaste(c)); cs.appendChild(b); });
 }
@@ -2809,7 +2810,7 @@ function revealTaste(c) {
   const first = !store.seen[item.id]; store.seen[item.id] = true;
   taste.results.push({it, correct, conf: c, p, pts, flip: taste.flip, first});
   $("t-pts").textContent = (taste.points >= 0 ? "+" : "") + taste.points;
-  $("t-streak").innerHTML = taste.streak >= 2 ? `<span class="flame">🔥</span> streak ${taste.streak}` : "";
+  $("t-streak").innerHTML = taste.streak >= 2 ? `${icon("i-check")} streak ${taste.streak}` : "";
   if (first) store.taste.points += pts;
   store.taste.n++; if (correct) store.taste.correct++; saveStore();
   const note = $("t-why-text").value.trim(); if (note) { store.notes[item.id] = note; saveStore(); } $("t-why-text").readOnly = true;
@@ -2879,7 +2880,7 @@ function finishTaste() {
   else if (ece < 0.15 && Math.abs(gap) <= 0.12) { cal = "calibrated"; note = `Stated confidence ${Math.round(avgConf * 100)}%, actual accuracy ${Math.round(acc * 100)}%. A forecaster who says 70% and is right 70% of the time. Now raise the accuracy without losing this.`; }
   else if (gap > 0.12 || (ece >= 0.15 && gap > 0)) { cal = "overconfident"; note = `You said ${Math.round(avgConf * 100)}% on average and were right ${Math.round(acc * 100)}% of the time. Overconfidence is the default for people who can write a plan but have not yet judged many: the plan looks fine because you could have written it. Cheap fix: before you say “sure”, name the feature that decides it.`; }
   else { cal = "underconfident"; note = `You were right ${Math.round(acc * 100)}% of the time but only claimed ${Math.round(avgConf * 100)}%. Your discriminator is better than you think; trust the feature you noticed. Underconfidence has a cost too — it is the silence until results.`; }
-  if (n >= 5) note += ` Calibration error (the average distance of the dots from the diagonal, weighted by how many answers sit in each dot): ${Math.round(ece * 100)} points. With ${n} items each dot rests on a few answers; one round is a hint, three rounds are a read.`;
+  if (n >= 5) note += ` Calibration error: ${Math.round(ece * 100)} points (how far the dots sit from the diagonal). One round is a hint; three rounds tell you something.`;
   $("tr-cal").textContent = cal; $("tr-calnote").textContent = note; $("tr-rel").innerHTML = reliabilitySVG();
   const missed = taste.results.filter(r => !r.correct);
   $("tr-missed-card").classList.toggle("hidden", !missed.length);
