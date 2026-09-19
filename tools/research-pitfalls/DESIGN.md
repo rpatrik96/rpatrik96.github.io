@@ -65,6 +65,13 @@ convergence studies). "General" shows only the domain-neutral cards.
    guess +1; wrong: sure −6, leaning −2, guess +1 (leaning beats guess above 60% belief, sure
    beats leaning above 80%, the midpoints between the stated probabilities).
 
+   Fairness rule for every pair: both sides are the same kind of work, at the same altitude
+   (a goal against a goal, a plan against a plan), in the same stated setting, and neither is
+   a strawman, so only the named feature differs. A devil's-advocate pass over all 48 pairs
+   rewrote eight that broke it. Extending a theorem to a known setting is valid work without
+   a prediction; the theory boundary pair therefore turns on assumptions checked against the
+   setting versus assumptions added until the proof goes through.
+
    Two **preference items** per round have no right answer: both sides are sound and the pick
    is a reading on one spectrum (no points, no confidence step). Abstract pairs ask which
    abstract makes the sounder claim, never which paper is better, since only the abstract is
@@ -82,8 +89,13 @@ convergence studies). "General" shows only the domain-neutral cards.
    pulled the pick left). Hollow mark: this round; filled mark: all rounds on the device. The
    profile is descriptive, not graded, and says so.
 3. **Field guide** — the full pitfall catalog by phase as expandable tiles (what / smells like /
-   instead / read, plus the worked example), hit/dodged marks from this device, a glossary of
-   every term the game uses, the player's taste-gym notes, and every linked resource in one list.
+   instead / read, plus the worked example), hit/dodged marks from this device, the player's
+   taste-gym notes, a glossary of every term the game uses, and every linked resource. The
+   glossary and the reading list open as collapsed groups with counts (nine glossary groups:
+   statistics, design, evaluation, models, theory, code and compute, simulation, lab and social
+   science, writing; seven reading groups by what the reading helps with), because the flat
+   lists of about 180 terms and 73 readings were too dense to scan. The glossary search opens
+   only the groups with a match and hides the rest.
 
 ## Didactic design (after a learning-science review)
 
