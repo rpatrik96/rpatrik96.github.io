@@ -51,13 +51,25 @@ convergence studies). "General" shows only the domain-neutral cards.
    only the first exposure to an item, so repetition does not level you up.
 3. **Field guide** — the full pitfall catalogue by phase as expandable tiles (what / smells like /
    instead / read, plus the worked example), hit/dodged marks from this device, a glossary of
-   every term the game uses, and every linked resource in one list.
+   every term the game uses, the player's taste-gym notes, and every linked resource in one list.
+
+## Terms and tooltips
+
+Every technical term in a situation, option, plan, pair or reveal gets a dotted underline and a
+hover tooltip with a one-line definition, and each card lists its terms in a tap-safe strip
+underneath (the options are buttons, so a tap on an underlined word would otherwise pick the
+answer). The index is built from `GLOSSARY` (`[term, definition, surface forms]`, ~180 entries
+after an exhaustive audit of every decision and option text) plus the 45 pitfall names, whose
+tooltip is the catalogue's one-line *what*. Only the first occurrence of a term in a text block is
+marked; surface forms are chosen to avoid ordinary English words (so "wells" is marked, "well" is
+not). Idioms that a non-native reader might miss were reworded in the cards.
 
 ## Content
 
 - 45 pitfalls (each with a worked example and a longer explanation), 59 scenario cards, 15
   pairwise items, 20 spot-the-flaw items (options use the catalogue's pitfall names), 60
-  glossary entries, 68 resources. The "why" notes from the taste gym are listed in the field guide.
+  glossary entries (about 180 with the tooltip audit), 70 resources. The "why" notes from the taste
+  gym are listed in the field guide.
 - Reviewed with an audience-persona pass (five first-year personas across domains) and a
   devil's-advocate pass (factual claims about cited papers verified, game logic simulated,
   scoring fairness, accessibility); both rounds' findings are folded in. Option texts are

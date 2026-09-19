@@ -30,6 +30,7 @@ from your mistakes. **Train your taste** gamifies the discriminative skill from
 plans, spot the flaw in a third, say how sure you are, and get scored on accuracy *and*
 calibration. Machine learning (experimental and theory) is the main focus; a domain selector
 re-voices the traps for computational, lab, and social science. A field guide lists every pitfall
-with its sources. Everything runs in your browser; nothing is sent anywhere.
+with its sources, and every technical term has a hover tooltip. Everything runs in your browser;
+nothing is sent anywhere.
 
 [**Open the game →**](/tools/research-pitfalls/){: .btn .btn--primary}

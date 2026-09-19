@@ -257,6 +257,17 @@
   @media(max-width:620px){.gloss{grid-template-columns:1fr}}
   .gloss .gl{display:grid; grid-template-columns:auto 1fr; gap:8px; padding:5px 0; border-top:1px solid var(--line)}
   .gloss .gl b{white-space:nowrap} .gloss .gl span{color:var(--muted)}
+  /* ---- term tooltips ---- */
+  .term{border-bottom:1px dotted var(--accent-dark); cursor:help; position:relative; text-decoration:none}
+  .term::after{content:attr(data-tip); position:absolute; left:0; bottom:calc(100% + 8px); background:var(--ink); color:var(--bg);
+    padding:8px 10px; border-radius:8px; font-size:.8rem; line-height:1.35; font-weight:400; text-transform:none; letter-spacing:0;
+    width:max-content; max-width:min(300px, 80vw); z-index:30; display:none; pointer-events:none; box-shadow:var(--shadow)}
+  .term.r::after{left:auto; right:0}
+  @media (hover:hover){ .term:hover::after{display:block} }
+  .termstrip{margin-top:12px; padding-top:10px; border-top:1px dashed var(--line); display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+  .tchip{border:1px dotted var(--accent-dark); color:var(--accent-dark); border-radius:999px; padding:.15em .6em; font-size:.8rem; background:var(--chip)}
+  .tchip[aria-expanded="true"]{background:var(--btn); color:var(--on-accent); border-style:solid}
+  .tdef{flex-basis:100%; font-size:.88rem; background:var(--soft); border-radius:8px; padding:8px 10px; margin-top:4px}
   .callout{border-left:3px solid var(--accent); background:rgba(74,143,227,.08); padding:10px 14px; border-radius:8px; margin:10px 0; font-size:.94rem}
 </style>
 </head>
@@ -322,7 +333,8 @@
       </button>
     </div>
     <p class="small muted" style="margin-top:16px">Runs in your browser; nothing is sent anywhere. Progress stays on
-      this device. It is a game, not a checklist.</p>
+      this device. It is a game, not a checklist. <span class="term" data-tip="Like this: hover or tap the chip under a card to see the definition.">Dotted terms</span> have a
+      one-line explanation on hover; every card also lists its terms underneath, tap-friendly.</p>
   </section>
 
   <!-- RUN -->
@@ -338,6 +350,7 @@
       <h2 id="run-title" tabindex="-1"></h2>
       <p class="situation" id="run-situation"></p>
       <div class="opts" id="run-opts"></div>
+      <div id="run-terms"></div>
       <div id="run-verdict" aria-live="polite"></div>
       <div class="underbar">
         <span class="small muted" id="run-keys">Keys: <kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> · <kbd>Enter</kbd> next</span>
@@ -404,6 +417,7 @@
       <h2 id="t-q" tabindex="-1"></h2>
       <div id="t-plan" class="plan hidden"></div>
       <div id="t-opts" class="opts"></div>
+      <div id="t-terms"></div>
       <div class="confrow hidden" id="t-confrow">
         <span class="small muted">How sure are you?</span>
         <span id="t-confs"></span>
@@ -855,7 +869,7 @@ const CARDS = [
      f:"A prior-work check matters, but it is bounded: two focused hours plus asking two people beats three more weeks. Reading can become a way of not deciding."}
    ]},
   {id:"Q_method", ph:"Q", dom:"all", title:"Whose problem is it?",
-   s:"You know one method inside out. A new dataset (or setting) appears in the group and nobody has touched it.",
+   s:"You know one method extremely well. A new dataset (or setting) appears in the group and nobody has touched it.",
    o:[
     {t:"Apply your method: you know its failure modes, the group needs a result on this data, and it's a solid first paper.", k:"pit", p:"q_method_first", w:2, r:-8,
      f:"Platt's warning: beware the person of one method. Ask “what would we know afterwards that we don't know now?” If the answer is “that X also works on Y”, that is a result nobody builds on."},
@@ -875,7 +889,7 @@ const CARDS = [
      f:"Exploratory work is legitimate when it is labelled as such — but pre-commit to what would count as interesting, or you will find something in any noise."}
    ]},
   {id:"Q_story", ph:"Q", dom:"all", title:"One beautiful story",
-   s:"Your reading suggests an elegant mechanism that explains the phenomenon. You can already see the figure.",
+   s:"Your reading suggests an elegant mechanism that explains the phenomenon. You can already imagine the final plot.",
    o:[
     {t:"Design the cleanest possible demonstration of the mechanism; if it's real, it will show, and rivals can wait for the discussion section.", k:"pit", p:"q_single_hypothesis", w:2, r:-8,
      f:"You will find evidence for it, because you are looking for it. Ask: do I want to prove myself right, or find out what's true?"},
@@ -907,7 +921,7 @@ const CARDS = [
   {id:"Q_theorem_for", ph:"Q", dom:["ml_theory"], title:"A theorem for whom?",
    s:"You can prove a clean result about a model nobody trains. The proof is within reach.",
    o:[
-    {t:"Prove it and write the introduction around deep networks; the model is a stand-in.", k:"pit", p:"q_method_first", w:6, r:-6,
+    {t:"Prove it and write the introduction around deep networks; the model is a substitute for them.", k:"pit", p:"q_method_first", w:6, r:-6,
      f:"Tractability-first is method-first in disguise, and the introduction claims what the model cannot support. Ask what question this answers about the models people care about."},
     {t:"Write the question first, then find the simplest model in which the phenomenon still appears.", k:"sound", w:2, r:8,
      f:"A toy model is a virtue when it isolates the mechanism; a vice when it is chosen for its proof, not its phenomenon."},
@@ -928,7 +942,7 @@ const CARDS = [
   {id:"Q_hyp_th", ph:"Q", dom:["ml_theory"], title:"The claim",
    s:"Time to write the claim at the top of your project document.",
    o:[
-    {t:"“We characterise the behaviour of the estimator.” Keep it open; the theorem will say what it says, and a specific prediction risks being wrong in print.", k:"pit", p:"q_vague_hypothesis", w:0, r:-8,
+    {t:"“We characterise the behaviour of the estimator.” Keep it open; the theorem will say what it says, and a specific prediction risks being shown wrong in a published paper.", k:"pit", p:"q_vague_hypothesis", w:0, r:-8,
      f:"Any theorem confirms it. Without a predicted dependence there is nothing a numerical check could contradict, so nothing will be checked."},
     {t:"“Under assumption A in regime R, Q scales as f(n); we check the slope numerically, and if it disagrees the mechanism story is wrong.”", k:"sound", w:1, r:8,
      f:"A predicted dependence with a numerical check attached. The check costs an afternoon and catches wrong theorems before reviewers do."},
@@ -946,7 +960,7 @@ const CARDS = [
     {t:"Use whatever the last paper in the area used.", k:"meh", w:0, r:2,
      f:"A fine default, if you check that it measures what you claim. A single inherited number for a complex thing is how fields drift."}
    ]},
-  {id:"D_power", ph:"D", dom:["ml_exp","comp","lab","social","any"], title:"Too small to tell",
+  {id:"D_power", ph:"D", dom:["ml_exp","comp","lab","social","any"], title:"Too few to tell",
    s:"Compute (or participants, or reagents) are limited. How many runs?",
    o:[
     {t:"Pilot for the variance; choose the n that can detect the effect you'd care about.", k:"sound", w:2, r:8,
@@ -1075,7 +1089,7 @@ const CARDS = [
   {id:"D_validate_sim", ph:"D", dom:["comp"], title:"Trusting the simulator",
    s:"You wrote the simulator yourself. There is an analytic solution for one special case.",
    o:[
-    {t:"Go straight to the interesting regime; the special case is trivial and the solver is standard.", k:"pit", p:"e_no_sanity_checks", w:2, r:-9,
+    {t:"Skip the checks and simulate the case you care about; the special case is trivial and the solver is standard.", k:"pit", p:"e_no_sanity_checks", w:2, r:-9,
      f:"A simulator that has never reproduced a known answer has not yet been shown to simulate anything."},
     {t:"Reproduce the analytic case first; then check results stop changing as grid and time step are refined.", k:"sound", w:2, r:8,
      f:"Every result you report will rest on this week. Convergence studies are how you know the instability is physics, not the grid."}
@@ -1091,7 +1105,7 @@ const CARDS = [
     {t:"A large experiment on a real model; try a few architectures and report the one where the predicted scaling is cleanest.", k:"pit", p:"a_forking", w:4, r:-8,
      f:"Choosing the architecture after seeing which one fits is a forking path; the figure then shows the selection, not the theorem."}
    ]},
-  {id:"D_sequential", ph:"D", dom:["social","lab"], title:"Peeking",
+  {id:"D_sequential", ph:"D", dom:["social","lab"], title:"Peeking at the results",
    s:"Recruitment is slow. Someone suggests checking the result every twenty participants and stopping when it's clear.",
    o:[
     {t:"Sensible: stop when it's significant, save the budget, and don't expose more participants than needed.", k:"pit", p:"d_optional_stopping", w:0, r:-9,
@@ -1100,9 +1114,9 @@ const CARDS = [
      f:"Planned looks with a correction are legitimate and can save budget. Unplanned looks are the problem."}
    ]},
   {id:"D_vv", ph:"D", dom:["comp"], title:"Verification and validation",
-   s:"The solver passes its convergence tests. Time to run the science?",
+   s:"The solver passes its convergence tests. Ready to run the real experiments?",
    o:[
-    {t:"Yes; the numerics are right, the equations are textbook, so the results will be right too.", k:"pit", p:"d_verification", w:2, r:-8,
+    {t:"Yes; the numerics are right and the equations are standard, so the results will be right too.", k:"pit", p:"d_verification", w:2, r:-8,
      f:"Verification (the code solves the equations correctly) is not validation (the equations describe the system). A converged answer to the wrong equations is still wrong."},
     {t:"First a comparison with measured data, separate from the analytic checks; then the science.", k:"sound", w:2, r:8,
      f:"Verification (analytic cases, convergence) and validation (measured data) are separate checks. With both, the results have a reason to be believed."}
@@ -1163,7 +1177,7 @@ const CARDS = [
   {id:"E_sunk", ph:"E", dom:"all", title:"Week 10",
    s:"The kill criterion said week 8. It's week 10 and the pilot still doesn't show the effect. You have plan B on paper.",
    o:[
-    {t:"Two more weeks: the gap is closing, and switching now throws away ten weeks of work.", k:"pit", p:"e_sunk_cost", w:6, r:-8,
+    {t:"Two more weeks: the result is getting closer, and switching now throws away ten weeks of work.", k:"pit", p:"e_sunk_cost", w:6, r:-8,
      f:"“Two more weeks” is rarely said only once. The ten weeks are gone whichever way you decide; only the next weeks are yours to spend."},
     {t:"A short postmortem (what did we learn?), then plan B.", k:"sound", w:1, r:8,
      f:"Quitting a design is not quitting the question. The learning from the failed pilot is the first section of plan B."},
@@ -1186,7 +1200,7 @@ const CARDS = [
     {t:"Write it out in the appendix, with the reference if it is standard.", k:"sound", w:1, r:8,
      f:"Half the time it takes ten minutes. The other half is where the paper actually is."}
    ]},
-  {id:"E_dumb", ph:"E", dom:["ml_theory"], title:"The dumb case",
+  {id:"E_dumb", ph:"E", dom:["ml_theory"], title:"The trivially simple case",
    s:"You have the theorem. You have not tried it for d = 1, n = 1, or the identity map.",
    o:[
     {t:"It's general; d = 1 tells you nothing the theorem doesn't already say.", k:"pit", p:"e_edge_cases", w:0, r:-8,
@@ -1203,7 +1217,7 @@ const CARDS = [
      f:"For model outputs: shuffle and hide the source before anyone scores. Same principle as a wet lab."}
    ]},
   {id:"E_sweep", ph:"E", dom:["comp"], title:"The parameter sweep",
-   s:"The first sweep shows nothing. You have a hunch about a narrower range.",
+   s:"The first sweep shows nothing. You have an intuition about a narrower range.",
    o:[
     {t:"The hunch is physically motivated: sweep the narrower range at higher resolution and report that as the main result.", k:"pit", p:"a_forking", w:2, r:-8,
      f:"A range chosen after the first plot is a fork in the garden. Report the whole sweep, including where nothing happened."},
@@ -1214,7 +1228,7 @@ const CARDS = [
   {id:"E_lowerbound", ph:"E", dom:["ml_theory"], title:"Below the lower bound",
    s:"Your upper bound is tighter than a published lower bound for what looks like the same problem.",
    o:[
-    {t:"Their lower bound must be loose; write it up as an improvement before someone else notices the gap.", k:"pit", p:"e_silent_bugs", w:2, r:-12,
+    {t:"Their lower bound must be loose; publish yours as an improvement before anyone else spots the inconsistency.", k:"pit", p:"e_silent_bugs", w:2, r:-12,
      f:"The base rate says your proof has an error, or the problems differ. Find the step where your argument would fail on their hard instance before writing anything."},
     {t:"Assume an error: compare assumptions line by line; run your proof on their hard instance.", k:"sound", w:1, r:9,
      f:"Either you find the gap, or you find the assumption that separates the problems, which is the paper."}
@@ -1223,14 +1237,14 @@ const CARDS = [
   {id:"A_slice", ph:"A", dom:["ml_exp","comp","lab","social","any"], title:"The surprising subgroup",
    s:"After slicing the data twenty ways, one slice shows a striking effect. The main analysis showed nothing.",
    o:[
-    {t:"Lead with the slice; it's the interesting finding, and the null on the full population goes in the appendix.", k:"pit", p:"a_harking", w:1, r:-10,
+    {t:"Make the subgroup result the main finding; the null on the full population goes in the appendix.", k:"pit", p:"a_harking", w:1, r:-10,
      f:"One in twenty slices will look striking by chance. Rewriting the introduction around it is HARKing (Hypothesising After the Results are Known), and you will half-believe you predicted it."},
     {t:"Treat it as a hypothesis: replicate on held-out data or fresh runs first.", k:"sound", w:2, r:8,
      f:"Exploratory findings are where hypotheses come from. They just aren't evidence for themselves."},
     {t:"Report it with a correction for the twenty comparisons, clearly labelled exploratory.", k:"meh", w:0, r:5,
      f:"Honest, and in a one-shot design (new participants would take months) it is the maximum you can do. Replication is stronger where it is possible."}
    ]},
-  {id:"A_bestof", ph:"A", dom:["ml_exp","comp"], title:"Best of five",
+  {id:"A_bestof", ph:"A", dom:["ml_exp","comp"], title:"The best of five runs",
    s:"Five runs (seeds, or initial conditions). One is excellent; the others are ordinary.",
    o:[
     {t:"Report the best run; it shows what the method can do, and the baselines' papers did the same.", k:"pit", p:"a_cherry_pick", w:0, r:-9,
@@ -1241,7 +1255,7 @@ const CARDS = [
   {id:"A_explain", ph:"A", dom:["comp","lab","social","any"], title:"“This shows that…”",
    s:"The results section. You measured an association between an intervention and an outcome.",
    o:[
-    {t:"“This shows that the intervention causes the outcome.” Hedging reads as weakness.", k:"pit", p:"a_overclaim", w:0, r:-8,
+    {t:"“This shows that the intervention causes the outcome.” Cautious wording looks like weakness.", k:"pit", p:"a_overclaim", w:0, r:-8,
      f:"You measured a number. The mechanism is your hypothesis about the number; keep them in different sentences."},
     {t:"State what was measured; the causal claim separately, as a hypothesis with a test.", k:"sound", w:0, r:8,
      f:"Explanation versus speculation. Speculation is fine when labelled."}
@@ -1264,7 +1278,7 @@ const CARDS = [
     {t:"Resample the existing measurements (a bootstrap over items) and say that's what the interval is.", k:"meh", w:0, r:3,
      f:"Captures measurement noise, not repeat-to-repeat noise. Honest if labelled, incomplete."}
    ]},
-  {id:"A_reuse", ph:"A", dom:["ml_exp"], title:"Forty looks",
+  {id:"A_reuse", ph:"A", dom:["ml_exp"], title:"Forty evaluations",
    s:"Over the project you have evaluated on the test set about forty times.",
    o:[
     {t:"Report the last number; every paper in the area does, and it's the test set reviewers know.", k:"pit", p:"a_test_reuse", w:0, r:-8,
@@ -1285,7 +1299,7 @@ const CARDS = [
    o:[
     {t:"Keep the introduction; rates are the object of study and constants are routinely ignored.", k:"pit", p:"a_bound_vacuous", w:0, r:-8,
      f:"A bound above the trivial one (it is vacuous) explains nothing about the setting you claim. Nagarajan & Kolter: some bounds even increase with n."},
-    {t:"Plot the bound against empirical values; state where it bites; otherwise call it qualitative.", k:"sound", w:1, r:8,
+    {t:"Plot the bound against empirical values; state where it is actually restrictive; otherwise call it qualitative.", k:"sound", w:1, r:8,
      f:"An honest qualitative result survives review. A vacuous quantitative claim does not survive one plot in the reviewers' hands."},
     {t:"Report the rate; drop the claim about the practical regime.", k:"meh", w:0, r:3,
      f:"Honest. The plot would tell you and the reader whether there is a regime where the bound bites, which is often the interesting part."}
@@ -1355,7 +1369,7 @@ const CARDS = [
   {id:"R_words", ph:"R", dom:["ml_exp","ml_theory"], title:"Words",
    s:"Draft: “the model understands the task and reasons about it.”",
    o:[
-    {t:"Keep it; everyone in the subfield writes “reasons”, and operational wording reads as hedging.", k:"pit", p:"r_language", w:0, r:-6,
+    {t:"Keep it; everyone in the subfield writes “reasons”, and describing only what was measured looks like a lack of confidence.", k:"pit", p:"r_language", w:0, r:-6,
      f:"“Understands” claims more than any measurement you made. Suggestive language is how a benchmark score becomes a headline."},
     {t:"Describe the measurement; interpretation in its own labelled sentence.", k:"sound", w:0, r:6,
      f:"Operational language ages well. Anthropomorphic language becomes the thing critics quote."}
@@ -1578,67 +1592,190 @@ const FLAWS = [
    repair:"State the accuracy and the split; keep the interpretation in a labelled sentence.", p:"r_language", res:["lipton"]}
 ];
 
+/* [term, one-line definition, surface forms to match in text]. Matching is case-insensitive on word boundaries;
+   list plurals, verb forms and both spellings. Keep definitions under ~25 words: they are tooltips. */
 const GLOSSARY = [
-  ["ablation", "Removing one component at a time to see which one the gain came from."],
-  ["baseline", "The simpler method or the existing state of the art you compare against."],
-  ["batch effect", "A difference caused by when, where or by whom a sample was processed, not by the treatment."],
-  ["bootstrap", "Estimating uncertainty by resampling your own data many times."],
-  ["calibration", "Whether stated confidence matches actual accuracy: a 70% forecast should be right 70% of the time."],
-  ["confound", "A variable that changes together with the treatment, so you cannot tell which one caused the effect."],
-  ["control (positive / negative)", "A condition where you know the effect must appear (positive) or must not (negative), to check the measurement works."],
-  ["discriminative vs generative skill", "Judging whether work is good vs producing it. Taste is the discriminative one."],
-  ["early stopping", "Choosing when to stop training by watching a validation score."],
-  ["forking paths", "Many defensible analysis choices; taking the one that looks best is a hidden multiple comparison."],
-  ["GAN", "Generative adversarial network: a generator and a discriminator train against each other. Here: making vs judging."],
-  ["HARKing", "Hypothesising After the Results are Known: presenting a found pattern as a prediction."],
-  ["held-out set", "Data kept aside and never used for any decision until the final evaluation."],
-  ["hyperparameter", "A setting chosen before training (learning rate, model size), usually by search."],
-  ["kill criterion", "A written condition and date at which the project pivots to plan B."],
-  ["leakage", "Test information reaching the model or the tuning through preprocessing, splitting or reuse."],
-  ["manipulation check", "A measure of whether participants actually experienced the intended manipulation."],
-  ["multiple comparisons", "Running many tests; some will be significant by chance unless corrected for."],
-  ["null result", "No detectable effect. Informative only if the study had the power to detect one."],
-  ["postmortem", "A short structured review of how a project went, done after it ends."],
-  ["power", "The probability that the study detects the effect if it is real. Depends on n, variance and effect size."],
-  ["pre-registration", "A public, timestamped record of hypothesis, sample size and analysis, made before the data."],
-  ["pseudoreplication", "Counting repeated measurements of one unit as independent samples."],
-  ["seed", "The random-number setting for a run; different seeds give different initialisations and data orders."],
-  ["shortcut learning", "A model solving the benchmark through a spurious cue rather than the intended concept."],
-  ["strong inference", "Several rival hypotheses, and an experiment whose outcome excludes at least one."],
-  ["technical replicate", "Repeat measurements of the same sample; they reduce measurement noise but do not add n."],
-  ["vacuous bound", "A bound larger than the trivial one, so it constrains nothing in the regime of interest."],
-  ["validation set", "Data used to make decisions (tuning, stopping) so the test set stays untouched."],
-  ["validity vs reliability", "Reliability: a measure agrees with itself. Validity: it measures the thing you mean."],
-  ["verification vs validation", "Verification: the code solves the equations correctly. Validation: the equations describe the system."],
-  ["winner's curse", "The configuration that won a noisy screen is partly lucky; its true performance is lower."],
-  ["optional stopping", "Collecting more data and re-testing until the result is significant; inflates false positives unless planned for."],
-  ["sequential design / planned looks", "A design that fixes in advance when you may look at the data and adjusts the test for it."],
-  ["zero-shot", "Evaluating a pretrained model on a task without training it on that task's examples."],
-  ["benchmark contamination", "Test items (or near-copies) present in a model's pretraining data."],
-  ["fine-tuning", "Further training a pretrained model on a specific task or dataset."],
-  ["convergence study", "Re-running a simulation at finer grids or time steps until the answer stops changing."],
-  ["exploratory vs confirmatory", "Confirmatory tests a hypothesis fixed in advance; exploratory looks for patterns to test later."],
-  ["effect size", "How big the difference is, in the units that matter, as opposed to whether it is statistically detectable."],
-  ["standard error", "The typical error of an estimate from a sample; shrinks as the square root of n."],
-  ["p-value and α", "p: probability of data at least this extreme if there were no effect. α: the threshold (often 0.05) below which p is called significant."],
-  ["within-subject / paired design", "Each unit gets both conditions, so the comparison cancels unit-level noise."],
-  ["distribution shift", "Test data drawn from a different distribution than training data (new hospital, new year, new domain)."],
-  ["rate vs constant (O-notation)", "O(√(d/n)) says how a bound scales; the hidden constant decides whether it says anything at your d and n."],
-  ["Cronbach's α", "A reliability statistic: how consistently a set of questionnaire items agree with each other."],
-  ["interquartile mean", "The mean of the middle 50% of values; robust to a few extreme runs."],
-  ["multiverse analysis", "Reporting the result under every defensible analysis choice, so the reader sees how much the choice matters."],
-  ["mixed-effects model", "A model with both fixed effects (treatment) and random effects (animal, participant, batch), using nested data correctly."],
-  ["Goodhart's law", "When a measure becomes a target, it stops being a good measure."],
-  ["Bonferroni correction", "Dividing the significance threshold by the number of tests, so many comparisons don't produce false positives."],
-  ["state of the art", "The best reported result on a benchmark at the time of writing."],
-  ["convex / strongly convex / smooth", "Assumptions on a loss function's shape that make optimisation proofs go through; deep-network losses satisfy none of them globally."],
-  ["SGD", "Stochastic gradient descent: the optimiser that trains most neural networks on mini-batches of data."],
-  ["chance level", "The accuracy a trivial rule reaches: random guessing, or always predicting the majority class."],
-  ["majority class", "The most frequent label; predicting it every time is a baseline every classifier must beat."],
-  ["covariate", "A variable you record and adjust for in the analysis, such as batch, age or site."],
-  ["confidence interval", "A range of values consistent with the data at a stated level; the interval, not the point, is the result."],
-  ["discretisation artefact", "A feature of a simulation caused by the grid or time step rather than by the equations."],
-  ["false positive", "Reporting an effect that isn't there; the rate is what α controls when the analysis is fixed in advance."]
+/* [term, one-line definition, surface forms to match in text]. Matching is case-insensitive on word boundaries;
+   list plurals, verb forms and both spellings; avoid forms that are ordinary English words. Definitions are tooltips: keep them short. */
+  ["ablation", "Removing one component at a time to see which one the gain came from.", ["ablation", "ablations", "ablate", "ablated"]],
+  ["baseline", "The simpler method, or the existing best method, that you compare against.", ["baseline", "baselines"]],
+  ["batch effect", "A difference caused by when, where or by whom a sample was processed, not by the treatment.", ["batch effect", "batch effects", "batch"]],
+  ["bootstrap", "Estimating uncertainty by resampling your own data many times.", ["bootstrap", "bootstrapping", "resample", "resampling"]],
+  ["calibration", "Whether stated confidence matches actual accuracy: a 70% forecast should be right 70% of the time.", ["calibration", "calibrated", "calibrate"]],
+  ["confound", "A variable that changes together with the treatment, so you cannot tell which one caused the effect.", ["confound", "confounded", "confounder", "confounding", "confounds"]],
+  ["control (positive / negative)", "A condition where you know the effect must appear (positive) or must not (negative), to check the measurement works.", ["positive control", "negative control", "positive and negative controls", "controls", "control"]],
+  ["discriminative vs generative skill", "Judging whether work is good (discriminative) vs producing it (generative). Taste is the discriminative one.", ["discriminative", "generative skill", "discriminator"]],
+  ["early stopping", "Choosing when to stop training by watching a validation score.", ["early stopping", "early-stop", "early-stopping"]],
+  ["forking paths", "Many defensible analysis choices; taking the one that looks best is a hidden multiple comparison.", ["forking path", "forking paths", "fork in the garden", "garden of forking paths"]],
+  ["GAN", "Generative adversarial network: a generator and a discriminator train against each other. Here: making vs judging.", ["GAN", "GANs"]],
+  ["HARKing", "Hypothesising After the Results are Known: presenting a found pattern as if it had been predicted.", ["HARKing", "HARK"]],
+  ["held-out set", "Data kept aside and never used for any decision until the final evaluation.", ["held-out set", "held-out data", "held-out", "held out"]],
+  ["hyperparameter", "A setting chosen before training (learning rate, model size), usually by search.", ["hyperparameter", "hyperparameters", "hyper-parameter"]],
+  ["kill criterion", "A written condition and date at which the project pivots to plan B.", ["kill criterion", "stopping condition", "go/no-go criterion", "go/no-go"]],
+  ["leakage", "Test information reaching the model or the tuning through preprocessing, splitting or reuse.", ["leakage", "leak", "leaks", "leaked"]],
+  ["manipulation check", "A measure of whether participants actually experienced the intended manipulation.", ["manipulation check", "manipulation checks"]],
+  ["multiple comparisons", "Running many tests; some will be significant by chance unless corrected for.", ["multiple comparisons", "multiple-comparisons", "twenty comparisons", "comparisons"]],
+  ["null result", "No detectable effect. Informative only if the study had the power to detect one.", ["null result", "null results", "a null", "null"]],
+  ["postmortem", "A short structured review of how a project went, done after it ends.", ["postmortem", "postmortems", "post-mortem"]],
+  ["power", "The probability that the study detects the effect if it is real. Depends on n, variance and effect size.", ["power analysis", "statistical power", "power", "underpowered"]],
+  ["pre-registration", "A public, timestamped record of hypothesis, sample size and analysis, made before the data.", ["pre-registration", "preregistration", "pre-register", "pre-registered", "preregistered", "pre-registering"]],
+  ["pseudoreplication", "Counting repeated measurements of one unit as independent samples.", ["pseudoreplication", "pseudoreplicated"]],
+  ["seed", "The random-number setting for a run; different seeds give different initialisations and data orders.", ["seed", "seeds", "random initialisation"]],
+  ["shortcut learning", "A model solving the benchmark through a spurious cue rather than the intended concept.", ["shortcut learning", "shortcut", "shortcuts", "spurious cue"]],
+  ["strong inference", "Several rival hypotheses, and an experiment whose outcome excludes at least one.", ["strong inference"]],
+  ["technical replicate", "Repeat measurements of the same sample; they reduce measurement noise but do not add n.", ["technical replicate", "technical replicates"]],
+  ["vacuous bound", "A bound larger than the trivial one, so it constrains nothing in the regime of interest.", ["vacuous bound", "vacuous", "non-vacuous"]],
+  ["validation set", "Data used to make decisions (tuning, stopping) so the test set stays untouched.", ["validation set", "validation split", "validation", "tune on validation"]],
+  ["validity vs reliability", "Reliability: a measure agrees with itself. Validity: it measures the thing you mean.", ["validity", "reliability", "validated"]],
+  ["verification vs validation", "Verification: the code solves the equations correctly. Validation: the equations describe the system.", ["verification", "validate against", "validation (of a model)"]],
+  ["winner's curse", "The configuration that won a noisy screen is partly lucky; its true performance is lower.", ["winner's curse", "winner’s curse"]],
+  ["optional stopping", "Collecting more data and re-testing until the result is significant; inflates false positives unless planned for.", ["optional stopping", "stop when it's significant", "stopping rule"]],
+  ["sequential design / planned looks", "A design that fixes in advance when you may look at the data and adjusts the test for it.", ["sequential design", "planned looks", "interim looks"]],
+  ["zero-shot", "Evaluating a pretrained model on a task without training it on that task's examples.", ["zero-shot", "zero shot"]],
+  ["benchmark contamination", "Test items (or near-copies) present in a model's pretraining data.", ["contamination", "contaminated", "contamination check"]],
+  ["fine-tuning", "Further training a pretrained model on a specific task or dataset.", ["fine-tuning", "fine-tuned", "fine-tune", "finetuning"]],
+  ["convergence study", "Re-running a simulation at finer grids or time steps until the answer stops changing.", ["convergence study", "convergence tests", "convergence", "grid refinement", "refined"]],
+  ["exploratory vs confirmatory", "Confirmatory tests a hypothesis fixed in advance; exploratory looks for patterns to test later.", ["exploratory", "confirmatory"]],
+  ["effect size", "How big the difference is, in the units that matter, as opposed to whether it is statistically detectable.", ["effect size", "effect sizes", "small effect", "smallest effect"]],
+  ["standard error", "The typical error of an estimate from a sample; shrinks as the square root of n.", ["standard error"]],
+  ["p-value and α", "p: probability of data at least this extreme if there were no effect. α: the threshold (often 0.05) below which p is called significant.", ["p-value", "p-values", "p < 0.05", "significant", "significance", "α"]],
+  ["within-subject / paired design", "Each unit gets both conditions, so the comparison cancels unit-level noise.", ["within-subject", "paired design", "within-pair"]],
+  ["distribution shift", "Test data drawn from a different distribution than training data (new hospital, new year, new domain).", ["distribution shift", "shifted set", "shifted benchmark", "under shift"]],
+  ["rate vs constant (O-notation)", "O(√(d/n)) says how a bound scales; the hidden constant decides whether it says anything at your d and n.", ["O(√(d/n))", "up to log factors", "log factors", "up to constants", "rate in n", "the rate"]],
+  ["Cronbach's α", "A reliability statistic: how consistently a set of questionnaire items agree with each other.", ["Cronbach's α", "Cronbach’s α", "Cronbach"]],
+  ["interquartile mean", "The mean of the middle 50% of values; robust to a few extreme runs.", ["interquartile mean"]],
+  ["multiverse analysis", "Reporting the result under every defensible analysis choice, so the reader sees how much the choice matters.", ["multiverse analysis", "multiverse"]],
+  ["mixed-effects model", "A model with both fixed effects (treatment) and random effects (animal, participant, batch), using nested data correctly.", ["mixed-effects model", "mixed-effects", "mixed effects"]],
+  ["Goodhart's law", "When a measure becomes a target, it stops being a good measure.", ["Goodhart's law", "Goodhart’s law", "Goodhart"]],
+  ["Bonferroni correction", "Dividing the significance threshold by the number of tests, so many comparisons don't produce false positives.", ["Bonferroni correction", "Bonferroni", "correction for the twenty comparisons"]],
+  ["state of the art", "The best reported result on a benchmark at the time of writing.", ["state of the art", "state-of-the-art", "SOTA"]],
+  ["convex / strongly convex / smooth", "Assumptions on a loss function's shape that make optimisation proofs go through; deep-network losses satisfy none of them globally.", ["strongly convex", "convex", "non-convex", "L-smooth"]],
+  ["SGD", "Stochastic gradient descent: the optimiser that trains most neural networks on mini-batches of data.", ["SGD", "gradient descent", "stochastic gradient descent"]],
+  ["chance level", "The accuracy a trivial rule reaches: random guessing, or always predicting the majority class.", ["chance level", "chance", "at chance", "above chance"]],
+  ["majority class", "The most frequent label; predicting it every time is a baseline every classifier must beat.", ["majority class", "majority-class"]],
+  ["covariate", "A variable you record and adjust for in the analysis, such as batch, age or site.", ["covariate", "covariates"]],
+  ["confidence interval", "A range of values consistent with the data at a stated level; the interval, not the point, is the result.", ["confidence interval", "confidence intervals", "interval estimate", "interval estimates", "intervals", "interval", "error bars"]],
+  ["discretisation artefact", "A feature of a simulation caused by the grid or time step rather than by the equations.", ["discretisation artefact", "numerical artefact", "artefact"]],
+  ["false positive", "Reporting an effect that isn't there; the rate is what α controls when the analysis is fixed in advance.", ["false positive", "false positives", "false-positive"]],
+  ["falsify", "To show a claim is wrong by an observation that contradicts it; a good hypothesis states what would falsify it.", ["falsify", "falsifies", "falsified", "falsifiable", "unfalsifiable", "falsifiability"]],
+  ["dataset", "A collection of data examples used to train, test or analyse a method.", ["dataset", "datasets", "data set", "data sets", "new dataset", "dataset D"]],
+  ["hypothesis", "A specific, testable statement predicting what you will observe if your idea is correct.", ["hypothesis", "hypotheses", "primary hypothesis", "unfalsifiable hypothesis"]],
+  ["placeholder letters (C, B, M, S, …)", "Stand-in symbols for the specific condition, baseline, measure, threshold or setting you would fill in for your own project.", ["condition C", "baseline B", "measure M", "setting S", "quantity Q"]],
+  ["δ (delta)", "Greek letter used here for a minimum amount of improvement or difference that you commit to in advance.", ["δ", "delta", "by at least δ"]],
+  ["participant", "A person who takes part in a study, for example by filling a questionnaire or doing a task.", ["participant", "participants", "every twenty participants"]],
+  ["rival hypothesis", "An alternative explanation for the same observation that your experiment should be able to rule out.", ["rival", "rivals", "rival hypothesis", "rival hypotheses", "alternative explanation"]],
+  ["discussion section", "The part of a paper that interprets results, discusses limitations and alternative explanations.", ["discussion section", "the discussion", "for the discussion"]],
+  ["pilot", "A small preliminary study run to check feasibility and estimate variability before the full study.", ["pilot", "pilots", "pilot study", "piloting", "pilot for the variance", "pilot look", "two-week pilot"]],
+  ["neural network", "A neural network with many layers; the standard model in modern machine learning.", ["deep network", "deep networks", "neural network", "neural networks", "network", "networks"]],
+  ["toy model", "A deliberately simplified model or system that keeps one mechanism and drops everything else.", ["toy model", "toy version", "toy results", "stated as a toy"]],
+  ["related work", "The section of a paper surveying prior research on the same problem.", ["related work", "related-work", "related-work sections"]],
+  ["estimator", "A formula or procedure that computes an estimate of an unknown quantity from data.", ["estimator", "estimators"]],
+  ["regime", "A range of parameter values or conditions in which a system behaves in one particular way.", ["regime", "regimes", "practical regime", "paper's regime", "interesting regime", "new regime"]],
+  ["scaling", "How a quantity grows or shrinks as a variable such as sample size n changes.", ["scales as", "scaling", "predicted scaling"]],
+  ["slope", "On a log-log plot the slope is the scaling exponent; comparing it with theory tests the predicted rate.", ["slope", "slopes", "check the slope"]],
+  ["bound", "A proven inequality: an upper bound says a quantity is at most some value, a lower bound at least.", ["bound", "bounds", "upper bound", "lower bound", "bound on Q", "the bound"]],
+  ["primary outcome", "The single pre-chosen quantity the study's main conclusion depends on.", ["primary measure", "primary outcome", "primary outcomes", "outcome score", "twelve outcomes"]],
+  ["exclusion rules", "Criteria fixed in advance for which data points or participants are dropped from analysis.", ["exclusion rules", "exclusion"]],
+  ["metric", "A number used to score how good a result is, such as accuracy or error.", ["metric", "metrics", "summary number", "new metric"]],
+  ["reagent", "A chemical or biological substance consumed in a lab experiment.", ["reagent", "reagents"]],
+  ["variance", "How much repeated measurements differ from each other; needed to know how many repeats are required.", ["variance", "seed variance", "seed std", "standard deviation", "report the spread"]],
+  ["pipeline", "The chain of processing steps from raw data to final result.", ["pipeline", "pipelines", "full pipeline", "your pipeline"]],
+  ["prototype", "A quick, rough first version built to test whether an idea works before building the full system.", ["prototype", "prototypes", "toy version", "full system"]],
+  ["leaderboard", "A public ranking of methods on a benchmark by one score.", ["leaderboard", "leaderboards", "leaderboard number", "leaderboard metric"]],
+  ["error norm", "A single number summarising how far a computed solution is from a reference solution.", ["error norm"]],
+  ["diagnostic", "An extra measurement that reveals whether the main number is trustworthy or being gamed.", ["diagnostic", "diagnostics", "two diagnostics"]],
+  ["gaming a metric", "Raising a score by exploiting how it is computed rather than by genuinely solving the task.", ["gamed", "gaming", "game the metric", "being gamed"]],
+  ["benchmark", "A standard dataset plus evaluation protocol used to compare methods.", ["benchmark", "benchmarks", "public benchmark", "reasoning-benchmark", "reasoning benchmark", "standard benchmarks"]],
+  ["test set", "Data held back and used once, at the end, to estimate real-world performance.", ["test set", "on test", "touch test once", "labelled test set", "test set as validation", "touch test", "test once", "the test set"]],
+  ["train / validation / test split", "Dividing data into training (fit), validation (tune) and test (final check) parts.", ["split", "splits", "split 80/20", "validation split", "training set", "split first", "identical splits", "its own split"]],
+  ["tuning", "Adjusting hyperparameters to improve performance; must never be done using the test set.", ["tune", "tunes", "tuned", "tuning", "re-tuning", "retuning", "tuning budget", "tune on the test set"]],
+  ["preprocessing", "Cleaning and transforming raw data before modelling, e.g. scaling or selecting features.", ["preprocessing", "pre-processing", "preprocess", "preprocessing choice"]],
+  ["feature", "An input variable used by a model.", ["feature", "features", "50 features"]],
+  ["feature selection", "Choosing which input variables to keep, often by correlation with the label; must be fitted on training data only.", ["feature selection", "selects the 50 features", "fit selection"]],
+  ["standardise", "Rescale a variable to mean 0 and standard deviation 1 using statistics that must come from training data only.", ["standardise", "standardize", "standardises", "standardizes", "standardising", "standardizing", "standardised", "standardized", "fit scaling"]],
+  ["configuration", "One complete set of hyperparameter and design choices for a run.", ["configuration", "configurations", "config", "configs", "100 configurations"]],
+  ["random initialisation", "Starting a model with random parameter values; each seed gives a different starting point.", ["random initialisation", "random initialization", "initialisation", "initialization"]],
+  ["architecture", "The structure of a neural network: its layers, connections and sizes.", ["architecture", "architectures", "new architecture"]],
+  ["augmentation", "Creating modified copies of training examples (crops, flips, noise) to improve generalisation.", ["augmentation", "augmentations", "data augmentation"]],
+  ["training length", "How long a model is trained (steps or epochs); longer training alone can improve results.", ["training length", "trains for twice as long", "same training length"]],
+  ["loss", "The function a model is trained to minimise; it measures how wrong the predictions are.", ["loss", "loss function", "the loss is convex", "convexity of the loss"]],
+  ["non-convex", "A function with many valleys where optimisation can get stuck; neural network losses are typically non-convex.", ["nonconvex", "non-convex case"]],
+  ["cell culture", "A population of cells grown in the lab; the biologically independent unit is the culture, not the well.", ["culture", "cultures", "cell culture", "three cultures"]],
+  ["well", "One small compartment in a lab plate holding a sample; wells from one culture are not independent.", ["wells", "12 wells", "well plate"]],
+  ["pipette", "To transfer a measured volume of liquid with a lab instrument.", ["pipetted", "pipette", "pipetting"]],
+  ["protocol", "The written step-by-step procedure for running an experiment.", ["protocol", "protocols", "the protocol and raw data"]],
+  ["interleave", "Alternate conditions across days, people or machines so that no condition is tied to one batch.", ["interleave", "interleaved", "interleaving"]],
+  ["operator", "The person (or machine) performing a procedure; differences between operators are a source of variation.", ["operator", "operators", "lab members"]],
+  ["cluster node", "One computer in a shared computing cluster; hardware differences between nodes can change results.", ["cluster nodes", "new cluster nodes", "cluster node"]],
+  ["library version", "The version number of a software package; updates can silently change numerical results.", ["library version", "log versions", "older library version", "versions logged"]],
+  ["patch release", "A small software update (e.g. 1.2.3 to 1.2.4) intended only to fix bugs.", ["patch release"]],
+  ["GPU", "Graphics processing unit: the hardware that runs most machine-learning training.", ["GPU", "GPUs", "GPU time", "GPU-hour", "200-GPU-hour run"]],
+  ["pinned environment", "A software setup with every package version fixed, so runs are reproducible.", ["pinned environment", "one pinned environment", "environment"]],
+  ["construct", "An abstract concept (trust, anxiety, motivation) that a questionnaire attempts to measure.", ["construct", "constructs", "measuring the construct"]],
+  ["validated instrument", "A set of questions designed to measure a construct; 'validated' means it has been tested to measure it well.", ["questionnaire", "questionnaires", "instrument", "instruments", "validated instrument"]],
+  ["simulator", "A computer program that imitates a physical or abstract system by solving its equations numerically.", ["simulator", "simulators", "simulation", "simulations", "production simulation", "set up the simulation"]],
+  ["analytic solution", "An exact formula solution of an equation, usable to check that numerical code is correct.", ["analytic solution", "analytic case", "analytic checks", "analytical"]],
+  ["solver", "The numerical algorithm or code that approximates the solution of equations.", ["solver", "solvers", "the solver is standard"]],
+  ["grid resolution", "The mesh of points where a simulation computes values; finer grids give more accurate results.", ["grid", "grids", "grid resolution", "grid resolution h", "grid refinement", "resolution", "resolutions", "three resolutions"]],
+  ["time step", "The interval between successive moments a simulation computes; smaller steps are more accurate.", ["time step", "time steps", "timestep", "timesteps"]],
+  ["grid refinement", "Make the grid or time step smaller and check that results stop changing.", ["refinement", "grid refinement", "are refined"]],
+  ["recruitment", "Enrolling participants into a study.", ["recruitment", "recruit", "recruiting", "stop recruiting"]],
+  ["pretrained model", "A model already trained on a huge general dataset before being applied to your task.", ["pretrained", "pre-trained", "pretraining", "pre-training", "pretraining data"]],
+  ["sanity check", "A quick test that catches gross errors, such as confirming you beat a random predictor.", ["sanity check", "sanity checks", "no sanity checks"]],
+  ["trivial baseline", "A very simple predictor (random guess, constant, majority class, hand rule) that any real method must beat.", ["trivial baselines", "trivial baseline", "random predictor", "trivial rule", "trivial predictor"]],
+  ["constant predictor", "A baseline that outputs the same answer for every input.", ["constant predictor", "a constant"]],
+  ["overfit", "Fit training data so closely the model memorises it; deliberately overfitting ten examples checks the code works.", ["overfit", "overfits", "overfitting", "overfit ten examples"]],
+  ["assay", "A lab procedure that measures the presence or amount of a substance or activity.", ["assay", "assays", "the assay is standard"]],
+  ["histogram", "A bar chart showing how often each value occurs.", ["histogram", "label histogram"]],
+  ["notebook", "An interactive coding document (e.g. Jupyter) mixing code, outputs and notes.", ["notebook", "notebooks", "one notebook"]],
+  ["version control", "Tracking every change to code and data (e.g. with git) so any past state can be recovered.", ["version it"]],
+  ["“it is easy to see that”", "A phrase in proofs that skips steps; a warning sign that a step has not actually been checked.", ["it is easy to see", "easy to see", "it is easy to see that"]],
+  ["identity map", "The function that returns its input unchanged; a trivial case for testing a theorem.", ["identity map"]],
+  ["trivial or extreme case", "The simplest or boundary input a theorem allows; errors in proofs often show up there.", ["trivial case", "extreme case", "dumb case", "special case"]],
+  ["rubric", "A written scoring guide with explicit criteria for rating outputs by hand.", ["rubric", "rubrics", "written rubric"]],
+  ["blinding", "Hiding which condition a sample belongs to from the person scoring it.", ["blind", "blinded", "blinding", "unblinded", "blind the rater", "unblinded scoring"]],
+  ["rater", "The person who scores outcomes by hand.", ["rater", "raters", "rated by hand", "rate them yourself"]],
+  ["randomise", "Assign or order by chance so that hidden patterns cannot bias the result.", ["randomise", "randomize", "randomised", "randomized", "randomise the order"]],
+  ["pre-specify", "Decide and write down before seeing the data.", ["pre-specify", "pre-specified", "prespecify", "pre-specifying"]],
+  ["parameter sweep", "Running the experiment across a range of parameter values.", ["sweep", "sweeps", "parameter sweep", "full sweep", "narrower range"]],
+  ["tight vs loose bound", "A tight bound is close to the true value; a loose one is far from it and less informative.", ["tight bound", "loose bound", "tighter than", "lower bound", "upper bound"]],
+  ["hard instance", "The specific difficult example a lower-bound proof constructs to show no method can do better.", ["hard instance", "their hard instance"]],
+  ["subgroup (slice)", "A subset of the data selected by some attribute; many slices mean many chances for a false positive.", ["slices", "slicing", "subgroup", "subgroups", "slicing the data"]],
+  ["replicate", "Repeat a finding on new, independent data or runs.", ["replicate", "replicated", "replication", "reproduced"]],
+  ["initial conditions", "The starting state of a simulation; different starts test whether a result is robust.", ["initial condition", "initial conditions"]],
+  ["hedging", "Cautious wording that limits a claim to what the evidence actually supports.", ["hedging", "hedge", "hedged", "reads as hedging"]],
+  ["anthropomorphic language", "Describing a model with human mental words like 'understands' or 'reasons', beyond what was measured.", ["understands", "reasons", "teaches the model to reason", "reasons about"]],
+  ["point estimate", "A single number reported without any indication of its uncertainty.", ["point estimate", "point estimates", "single number"]],
+  ["human-level", "Performance matching or exceeding humans on the same test.", ["human-level", "human level", "beating humans"]],
+  ["probe", "A targeted test that checks what a model actually relies on to get its answer.", ["probe", "probes", "probing"]],
+  ["cue", "A superficial feature a model may exploit instead of the intended concept.", ["cues", "suspected cue"]],
+  ["shuffle inputs", "Randomly reorder parts of the input; if the score survives, the model ignored the structure.", ["shuffle", "shuffled", "shuffle inputs"]],
+  ["big-O notation", "Big-O notation: the bound grows like the square root of d over n, ignoring constant factors.", ["√(d/n)", "O(·)", "C·√(d/n)", "big-O"]],
+  ["parameters", "The numbers inside a model that training adjusts; d counts them.", ["10⁶ parameters"]],
+  ["generalise", "To perform well on new data, not just the training examples.", ["generalise", "generalize", "generalises", "generalizes", "generalisation", "generalization"]],
+  ["outlier", "A data point far from the others; removing outliers needs a rule set before seeing them.", ["outlier", "outliers"]],
+  ["existence proof", "A proof that something exists without saying how to find or construct it.", ["existence", "existence proof", "there exists", "state existence as such"]],
+  ["algorithmic question", "Whether an algorithm can actually find the object whose existence was proven.", ["algorithmic question", "algorithmic"]],
+  ["scoop", "When someone else publishes your idea before you do.", ["scoop", "scooped", "invite a scoop"]],
+  ["epoch", "One full pass through the training data.", ["epoch", "epochs", "every epoch", "best epoch"]],
+  ["numerical instability", "Rapid growth of errors in a simulation; may be real physics or an artefact of the numerical method.", ["instability", "instabilities", "new instability"]],
+  ["compositional structure", "How meaning is built by combining parts; a strong claim about what a model 'understands'.", ["compositional", "compositional structure", "novel combinations"]],
+  ["linear model", "A model whose output is a weighted sum of its inputs; simple enough to analyse fully.", ["linear model"]],
+  ["checkable assumption", "An assumption whose truth can be verified in the setting of interest.", ["every assumption is checkable"]],
+  ["convenience sample", "Participants recruited because they were easy to reach, not because they were chosen by design.", ["by convenience", "convenience sample"]],
+  ["ε (epsilon)", "Greek letter for an arbitrarily small positive error or tolerance.", ["ε", "epsilon", "for every ε"]],
+  ["constructive proof", "A proof that explicitly builds the object, rather than only showing it must exist.", ["constructive", "constructive proof"]],
+  ["physics term", "A term in the simulated equations representing one physical process; switching it off tests whether it causes the effect.", ["physics term", "physics term is off"]],
+  ["sunk cost", "Continuing because of what was already spent; the past spending is gone either way, only the future is a choice.", ["sunk cost", "sunk-cost", "throws away ten weeks of work"]],
+  ["prediction (in a hypothesis)", "A concrete statement made in advance of what the data will show if the hypothesis is right.", ["predictive", "prediction", "predictions"]],
+  ["mechanism", "The underlying process that explains why an effect happens; a “mechanism story” is a claimed explanation.", ["mechanism", "mechanism story", "mechanisms"]],
+  ["assumption (in a proof)", "A condition taken as given; the theorem holds only where its assumptions hold.", ["assumption", "assumptions"]],
+  ["analysis plan", "What will be measured, compared and excluded, written down before the data arrive.", ["analysis plan"]],
+  ["plan B", "The alternative project you switch to if the first plan fails its kill criterion.", ["plan B"]],
+  ["screening (two-stage)", "A cheap first pass over many options to pick a few for closer study; the winners are partly lucky.", ["screen twenty", "screening"]],
+  ["paper defaults", "The hyperparameters from a method's original paper, tuned for that paper's data, not yours.", ["paper defaults", "default hyperparameters", "their defaults"]],
+  ["full generality", "Stating a theorem in its most general, and therefore most complex, form; the informal special case is what most readers need.", ["full generality", "in full generality"]],
+  ["referee", "A peer reviewer who evaluates a submitted paper and recommends acceptance or rejection.", ["referee", "referees"]]
 ];
 
 /* Level points count only the first time an item is seen, so repetition does not level you up. */
@@ -1847,13 +1984,59 @@ function lessonHTML(pid) {
     <div class="inner"><div class="lh">${icon("i-nose")} A worked example</div>${fmt(L.ex)}<div class="lh">${icon("i-warn")} Why it happens, how to notice it, what the fix costs</div>${fmt(L.deep)}
     <div class="lh">${icon("i-book")} Go deeper</div><ul class="reads">${readsHTML(p.res)}</ul></div></details>`;
 }
+/* ---- term tooltips. GLOSSARY entries: [term, definition, aliases?]. The first occurrence of each term in a text
+   block gets a dotted underline and a hover tooltip; the terms found on a screen are also listed in a tap-safe strip. ---- */
+const rxEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const TERM_INDEX = (() => {
+  const list = [];
+  const taken = new Set();
+  const add = (i, f) => { const k = f.toLowerCase(); if (!f || taken.has(k)) return; taken.add(k); list.push({i, f}); };
+  GLOSSARY.forEach((g, i) => {
+    const [t, d, al] = g;
+    if (al) al.forEach(f => add(i, f));
+    else t.split(/\s*\/\s*/).forEach(x => add(i, x.replace(/\s*\(.*?\)\s*/g, "").trim()));
+  });
+  /* pitfall names are terms too: their tooltip is the catalogue's one-line "what" */
+  const pitStart = GLOSSARY.length;
+  Object.values(PITFALLS).forEach((p, j) => { GLOSSARY.push([p.name, p.what, [p.name], "pit"]); add(pitStart + j, p.name); });
+  list.sort((x, y) => y.f.length - x.f.length);
+  const rx = new RegExp("(?<![\\w-])(" + list.map(x => rxEsc(esc(x.f))).join("|") + ")(?![\\w-])", "gi");
+  const byForm = {}; list.forEach(x => { byForm[esc(x.f).toLowerCase()] = x.i; });
+  return {rx, byForm};
+})();
+/* returns {html, found:Set<index>}; text is raw (unescaped) */
+function annotate(text, found) {
+  found = found || new Set(); const seen = new Set();
+  const html = esc(text).replace(TERM_INDEX.rx, m => {
+    const i = TERM_INDEX.byForm[m.toLowerCase()];
+    if (i === undefined || seen.has(i)) return m;
+    seen.add(i); found.add(i);
+    return `<span class="term" data-tip="${esc(GLOSSARY[i][1])}">${m}</span>`;
+  });
+  return {html, found};
+}
+function termStripHTML(found) {
+  const ids = Array.from(found);
+  if (!ids.length) return "";
+  return `<div class="termstrip"><span class="small muted">Terms on this card:</span> ${ids.map(i => `<button type="button" class="tchip" data-i="${i}" aria-expanded="false">${esc(GLOSSARY[i][0])}</button>`).join("")}<div class="tdef hidden"></div></div>`;
+}
+function wireTermStrip(host) {
+  host.querySelectorAll(".tchip").forEach(b => b.addEventListener("click", () => {
+    const def = host.querySelector(".tdef"); const i = Number(b.dataset.i); const open = b.getAttribute("aria-expanded") === "true";
+    host.querySelectorAll(".tchip").forEach(x => x.setAttribute("aria-expanded", "false"));
+    if (open) { def.classList.add("hidden"); return; }
+    b.setAttribute("aria-expanded", "true"); def.innerHTML = `<b>${esc(GLOSSARY[i][0])}</b> ${esc(GLOSSARY[i][1])}`; def.classList.remove("hidden");
+  }));
+}
+/* keep tooltips on screen: flip to the right edge when the term sits in the right half */
+document.addEventListener("mouseover", e => { const t = e.target.closest && e.target.closest(".term"); if (t) t.classList.toggle("r", t.getBoundingClientRect().left > window.innerWidth / 2); });
 const icon = (id, cls) => `<svg class="ic ${cls || ""}" aria-hidden="true"><use href="#${id}"/></svg>`;
 function pitboxHTML(pid, open) {
   const p = PITFALLS[pid]; if (!p) return "";
   return `<div class="pitbox"><div class="pn">${icon("i-warn")} ${esc(p.name)}</div>
-    <dl><div class="tile what"><dt>${icon("i-warn")} What</dt><dd>${esc(p.what)}</dd></div>
-        <div class="tile smell"><dt>${icon("i-nose")} Smells like</dt><dd>${esc(p.smell)}</dd></div>
-        <div class="tile fix"><dt>${icon("i-wrench")} Instead</dt><dd>${esc(p.fix)}</dd></div></dl>
+    <dl><div class="tile what"><dt>${icon("i-warn")} What</dt><dd>${annotate(p.what).html}</dd></div>
+        <div class="tile smell"><dt>${icon("i-nose")} Smells like</dt><dd>${annotate(p.smell).html}</dd></div>
+        <div class="tile fix"><dt>${icon("i-wrench")} Instead</dt><dd>${annotate(p.fix).html}</dd></div></dl>
     ${lessonHTML(pid)}</div>`;
 }
 
@@ -1923,16 +2106,18 @@ function renderRunCard() {
   $("run-right").textContent = domLabel(store.domain, true);
   renderStepper();
   $("run-phase").textContent = `Phase · ${ph.name} — ${ph.blurb}`;
-  $("run-title").textContent = c.title; $("run-situation").textContent = c.s;
+  const found = new Set();
+  $("run-title").textContent = c.title; $("run-situation").innerHTML = annotate(c.s, found).html;
   const host = $("run-opts"); host.innerHTML = "";
   run.order.forEach((k, idx) => {
     const o = c.o[k]; const b = document.createElement("button");
     b.className = "opt"; b.dataset.k = k;
-    b.innerHTML = `<span class="ltr">${"ABCD"[idx]}</span><span class="txt">${esc(o.t)}</span>`;
+    b.innerHTML = `<span class="ltr">${"ABCD"[idx]}</span><span class="txt">${annotate(o.t, found).html}</span>`;
     b.addEventListener("click", () => { if (!run.answered) answerRun(k); });
     host.appendChild(b);
   });
   $("run-verdict").innerHTML = "";
+  $("run-terms").innerHTML = termStripHTML(found); wireTermStrip($("run-terms"));
   $("run-next").classList.add("hidden");
   $("run-keys").innerHTML = `Keys: ${run.order.map((_, i) => `<kbd>${"ABCD"[i]}</kbd>`).join(" ")} · <kbd>Enter</kbd> next`;
   renderMeters();
@@ -1959,7 +2144,7 @@ function answerRun(k) {
   const label = o.k === "sound" ? "Sound call." : o.k === "pit" ? "Pitfall." : (lostHere <= 3 ? "Defensible; a stronger option existed." : "Defensible, but it costs you.");
   const delta = `${o.w ? `+${o.w} week${o.w === 1 ? "" : "s"}` : "no time"} · rigour ${lostHere ? "−" + Math.round(100 * lostHere / run.span) : "kept"}`;
   const vic = o.k === "sound" ? "i-check" : o.k === "pit" ? "i-x" : "i-tilde";
-  let html = `<div class="verdict ${o.k}"><div class="vic">${icon(vic)}</div><div><div class="vt">${label} <span class="small muted" style="font-weight:400">(${delta})</span></div><div>${esc(o.f)}</div></div></div>`;
+  let html = `<div class="verdict ${o.k}"><div class="vic">${icon(vic)}</div><div><div class="vt">${label} <span class="small muted" style="font-weight:400">(${delta})</span></div><div>${annotate(o.f).html}</div></div></div>`;
   if (o.k === "pit") html += pitboxHTML(o.p, true);
   else if (pitsHere.length) {
     const names = pitsHere.filter((p, i, a) => a.indexOf(p) === i).map(p => PITFALLS[p].name);
@@ -2075,28 +2260,29 @@ function renderTasteItem() {
   $("t-left").textContent = `Item ${taste.i + 1} of ${taste.items.length}`;
   $("t-right").textContent = domLabel(store.domain, true);
   $("t-bar").style.width = (taste.i / taste.items.length * 100) + "%";
-  const host = $("t-opts"); host.innerHTML = ""; host.className = "opts";
+  const host = $("t-opts"); host.innerHTML = ""; host.className = "opts"; const found = new Set();
   if (it.kind === "pair") {
     const p = it.item; taste.flip = Math.random() < 0.5;
-    $("t-kind").textContent = "Which is stronger?"; $("t-q").textContent = p.q; $("t-plan").classList.add("hidden");
+    $("t-kind").textContent = "Which is stronger?"; $("t-q").innerHTML = annotate(p.q, found).html; $("t-plan").classList.add("hidden");
     host.className = "opts pair";
     const order = taste.flip ? ["b","a"] : ["a","b"];
     order.forEach((side, idx) => {
       const b = document.createElement("button"); b.className = "opt"; b.dataset.side = side;
-      b.innerHTML = `<span class="ltr">${"AB"[idx]}</span><span class="txt">${esc(p[side])}</span>`;
+      b.innerHTML = `<span class="ltr">${"AB"[idx]}</span><span class="txt">${annotate(p[side], found).html}</span>`;
       b.addEventListener("click", () => pickTaste(side)); host.appendChild(b);
     });
   } else {
     const f = it.item; taste.order = shuffle(f.opts.map((_, k) => k));
     $("t-kind").textContent = "Spot the flaw"; $("t-q").textContent = "What is the main problem with this plan?";
-    $("t-plan").textContent = f.plan; $("t-plan").classList.remove("hidden");
+    $("t-plan").innerHTML = annotate(f.plan, found).html; $("t-plan").classList.remove("hidden");
     taste.order.forEach((k, idx) => {
       const b = document.createElement("button"); b.className = "opt"; b.dataset.k = k;
-      b.innerHTML = `<span class="ltr">${"ABCD"[idx]}</span><span class="txt">${esc(f.opts[k])}</span>`;
+      b.innerHTML = `<span class="ltr">${"ABCD"[idx]}</span><span class="txt">${annotate(f.opts[k], found).html}</span>`;
       b.addEventListener("click", () => pickTaste(k)); host.appendChild(b);
     });
   }
   $("t-confrow").classList.add("hidden"); $("t-verdict").innerHTML = "";
+  $("t-terms").innerHTML = termStripHTML(found); wireTermStrip($("t-terms"));
   $("t-why").classList.add("hidden"); $("t-why-text").value = ""; $("t-why-text").readOnly = false;
   $("t-next").classList.add("hidden");
   $("t-q").focus();
@@ -2136,8 +2322,8 @@ function revealTaste(c) {
   });
   const head = correct ? `Right${c.id === "sure" ? ", and sure" : ""}.` : (c.id === "sure" ? "Wrong, and sure. The expensive case." : "Not this one.");
   let html = `<div class="verdict ${correct ? "sound" : "pit"}"><div class="vic">${icon(correct ? "i-check" : "i-x")}</div><div><div class="vt">${head} <span class="small muted" style="font-weight:400">(${pts >= 0 ? "+" : ""}${pts} pts)</span></div>`;
-  if (it.kind === "pair") html += `<div><span class="feat">${esc(item.feat)}</span></div><div style="margin-top:6px">${esc(relabel(item.why, taste.flip))}</div>`;
-  else html += `<div><span class="feat">${esc(item.opts[item.ans])}</span></div><div style="margin-top:6px">${esc(item.why)}</div><div style="margin-top:6px">${icon("i-wrench")} <b>The repair:</b> ${esc(item.repair)}</div>`;
+  if (it.kind === "pair") html += `<div><span class="feat">${esc(item.feat)}</span></div><div style="margin-top:6px">${annotate(relabel(item.why, taste.flip)).html}</div>`;
+  else html += `<div><span class="feat">${esc(item.opts[item.ans])}</span></div><div style="margin-top:6px">${annotate(item.why).html}</div><div style="margin-top:6px">${icon("i-wrench")} <b>The repair:</b> ${annotate(item.repair).html}</div>`;
   html += `<details style="margin-top:8px"><summary class="small" style="cursor:pointer;color:var(--accent-dark)">${icon("i-book")} Read (${item.res.length})</summary><ul class="reads">${readsHTML(item.res)}</ul></details></div></div>`;
   if (it.kind === "flaw" && item.p) html += `<details class="lesson" style="margin-top:10px"><summary>${icon("i-warn")} What “${esc(PITFALLS[item.p].name)}” looks like</summary><div class="inner">${pitboxHTML(item.p)}</div></details>`;
   $("t-verdict").innerHTML = html;
@@ -2231,7 +2417,7 @@ function renderGuide() {
   const noteItems = Object.entries(store.notes).map(([id, t]) => { const it = PAIRS.find(x => x.id === id) || FLAWS.find(x => x.id === id); if (!it) return null; const feat = it.feat || it.opts[it.ans]; return `<div class="verdict sound" style="margin:8px 0"><div class="small muted">${esc(feat)}</div><div>${esc(t)}</div></div>`; }).filter(Boolean);
   $("guide-notes-card").classList.toggle("hidden", !noteItems.length);
   $("guide-notes").innerHTML = noteItems.join("");
-  $("guide-gloss").innerHTML = GLOSSARY.map(([t, d]) => `<div class="gl"><b>${esc(t)}</b><span>${esc(d)}</span></div>`).join("");
+  $("guide-gloss").innerHTML = GLOSSARY.filter(g => g[3] !== "pit").sort((x, y) => x[0].localeCompare(y[0], "en", {sensitivity:"base"})).map(([t, d]) => `<div class="gl"><b>${esc(t)}</b><span>${esc(d)}</span></div>`).join("");
   $("guide-reads").innerHTML = readsHTML(Object.keys(RESOURCES));
 }
 
