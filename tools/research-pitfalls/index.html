@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research Pitfalls — The Study Game</title>
+<meta name="description" content="A lightweight, text-only game for junior PhD students: run a study through five phases and dodge the classic pitfalls, then train your research taste on pairwise judgements and spot-the-flaw drills. Domain selector, further reading, no backend.">
+<style>
+  :root{
+    --accent:#4A8FE3; --accent-dark:#2f6fbf; --ink:#1c2430; --muted:#525c6b;
+    --bg:#ffffff; --soft:#f4f7fb; --line:#e3e9f1; --b:#fbfdff; --chip:#ffffff; --kbd:#eef2f7;
+    --good:#2e8b57; --good-bg:rgba(46,139,87,.10); --bad:#c0392b; --bad-bg:rgba(192,57,43,.09);
+    --meh:#b8860b; --meh-bg:rgba(184,134,11,.10);
+    --radius:16px; --shadow:0 6px 24px rgba(31,52,84,.10); --maxw:880px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --accent:#6ea6ee; --accent-dark:#9cc1f5; --ink:#e8edf4; --muted:#a4afbe;
+      --bg:#161b24; --soft:#0f131a; --line:#2a3342; --b:#1a2130; --chip:#1a2130; --kbd:#232b38;
+      --good:#5fc48a; --good-bg:rgba(95,196,138,.14); --bad:#f08a7c; --bad-bg:rgba(240,138,124,.12);
+      --meh:#e0b74a; --meh-bg:rgba(224,183,74,.14); --shadow:0 6px 24px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --accent:#6ea6ee; --accent-dark:#9cc1f5; --ink:#e8edf4; --muted:#a4afbe;
+    --bg:#161b24; --soft:#0f131a; --line:#2a3342; --b:#1a2130; --chip:#1a2130; --kbd:#232b38;
+    --good:#5fc48a; --good-bg:rgba(95,196,138,.14); --bad:#f08a7c; --bad-bg:rgba(240,138,124,.12);
+    --meh:#e0b74a; --meh-bg:rgba(224,183,74,.14); --shadow:0 6px 24px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       color:var(--ink); background:var(--soft); line-height:1.5; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:24px 16px 64px}
+  a{color:var(--accent-dark)}
+  h1,h2,h3{line-height:1.2; margin:0 0 .4em}
+  h1{font-size:1.9rem; letter-spacing:-.01em}
+  h2{font-size:1.35rem}
+  h3{font-size:1.1rem}
+  p{margin:.4em 0}
+  .sub{color:var(--muted); font-size:1.02rem; margin:.2em 0 0}
+  .muted{color:var(--muted)} .small{font-size:.86rem} .center{text-align:center}
+  button{font:inherit; cursor:pointer; border:0; background:none; color:inherit}
+  :focus-visible{outline:2px solid var(--accent-dark); outline-offset:2px; border-radius:8px}
+  .btn{display:inline-block; background:var(--accent); color:#fff; padding:.65em 1.15em; border-radius:999px;
+       font-weight:600; box-shadow:0 4px 12px rgba(74,143,227,.28); transition:transform .08s, box-shadow .15s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.ghost{background:var(--chip); color:var(--accent-dark); border:1.5px solid var(--accent); box-shadow:none}
+  .btn.grey{background:var(--kbd); color:var(--ink); box-shadow:none}
+  .btn.sm{padding:.4em .85em; font-size:.86rem}
+  .btn[disabled]{opacity:.45; cursor:not-allowed; transform:none}
+  .card{background:var(--bg); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px}
+  .hidden{display:none !important}
+  .row{display:flex; gap:12px; flex-wrap:wrap; align-items:center}
+  .spread{justify-content:space-between}
+  .link{color:var(--accent-dark); font-size:.92rem; text-decoration:underline; text-underline-offset:2px}
+  .link.grey{color:var(--muted)}
+  kbd{font:.8em ui-monospace,Menlo,monospace; background:var(--kbd); border:1px solid var(--line);
+      border-bottom-width:2px; border-radius:5px; padding:.1em .45em}
+
+  header.top{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:18px; flex-wrap:wrap}
+  .brandmark{font-weight:700}
+  .topnav{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .dompill{font-size:.8rem; background:var(--kbd); border:1px solid var(--line); border-radius:999px; padding:.2em .7em; color:var(--muted)}
+
+  .modegrid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-top:20px}
+  @media(max-width:700px){.modegrid{grid-template-columns:1fr}}
+  .mode{cursor:pointer; text-align:left; transition:transform .1s, box-shadow .15s; display:block}
+  .mode:hover{transform:translateY(-2px)}
+  .tag{display:inline-block; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em;
+       color:var(--accent-dark); background:rgba(74,143,227,.12); padding:.25em .7em; border-radius:999px; margin-bottom:8px}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 0}
+  .chip{border:1.5px solid var(--line); background:var(--chip); padding:.45em .95em; border-radius:999px; font-size:.9rem; transition:all .12s}
+  .chip:hover{border-color:var(--accent)}
+  .chip[aria-pressed="true"]{background:var(--accent); color:#fff; border-color:var(--accent)}
+
+  .progress{height:6px; background:var(--kbd); border-radius:999px; overflow:hidden; margin:4px 0 16px}
+  .progress>i{display:block; height:100%; background:var(--accent); width:0; transition:width .3s}
+  .counter{font-size:.85rem; color:var(--muted); display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:6px}
+
+  .meters{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:0 0 14px}
+  @media(max-width:520px){.meters{grid-template-columns:1fr}}
+  .meter{background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:10px 14px}
+  .meter .lab{font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); display:flex; justify-content:space-between}
+  .meter .bar{height:8px; background:var(--kbd); border-radius:999px; overflow:hidden; margin-top:6px}
+  .meter .bar>i{display:block; height:100%; width:0; background:var(--accent); transition:width .35s}
+  .meter.warn .bar>i{background:var(--bad)}
+
+  .phasehead{font-size:.8rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:0 0 4px}
+  .situation{font-size:1.08rem; margin:.3em 0 14px}
+  .opts{display:grid; gap:10px}
+  .opt{position:relative; text-align:left; border:2px solid var(--line); background:var(--b); border-radius:12px;
+       padding:14px 14px 14px 46px; transition:border-color .12s, transform .08s; font-size:.98rem}
+  .opt:hover:not([disabled]){border-color:var(--accent); transform:translateY(-1px)}
+  .opt[disabled]{cursor:default; opacity:.85}
+  .opt .ltr{position:absolute; top:12px; left:12px; width:24px; height:24px; border-radius:50%; background:var(--accent);
+       color:#fff; font-weight:700; font-size:.8rem; display:flex; align-items:center; justify-content:center}
+  .opt.picked{border-color:var(--accent)}
+  .opt.sound{border-color:var(--good); background:var(--good-bg)} .opt.sound .ltr{background:var(--good)}
+  .opt.pit{border-color:var(--bad); background:var(--bad-bg)} .opt.pit .ltr{background:var(--bad)}
+  .opt.meh{border-color:var(--meh); background:var(--meh-bg)} .opt.meh .ltr{background:var(--meh)}
+  .opt.dim{opacity:.55}
+
+  .verdict{margin-top:16px; border-radius:12px; padding:14px 16px; border-left:4px solid var(--line); background:var(--soft)}
+  .verdict.sound{border-left-color:var(--good); background:var(--good-bg)}
+  .verdict.pit{border-left-color:var(--bad); background:var(--bad-bg)}
+  .verdict.meh{border-left-color:var(--meh); background:var(--meh-bg)}
+  .verdict .vt{font-weight:700; margin-bottom:4px}
+  .pitbox{margin-top:12px; border:1px dashed var(--line); border-radius:12px; padding:12px 14px; background:var(--bg)}
+  .pitbox .pn{font-weight:700}
+  .pitbox dl{margin:6px 0 0; display:grid; grid-template-columns:auto 1fr; gap:4px 12px; font-size:.93rem}
+  .pitbox dt{color:var(--muted); font-weight:600} .pitbox dd{margin:0}
+  .reads{margin:6px 0 0; padding-left:1.1em; font-size:.92rem} .reads li{margin:2px 0}
+  .reads .by{color:var(--muted)}
+  .underbar{display:flex; gap:10px; align-items:center; justify-content:space-between; margin-top:16px; flex-wrap:wrap}
+
+  .why textarea{width:100%; resize:vertical; min-height:40px; border:1.5px solid var(--line); border-radius:10px;
+       padding:9px 12px; font:inherit; margin-top:6px; background:var(--bg); color:var(--ink)}
+  .confrow{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:14px}
+  .conf{border:1.5px solid var(--line); background:var(--chip); border-radius:999px; padding:.4em .9em; font-size:.9rem}
+  .conf:hover{border-color:var(--accent)}
+  .conf[aria-pressed="true"]{background:var(--accent); color:#fff; border-color:var(--accent)}
+  .streak{font-size:.85rem; color:var(--muted)}
+  .pair{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  @media(max-width:620px){.pair{grid-template-columns:1fr}}
+  .pair .opt{padding:38px 14px 14px 14px; min-height:110px}
+  .pair .opt .ltr{top:10px; left:12px}
+  .plan{font-size:1.05rem; background:var(--soft); border-radius:10px; padding:12px 14px; margin:8px 0 12px; border:1px solid var(--line)}
+  .feat{display:inline-block; font-size:.78rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--accent-dark);
+        background:rgba(74,143,227,.12); padding:.2em .6em; border-radius:999px}
+
+  .stat{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:12px 0}
+  .stat .s{background:var(--soft); border:1px solid var(--line); border-radius:12px; padding:12px 14px}
+  .stat .s b{font-size:1.5rem; display:block; line-height:1.1}
+  .stat .s span{font-size:.82rem; color:var(--muted)}
+  .verdict-big{font-size:1.4rem; font-weight:700; letter-spacing:-.01em}
+  .list{margin:6px 0 0; padding-left:1.1em} .list li{margin:4px 0}
+  details.expander{margin-top:14px; border:1px solid var(--line); border-radius:12px; background:var(--bg)}
+  details.expander>summary{cursor:pointer; padding:12px 16px; font-weight:600; list-style:none}
+  details.expander>summary::-webkit-details-marker{display:none}
+  details.expander>summary::before{content:"▸ "; color:var(--accent-dark)}
+  details.expander[open]>summary::before{content:"▾ "}
+  details.expander .inner{padding:0 16px 16px; font-size:.94rem; color:var(--muted)}
+
+  .guide .ph{margin-top:18px}
+  .guide table{width:100%; border-collapse:collapse; font-size:.92rem}
+  .guide th,.guide td{text-align:left; vertical-align:top; padding:8px 8px; border-top:1px solid var(--line)}
+  .guide th{color:var(--muted); font-weight:600; font-size:.8rem; text-transform:uppercase; letter-spacing:.04em; border-top:0}
+  .guide td.nm{font-weight:600; white-space:nowrap}
+  .guide .mark{font-size:.78rem; color:var(--muted); white-space:nowrap}
+  .guide .mark.hit{color:var(--bad)} .guide .mark.dodged{color:var(--good)}
+  @media(max-width:620px){.guide td.nm{white-space:normal} .guide th:nth-child(3),.guide td:nth-child(3){display:none}}
+  .toast{position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(20px); background:var(--ink); color:var(--bg);
+         padding:.7em 1.2em; border-radius:999px; font-size:.9rem; opacity:0; transition:all .2s; pointer-events:none; z-index:50}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+  .callout{border-left:3px solid var(--accent); background:rgba(74,143,227,.08); padding:10px 14px; border-radius:8px; margin:10px 0; font-size:.94rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div><div class="brandmark">Research Pitfalls <span class="muted">· The Study Game</span></div></div>
+    <nav class="topnav">
+      <span class="dompill" id="dompill" title="Current domain"></span>
+      <button class="link" id="nav-home">Home</button>
+      <button class="link" id="nav-guide">Field guide</button>
+    </nav>
+  </header>
+
+  <!-- HOME -->
+  <section id="screen-home">
+    <h1>Set up a study. Try not to fall in.</h1>
+    <p class="sub">A text-only game for the first year of a PhD. You make the decisions a study actually consists of —
+      question, design, execution, analysis, reporting — and the game tells you which classic pitfall you just walked
+      into, why it was tempting, and what to read. A second part trains <b>taste</b>: the skill of telling a strong
+      plan from a weak one before anyone has run it.</p>
+
+    <div class="card" style="margin-top:18px">
+      <h3 style="margin-bottom:2px">Your domain</h3>
+      <p class="small muted" style="margin:0">The pitfalls are universal; the wording isn't. Machine learning is the main
+        focus; the other packs re-voice the same traps and add a few of their own.</p>
+      <div class="chips" id="dom-chips" role="group" aria-label="Research domain"></div>
+    </div>
+
+    <div class="modegrid">
+      <button class="card mode" id="go-run">
+        <span class="tag">Play · ~10 min</span>
+        <h3>Run a study</h3>
+        <p class="muted small" style="margin:0">Thirteen decisions across five phases. Two meters: weeks spent and
+          rigour. Every wrong turn names its pitfall. Ends in a postmortem with a reading list built from your mistakes.</p>
+      </button>
+      <button class="card mode" id="go-taste">
+        <span class="tag">Train · ~8 min</span>
+        <h3>Train your taste</h3>
+        <p class="muted small" style="margin:0">Pairs of plans: pick the stronger one. Plans with a flaw: name it.
+          Say how sure you are, then find out. Scores accuracy, calibration, and a discriminator level.</p>
+      </button>
+      <button class="card mode" id="go-guide">
+        <span class="tag">Read</span>
+        <h3>Field guide</h3>
+        <p class="muted small" style="margin:0">The full pitfall catalogue by phase — what it is, what it smells like,
+          the fix — with the papers and essays behind each. Tracks which ones you've hit.</p>
+      </button>
+    </div>
+    <p class="small muted" style="margin-top:16px">Runs in your browser; nothing is sent anywhere. Progress is kept on
+      this device. It is a game, not a checklist: the point is the argument you have with yourself after each reveal.</p>
+  </section>
+
+  <!-- RUN -->
+  <section id="screen-run" class="hidden">
+    <div class="counter"><span id="run-left"></span><span id="run-right"></span></div>
+    <div class="progress"><i id="run-bar"></i></div>
+    <div class="meters">
+      <div class="meter" id="m-weeks"><div class="lab"><span>Weeks spent</span><span id="m-weeks-v"></span></div><div class="bar"><i id="m-weeks-b"></i></div></div>
+      <div class="meter" id="m-rigor"><div class="lab"><span>Rigour</span><span id="m-rigor-v"></span></div><div class="bar"><i id="m-rigor-b"></i></div></div>
+    </div>
+    <div class="card">
+      <div class="phasehead" id="run-phase"></div>
+      <h2 id="run-title"></h2>
+      <p class="situation" id="run-situation"></p>
+      <div class="opts" id="run-opts"></div>
+      <div id="run-verdict" class="hidden"></div>
+      <div class="underbar">
+        <span class="small muted" id="run-keys">Keys: <kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> · <kbd>Enter</kbd> next</span>
+        <button class="btn hidden" id="run-next">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RUN RESULTS -->
+  <section id="screen-postmortem" class="hidden">
+    <h1>Postmortem</h1>
+    <p class="sub">The outcome is what you're judged on; the process is what you can change. Two hours on this after a
+      real project is the cheapest thing you will ever do.</p>
+    <div class="card" style="margin-top:16px">
+      <div class="verdict-big" id="pm-verdict"></div>
+      <p class="muted" id="pm-line"></p>
+      <div class="stat">
+        <div class="s"><b id="pm-weeks"></b><span>weeks spent (budget <span id="pm-budget"></span>)</span></div>
+        <div class="s"><b id="pm-rigor"></b><span>rigour (0–100)</span></div>
+        <div class="s"><b id="pm-nhit"></b><span>pitfalls hit</span></div>
+        <div class="s"><b id="pm-ndodged"></b><span>pitfalls dodged</span></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px" id="pm-hit-card">
+      <h3>Where you fell in</h3>
+      <div id="pm-hit"></div>
+    </div>
+    <div class="card" style="margin-top:16px" id="pm-meh-card">
+      <h3>Defensible, but costly</h3>
+      <div id="pm-meh"></div>
+    </div>
+    <div class="card" style="margin-top:16px" id="pm-dodged-card">
+      <h3>What you walked past</h3>
+      <p class="small muted" style="margin:0 0 6px">Pitfalls that were on the table and you didn't take.</p>
+      <div id="pm-dodged"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3>Your reading list</h3>
+      <p class="small muted" style="margin:0 0 6px">Built from the pitfalls you hit; the field guide has the rest.</p>
+      <ul class="reads" id="pm-reads"></ul>
+    </div>
+    <div class="underbar" style="justify-content:flex-start; margin-top:20px">
+      <button class="btn" id="pm-again">Run another study</button>
+      <button class="btn ghost" id="pm-taste">Train your taste</button>
+      <button class="btn grey" id="pm-copy">Copy summary</button>
+      <button class="link grey" id="pm-domain">Change domain</button>
+    </div>
+  </section>
+
+  <!-- TASTE -->
+  <section id="screen-taste" class="hidden">
+    <div class="counter"><span id="t-left"></span><span id="t-right"></span></div>
+    <div class="progress"><i id="t-bar"></i></div>
+    <div class="card">
+      <div class="phasehead" id="t-kind"></div>
+      <h2 id="t-q"></h2>
+      <div id="t-plan" class="plan hidden"></div>
+      <div id="t-opts" class="opts"></div>
+      <div class="confrow hidden" id="t-confrow">
+        <span class="small muted">How sure are you?</span>
+        <span id="t-confs"></span>
+        <span class="small muted">· keys <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></span>
+      </div>
+      <div id="t-verdict" class="hidden"></div>
+      <div class="why hidden" id="t-why">
+        <label class="small muted" for="t-why-text">Articulate why (optional; kept on this device). Saying <em>why</em> is the part that trains the discriminator.</label>
+        <textarea id="t-why-text" placeholder="In one line: what feature separated them?"></textarea>
+      </div>
+      <div class="underbar">
+        <span class="streak" id="t-streak"></span>
+        <button class="btn hidden" id="t-next">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TASTE RESULTS -->
+  <section id="screen-tasteres" class="hidden">
+    <h1>Your discriminator</h1>
+    <p class="sub">Taste is a discriminative skill: telling strong from weak. Like the discriminator in a GAN, it trains
+      on judging many examples and getting told the answer — which you just did.</p>
+    <div class="card" style="margin-top:16px">
+      <div class="verdict-big" id="tr-level"></div>
+      <p class="muted" id="tr-levelnote"></p>
+      <div class="stat">
+        <div class="s"><b id="tr-acc"></b><span>accuracy</span></div>
+        <div class="s"><b id="tr-points"></b><span>taste points this round</span></div>
+        <div class="s"><b id="tr-conf"></b><span>average stated confidence</span></div>
+        <div class="s"><b id="tr-cal"></b><span>calibration</span></div>
+      </div>
+      <div class="callout" id="tr-calnote"></div>
+    </div>
+    <div class="card" style="margin-top:16px" id="tr-missed-card">
+      <h3>Features you missed</h3>
+      <p class="small muted" style="margin:0 0 6px">Each is a discriminating feature — the thing that separated the strong plan from the weak one.</p>
+      <div id="tr-missed"></div>
+    </div>
+    <div class="card" style="margin-top:16px" id="tr-notes-card">
+      <h3>Your notes</h3>
+      <div id="tr-notes"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3>Reading list</h3>
+      <ul class="reads" id="tr-reads"></ul>
+    </div>
+    <details class="expander">
+      <summary>How this is scored</summary>
+      <div class="inner">
+        <p><b>Taste points.</b> Right and sure +3, right and leaning +2, right on a coin flip +1; wrong and sure −3,
+          wrong and leaning −1, wrong on a coin flip 0. Being sure and wrong is the expensive case — as it is in review.</p>
+        <p><b>Calibration.</b> Your stated confidence (coin flip 50%, leaning 70%, sure 90%) is compared with how often
+          you were actually right. A weather forecaster who says “70%” should be right on 70% of those days. If your
+          average confidence is well above your accuracy you are overconfident; well below, underconfident. This is
+          the same idea as expected calibration error for a classifier, with three bins.</p>
+        <p><b>Level.</b> Cumulative taste points across rounds on this device. It resets with your progress.</p>
+        <p>The answers are opinionated: they encode one reviewer's taste, argued in the reveal. Disagreeing with a
+          reason is allowed — that is also how taste gets built.</p>
+      </div>
+    </details>
+    <div class="underbar" style="justify-content:flex-start; margin-top:20px">
+      <button class="btn" id="tr-again">Another round</button>
+      <button class="btn ghost" id="tr-run">Run a study</button>
+      <button class="btn grey" id="tr-copy">Copy summary</button>
+    </div>
+  </section>
+
+  <!-- GUIDE -->
+  <section id="screen-guide" class="hidden guide">
+    <h1>Field guide</h1>
+    <p class="sub">Every pitfall in the game, by phase. “Hit” and “dodged” counts come from your runs on this device.</p>
+    <div id="guide-body"></div>
+    <div class="card" style="margin-top:18px">
+      <h3>Further reading</h3>
+      <p class="small muted" style="margin:0 0 6px">Everything linked in the game, in one place.</p>
+      <ul class="reads" id="guide-reads"></ul>
+    </div>
+    <div class="underbar" style="justify-content:flex-start; margin-top:20px">
+      <button class="btn" id="guide-run">Run a study</button>
+      <button class="btn ghost" id="guide-taste">Train your taste</button>
+      <button class="link grey" id="guide-reset">Reset progress on this device</button>
+    </div>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ============================================================================
+   CONTENT. Everything the game says lives here. Domains:
+   ml_exp (ML, experimental) · ml_theory (ML, theory) · comp (computational /
+   simulation) · lab (experimental / lab) · social (social & behavioural) · any
+   A card with domains:"all" shows for every domain.
+   ========================================================================== */
+
+const DOMAINS = [
+  {id:"ml_exp",    label:"Machine learning — experimental", short:"ML · experimental"},
+  {id:"ml_theory", label:"Machine learning — theory",       short:"ML · theory"},
+  {id:"comp",      label:"Computational / simulation",     short:"Computational"},
+  {id:"lab",       label:"Experimental / lab science",     short:"Lab"},
+  {id:"social",    label:"Social & behavioural",           short:"Social"},
+  {id:"any",       label:"General (domain-neutral cards only)", short:"General"}
+];
+
+const PHASES = [
+  {id:"Q", name:"Question",  pick:2, blurb:"What are you actually asking, and would you know if you were wrong?"},
+  {id:"D", name:"Design",    pick:3, blurb:"Decide what counts as evidence before you have any."},
+  {id:"E", name:"Execution", pick:3, blurb:"Where bugs, sunk cost and silence live."},
+  {id:"A", name:"Analysis",  pick:3, blurb:"The garden of forking paths."},
+  {id:"R", name:"Reporting", pick:2, blurb:"One message, honest limits, reproducible, then a postmortem."}
+];
+
+/* ---- Further reading. Keyed by id; referenced from pitfalls and taste items. ---- */
+const RESOURCES = {
+  taste:      {t:"Developing taste — the GAN theory of picking great ideas", by:"P2P No. 135", url:"https://path2phd.substack.com/p/developing-taste",
+               n:"Taste is a discriminative skill, trainable by judging many things and articulating why."},
+  triage:     {t:"Idea triage and the haunt filter", by:"P2P No. 60", url:"https://path2phd.substack.com/p/p2p-no-60-idea-triage-and-the-haunt",
+               n:"Keep the ideas that keep coming back; purge the rest before they become a graveyard."},
+  greatideas: {t:"How to develop great ideas", by:"P2P No. 124", url:"https://path2phd.substack.com/p/how-to-develop-great-ideas"},
+  hamming:    {t:"You and Your Research", by:"Richard Hamming", url:"https://www.cs.virginia.edu/~robins/YouAndYourResearch.html",
+               n:"Work on important problems; keep the door open."},
+  pg_taste:   {t:"Taste for Makers", by:"Paul Graham", url:"https://paulgraham.com/taste.html"},
+  story:      {t:"Don't fall in love with a story", by:"P2P No. 38", url:"https://path2phd.substack.com/p/p2p-no-38-dont-fall-in-love-with",
+               n:"Do you want to prove yourself right, or find the truth?"},
+  darlings:   {t:"Kill your darlings", by:"P2P No. 25", url:"https://path2phd.substack.com/p/p2p-no-25-kill-your-darlings"},
+  predictive: {t:"Hypotheses need to be predictive", by:"P2P No. 111", url:"https://path2phd.substack.com/p/how-does-a-good-hypothesis-look-like",
+               n:"A hypothesis must do more than explain past data."},
+  disprove:   {t:"A hypothesis worth disproving", by:"P2P No. 65", url:"https://path2phd.substack.com/p/a-hypothesis-worth-disproving"},
+  mwh:        {t:"The method of multiple working hypotheses", by:"P2P No. 78 (on Chamberlin, 1890)", url:"https://path2phd.substack.com/p/the-method-of-multiple-working-hypotheses"},
+  chamberlin: {t:"The Method of Multiple Working Hypotheses", by:"T. C. Chamberlin, Science (1890)", url:"https://doi.org/10.1126/science.ns-15.366.92"},
+  strong:     {t:"Strong inference", by:"P2P No. 82 (on Platt, 1964)", url:"https://path2phd.substack.com/p/strong-inference-improving-the-scientific"},
+  platt:      {t:"Strong Inference", by:"John R. Platt, Science (1964)", url:"https://doi.org/10.1126/science.146.3642.347",
+               n:"Devise alternative hypotheses and the crucial experiment that excludes some."},
+  method:     {t:"Method vs problem orientation", by:"P2P No. 86", url:"https://path2phd.substack.com/p/method-vs-problem-orientation",
+               n:"Beware the person of one method or one instrument."},
+  barbell:    {t:"The barbell strategy of research", by:"P2P No. 5", url:"https://path2phd.substack.com/p/p2p-no-5-the-barbell-strategy-of"},
+  proto:      {t:"On prototyping", by:"P2P No. 40", url:"https://path2phd.substack.com/p/p2p-no-40-prototyping-in-academia"},
+  karpathy:   {t:"A Recipe for Training Neural Networks", by:"Andrej Karpathy", url:"http://karpathy.github.io/2019/04/25/recipe/",
+               n:"Become one with the data; get dumb baselines first; overfit one batch; then regularise."},
+  contingency:{t:"Contingency plans", by:"P2P No. 51", url:"https://path2phd.substack.com/p/p2p-no-51-the-price-of-not-having"},
+  quitgrit:   {t:"The quit and grit test", by:"P2P No. 63", url:"https://path2phd.substack.com/p/when-to-quit-and-when-to-grit"},
+  stopfinish: {t:"Stop or finish?", by:"P2P No. 16", url:"https://path2phd.substack.com/p/p2p-no-16-stop-or-finish"},
+  openloop:   {t:"Don't run your projects open-loop", by:"P2P No. 134", url:"https://path2phd.substack.com/p/dont-run-your-projects-open-loop",
+               n:"A project without a postmortem is an open-loop controller."},
+  relu:       {t:"The ReLU illusion of progress", by:"P2P No. 130", url:"https://path2phd.substack.com/p/the-relu-illusion-of-progress"},
+  measure:    {t:"Single measure, complex thing", by:"P2P No. 31", url:"https://path2phd.substack.com/p/p2p-no-31-single-measure-complex"},
+  reviewer:   {t:"The reviewer checklist", by:"P2P No. 88", url:"https://path2phd.substack.com/p/the-reviewer-checklist"},
+  clarity:    {t:"Improving clarity in scientific papers", by:"P2P No. 94", url:"https://open.substack.com/pub/path2phd/p/improving-the-clarity-of-scientific"},
+  spectrum:   {t:"The spectrum of details in communication", by:"P2P No. 92", url:"https://path2phd.substack.com/p/the-spectrum-of-details-in-communication"},
+  change:     {t:"What would it take to change your opinion?", by:"P2P No. 98", url:"https://path2phd.substack.com/p/what-would-it-take-to-change-your"},
+  convictions:{t:"Strong convictions, loosely held", by:"P2P No. 14", url:"https://path2phd.substack.com/p/p2p-no-14-strong-convictions-loosely"},
+  failure:    {t:"On failure", by:"P2P No. 13", url:"https://path2phd.substack.com/p/p2p-no-13-on-failure"},
+  planning:   {t:"On planning", by:"P2P No. 125", url:"https://path2phd.substack.com/p/on-planning"},
+  simulate:   {t:"Simulating the future", by:"P2P No. 115", url:"https://path2phd.substack.com/p/simulating-the-future"},
+  lipton:     {t:"Troubling Trends in Machine Learning Scholarship", by:"Lipton & Steinhardt (2018)", url:"https://arxiv.org/abs/1807.03341",
+               n:"Explanation vs speculation, failure to identify sources of gains, mathiness, suggestive language."},
+  leakage:    {t:"Leakage and the reproducibility crisis in ML-based science", by:"Kapoor & Narayanan (2022)", url:"https://arxiv.org/abs/2207.07048",
+               n:"A taxonomy of leakage, with model info sheets as the fix."},
+  henderson:  {t:"Deep Reinforcement Learning that Matters", by:"Henderson et al. (2017)", url:"https://arxiv.org/abs/1709.06560",
+               n:"Seeds, implementations and reporting choices can flip conclusions."},
+  bouthillier:{t:"Accounting for Variance in Machine Learning Benchmarks", by:"Bouthillier et al. (2021)", url:"https://arxiv.org/abs/2103.03098"},
+  agarwal:    {t:"Deep RL at the Edge of the Statistical Precipice", by:"Agarwal et al. (2021)", url:"https://arxiv.org/abs/2108.13264",
+               n:"Few runs + point estimates = unreliable conclusions; use interval estimates and aggregate metrics."},
+  dodge:      {t:"Show Your Work: Improved Reporting of Experimental Results", by:"Dodge et al. (2019)", url:"https://arxiv.org/abs/1909.03004",
+               n:"Report expected validation performance as a function of tuning budget."},
+  melis:      {t:"On the State of the Art of Evaluation in Neural Language Models", by:"Melis, Dyer & Blunsom (2017)", url:"https://arxiv.org/abs/1707.05589",
+               n:"Tuned old baselines beat newer architectures."},
+  musgrave:   {t:"A Metric Learning Reality Check", by:"Musgrave, Belongie & Lim (2020)", url:"https://arxiv.org/abs/2003.08505"},
+  lucic:      {t:"Are GANs Created Equal? A Large-Scale Study", by:"Lucic et al. (2017)", url:"https://arxiv.org/abs/1711.10337"},
+  recht:      {t:"Do ImageNet Classifiers Generalize to ImageNet?", by:"Recht et al. (2019)", url:"https://arxiv.org/abs/1902.10811",
+               n:"How much test-set reuse actually hurts."},
+  geirhos:    {t:"Shortcut Learning in Deep Neural Networks", by:"Geirhos et al. (2020)", url:"https://arxiv.org/abs/2004.07780"},
+  gorman:     {t:"We Need to Talk about Standard Splits", by:"Gorman & Bedrick (2019)", url:"https://doi.org/10.18653/v1/P19-1267"},
+  pineau:     {t:"Improving Reproducibility in Machine Learning Research", by:"Pineau et al. (2020)", url:"https://arxiv.org/abs/2003.12206",
+               n:"The NeurIPS reproducibility checklist and what it changed."},
+  checklist:  {t:"The Machine Learning Reproducibility Checklist", by:"Joelle Pineau", url:"https://www.cs.mcgill.ca/~jpineau/ReproducibilityChecklist.pdf"},
+  zhang:      {t:"Understanding deep learning requires rethinking generalization", by:"Zhang et al. (2017)", url:"https://arxiv.org/abs/1611.03530",
+               n:"The randomisation test: can your model fit shuffled labels?"},
+  nagarajan:  {t:"Uniform convergence may be unable to explain generalization in deep learning", by:"Nagarajan & Kolter (2019)", url:"https://arxiv.org/abs/1902.04742",
+               n:"Bounds can be vacuous or even increase with n."},
+  tao_rigour: {t:"There's more to mathematics than rigour and proofs", by:"Terence Tao", url:"https://terrytao.wordpress.com/career-advice/theres-more-to-mathematics-than-rigour-and-proofs/"},
+  tao_dumb:   {t:"Ask yourself dumb questions — and answer them!", by:"Terence Tao", url:"https://terrytao.wordpress.com/career-advice/ask-yourself-dumb-questions-and-answer-them/"},
+  gelman:     {t:"The garden of forking paths", by:"Gelman & Loken (2013)", url:"http://www.stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf",
+               n:"You can p-hack without ever intending to."},
+  simmons:    {t:"False-Positive Psychology", by:"Simmons, Nelson & Simonsohn (2011)", url:"https://doi.org/10.1177/0956797611417632",
+               n:"Undisclosed flexibility in data collection and analysis makes anything significant."},
+  kerr:       {t:"HARKing: Hypothesizing After the Results are Known", by:"Kerr (1998)", url:"https://doi.org/10.1207/s15327957pspr0203_4"},
+  ioannidis:  {t:"Why Most Published Research Findings Are False", by:"Ioannidis (2005)", url:"https://doi.org/10.1371/journal.pmed.0020124"},
+  button:     {t:"Power failure: why small sample size undermines the reliability of neuroscience", by:"Button et al. (2013)", url:"https://doi.org/10.1038/nrn3475"},
+  nosek:      {t:"The preregistration revolution", by:"Nosek et al. (2018)", url:"https://doi.org/10.1073/pnas.1708274114"},
+  munafo:     {t:"A manifesto for reproducible science", by:"Munafò et al. (2017)", url:"https://doi.org/10.1038/s41562-016-0021"},
+  hurlbert:   {t:"Pseudoreplication and the design of ecological field experiments", by:"Hurlbert (1984)", url:"https://doi.org/10.2307/1942661"},
+  leek:       {t:"Tackling the widespread and critical impact of batch effects", by:"Leek et al. (2010)", url:"https://doi.org/10.1038/nrg2825"},
+  manyanalysts:{t:"Many Analysts, One Data Set", by:"Silberzahn et al. (2018)", url:"https://doi.org/10.1177/2515245917747646",
+               n:"29 teams, same data, same question, 29 answers."},
+  feynman:    {t:"Cargo Cult Science", by:"Richard Feynman (1974)", url:"https://calteches.library.caltech.edu/51/2/CargoCult.htm",
+               n:"Bend over backwards to report what might make your result wrong."},
+  spj:        {t:"How to write a great research paper", by:"Simon Peyton Jones", url:"https://www.microsoft.com/en-us/research/academic-program/write-great-research-paper/",
+               n:"One clear, sharp idea per paper."},
+  bergstra:   {t:"Random Search for Hyper-Parameter Optimization", by:"Bergstra & Bengio (2012)", url:"https://jmlr.org/papers/v13/bergstra12a.html"}
+};
+
+/* ---- The pitfall catalogue. phase: Q/D/E/A/R. ---- */
+const PITFALLS = {
+  /* Question */
+  q_method_first:      {ph:"Q", name:"Method looking for a problem", 
+    what:"You start from the tool you know and go hunting for somewhere to apply it, instead of starting from a question worth answering.",
+    smell:"Your plan begins with “apply X to…”. You cannot say what would be known afterwards that isn't known now.",
+    fix:"Write the question first, in one sentence, with the answer's shape. Choose the method last.", res:["method","hamming","platt"]},
+  q_vague_hypothesis:  {ph:"Q", name:"Unfalsifiable hypothesis",
+    what:"The hypothesis explains any outcome, so no result can embarrass it — and no result can support it either.",
+    smell:"“Our approach improves performance.” No condition, no magnitude, no comparison, no way to lose.",
+    fix:"State the prediction with a condition, a comparison and a magnitude that would count as failure.", res:["predictive","disprove","feynman"]},
+  q_single_hypothesis: {ph:"Q", name:"One story, held too tight",
+    what:"You have a beautiful mechanism in mind and design the study to confirm it, so rivals never get a chance to win.",
+    smell:"Every experiment is a “demonstration”. You cannot name an outcome that would make you abandon the story.",
+    fix:"List two or three rival explanations and design at least one test that each would fail (strong inference).", res:["story","mwh","strong","platt","chamberlin","change"]},
+  q_scope_creep:       {ph:"Q", name:"Scope creep",
+    what:"The project grows three extensions before the core result exists. Everything is 80% done, nothing is done.",
+    smell:"“While we're at it…”. The paper outline has four contributions and no single claim.",
+    fix:"Define the minimum result that makes the paper. Extensions go on a dated “if time” list.", res:["darlings","spj","planning"]},
+  q_no_kill_criterion: {ph:"Q", name:"No kill criterion",
+    what:"Nobody wrote down what failure looks like, so the project can never fail — it just keeps consuming months.",
+    smell:"“We'll know it when we see it.” Plan B does not exist.",
+    fix:"Before starting: by week N, if the pilot doesn't show X, we pivot to plan B. Put it in the calendar.", res:["contingency","quitgrit","stopfinish","barbell"]},
+  q_no_feedback:       {ph:"Q", name:"Silence until results",
+    what:"You won't show anything to your supervisor until you have results — so the taste you lack is never corrected until it's expensive.",
+    smell:"Weeks pass without a one-page pitch being read by anyone. You are polishing before validating.",
+    fix:"Send a one-page pitch (claim, falsifying prediction, smallest killing experiment) before building. Feedback early is cheap; late, it's a rewrite.", res:["taste","greatideas","proto"]},
+  /* Design */
+  d_no_prereg:         {ph:"D", name:"Analysis decided after the data",
+    what:"The primary metric, the comparison and the sample size get chosen after seeing results — the garden of forking paths opens.",
+    smell:"“Let's collect first and see.” Every subgroup, metric and exclusion rule is still negotiable.",
+    fix:"Write the analysis plan (primary metric, comparison, n, exclusion rules) before the first run. Pre-register if your field has the venue for it; otherwise a dated note counts.", res:["gelman","nosek","simmons","munafo"]},
+  d_underpowered:      {ph:"D", name:"Underpowered study",
+    what:"Too few samples, seeds or subjects to detect the effect you care about. A null tells you nothing; a positive is probably inflated.",
+    smell:"n was chosen by budget, not by the variance and the effect size. Nobody ran a pilot.",
+    fix:"Pilot to estimate variance, then pick n to detect the effect that would matter. If you can't afford it, shrink the question, not the n.", res:["button","ioannidis","agarwal"]},
+  d_no_prototype:      {ph:"D", name:"Full system before toy version",
+    what:"Months of building before the first result that could be wrong. Feedback arrives too late to change the design.",
+    smell:"The first plot is scheduled for month four. Nothing has been allowed to fail yet.",
+    fix:"Build the smallest version that can be wrong within a day. Scale only what survived.", res:["proto","karpathy","failure","relu"]},
+  d_metric_proxy:      {ph:"D", name:"One number for a complex thing",
+    what:"A single proxy metric stands in for the thing you care about; optimising it hard makes it stop measuring that thing.",
+    smell:"Only the leaderboard number is tracked. Nobody can say what a two-point gain means for the actual goal.",
+    fix:"One primary metric plus two diagnostics that would reveal if the primary is being gamed.", res:["measure","lipton","geirhos"]},
+  d_leakage:           {ph:"D", name:"Leakage",
+    what:"Information from the test data reaches the model or the tuning — through preprocessing, splitting, feature selection or the test set doubling as validation.",
+    smell:"Normalisation fitted on the full dataset; test used for early stopping; duplicates across splits; tuning “on test because validation is small”.",
+    fix:"Split first, then fit every preprocessing step on train only. Touch the test set once, at the end.", res:["leakage","gorman","recht"]},
+  d_weak_baselines:    {ph:"D", name:"Weak or copied baselines",
+    what:"Baselines get numbers copied from papers with different splits, preprocessing or compute — or default hyperparameters while your method is tuned.",
+    smell:"“Their paper reports 71.2.” Your rerun of the baseline is never mentioned.",
+    fix:"Re-run every baseline in your own pipeline with the same tuning budget; report where your rerun disagrees with the published number.", res:["melis","musgrave","lucic","lipton"]},
+  d_no_seeds:          {ph:"D", name:"Single-seed conclusions",
+    what:"One run per configuration; the difference between methods is smaller than the difference between seeds.",
+    smell:"No spread reported anywhere. Adding a seed changes the ranking.",
+    fix:"Several seeds for the headline configurations; report the spread and use interval estimates.", res:["henderson","bouthillier","agarwal"]},
+  d_confounded:        {ph:"D", name:"Confounded comparison",
+    what:"Your method changes three things at once (architecture, augmentation, training length); the baseline changes none. The gain has no identified source.",
+    smell:"There is no ablation. The baseline trained for fewer steps.",
+    fix:"Change one thing at a time; give the baseline every advantage your method gets.", res:["lipton","henderson","bergstra"]},
+  d_wrong_assumptions: {ph:"D", name:"Assumptions doing all the work",
+    what:"The theorem holds under an assumption (convexity, Gaussianity, infinite width) that fails in the setting the paper claims to explain.",
+    smell:"The assumption lives in a footnote. Nobody has checked it on a single instance.",
+    fix:"Ask which assumption does the work; test the theorem numerically where the assumption fails; state the regime honestly.", res:["nagarajan","zhang","tao_rigour","lipton"]},
+  d_pseudoreplication: {ph:"D", name:"Pseudoreplication",
+    what:"Repeated measurements from one unit (one culture, one animal, one participant, one training run) are counted as independent samples.",
+    smell:"n=36 wells from three plates. n=1000 tokens from one model.",
+    fix:"Identify the unit that received the treatment independently; that is your n.", res:["hurlbert","leek"]},
+  d_batch:             {ph:"D", name:"Batch effects",
+    what:"Treatment and control differ in day, operator, instrument, hardware or library version — and the batch difference is what you measure.",
+    smell:"Controls on Monday, treatment on Friday. Baseline on the old GPU driver.",
+    fix:"Randomise or interleave conditions across batches; record batch as a variable and check it.", res:["leek","henderson"]},
+  /* Execution */
+  e_silent_bugs:       {ph:"E", name:"Too good to be true",
+    what:"A result far beyond the field's is celebrated instead of suspected. The most likely explanation is a bug or leakage.",
+    smell:"You are writing the paper before anyone tried to break the result.",
+    fix:"Assume a bug. Shuffle the labels, run a null control, re-implement the pipeline from scratch, check for duplicates.", res:["zhang","leakage","feynman"]},
+  e_no_sanity_checks:  {ph:"E", name:"No sanity checks",
+    what:"The trivial baselines (random, majority, constant, analytic solution) never ran, so you cannot tell learning from luck — or a simulator from a random-number generator.",
+    smell:"You don't know the chance level. The simulator was never checked against a case with a known answer.",
+    fix:"Trivial baselines first. Overfit a tiny subset. Reproduce a known result before producing a new one.", res:["karpathy","zhang"]},
+  e_hparam_asymmetry:  {ph:"E", name:"Asymmetric tuning budget",
+    what:"Your method gets hundreds of trials; the baselines get their paper defaults. The gap is the tuning, not the idea.",
+    smell:"The baseline was “run as published”. Nobody logged how many configurations each method saw.",
+    fix:"Equal budget for everyone; report expected performance as a function of budget.", res:["dodge","melis","bergstra"]},
+  e_open_loop_code:    {ph:"E", name:"Irreproducible to yourself",
+    what:"One notebook, overwritten as you go; no seeds, no configs, no versions. Three weeks later, you cannot regenerate your own figure.",
+    smell:"“Which run was that?” Figures exist only as screenshots.",
+    fix:"Versioned code, logged config and seed per run, every figure regenerable by one command.", res:["pineau","checklist","henderson"]},
+  e_sunk_cost:         {ph:"E", name:"Sunk cost",
+    what:"The kill criterion passed; you keep going because of the months already spent. The months already spent are gone either way.",
+    smell:"“Two more weeks.” Said three times.",
+    fix:"Run the quit-and-grit test against the criterion you wrote at the start, not against how much it hurts.", res:["quitgrit","stopfinish","contingency"]},
+  e_proof_gap:         {ph:"E", name:"“It is easy to see that…”",
+    what:"A step of the argument is asserted rather than shown. It is usually the step that fails.",
+    smell:"“Clearly”, “trivially”, “by a standard argument”, with no reference and no derivation in the appendix.",
+    fix:"Write it out. If it takes more than a page, it is a lemma; if it takes more than a day, it is the result.", res:["tao_rigour","tao_dumb"]},
+  e_edge_cases:        {ph:"E", name:"Never tried the dumb case",
+    what:"The theorem was never checked on the trivial, extreme or degenerate instance where the answer is known.",
+    smell:"d=1, n=1, the identity map, the zero function: none were tried. No numerical instance exists.",
+    fix:"Instantiate on the simplest case; then the extreme one; then one random numerical instance.", res:["tao_dumb","tao_rigour"]},
+  e_no_blinding:       {ph:"E", name:"Unblinded scoring",
+    what:"The person scoring the outcome knows the condition. Expectations leak into the data.",
+    smell:"You labelled the outputs yourself, knowing which came from your method.",
+    fix:"Blind the rater to condition; randomise presentation order; pre-specify the rubric.", res:["munafo","feynman"]},
+  /* Analysis */
+  a_harking:           {ph:"A", name:"HARKing",
+    what:"Hypothesising After the Results are Known: the surprising slice becomes the hypothesis you “predicted”.",
+    smell:"The introduction was rewritten after the results. The finding comes from one of twenty subgroups.",
+    fix:"Label it exploratory, replicate on held-out data or fresh seeds, then it can become a hypothesis.", res:["kerr","gelman","simmons"]},
+  a_forking:           {ph:"A", name:"Forking paths",
+    what:"Many defensible analysis choices (exclusions, metrics, subgroups, sweeps) tried until one is significant — often without noticing.",
+    smell:"Outliers removed after seeing results. The parameter sweep range was chosen after the first plot.",
+    fix:"Fix the analysis before the data; if you explore, say so and correct for it.", res:["gelman","simmons","manyanalysts"]},
+  a_cherry_pick:       {ph:"A", name:"Cherry-picking",
+    what:"The best seed, the best dataset, the best epoch, the runs that didn't crash — reported as if they were typical.",
+    smell:"“Best of five.” The three seeds were chosen from ten.",
+    fix:"Report all runs, the aggregate with uncertainty, and the selection rule if any.", res:["henderson","agarwal","lipton"]},
+  a_overclaim:         {ph:"A", name:"Overclaiming",
+    what:"Measured correlation becomes cause; an existence proof becomes an explanation; a benchmark score becomes “understanding”.",
+    smell:"“This shows that the model learns to reason.” The word “explains” for a curve fit.",
+    fix:"Write what was measured. State the mechanism claim as a hypothesis with the test that would falsify it.", res:["lipton","story","convictions"]},
+  a_no_uncertainty:    {ph:"A", name:"No uncertainty",
+    what:"Point estimates without intervals; a 0.4-point gain treated as a fact.",
+    smell:"No error bars in any figure. Nobody knows the seed-to-seed spread.",
+    fix:"Fewer configurations, more repeats; interval estimates; bootstrap over test items at minimum.", res:["agarwal","bouthillier","henderson"]},
+  a_test_reuse:        {ph:"A", name:"Test set as validation",
+    what:"The test set was consulted dozens of times over the project; the final number is optimistically biased.",
+    smell:"Test evaluated every epoch; “the best epoch” reported.",
+    fix:"Validation for every decision; test once. If contaminated, get a fresh held-out set and say so.", res:["recht","gorman","leakage"]},
+  a_shortcut:          {ph:"A", name:"Shortcut learning",
+    what:"High benchmark score obtained through a spurious cue (background, length, artefact), not the concept you claim.",
+    smell:"Performance collapses under a distribution shift nobody tested. Removing the suspected cue was never tried.",
+    fix:"Remove the cue, shuffle inputs, test on a shifted set; then decide what was learned.", res:["geirhos","zhang","lipton"]},
+  a_bound_vacuous:     {ph:"A", name:"Vacuous bound",
+    what:"The bound is correct and larger than the trivial one in every regime the paper cares about.",
+    smell:"The bound was never plotted against empirical values. In the paper's regime it exceeds 1.",
+    fix:"Instantiate it. State the regime where it is non-vacuous; if there is none, frame the result as qualitative.", res:["nagarajan","zhang","lipton"]},
+  /* Reporting */
+  r_multiple_messages: {ph:"R", name:"Too many messages",
+    what:"Four contributions in eight pages. Reviewers cannot find the claim; readers stop before the proof.",
+    smell:"The abstract lists contributions with “furthermore”. A theory result and a method result share one paper.",
+    fix:"One claim per paper. The rest is the appendix, or the next paper.", res:["spj","clarity","spectrum"]},
+  r_no_limitations:    {ph:"R", name:"Hidden limitations",
+    what:"The setting where it failed is left out. Readers build on a result that doesn't hold where they need it.",
+    smell:"“We leave X to future work” standing in for “X did not work”.",
+    fix:"Report where it fails and your best guess why. It is the most reused paragraph in the paper.", res:["feynman","lipton","reviewer"]},
+  r_irreproducible:    {ph:"R", name:"Irreproducible",
+    what:"No code, no seeds, no exact commands, no compute. Nobody can build on it — including you next year.",
+    smell:"“Code will be released upon acceptance.”",
+    fix:"Code, configs, seeds, exact commands and compute alongside the paper. Run the checklist.", res:["pineau","checklist","munafo"]},
+  r_mathiness:         {ph:"R", name:"Mathiness",
+    what:"Notation that adds authority rather than precision; a simple idea made hard to state so it looks rigorous.",
+    smell:"Reviewers ask what the theorem is for. The informal version fits in one sentence but never appears.",
+    fix:"Informal statement up front, formal in the appendix. A spectrum of details, not a wall.", res:["lipton","spectrum","clarity"]},
+  r_language:          {ph:"R", name:"Suggestive language",
+    what:"“Understands”, “reasons”, “human-level”: words that claim more than the measurement.",
+    smell:"Anthropomorphic verbs in the results section.",
+    fix:"Describe the measurement operationally; keep the interpretation separate and labelled as such.", res:["lipton"]},
+  r_no_postmortem:     {ph:"R", name:"No postmortem",
+    what:"Project ends, next project starts the same way. The outcome was recorded; the process was not.",
+    smell:"Nobody can say which decision cost the most time.",
+    fix:"Two hours: what cost the most, what would you do differently, one change for next time.", res:["openloop","failure"]}
+};
+
+/* ---- Scenario cards. k: sound | pit | meh. w: weeks spent. r: rigor delta. ---- */
+const CARDS = [
+  /* ===================== QUESTION ===================== */
+  {id:"Q_pitch", ph:"Q", dom:"all", title:"The first idea",
+   s:"Three weeks of reading, and you have an idea you like. Your supervisor is away for two weeks.",
+   o:[
+    {t:"Write a one-page pitch — the claim, the prediction that would falsify it, the smallest experiment or proof that could kill it — and send it to your supervisor and a labmate before building anything.", k:"sound", w:1, r:8,
+     f:"Feedback on a page costs a day; feedback on a pipeline costs a month. The pitch also forces you to write down what would make you wrong, which is most of the design work."},
+    {t:"Start building the full pipeline now. You'll have results to show when they're back.", k:"pit", p:"q_no_feedback", w:3, r:-8,
+     f:"This is the most common trap in the first year: showing up only with results. What you bring will be shaped by the taste you don't yet have, and the correction arrives after the expensive part."},
+    {t:"Read for another three weeks to be sure nobody has done it.", k:"meh", w:3, r:2,
+     f:"A prior-work check matters, but it is bounded: two focused hours plus asking two people beats three more weeks. Reading can become a way of not deciding."}
+   ]},
+  {id:"Q_method", ph:"Q", dom:"all", title:"Whose problem is it?",
+   s:"You know one method inside out. A new dataset (or setting) appears in the group and nobody has touched it.",
+   o:[
+    {t:"Apply your method to it — you know it will work, and it's a quick paper.", k:"pit", p:"q_method_first", w:2, r:-8,
+     f:"Platt's warning: beware the person of one method. The question here is “what would we know afterwards that we don't know now?” If the answer is “that X also works on Y”, that is a brick lying in the brickyard."},
+    {t:"Write the question first — one sentence, plus what the answer would look like. Choose the method after.", k:"sound", w:1, r:8,
+     f:"Problem-oriented, not method-oriented. Often the method you know is still the right one; now you can say why."},
+    {t:"Ask your supervisor to hand you a problem.", k:"meh", w:1, r:1,
+     f:"Reasonable early on, but the skill you are here to learn is choosing. At minimum, ask why this problem and what would make it fail."}
+   ]},
+  {id:"Q_hyp", ph:"Q", dom:"all", title:"The hypothesis",
+   s:"Time to write the hypothesis at the top of your project document.",
+   o:[
+    {t:"“Our approach improves performance.”", k:"pit", p:"q_vague_hypothesis", w:0, r:-8,
+     f:"No condition, no comparison, no magnitude, no way to lose. A hypothesis that survives every outcome supports none."},
+    {t:"“Under condition C, our approach beats baseline B on metric M by at least δ. If it doesn't with n runs, the mechanism story is wrong.”", k:"sound", w:1, r:8,
+     f:"Predictive and falsifiable. The δ and n force the design conversation now instead of at the rebuttal."},
+    {t:"“We explore the behaviour of our approach in setting S.”", k:"meh", w:0, r:1,
+     f:"Exploratory work is legitimate when it is labelled as such — but pre-commit to what would count as interesting, or you will find something in any noise."}
+   ]},
+  {id:"Q_story", ph:"Q", dom:"all", title:"One beautiful story",
+   s:"Your reading suggests an elegant mechanism that explains the phenomenon. You can already see the figure.",
+   o:[
+    {t:"Design the study to demonstrate the mechanism.", k:"pit", p:"q_single_hypothesis", w:2, r:-8,
+     f:"You will find evidence for it, because you are looking for it. Ask: do I want to prove myself right, or find out what's true?"},
+    {t:"List two or three rival explanations and design at least one test that each rival would fail.", k:"sound", w:2, r:8,
+     f:"Chamberlin's multiple working hypotheses, Platt's strong inference. The rivals are also your best defence in review."},
+    {t:"Skip explanations for now and just collect data.", k:"meh", w:2, r:0,
+     f:"Data without a hypothesis is not neutral: with no prediction in advance, every pattern you find later is a fork in the garden."}
+   ]},
+  {id:"Q_scope", ph:"Q", dom:"all", title:"Scope",
+   s:"Your supervisor is excited and suggests three extensions. Each sounds like a week.",
+   o:[
+    {t:"Do all of it. It's a bigger paper.", k:"pit", p:"q_scope_creep", w:5, r:-6,
+     f:"Each “week” is a month, and the core result gets the time that's left. Four contributions and no claim is the most common shape of a rejected paper."},
+    {t:"Define the minimum result that makes the paper. Put extensions on an “if time” list with a date.", k:"sound", w:1, r:7,
+     f:"The minimum viable paper has one claim. The list keeps the enthusiasm without spending it yet."},
+    {t:"Pick the easiest extension.", k:"meh", w:2, r:0,
+     f:"Easiest is not the same as most informative. Choose the extension that would change the claim if it failed."}
+   ]},
+  {id:"Q_kill", ph:"Q", dom:"all", title:"When would you stop?",
+   s:"Planning meeting. Someone asks: what if the pilot doesn't work?",
+   o:[
+    {t:"Write a kill criterion now: “by week 8, if the pilot doesn't show X, we pivot to plan B.” Put plan B on paper.", k:"sound", w:1, r:8,
+     f:"A criterion written before the emotion arrives is the only one you'll obey. Contingency plans are cheap now and impossible in week 20."},
+    {t:"We'll know it when we see it.", k:"pit", p:"q_no_kill_criterion", w:0, r:-8,
+     f:"You will not. Every week's result will look like it needs one more week."},
+    {t:"Commit for the full year no matter what. Grit.", k:"meh", w:0, r:-2,
+     f:"Grit without a defined test is sunk cost in disguise. The quit-and-grit test needs a written criterion to be a test."}
+   ]},
+  {id:"Q_theorem_for", ph:"Q", dom:["ml_theory"], title:"A theorem for whom?",
+   s:"You can prove a clean result about a model nobody trains. The proof is within reach.",
+   o:[
+    {t:"Prove it. Provable is rare.", k:"pit", p:"q_method_first", w:6, r:-6,
+     f:"Tractability-first is method-first in disguise. Ask what question this answers about models people care about; if none, find the simplest model that still captures the phenomenon."},
+    {t:"Write down the practical or conceptual question first, then find the simplest model in which the phenomenon still appears.", k:"sound", w:2, r:8,
+     f:"A toy model is a virtue when it isolates the mechanism; a vice when it is chosen for its proof, not its phenomenon."},
+    {t:"Prove it, and add a paragraph arguing it should carry over.", k:"meh", w:6, r:-2,
+     f:"The paragraph is where the assumptions hide. At least test the claim numerically on the model people do use."}
+   ]},
+
+  /* ===================== DESIGN ===================== */
+  {id:"D_plan", ph:"D", dom:"all", title:"The analysis plan",
+   s:"You are about to launch the first real runs (or the first real data collection).",
+   o:[
+    {t:"Write down the primary metric, the comparison, the number of runs and the exclusion rules before seeing any result.", k:"sound", w:1, r:8,
+     f:"A dated note is enough where pre-registration isn't customary. It is the difference between testing a hypothesis and finding one."},
+    {t:"Collect first, decide what to report when you see what's interesting.", k:"pit", p:"d_no_prereg", w:0, r:-9,
+     f:"Every remaining choice — metric, subgroup, exclusion — is a fork. With twenty forks you will find a significant path, and you won't notice you chose it."},
+    {t:"Use whatever the last paper in the area used.", k:"meh", w:0, r:2,
+     f:"A fine default, if you check that it measures what you claim. A single inherited number for a complex thing is how fields drift."}
+   ]},
+  {id:"D_power", ph:"D", dom:"all", title:"Too small to tell",
+   s:"Compute (or participants, or reagents) are limited. How many runs?",
+   o:[
+    {t:"Run a small pilot to estimate the variance, then choose the n that can detect the effect you'd care about.", k:"sound", w:2, r:8,
+     f:"If the affordable n can't detect the effect that matters, shrink the question rather than the n. A null from an underpowered study is not evidence."},
+    {t:"Three runs; that's what the budget allows. Hope for a clear effect.", k:"pit", p:"d_underpowered", w:1, r:-8,
+     f:"An underpowered positive is probably inflated; an underpowered null is uninformative. Either way you learn less than the runs cost."},
+    {t:"Use the maximum the budget allows and don't ask whether it's enough.", k:"meh", w:3, r:1,
+     f:"Better than three, but you still can't interpret a null. Ten minutes of power arithmetic would tell you whether the study can succeed."}
+   ]},
+  {id:"D_proto", ph:"D", dom:"all", title:"Prototype",
+   s:"The full pipeline will take two months to build. The toy version, a day.",
+   o:[
+    {t:"Build the smallest version that can be wrong within a day. Scale what survives.", k:"sound", w:1, r:8,
+     f:"The toy fails fast and cheaply. Most of what you learn in a project you learn from things that failed early."},
+    {t:"Build the real system first, so the results are real.", k:"pit", p:"d_no_prototype", w:8, r:-6,
+     f:"Two months without a result that could be wrong. When it finally is wrong, the design conversation you needed happens in month three."}
+   ]},
+  {id:"D_metric", ph:"D", dom:"all", title:"One number",
+   s:"The field has a standard leaderboard metric. What do you track?",
+   o:[
+    {t:"The leaderboard number and nothing else. That's what reviewers compare.", k:"pit", p:"d_metric_proxy", w:0, r:-7,
+     f:"Optimise a proxy hard enough and it stops measuring the thing. Two points on the leaderboard can mean anything, including a shortcut."},
+    {t:"The leaderboard number as primary, plus two diagnostics that would show if it is being gamed.", k:"sound", w:1, r:8,
+     f:"The diagnostics are what turn a number into an argument. They are also where the interesting findings usually are."},
+    {t:"Ten metrics; let the reader decide.", k:"meh", w:1, r:0,
+     f:"Readers can't. Without a primary metric you have also given yourself ten chances to find a win."}
+   ]},
+  {id:"D_split", ph:"D", dom:["ml_exp"], title:"The split",
+   s:"The benchmark ships with a labelled test set. Your validation split is small and noisy.",
+   o:[
+    {t:"Tune on the test set — validation is too small to trust.", k:"pit", p:"d_leakage", w:0, r:-12,
+     f:"Every tuning decision on test is a bit of test information in your model. The final number is no longer an estimate of anything."},
+    {t:"Carve a bigger validation split from train; touch test once, at the end.", k:"sound", w:1, r:8,
+     f:"Less training data hurts less than an untrustworthy test number. Test once, and say how many times you looked."},
+    {t:"Use test only for early stopping — that's not really tuning.", k:"pit", p:"d_leakage", w:0, r:-9,
+     f:"It is tuning. Choosing the epoch on test is choosing the model on test."}
+   ]},
+  {id:"D_preproc", ph:"D", dom:["ml_exp","comp","social"], title:"Preprocessing",
+   s:"Features need standardising. The pipeline currently computes mean and standard deviation over the whole dataset, then splits.",
+   o:[
+    {t:"Fine — it's just normalisation.", k:"pit", p:"d_leakage", w:0, r:-8,
+     f:"Preprocessing leakage: the test distribution leaked into the training pipeline. It rarely changes much here — and sometimes it changes everything (feature selection, imputation, target encoding)."},
+    {t:"Split first; fit every preprocessing step on train only and apply it to the rest.", k:"sound", w:0, r:6,
+     f:"The rule generalises: anything fitted to data is part of the model, and the model never sees test."}
+   ]},
+  {id:"D_baseline", ph:"D", dom:["ml_exp"], title:"Baselines",
+   s:"The strongest baseline reports 71.2 in its paper. Your rerun gives 68.9.",
+   o:[
+    {t:"Use 71.2 from their paper.", k:"pit", p:"d_weak_baselines", w:0, r:-8,
+     f:"Different split, preprocessing, compute or tuning. Copied numbers are not comparable; your 68.9 is at least measured in your pipeline."},
+    {t:"Re-run the baseline in your pipeline with the same tuning budget as your method. Report both numbers and the gap.", k:"sound", w:2, r:8,
+     f:"Reporting the discrepancy is not a weakness; it's the most useful sentence a reviewer will read."},
+    {t:"Re-run with their default hyperparameters.", k:"meh", w:1, r:1,
+     f:"Defaults are not tuned. Melis et al. showed carefully tuned old baselines beating newer architectures."}
+   ]},
+  {id:"D_seeds", ph:"D", dom:["ml_exp","comp"], title:"Seeds",
+   s:"Compute budget: 40 runs. Ten configurations interest you.",
+   o:[
+    {t:"One seed per configuration, forty configurations.", k:"pit", p:"d_no_seeds", w:1, r:-8,
+     f:"The difference between methods is often smaller than the difference between seeds. With one seed, your ranking is a coin flip."},
+    {t:"Five seeds for the eight configurations that matter. Report the spread.", k:"sound", w:1, r:8,
+     f:"Fewer questions, answered. Interval estimates over runs are what make a comparison a comparison."}
+   ]},
+  {id:"D_ablate", ph:"D", dom:["ml_exp"], title:"Three changes",
+   s:"Your method changes the architecture, adds a new augmentation, and trains for twice as long.",
+   o:[
+    {t:"Compare the full method to the baseline. That's the contribution.", k:"pit", p:"d_confounded", w:1, r:-8,
+     f:"The gain has no identified source. It may be the training length, in which case the contribution is “train longer”."},
+    {t:"Ablate each change, and give the baseline the same training length.", k:"sound", w:3, r:8,
+     f:"Lipton & Steinhardt's “failure to identify the sources of empirical gains”. Ablations are what turn a number into knowledge."}
+   ]},
+  {id:"D_assume", ph:"D", dom:["ml_theory"], title:"The convenient assumption",
+   s:"The proof goes through if the loss is convex. The paper is about neural networks.",
+   o:[
+    {t:"Assume it; mention it in a footnote.", k:"pit", p:"d_wrong_assumptions", w:2, r:-9,
+     f:"The assumption does all the work and fails in the setting you claim to explain. Reviewers will find the footnote."},
+    {t:"Ask which assumption carries the result; test the theorem numerically where it fails; state the regime honestly.", k:"sound", w:3, r:8,
+     f:"Knowing exactly where a result breaks is a result. It often points to the next theorem."},
+    {t:"Prove the general non-convex case first.", k:"meh", w:10, r:0,
+     f:"Perfectionism with a deadline. Start with the strong assumption, understand the mechanism, then relax."}
+   ]},
+  {id:"D_pseudo", ph:"D", dom:["lab"], title:"How many samples?",
+   s:"Three cultures, twelve wells each. The analysis script says n = 36.",
+   o:[
+    {t:"n = 36. More wells, more power.", k:"pit", p:"d_pseudoreplication", w:0, r:-9,
+     f:"Wells from one culture share everything. The treatment was applied independently three times: n = 3. The 36 makes tiny p-values out of nothing."},
+    {t:"n = 3, with wells as technical replicates averaged per culture. Plan more cultures.", k:"sound", w:2, r:8,
+     f:"Hurlbert (1984) is still the reference. The unit that received the treatment independently is your n."}
+   ]},
+  {id:"D_batchlab", ph:"D", dom:["lab"], title:"Scheduling",
+   s:"The lab schedule: controls on Monday, treated samples on Thursday, prepared by two different people.",
+   o:[
+    {t:"Fine — same protocol either way.", k:"pit", p:"d_batch", w:0, r:-9,
+     f:"Day and operator are now perfectly confounded with treatment. Whatever you measure, you cannot tell it from the batch."},
+    {t:"Interleave conditions across days and operators; record batch and check it in the analysis.", k:"sound", w:1, r:8,
+     f:"Randomise what you can, record what you can't. Batch as a covariate has saved more studies than any statistic."}
+   ]},
+  {id:"D_batchml", ph:"D", dom:["ml_exp","comp"], title:"Hardware",
+   s:"Your method's runs go on the new cluster nodes; the baseline runs happened last month on the old ones, with an older library version.",
+   o:[
+    {t:"Compute is compute.", k:"pit", p:"d_batch", w:0, r:-6,
+     f:"Library version, driver, nondeterministic kernels: Henderson et al. found implementation differences alone flip conclusions. Rerun the baseline in the same environment."},
+    {t:"Rerun everything in one pinned environment; log versions with each run.", k:"sound", w:2, r:7,
+     f:"One environment, versions logged. Boring, and the reason your numbers will still mean something next year."}
+   ]},
+  {id:"D_measure_social", ph:"D", dom:["social"], title:"Measuring the construct",
+   s:"No existing questionnaire fits. You draft eight items over lunch.",
+   o:[
+    {t:"Use the eight items; they clearly measure what we mean.", k:"pit", p:"d_metric_proxy", w:1, r:-8,
+     f:"Face validity is not validity. An unvalidated scale is a single number standing in for a complex thing, and reviewers will ask what it measures."},
+    {t:"Adapt a validated instrument, or pilot yours and check reliability and convergent validity before the main study.", k:"sound", w:3, r:8,
+     f:"Measurement is the study. If the instrument is noise, everything downstream is noise with confidence intervals."}
+   ]},
+  {id:"D_prereg_social", ph:"D", dom:["social","lab"], title:"Pre-registration",
+   s:"A colleague suggests pre-registering the primary hypothesis and analysis.",
+   o:[
+    {t:"Skip it — it's paperwork and it limits what we can find.", k:"pit", p:"d_no_prereg", w:0, r:-8,
+     f:"It limits what you can claim to have predicted, which is the point. Exploration stays allowed; it just gets labelled."},
+    {t:"Pre-register the primary hypothesis, sample size and analysis; label everything else exploratory.", k:"sound", w:1, r:8,
+     f:"Confirmatory and exploratory both matter. The registration is what lets readers tell them apart."}
+   ]},
+  {id:"D_validate_sim", ph:"D", dom:["comp"], title:"Trusting the simulator",
+   s:"You wrote the simulator yourself. There is an analytic solution for one special case.",
+   o:[
+    {t:"Go straight to the interesting regime — the special case is trivial.", k:"pit", p:"e_no_sanity_checks", w:2, r:-9,
+     f:"A simulator that has never reproduced a known answer is a random-number generator with a physics vocabulary."},
+    {t:"Reproduce the analytic case and a published result first; then run a resolution and time-step convergence study.", k:"sound", w:2, r:8,
+     f:"Every result you report will rest on this week. Convergence studies are how you know the instability is physics, not the grid."}
+   ]},
+
+  /* ===================== EXECUTION ===================== */
+  {id:"E_toogood", ph:"E", dom:"all", title:"Too good to be true",
+   s:"First real results: your method beats the best published number by a wide margin.",
+   o:[
+    {t:"Celebrate. Start the paper this week.", k:"pit", p:"e_silent_bugs", w:2, r:-12,
+     f:"The base rate for “far beyond the field” is a bug or leakage. Write the paper after someone has tried to break the result."},
+    {t:"Assume a bug. Shuffle the labels, run a null control, check for duplicates across splits, re-derive the pipeline.", k:"sound", w:1, r:9,
+     f:"If it survives, you have a much stronger paper: the checks become the evidence. If it doesn't, you saved yourself a retraction."},
+    {t:"Run it again with the same code to confirm.", k:"meh", w:1, r:0,
+     f:"Same code, same bug, same result. Reproducing is not the same as checking."}
+   ]},
+  {id:"E_sanity", ph:"E", dom:"all", title:"Sanity checks",
+   s:"The deadline is in six weeks. Trivial baselines (random, majority, constant, analytic) are on the to-do list.",
+   o:[
+    {t:"Skip them; nobody reports chance level anyway.", k:"pit", p:"e_no_sanity_checks", w:0, r:-8,
+     f:"Without chance level you cannot tell learning from luck. Without overfitting a tiny subset you cannot tell a bug from a hard problem."},
+    {t:"Do them first: chance level, a constant predictor, overfit ten examples. Half a day.", k:"sound", w:1, r:8,
+     f:"Karpathy's recipe: dumb baselines first. They also give you the y-axis for every later plot."}
+   ]},
+  {id:"E_notebook", ph:"E", dom:"all", title:"The notebook",
+   s:"Everything lives in one notebook, overwritten as you go. Figures are screenshots in a chat.",
+   o:[
+    {t:"It works; cleaning up can wait for the camera-ready.", k:"pit", p:"e_open_loop_code", w:0, r:-8,
+     f:"In three weeks a reviewer — or you — will ask which run made figure 2, and the answer will be a screenshot."},
+    {t:"Version the code; log config and seed per run; make each figure regenerable by one command.", k:"sound", w:1, r:8,
+     f:"Reproducible-to-yourself is the minimum. It is also the fastest way to do the rebuttal experiments."},
+    {t:"Keep careful notes in a document.", k:"meh", w:0, r:2,
+     f:"Better than nothing; notes drift from code within days. Log from the code, not about it."}
+   ]},
+  {id:"E_sunk", ph:"E", dom:"all", title:"Week 10",
+   s:"The kill criterion said week 8. It's week 10 and the pilot still doesn't show the effect. You have plan B on paper.",
+   o:[
+    {t:"Two more weeks. It's so close.", k:"pit", p:"e_sunk_cost", w:6, r:-8,
+     f:"“Two more weeks” is said three times on average. The months already spent are gone whichever way you decide."},
+    {t:"Run the postmortem-lite: what did we learn, what changes the design? Then execute plan B.", k:"sound", w:1, r:8,
+     f:"Quitting a design is not quitting the question. The learning from the failed pilot is the first section of plan B."},
+    {t:"Ask your supervisor to decide.", k:"meh", w:1, r:1,
+     f:"Do bring it to them — with your own recommendation and the criterion you wrote at the start. Outsourcing the decision teaches you nothing."}
+   ]},
+  {id:"E_budget", ph:"E", dom:["ml_exp"], title:"Tuning budget",
+   s:"Your method has had 200 hyperparameter trials. The baselines have had their paper defaults.",
+   o:[
+    {t:"That's how everyone does it.", k:"pit", p:"e_hparam_asymmetry", w:0, r:-9,
+     f:"The gap is the tuning, not the idea. Dodge et al.: report expected performance as a function of budget, and the picture often reverses."},
+    {t:"Give every method the same budget; report performance versus number of trials.", k:"sound", w:3, r:8,
+     f:"Equal budgets are the only fair race. The budget curve also tells readers what your method needs to work."}
+   ]},
+  {id:"E_clearly", ph:"E", dom:["ml_theory"], title:"“Clearly”",
+   s:"One step in the proof says “it is easy to see that”. You have not written it out.",
+   o:[
+    {t:"Move on; it's standard.", k:"pit", p:"e_proof_gap", w:0, r:-9,
+     f:"The unwritten step is the one that fails. Write it out; if it takes more than a page, it is a lemma."},
+    {t:"Write it out fully in the appendix, with the reference if it really is standard.", k:"sound", w:1, r:8,
+     f:"Half the time it takes ten minutes. The other half is where the paper actually is."}
+   ]},
+  {id:"E_dumb", ph:"E", dom:["ml_theory"], title:"The dumb case",
+   s:"You have the theorem. You have not tried it for d = 1, n = 1, or the identity map.",
+   o:[
+    {t:"It's general — the special cases follow.", k:"pit", p:"e_edge_cases", w:0, r:-8,
+     f:"The special cases are where you know the answer, so they are the only free test you have. Tao: ask the dumb questions and answer them."},
+    {t:"Instantiate the trivial case, an extreme case, and one random numerical instance.", k:"sound", w:1, r:8,
+     f:"A numerical instance catches sign errors, missing constants, and assumptions that quietly exclude the case you care about."}
+   ]},
+  {id:"E_blind", ph:"E", dom:["lab","social","ml_exp"], title:"Scoring",
+   s:"Outcomes need to be rated by hand. You know which samples (or model outputs) are the treated ones.",
+   o:[
+    {t:"Rate them yourself; you're the most careful person in the lab.", k:"pit", p:"e_no_blinding", w:0, r:-8,
+     f:"Care does not remove expectation. Blinded raters exist because careful people still see what they hope to see."},
+    {t:"Blind the rater to condition, randomise the order, pre-specify the rubric.", k:"sound", w:1, r:8,
+     f:"For model outputs: shuffle and hide the source before anyone scores. Same principle as a wet lab."}
+   ]},
+  {id:"E_sweep", ph:"E", dom:["comp"], title:"The parameter sweep",
+   s:"The first sweep shows nothing. You have a hunch about a narrower range.",
+   o:[
+    {t:"Sweep the narrower range until the effect appears; report that range.", k:"pit", p:"a_forking", w:2, r:-8,
+     f:"A range chosen after the first plot is a fork in the garden. Report the whole sweep, including where nothing happened."},
+    {t:"Report the full sweep; if you narrow, say why in advance and show both.", k:"sound", w:1, r:7,
+     f:"The empty region is data. It is also where reviewers will look."}
+   ]},
+
+  /* ===================== ANALYSIS ===================== */
+  {id:"A_slice", ph:"A", dom:"all", title:"The surprising subgroup",
+   s:"After slicing the data twenty ways, one slice shows a striking effect. The main analysis showed nothing.",
+   o:[
+    {t:"Lead with the slice. That's the finding.", k:"pit", p:"a_harking", w:1, r:-10,
+     f:"One in twenty slices will look striking by chance. Rewriting the introduction around it is HARKing — and you will half-believe you predicted it."},
+    {t:"Treat it as a hypothesis: replicate on held-out data or fresh runs before it becomes a claim.", k:"sound", w:2, r:8,
+     f:"Exploratory findings are where hypotheses come from. They just aren't evidence for themselves."},
+    {t:"Report it with a multiple-comparisons correction, clearly labelled exploratory.", k:"meh", w:0, r:4,
+     f:"Honest and acceptable. Replication is stronger, but labelling plus correction keeps the reader informed."}
+   ]},
+  {id:"A_bestof", ph:"A", dom:["ml_exp","comp"], title:"Best of five",
+   s:"Five runs. One is excellent; the others are ordinary.",
+   o:[
+    {t:"Report the excellent one. It shows what the method can do.", k:"pit", p:"a_cherry_pick", w:0, r:-9,
+     f:"It shows what one seed can do. Readers will assume the number is typical; their reproduction will fail; your paper becomes a cautionary tale."},
+    {t:"Report mean and interval over all five; show the best only labelled as such.", k:"sound", w:0, r:8,
+     f:"The spread is the finding here: your method is high-variance. That is worth knowing and worth saying."}
+   ]},
+  {id:"A_explain", ph:"A", dom:"all", title:"“This shows that…”",
+   s:"The results section. You measured a correlation between an intervention and an outcome.",
+   o:[
+    {t:"“This shows that the model learns to reason” (or: the intervention causes the outcome).", k:"pit", p:"a_overclaim", w:0, r:-8,
+     f:"You measured a number. The mechanism is your hypothesis about the number; keep them in different sentences."},
+    {t:"State what was measured; state the mechanism claim separately, as a hypothesis, with the test that would falsify it.", k:"sound", w:0, r:8,
+     f:"Lipton & Steinhardt: explanation versus speculation. Speculation is fine when labelled."}
+   ]},
+  {id:"A_errorbars", ph:"A", dom:"all", title:"No time for error bars",
+   s:"Two weeks to the deadline. Every result is a single point estimate.",
+   o:[
+    {t:"Ship the point estimates. Everyone knows there's noise.", k:"pit", p:"a_no_uncertainty", w:0, r:-8,
+     f:"Everyone knows, and nobody can tell whether your 0.4 gain is one. Without intervals your comparison is a story."},
+    {t:"Cut configurations; repeat the ones that carry the claim; report intervals.", k:"sound", w:2, r:8,
+     f:"Fewer claims, each supported. Agarwal et al.: with few runs, use interval estimates and aggregate metrics rather than means."},
+    {t:"Bootstrap over test items at least, and say that's what it is.", k:"meh", w:0, r:3,
+     f:"Captures test-set noise, not run-to-run noise. Honest if labelled, incomplete for training variance."}
+   ]},
+  {id:"A_reuse", ph:"A", dom:["ml_exp"], title:"Forty looks",
+   s:"Over the project you have evaluated on the test set about forty times.",
+   o:[
+    {t:"Report the last number.", k:"pit", p:"a_test_reuse", w:0, r:-8,
+     f:"Forty looks is forty decisions informed by test. Recht et al. measured how much this optimism costs; it is not zero."},
+    {t:"Say so; if you can, evaluate once on a fresh held-out set and report both.", k:"sound", w:1, r:7,
+     f:"Contamination admitted is a limitation. Contamination hidden is a retraction."}
+   ]},
+  {id:"A_shortcut", ph:"A", dom:["ml_exp"], title:"98%",
+   s:"Your model reaches 98% on the benchmark. Human-level is 96%.",
+   o:[
+    {t:"Conclude it has learned the underlying concept.", k:"pit", p:"a_shortcut", w:0, r:-8,
+     f:"Or a background cue, an artefact, a length statistic. Geirhos et al.: shortcut learning is the default, not the exception."},
+    {t:"Probe: remove the suspected cue, shuffle the inputs, evaluate on a shifted set. Then decide what was learned.", k:"sound", w:2, r:8,
+     f:"The probes are also the interesting paper. “Where it fails” is the section that gets cited."}
+   ]},
+  {id:"A_bound", ph:"A", dom:["ml_theory"], title:"The bound",
+   s:"Your bound is O(√(d/n)). In the regime the paper is about, its value is around 300.",
+   o:[
+    {t:"Report it as is. Rates are what matter.", k:"pit", p:"a_bound_vacuous", w:0, r:-8,
+     f:"A bound above the trivial one explains nothing about the setting you claim. Nagarajan & Kolter: some bounds even increase with n."},
+    {t:"Plot the bound against empirical values; state the regime where it is non-vacuous; if none, frame the result as qualitative.", k:"sound", w:1, r:8,
+     f:"An honest qualitative result survives review. A vacuous quantitative claim does not survive one plot in the rebuttal."}
+   ]},
+  {id:"A_outlier", ph:"A", dom:["lab","social","comp"], title:"Outliers",
+   s:"Two data points ruin the effect. They look odd.",
+   o:[
+    {t:"Remove them; they're clearly outliers.", k:"pit", p:"a_forking", w:0, r:-8,
+     f:"Odd after seeing the result is not a rule. Exclusion decided post hoc is a fork; Simmons et al. show it is enough to manufacture significance."},
+    {t:"Apply the exclusion rule you wrote in the plan; if there is none, report with and without, and say so.", k:"sound", w:0, r:7,
+     f:"With-and-without is the honest analysis. If the effect depends on two points, that is the finding."}
+   ]},
+  {id:"A_existence", ph:"A", dom:["ml_theory"], title:"Existence",
+   s:"You proved that a network with the property exists. The introduction says this explains why training finds it.",
+   o:[
+    {t:"Keep it: existence is the hard part.", k:"pit", p:"a_overclaim", w:0, r:-8,
+     f:"Existence says nothing about what gradient descent finds. The claim in the introduction is a different theorem you haven't proved."},
+    {t:"State the existence result as such; pose the algorithmic question as open, with a numerical check of whether training gets there.", k:"sound", w:1, r:8,
+     f:"The numerical check is cheap and either supports the story or gives you the next paper."}
+   ]},
+
+  /* ===================== REPORTING ===================== */
+  {id:"R_messages", ph:"R", dom:"all", title:"Many messages",
+   s:"You have a method result, a theory result and a new dataset. Eight pages.",
+   o:[
+    {t:"All of it. It's a strong paper.", k:"pit", p:"r_multiple_messages", w:2, r:-7,
+     f:"Reviewers will not find the claim; readers will stop before the proof. Dense is not the same as strong."},
+    {t:"One claim per paper. The rest goes to the appendix or the next paper.", k:"sound", w:1, r:8,
+     f:"Peyton Jones: one clear, sharp idea. The other results lose nothing by waiting; they gain a paper each."}
+   ]},
+  {id:"R_limits", ph:"R", dom:"all", title:"Limitations",
+   s:"The method fails in one setting you tested. It fits neatly into “future work”.",
+   o:[
+    {t:"Leave it out. It's not the point of the paper.", k:"pit", p:"r_no_limitations", w:0, r:-8,
+     f:"Someone will build on your result exactly where it fails. Feynman: report what might make you wrong, especially when it's inconvenient."},
+    {t:"Report where it fails and your best guess why.", k:"sound", w:0, r:8,
+     f:"The limitations paragraph is the most reused paragraph in most papers. It is also what makes the rest believable."},
+    {t:"Put it in the appendix.", k:"meh", w:0, r:2,
+     f:"Reported, technically. A sentence in the main text pointing to it costs nothing."}
+   ]},
+  {id:"R_code", ph:"R", dom:"all", title:"Reproducibility",
+   s:"Submission is tomorrow. The code is a mess.",
+   o:[
+    {t:"“Code will be released upon acceptance.”", k:"pit", p:"r_irreproducible", w:0, r:-7,
+     f:"It usually isn't. Messy code with exact commands and seeds beats no code; the checklist takes an hour."},
+    {t:"Release the messy code with configs, seeds, exact commands and compute used. Clean later.", k:"sound", w:1, r:8,
+     f:"Reproducible beats pretty. Your future self doing the rebuttal is the first user."}
+   ]},
+  {id:"R_words", ph:"R", dom:["ml_exp","ml_theory"], title:"Words",
+   s:"Draft: “the model understands the task and reasons about it.”",
+   o:[
+    {t:"Keep it; it reads well.", k:"pit", p:"r_language", w:0, r:-6,
+     f:"“Understands” claims more than any measurement you made. Suggestive language is how a benchmark score becomes a headline."},
+    {t:"Describe the measurement; keep the interpretation in its own labelled sentence.", k:"sound", w:0, r:6,
+     f:"Operational language ages well. Anthropomorphic language becomes the thing critics quote."}
+   ]},
+  {id:"R_math", ph:"R", dom:["ml_theory"], title:"Notation",
+   s:"A colleague says the main theorem takes a page of notation to state a one-sentence idea.",
+   o:[
+    {t:"Keep it; it looks rigorous.", k:"pit", p:"r_mathiness", w:0, r:-7,
+     f:"Mathiness: notation as authority. Rigour lives in the appendix; the main text needs the idea."},
+    {t:"Informal statement up front, formal in the appendix. A spectrum of details.", k:"sound", w:1, r:8,
+     f:"Most readers want the informal version; the few who want the formal one will find it. Both are served."}
+   ]},
+  {id:"R_post", ph:"R", dom:"all", title:"Done",
+   s:"Submitted. The next project starts Monday.",
+   o:[
+    {t:"Onto the next one.", k:"pit", p:"r_no_postmortem", w:0, r:-6,
+     f:"Open-loop: the outcome was recorded and the process was not. The next project will spend the same months in the same places."},
+    {t:"Two hours on Monday: which decision cost the most, what would we do differently, one change for next time.", k:"sound", w:0, r:8,
+     f:"The postmortem is the cheapest thing in this game. It is the only step that compounds."}
+   ]}
+];
+
+/* ---- Taste gym: pairwise comparisons. better: 'a' | 'b'. ---- */
+const PAIRS = [
+  {id:"P_hyp", dom:"all", q:"Which hypothesis would you rather defend?",
+   a:"“We study whether X affects Y.”",
+   b:"“If X causes Y through M, then removing M should abolish the effect. We test this by …”",
+   better:"b", feat:"A prediction you can lose",
+   why:"B commits to a mechanism and a way to be wrong; A can absorb any result. Taste, here, is preferring the sentence that risks something.",
+   res:["predictive","disprove","platt"]},
+  {id:"P_sota", dom:["ml_exp"], q:"Which abstract is the stronger contribution?",
+   a:"“We propose NewNet, which achieves state of the art on five benchmarks, improving the average by 2.1 points.”",
+   b:"“We show that the gains of recent methods on benchmark Z are explained by one preprocessing choice; once controlled for, the differences vanish.”",
+   better:"b", feat:"Explanation over leaderboard",
+   why:"B identifies the source of a gain, which changes what the field does next. A adds a number without saying why. Lipton & Steinhardt call this failure to identify sources of gains.",
+   res:["lipton","melis","musgrave"]},
+  {id:"P_scope", dom:"all", q:"Which claim would you rather have your name on?",
+   a:"“A general theory of learning in realistic settings.”",
+   b:"“For the case of …, we characterise when … holds, and show the boundary where it fails.”",
+   better:"b", feat:"A claim with a boundary",
+   why:"B knows where it stops. A boundary is a testable claim; “general” is a promise. Ambition is fine, but the claim should be exactly as big as the evidence.",
+   res:["convictions","spectrum"]},
+  {id:"P_assume", dom:["ml_theory"], q:"Which theory paper would you rather review?",
+   a:"A theorem about deep networks with six assumptions, one of which is convexity of the loss, presented as explaining practical training.",
+   b:"A theorem in a linear model where every assumption is checkable, showing the same phenomenon and stating that it is a toy.",
+   better:"b", feat:"Honest minimal model",
+   why:"B isolates a mechanism in a setting where the assumptions hold. A's conclusion rests on an assumption that fails where it claims relevance.",
+   res:["nagarajan","tao_rigour","lipton"]},
+  {id:"P_plan", dom:"all", q:"Which research plan is the better bet?",
+   a:"Twelve experiments over nine months, results synthesised at the end.",
+   b:"A two-week pilot with an explicit go/no-go criterion, then scaling whichever design survived.",
+   better:"b", feat:"A cheap way to be wrong early",
+   why:"B buys information for two weeks and can change course. A commits nine months to a design nobody has tested. The pilot is also where the taste gets built.",
+   res:["proto","contingency","barbell"]},
+  {id:"P_eval", dom:["ml_exp","comp"], q:"Which evaluation would you trust?",
+   a:"Mean and interval over five seeds, equal tuning budget for all methods, one failure case shown. Headline gain: 0.8 points.",
+   b:"Best of five seeds, baselines at paper defaults, no intervals. Headline gain: 3.1 points.",
+   better:"a", feat:"Rigour beats the headline",
+   why:"A's smaller number means something; B's larger one is mostly tuning asymmetry and selection. Taste is being unimpressed by the bigger number.",
+   res:["dodge","henderson","agarwal"]},
+  {id:"P_boundary", dom:"all", q:"Which question is more worth a year?",
+   a:"“Does X also work on dataset D?”",
+   b:"“Under what conditions does X fail?”",
+   better:"b", feat:"Boundary-seeking",
+   why:"B produces knowledge whatever the answer; A produces a brick for the brickyard unless D is special. Failures locate mechanisms.",
+   res:["method","hamming","disprove"]},
+  {id:"P_prereg", dom:["social","lab"], q:"Which study design would you fund?",
+   a:"Pre-registered primary outcome, sample size from a power analysis, exploratory analyses labelled.",
+   b:"A larger battery of outcomes, sample by convenience, “we'll see what comes out significant”.",
+   better:"a", feat:"Decisions before data",
+   why:"A can be wrong; B cannot. B will produce a significant result by construction, and it will be noise.",
+   res:["nosek","simmons","button"]},
+  {id:"P_ablate", dom:["ml_exp"], q:"Which ablation write-up shows better judgement?",
+   a:"“Removing component C drops accuracy by 0.3 points (seed std: 0.6), showing C is essential.”",
+   b:"“Removing C changes accuracy by 0.3 points, within seed variance; we find no evidence C matters and drop it from the final method.”",
+   better:"b", feat:"Respecting the noise",
+   why:"B reads its own error bars and simplifies. A turns noise into a story because the story was wanted.",
+   res:["henderson","bouthillier","darlings"]},
+  {id:"P_exist", dom:["ml_theory"], q:"Which theory result is more useful as stated?",
+   a:"“For every ε there exists a network achieving error ε”, presented as explaining why training works.",
+   b:"“With n samples the error is at most C·√(d/n); C is explicit and the bound is plotted against experiments in Figure 1.”",
+   better:"b", feat:"Instantiated, matched to its use",
+   why:"B's claim matches what it proves and shows where it bites. A proves existence and claims an algorithmic explanation it doesn't contain.",
+   res:["nagarajan","zhang"]},
+  {id:"P_haunt", dom:"all", q:"Which idea deserves the next month?",
+   a:"The clever idea you had yesterday. It seems obviously good.",
+   b:"The idea that has come back to you for months and bothers you because nobody has answered it.",
+   better:"b", feat:"The haunt filter",
+   why:"Ideas that keep returning have passed a filter that yesterday's has not. Most ideas are bad (Sturgeon's law); the ones that haunt you are the sample worth spending on.",
+   res:["triage","greatideas","hamming"]},
+  {id:"P_conv", dom:["comp"], q:"Which simulation result would you believe?",
+   a:"A new instability observed at one resolution and one time step.",
+   b:"The same instability, present at three resolutions with converging magnitude, absent when the physics term is switched off.",
+   better:"b", feat:"Convergence and a null",
+   why:"B has ruled out the grid and identified the term. A is indistinguishable from a numerical artefact.",
+   res:["karpathy","feynman"]},
+  {id:"P_abstract", dom:"all", q:"Which abstract would you rather read?",
+   a:"Four contributions listed with “furthermore”, covering a method, a dataset, a theorem and a metric.",
+   b:"One claim, one line of evidence for it, one sentence on where it fails.",
+   better:"b", feat:"One message",
+   why:"B can be remembered and checked. A cannot be reviewed as a whole and will be judged on its weakest part.",
+   res:["spj","clarity"]},
+  {id:"P_baselines", dom:["ml_exp"], q:"Which comparison table shows better taste?",
+   a:"Baseline numbers copied from their papers, each with its own split and preprocessing.",
+   b:"All baselines rerun under identical splits; a footnote where the rerun differs from the published number.",
+   better:"b", feat:"Comparable numbers",
+   why:"B's numbers can be compared; A's cannot, whatever the decimals say. The footnote is the most credible thing in the paper.",
+   res:["melis","gorman","lipton"]},
+  {id:"P_null", dom:["lab","social"], q:"Which null result is worth publishing?",
+   a:"n = 12, no effect, wide interval including the effect sizes reported by others.",
+   b:"n from a power analysis for the smallest effect that would matter, no effect, interval excluding it.",
+   better:"b", feat:"An informative null",
+   why:"B rules something out. A is silence: it cannot distinguish “no effect” from “too small to see”.",
+   res:["button","ioannidis"]}
+];
+
+/* ---- Taste gym: spot the flaw. ans = index into opts. ---- */
+const FLAWS = [
+  {id:"F_preproc", dom:["ml_exp","comp","social"],
+   plan:"“We standardise all features using the mean and standard deviation of the full dataset, split 80/20, tune on validation and report on test.”",
+   opts:["Underpowered comparison","Leakage through preprocessing","Weak baselines","No uncertainty reported"], ans:1,
+   why:"Statistics fitted on the full dataset include test data. Split first; fit every preprocessing step on train only.",
+   repair:"Move the split before standardisation; fit the scaler on train; apply to validation and test.", p:"d_leakage", res:["leakage"]},
+  {id:"F_budget", dom:["ml_exp"],
+   plan:"“Our method is tuned over 100 configurations. Baselines use the hyperparameters from their original papers, on our dataset.”",
+   opts:["Asymmetric tuning budget","Test-set reuse","HARKing","Scope creep"], ans:0,
+   why:"Their paper's hyperparameters were tuned for their dataset. Your method gets 100 shots; theirs gets one.",
+   repair:"Equal budget; report expected best performance as a function of the number of trials.", p:"e_hparam_asymmetry", res:["dodge","melis"]},
+  {id:"F_fork", dom:"all",
+   plan:"“Hypothesis: the intervention improves outcomes. We'll run it, then analyse the data to find where it helps most.”",
+   opts:["Underpowered study","No prototype","Forking paths / HARKing","Mathiness"], ans:2,
+   why:"“Where it helps most” is chosen after the data. With enough subgroups one will help, by chance.",
+   repair:"Pre-specify the primary outcome and population; label subgroup findings exploratory and replicate.", p:"a_harking", res:["gelman","kerr"]},
+  {id:"F_convex", dom:["ml_theory"],
+   plan:"“We prove convergence assuming the loss is L-smooth and strongly convex, and conclude this explains why SGD works for deep networks.”",
+   opts:["Vacuous bound","Assumptions not satisfied where the claim is made","Proof gap","No numerical instance"], ans:1,
+   why:"Deep network losses are not strongly convex. The theorem may be correct; the conclusion is about a different object.",
+   repair:"State the result for the convex case; test numerically whether the predicted behaviour appears in the non-convex case; claim only that.", p:"d_wrong_assumptions", res:["nagarajan","lipton"]},
+  {id:"F_batch", dom:["lab"],
+   plan:"“Treated plates were prepared on Monday and control plates on Thursday, by different lab members. Each plate gives 12 wells, so n = 36 per condition.”",
+   opts:["Unblinded scoring","Batch effects confounded with treatment (and pseudoreplication)","Underpowered study","Hidden limitations"], ans:1,
+   why:"Day and operator are perfectly confounded with condition, and wells within a plate are not independent. n is 3, and the batch is the treatment.",
+   repair:"Interleave conditions across days and operators; analyse at the plate level with batch as a covariate.", p:"d_batch", res:["leek","hurlbert"]},
+  {id:"F_power", dom:["social","lab"],
+   plan:"“We will recruit 30 participants, which is what the budget allows, to detect a small effect of the intervention.”",
+   opts:["Underpowered study","Forking paths","No pre-registration","Unblinded scoring"], ans:0,
+   why:"A small effect with 30 participants has little chance of detection; a positive result would likely be inflated.",
+   repair:"Power analysis for the smallest effect that matters; if unaffordable, change the design (within-subject, stronger manipulation) or the question.", p:"d_underpowered", res:["button"]},
+  {id:"F_toogood", dom:"all",
+   plan:"“Our first run was three times better than any published method. We wrote the paper that week.”",
+   opts:["Too good to be true, unchecked","Scope creep","No postmortem","Suggestive language"], ans:0,
+   why:"A result that far outside the field's range is, by base rate, a bug or leakage. Nobody tried to break it.",
+   repair:"Shuffled-label control, duplicate check across splits, independent re-implementation; then write.", p:"e_silent_bugs", res:["zhang","leakage"]},
+  {id:"F_epoch", dom:["ml_exp"],
+   plan:"“We evaluate on the test set after every epoch and report the best epoch.”",
+   opts:["Confounded comparison","Test set used as validation","Single-seed conclusions","Cherry-picked datasets"], ans:1,
+   why:"Choosing the epoch on test is choosing the model on test. The reported number is optimistically biased.",
+   repair:"Early-stop on validation; evaluate the chosen checkpoint on test once.", p:"a_test_reuse", res:["recht","gorman"]},
+  {id:"F_vacuous", dom:["ml_theory"],
+   plan:"“Our bound holds for any distribution. We do not evaluate it numerically; in the paper's regime (d = 10⁶, n = 10⁴) its value is about 300.”",
+   opts:["Proof gap","Vacuous bound","Mathiness","Never tried the dumb case"], ans:1,
+   why:"A bound of 300 on a quantity in [0, 1] says nothing in the regime the paper is about.",
+   repair:"Plot it against empirical values; state the regime where it is informative; otherwise present it as qualitative.", p:"a_bound_vacuous", res:["nagarajan"]},
+  {id:"F_build", dom:"all",
+   plan:"“We'll spend the first four months building the full system, then start experiments.”",
+   opts:["No kill criterion","Full system before a toy version","Irreproducible","Single-seed conclusions"], ans:1,
+   why:"Four months with nothing that can be wrong. The first design conversation happens after the design is built.",
+   repair:"A toy version in the first week; scale only what survives.", p:"d_no_prototype", res:["proto","karpathy"]},
+  {id:"F_res", dom:["comp"],
+   plan:"“Our simulation shows a new instability at grid resolution h. We did not check other resolutions or time steps.”",
+   opts:["No sanity / convergence check","Batch effects","Forking paths","Overclaiming"], ans:0,
+   why:"An effect at one resolution is indistinguishable from a discretisation artefact.",
+   repair:"Convergence study across resolutions and time steps; switch the candidate physics term off as a null.", p:"e_no_sanity_checks", res:["karpathy"]},
+  {id:"F_many", dom:"all",
+   plan:"“Contributions: a new method, a new dataset, a new theoretical framework and a new metric, in eight pages.”",
+   opts:["Too many messages","Hidden limitations","No uncertainty","Method looking for a problem"], ans:0,
+   why:"Four contributions and no claim. It will be judged on its weakest quarter.",
+   repair:"One claim per paper; the others become the appendix or the next paper.", p:"r_multiple_messages", res:["spj","clarity"]},
+  {id:"F_shortcut", dom:["ml_exp"],
+   plan:"“The model reaches 98% on the benchmark; we conclude it has learned the underlying concept.”",
+   opts:["Shortcut learning not ruled out","Leakage","No error bars","Mathiness"], ans:0,
+   why:"98% is compatible with a spurious cue. Nothing tested what the model uses.",
+   repair:"Remove the suspected cue, shuffle, evaluate under shift; then interpret.", p:"a_shortcut", res:["geirhos"]},
+  {id:"F_nan", dom:["ml_exp","comp"],
+   plan:"“We report the mean over 3 seeds, chosen from the 10 runs that finished without numerical errors.”",
+   opts:["Cherry-picking through selection","Confounded comparison","No prototype","Asymmetric tuning budget"], ans:0,
+   why:"Runs that diverge are data about the method. Selecting the survivors inflates the mean and hides the instability.",
+   repair:"Report the divergence rate, and the aggregate over all runs with the failures counted.", p:"a_cherry_pick", res:["henderson","agarwal"]},
+  {id:"F_kill", dom:"all",
+   plan:"“The project has no defined stopping condition; we'll continue until it works.”",
+   opts:["No kill criterion","Unfalsifiable hypothesis","No postmortem","Scope creep"], ans:0,
+   why:"“Until it works” has no failure state. Every week's result will justify one more.",
+   repair:"Date and criterion for plan B, written now, in the calendar.", p:"q_no_kill_criterion", res:["contingency","quitgrit"]},
+  {id:"F_words", dom:["ml_exp"],
+   plan:"“Results: the model understands compositional structure and reasons about novel combinations.”",
+   opts:["Suggestive language beyond the measurement","No pre-registration","Batch effects","Underpowered"], ans:0,
+   why:"“Understands” and “reasons” describe no measurement. The result is an accuracy on some split.",
+   repair:"State the accuracy and the split; keep the interpretation in a labelled sentence.", p:"r_language", res:["lipton"]}
+];
+
+const LEVELS = [
+  {min:-999, name:"Untrained discriminator", note:"Everything looks plausible. That is where everyone starts."},
+  {min:6,    name:"Calibrating",             note:"You can tell the bad from the good; you are still guessing about the middle."},
+  {min:14,   name:"Sharp",                   note:"You spot the missing control before the author does."},
+  {min:22,   name:"Reviewer they ask for",   note:"Your objections are the ones that make the paper better."}
+];
+
+const CONF = [
+  {id:"coin", label:"Coin flip", p:0.5,  right:1, wrong:0},
+  {id:"lean", label:"Leaning",   p:0.7,  right:2, wrong:-1},
+  {id:"sure", label:"Sure",      p:0.9,  right:3, wrong:-3}
+];
+
+/* ============================================================================
+   APP. Vanilla JS, no deps. State in localStorage under STORE_KEY.
+   ========================================================================== */
+const STORE_KEY = "rp_v1";
+const BUDGET = 26;          /* weeks in a semester-ish */
+const RIGOR0 = 45;
+const TASTE_ROUND = 10;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
+const inDom = (item, dom) => item.dom === "all" || (Array.isArray(item.dom) && item.dom.includes(dom));
+
+/* ---- persistence ---- */
+function loadStore() {
+  try { const s = JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); return Object.assign({domain:"ml_exp", hits:{}, dodges:{}, runs:0, taste:{points:0, n:0, correct:0}, notes:{}}, s); }
+  catch (e) { return {domain:"ml_exp", hits:{}, dodges:{}, runs:0, taste:{points:0, n:0, correct:0}, notes:{}}; }
+}
+function saveStore() { try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) { /* private mode: fine */ } }
+let store = loadStore();
+
+/* ---- screens ---- */
+const SCREENS = ["home","run","postmortem","taste","tasteres","guide"];
+let current = "home";
+function show(id) {
+  SCREENS.forEach(s => $("screen-" + s).classList.toggle("hidden", s !== id));
+  current = id;
+  window.scrollTo({top:0, behavior:"smooth"});
+  $("dompill").textContent = domLabel(store.domain, true);
+}
+function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 1800); }
+function domLabel(id, short) { const d = DOMAINS.find(x => x.id === id) || DOMAINS[0]; return short ? d.short : d.label; }
+
+function readsHTML(ids) {
+  const seen = new Set();
+  return ids.filter(id => RESOURCES[id] && !seen.has(id) && seen.add(id)).map(id => {
+    const r = RESOURCES[id];
+    return `<li><a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.t)}</a> <span class="by">— ${esc(r.by)}</span>${r.n ? ` <span class="muted">· ${esc(r.n)}</span>` : ""}</li>`;
+  }).join("");
+}
+function pitboxHTML(pid) {
+  const p = PITFALLS[pid]; if (!p) return "";
+  return `<div class="pitbox"><div class="pn">Pitfall: ${esc(p.name)}</div>
+    <dl><dt>What</dt><dd>${esc(p.what)}</dd><dt>Smells like</dt><dd>${esc(p.smell)}</dd><dt>Instead</dt><dd>${esc(p.fix)}</dd></dl>
+    <div class="small muted" style="margin-top:8px">Read:</div><ul class="reads">${readsHTML(p.res)}</ul></div>`;
+}
+
+/* ---- domain chips ---- */
+function renderDomChips() {
+  const host = $("dom-chips"); host.innerHTML = "";
+  DOMAINS.forEach(d => {
+    const b = document.createElement("button");
+    b.className = "chip"; b.textContent = d.label; b.setAttribute("aria-pressed", String(d.id === store.domain));
+    b.addEventListener("click", () => { store.domain = d.id; saveStore(); renderDomChips(); $("dompill").textContent = domLabel(d.id, true); });
+    host.appendChild(b);
+  });
+}
+
+/* ============================================================================
+   RUN A STUDY
+   ========================================================================== */
+let run = null;
+function buildDeck(dom) {
+  const deck = [];
+  PHASES.forEach(ph => {
+    const pool = CARDS.filter(c => c.ph === ph.id && inDom(c, dom));
+    const specific = shuffle(pool.filter(c => c.dom !== "all"));
+    const universal = shuffle(pool.filter(c => c.dom === "all"));
+    /* prefer domain-specific cards, then fill with universal ones, then shuffle within phase */
+    const chosen = specific.slice(0, ph.pick);
+    const need = ph.pick - chosen.length;
+    if (need > 0) chosen.push(...universal.slice(0, need));
+    deck.push(...shuffle(chosen));
+  });
+  return deck;
+}
+function startRun() {
+  run = {deck: buildDeck(store.domain), i: 0, weeks: 0, rigor: RIGOR0, hit: [], meh: [], dodged: [], answered: false, log: []};
+  show("run"); renderRunCard();
+}
+function renderMeters() {
+  $("m-weeks-v").textContent = `${run.weeks} / ${BUDGET}`;
+  $("m-weeks-b").style.width = clamp(run.weeks / BUDGET * 100, 0, 100) + "%";
+  $("m-weeks").classList.toggle("warn", run.weeks > BUDGET);
+  $("m-rigor-v").textContent = String(run.rigor);
+  $("m-rigor-b").style.width = run.rigor + "%";
+  $("m-rigor").classList.toggle("warn", run.rigor < 35);
+}
+function renderRunCard() {
+  const c = run.deck[run.i]; const ph = PHASES.find(p => p.id === c.ph);
+  run.answered = false; run.order = shuffle(c.o.map((_, k) => k));
+  $("run-left").textContent = `Decision ${run.i + 1} of ${run.deck.length}`;
+  $("run-right").textContent = domLabel(store.domain, true);
+  $("run-bar").style.width = (run.i / run.deck.length * 100) + "%";
+  $("run-phase").textContent = `Phase · ${ph.name} — ${ph.blurb}`;
+  $("run-title").textContent = c.title; $("run-situation").textContent = c.s;
+  const host = $("run-opts"); host.innerHTML = "";
+  run.order.forEach((k, idx) => {
+    const o = c.o[k]; const b = document.createElement("button");
+    b.className = "opt"; b.dataset.k = k;
+    b.innerHTML = `<span class="ltr">${"ABCD"[idx]}</span><span class="txt">${esc(o.t)}</span>`;
+    b.addEventListener("click", () => answerRun(k));
+    host.appendChild(b);
+  });
+  $("run-verdict").classList.add("hidden"); $("run-verdict").innerHTML = "";
+  $("run-next").classList.add("hidden");
+  $("run-keys").innerHTML = `Keys: ${run.order.map((_, i) => `<kbd>${"ABCD"[i]}</kbd>`).join(" ")} · <kbd>Enter</kbd> next`;
+  renderMeters();
+}
+function answerRun(k) {
+  if (run.answered) return; run.answered = true;
+  const c = run.deck[run.i]; const o = c.o[k];
+  run.weeks += o.w; run.rigor = clamp(run.rigor + o.r, 0, 100);
+  const pitsHere = c.o.filter(x => x.k === "pit" && x.p).map(x => x.p);
+  if (o.k === "pit") { run.hit.push({card: c, opt: o}); store.hits[o.p] = (store.hits[o.p] || 0) + 1; }
+  else {
+    if (o.k === "meh") run.meh.push({card: c, opt: o});
+    pitsHere.filter((p, i, a) => a.indexOf(p) === i).forEach(p => { run.dodged.push(p); store.dodges[p] = (store.dodges[p] || 0) + 1; });
+  }
+  saveStore();
+  document.querySelectorAll("#run-opts .opt").forEach(b => {
+    b.disabled = true; const kk = Number(b.dataset.k); const oo = c.o[kk];
+    b.classList.add(kk === k ? oo.k : "dim");
+    if (kk !== k) b.classList.add(oo.k === "sound" ? "sound" : oo.k === "pit" ? "pit" : "meh");
+  });
+  const label = o.k === "sound" ? "Sound call." : o.k === "pit" ? "Pitfall." : "Defensible, but it costs you.";
+  const delta = `${o.w ? `+${o.w} week${o.w === 1 ? "" : "s"}` : "no time"} · rigour ${o.r >= 0 ? "+" : ""}${o.r}`;
+  let html = `<div class="verdict ${o.k}"><div class="vt">${label} <span class="small muted" style="font-weight:400">(${delta})</span></div><div>${esc(o.f)}</div></div>`;
+  if (o.k === "pit") html += pitboxHTML(o.p);
+  else if (pitsHere.length) {
+    const names = pitsHere.filter((p, i, a) => a.indexOf(p) === i).map(p => PITFALLS[p].name);
+    html += `<p class="small muted" style="margin-top:10px">Dodged: ${esc(names.join(" · "))}. <button class="link" id="run-showpit">Show what it looks like</button></p><div id="run-pitdetails" class="hidden">${pitsHere.filter((p, i, a) => a.indexOf(p) === i).map(pitboxHTML).join("")}</div>`;
+  }
+  $("run-verdict").innerHTML = html; $("run-verdict").classList.remove("hidden");
+  const sp = $("run-showpit"); if (sp) sp.addEventListener("click", () => { $("run-pitdetails").classList.toggle("hidden"); });
+  $("run-next").textContent = run.i + 1 < run.deck.length ? "Next →" : "To the postmortem →";
+  $("run-next").classList.remove("hidden"); $("run-next").focus();
+  renderMeters();
+}
+function nextRun() {
+  if (!run.answered) return;
+  run.i++;
+  if (run.i < run.deck.length) renderRunCard(); else finishRun();
+}
+function finishRun() {
+  store.runs++; saveStore();
+  const over = run.weeks > BUDGET;
+  let verdict, line;
+  if (run.rigor >= 80) { verdict = "Ready for review"; line = "The claims are as big as the evidence and nothing is hiding in the appendix. Reviewers will still find something; that is their job."; }
+  else if (run.rigor >= 60) { verdict = "Major revision"; line = "A real result with real holes. The fixes are known — they are listed below — and most of them are cheaper now than in a rebuttal."; }
+  else if (run.rigor >= 40) { verdict = "Reject, resubmit"; line = "The study cannot support its claim as designed. The good news: almost every pitfall below is a design decision, and design decisions can be remade."; }
+  else { verdict = "Desk reject"; line = "The result may be true; nobody can tell, including you. Start from the question and the kill criterion next time — they are the cheap part."; }
+  if (over) line += " Also: you asked for an extension.";
+  $("pm-verdict").textContent = verdict; $("pm-line").textContent = line;
+  $("pm-weeks").textContent = run.weeks; $("pm-budget").textContent = BUDGET;
+  $("pm-rigor").textContent = run.rigor; $("pm-nhit").textContent = run.hit.length;
+  const dodgedU = run.dodged.filter((p, i, a) => a.indexOf(p) === i && !run.hit.some(h => h.opt.p === p));
+  $("pm-ndodged").textContent = dodgedU.length;
+  const hitHTML = run.hit.map(h => `<div style="margin:8px 0"><div class="small muted">${esc(PHASES.find(p => p.id === h.card.ph).name)} · ${esc(h.card.title)} — you chose: <em>${esc(h.opt.t)}</em></div>${pitboxHTML(h.opt.p)}</div>`).join("");
+  $("pm-hit").innerHTML = hitHTML || `<p class="muted">None. Either you have done this before, or you have read the field guide. Try another domain.</p>`;
+  $("pm-meh-card").classList.toggle("hidden", !run.meh.length);
+  $("pm-meh").innerHTML = run.meh.map(m => `<div class="verdict meh" style="margin:8px 0"><div class="vt small">${esc(m.card.title)} — <em>${esc(m.opt.t)}</em></div><div class="small">${esc(m.opt.f)}</div></div>`).join("");
+  $("pm-dodged-card").classList.toggle("hidden", !dodgedU.length);
+  $("pm-dodged").innerHTML = `<ul class="list">${dodgedU.map(p => `<li><b>${esc(PITFALLS[p].name)}</b> <span class="muted small">— ${esc(PITFALLS[p].smell)}</span></li>`).join("")}</ul>`;
+  const reads = []; run.hit.forEach(h => reads.push(...PITFALLS[h.opt.p].res));
+  if (!reads.length) reads.push("taste", "hamming", "lipton", "openloop");
+  $("pm-reads").innerHTML = readsHTML(reads);
+  show("postmortem");
+}
+function runSummaryText() {
+  const lines = [`Research Pitfalls — ${domLabel(store.domain)}`, `${$("pm-verdict").textContent}: ${run.weeks}/${BUDGET} weeks, rigour ${run.rigor}/100.`];
+  if (run.hit.length) { lines.push("Pitfalls hit:"); run.hit.forEach(h => lines.push(`- ${PITFALLS[h.opt.p].name} (${h.card.title})`)); }
+  const dodgedU = run.dodged.filter((p, i, a) => a.indexOf(p) === i && !run.hit.some(h => h.opt.p === p));
+  if (dodgedU.length) lines.push("Dodged: " + dodgedU.map(p => PITFALLS[p].name).join(", "));
+  lines.push(location.origin + location.pathname);
+  return lines.join("\n");
+}
+
+/* ============================================================================
+   TASTE GYM
+   ========================================================================== */
+let taste = null;
+function buildTasteRound(dom) {
+  const pairs = shuffle(PAIRS.filter(x => inDom(x, dom))).map(x => ({kind:"pair", item:x}));
+  const flaws = shuffle(FLAWS.filter(x => inDom(x, dom))).map(x => ({kind:"flaw", item:x}));
+  const out = []; let pi = 0, fi = 0;
+  /* alternate kinds while both last, then fill from whichever remains */
+  while (out.length < TASTE_ROUND && (pi < pairs.length || fi < flaws.length)) {
+    if (out.length % 2 === 0 ? pi < pairs.length : fi >= flaws.length) out.push(pairs[pi++]); else out.push(flaws[fi++]);
+  }
+  return out;
+}
+function startTaste() {
+  taste = {items: buildTasteRound(store.domain), i: 0, picked: null, conf: null, results: [], streak: 0, points: 0};
+  show("taste"); renderTasteItem();
+}
+function renderTasteItem() {
+  const it = taste.items[taste.i]; taste.picked = null; taste.conf = null;
+  $("t-left").textContent = `Item ${taste.i + 1} of ${taste.items.length}`;
+  $("t-right").textContent = domLabel(store.domain, true);
+  $("t-bar").style.width = (taste.i / taste.items.length * 100) + "%";
+  const host = $("t-opts"); host.innerHTML = ""; host.className = "opts";
+  if (it.kind === "pair") {
+    const p = it.item; taste.flip = Math.random() < 0.5;
+    $("t-kind").textContent = "Which is stronger?"; $("t-q").textContent = p.q; $("t-plan").classList.add("hidden");
+    host.className = "opts pair";
+    const order = taste.flip ? ["b","a"] : ["a","b"];
+    order.forEach((side, idx) => {
+      const b = document.createElement("button"); b.className = "opt"; b.dataset.side = side;
+      b.innerHTML = `<span class="ltr">${"AB"[idx]}</span><span class="txt">${esc(p[side])}</span>`;
+      b.addEventListener("click", () => pickTaste(side)); host.appendChild(b);
+    });
+  } else {
+    const f = it.item; taste.order = shuffle(f.opts.map((_, k) => k));
+    $("t-kind").textContent = "Spot the flaw"; $("t-q").textContent = "What is the main problem with this plan?";
+    $("t-plan").textContent = f.plan; $("t-plan").classList.remove("hidden");
+    taste.order.forEach((k, idx) => {
+      const b = document.createElement("button"); b.className = "opt"; b.dataset.k = k;
+      b.innerHTML = `<span class="ltr">${"ABCD"[idx]}</span><span class="txt">${esc(f.opts[k])}</span>`;
+      b.addEventListener("click", () => pickTaste(k)); host.appendChild(b);
+    });
+  }
+  $("t-confrow").classList.add("hidden"); $("t-verdict").classList.add("hidden"); $("t-verdict").innerHTML = "";
+  $("t-why").classList.add("hidden"); $("t-why-text").value = "";
+  $("t-next").classList.add("hidden");
+  $("t-streak").textContent = taste.streak >= 2 ? `Streak: ${taste.streak}` : "";
+  const cs = $("t-confs"); cs.innerHTML = "";
+  CONF.forEach(c => { const b = document.createElement("button"); b.className = "conf"; b.textContent = `${c.label} (${Math.round(c.p * 100)}%)`; b.setAttribute("aria-pressed", "false"); b.addEventListener("click", () => revealTaste(c)); cs.appendChild(b); });
+}
+function pickTaste(v) {
+  if (taste.conf) return;
+  taste.picked = v;
+  document.querySelectorAll("#t-opts .opt").forEach(b => { const mine = (b.dataset.side !== undefined ? b.dataset.side === v : Number(b.dataset.k) === v); b.classList.toggle("picked", mine); });
+  $("t-confrow").classList.remove("hidden");
+}
+function revealTaste(c) {
+  if (taste.picked === null || taste.conf) return;
+  taste.conf = c;
+  const it = taste.items[taste.i]; const item = it.item;
+  const correct = it.kind === "pair" ? taste.picked === item.better : taste.picked === item.ans;
+  const pts = correct ? c.right : c.wrong;
+  taste.points += pts; taste.streak = correct ? taste.streak + 1 : 0;
+  taste.results.push({it, correct, conf: c, pts});
+  store.taste.points += pts; store.taste.n++; if (correct) store.taste.correct++; saveStore();
+  document.querySelectorAll("#t-confs .conf").forEach(b => b.setAttribute("aria-pressed", String(b.textContent.startsWith(c.label))));
+  document.querySelectorAll("#t-opts .opt").forEach(b => {
+    b.disabled = true;
+    const isAns = it.kind === "pair" ? b.dataset.side === item.better : Number(b.dataset.k) === item.ans;
+    const mine = it.kind === "pair" ? b.dataset.side === taste.picked : Number(b.dataset.k) === taste.picked;
+    if (isAns) b.classList.add("sound"); else if (mine) b.classList.add("pit"); else b.classList.add("dim");
+  });
+  const head = correct ? `Right${c.id === "sure" ? ", and sure" : ""}.` : (c.id === "sure" ? "Wrong, and sure. The expensive case." : "Not this one.");
+  let html = `<div class="verdict ${correct ? "sound" : "pit"}"><div class="vt">${head} <span class="small muted" style="font-weight:400">(${pts >= 0 ? "+" : ""}${pts} taste points)</span></div>`;
+  if (it.kind === "pair") html += `<div><span class="feat">${esc(item.feat)}</span></div><div style="margin-top:6px">${esc(item.why)}</div>`;
+  else html += `<div><span class="feat">${esc(item.opts[item.ans])}</span></div><div style="margin-top:6px">${esc(item.why)}</div><div style="margin-top:6px"><b>The repair:</b> ${esc(item.repair)}</div>`;
+  html += `<div class="small muted" style="margin-top:8px">Read:</div><ul class="reads">${readsHTML(item.res)}</ul></div>`;
+  if (it.kind === "flaw" && item.p && !correct) html += pitboxHTML(item.p);
+  $("t-verdict").innerHTML = html; $("t-verdict").classList.remove("hidden");
+  $("t-why").classList.remove("hidden");
+  $("t-next").textContent = taste.i + 1 < taste.items.length ? "Next →" : "See your discriminator →";
+  $("t-next").classList.remove("hidden"); $("t-next").focus();
+}
+function nextTaste() {
+  if (!taste.conf) return;
+  const note = $("t-why-text").value.trim(); const id = taste.items[taste.i].item.id;
+  if (note) { store.notes[id] = note; saveStore(); }
+  taste.i++;
+  if (taste.i < taste.items.length) renderTasteItem(); else finishTaste();
+}
+function levelFor(points) { let L = LEVELS[0]; LEVELS.forEach(l => { if (points >= l.min) L = l; }); return L; }
+function finishTaste() {
+  const n = taste.results.length; const correct = taste.results.filter(r => r.correct).length;
+  const acc = correct / n; const avgConf = taste.results.reduce((s, r) => s + r.conf.p, 0) / n;
+  const gap = avgConf - acc;
+  const L = levelFor(store.taste.points);
+  $("tr-level").textContent = L.name; $("tr-levelnote").textContent = `${L.note} (${store.taste.points} points across ${store.taste.n} items on this device.)`;
+  $("tr-acc").textContent = `${correct}/${n}`; $("tr-points").textContent = (taste.points >= 0 ? "+" : "") + taste.points;
+  $("tr-conf").textContent = Math.round(avgConf * 100) + "%";
+  let cal, note;
+  if (n < 5) { cal = "too few"; note = "Fewer than five items: calibration is noise at this sample size. Which is itself the lesson about small n."; }
+  else if (gap > 0.12) { cal = "overconfident"; note = `You said ${Math.round(avgConf * 100)}% on average and were right ${Math.round(acc * 100)}% of the time. Overconfidence is the default for people with generative skill and an untrained discriminator: the plan looks fine because you could have written it. Cheap fix: before you say “sure”, name the feature that decides it.`; }
+  else if (gap < -0.12) { cal = "underconfident"; note = `You were right ${Math.round(acc * 100)}% of the time but only claimed ${Math.round(avgConf * 100)}%. Your discriminator is better than you think; trust the feature you noticed. Underconfidence has a cost too — it is the silence until results.`; }
+  else { cal = "calibrated"; note = `Stated confidence ${Math.round(avgConf * 100)}%, actual accuracy ${Math.round(acc * 100)}%. A forecaster who says 70% and is right 70% of the time. Now raise the accuracy without losing this.`; }
+  $("tr-cal").textContent = cal; $("tr-calnote").textContent = note;
+  const missed = taste.results.filter(r => !r.correct);
+  $("tr-missed-card").classList.toggle("hidden", !missed.length);
+  $("tr-missed").innerHTML = `<ul class="list">${missed.map(r => { const it = r.it.item; const feat = r.it.kind === "pair" ? it.feat : it.opts[it.ans]; return `<li><b>${esc(feat)}</b> <span class="muted small">— ${esc(it.why)}</span></li>`; }).join("")}</ul>`;
+  const notes = taste.results.map(r => ({r, t: store.notes[r.it.item.id]})).filter(x => x.t);
+  $("tr-notes-card").classList.toggle("hidden", !notes.length);
+  $("tr-notes").innerHTML = notes.map(x => `<div class="verdict ${x.r.correct ? "sound" : "pit"}" style="margin:8px 0"><div class="small muted">${esc(x.r.it.kind === "pair" ? x.r.it.item.feat : x.r.it.item.opts[x.r.it.item.ans])}</div><div>${esc(x.t)}</div></div>`).join("");
+  const reads = ["taste"]; missed.forEach(r => reads.push(...r.it.item.res)); if (missed.length === 0) reads.push("pg_taste", "hamming", "triage");
+  $("tr-reads").innerHTML = readsHTML(reads);
+  show("tasteres");
+}
+function tasteSummaryText() {
+  const n = taste.results.length; const correct = taste.results.filter(r => r.correct).length;
+  return [`Research Pitfalls · taste gym — ${domLabel(store.domain)}`, `${$("tr-level").textContent}: ${correct}/${n} correct, ${taste.points >= 0 ? "+" : ""}${taste.points} points, ${$("tr-cal").textContent}.`,
+    ...taste.results.filter(r => !r.correct).map(r => `- missed: ${r.it.kind === "pair" ? r.it.item.feat : r.it.item.opts[r.it.item.ans]}`), location.origin + location.pathname].join("\n");
+}
+
+/* ============================================================================
+   FIELD GUIDE
+   ========================================================================== */
+function renderGuide() {
+  const host = $("guide-body"); host.innerHTML = "";
+  PHASES.forEach(ph => {
+    const rows = Object.entries(PITFALLS).filter(([, p]) => p.ph === ph.id);
+    const sec = document.createElement("div"); sec.className = "card ph";
+    sec.innerHTML = `<h3 style="margin-bottom:0">${esc(ph.name)}</h3><p class="small muted" style="margin:0 0 6px">${esc(ph.blurb)}</p>
+      <table><thead><tr><th>Pitfall</th><th>What / smells like / instead</th><th>Read</th><th>You</th></tr></thead><tbody>
+      ${rows.map(([id, p]) => {
+        const h = store.hits[id] || 0, d = store.dodges[id] || 0;
+        const mark = h ? `<span class="mark hit">hit ×${h}</span>` : d ? `<span class="mark dodged">dodged ×${d}</span>` : `<span class="mark">—</span>`;
+        return `<tr><td class="nm">${esc(p.name)}</td><td><div>${esc(p.what)}</div><div class="small muted" style="margin-top:3px"><b>Smells like:</b> ${esc(p.smell)}</div><div class="small" style="margin-top:3px"><b>Instead:</b> ${esc(p.fix)}</div></td>
+          <td class="small">${p.res.map(r => `<a href="${esc(RESOURCES[r].url)}" target="_blank" rel="noopener noreferrer">${esc(RESOURCES[r].by)}</a>`).join("<br>")}</td><td>${mark}</td></tr>`;
+      }).join("")}</tbody></table>`;
+    host.appendChild(sec);
+  });
+  $("guide-reads").innerHTML = readsHTML(Object.keys(RESOURCES));
+}
+
+/* ============================================================================
+   WIRING
+   ========================================================================== */
+function copyText(t) {
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(() => toast("Copied"), () => toast("Could not copy"));
+  else toast("Clipboard unavailable");
+}
+$("go-run").addEventListener("click", startRun);
+$("go-taste").addEventListener("click", startTaste);
+$("go-guide").addEventListener("click", () => { renderGuide(); show("guide"); });
+$("nav-home").addEventListener("click", () => show("home"));
+$("nav-guide").addEventListener("click", () => { renderGuide(); show("guide"); });
+$("run-next").addEventListener("click", nextRun);
+$("pm-again").addEventListener("click", startRun);
+$("pm-taste").addEventListener("click", startTaste);
+$("pm-copy").addEventListener("click", () => copyText(runSummaryText()));
+$("pm-domain").addEventListener("click", () => show("home"));
+$("t-next").addEventListener("click", nextTaste);
+$("tr-again").addEventListener("click", startTaste);
+$("tr-run").addEventListener("click", startRun);
+$("tr-copy").addEventListener("click", () => copyText(tasteSummaryText()));
+$("guide-run").addEventListener("click", startRun);
+$("guide-taste").addEventListener("click", startTaste);
+$("guide-reset").addEventListener("click", () => {
+  if (!confirm("Reset hits, dodges, taste points and notes on this device?")) return;
+  const dom = store.domain; store = loadStore.call(null); Object.assign(store, {domain: dom, hits:{}, dodges:{}, runs:0, taste:{points:0, n:0, correct:0}, notes:{}});
+  saveStore(); renderGuide(); toast("Progress reset");
+});
+
+document.addEventListener("keydown", e => {
+  if (e.target && (e.target.tagName === "TEXTAREA" || e.target.tagName === "INPUT")) return;
+  const k = e.key.toUpperCase();
+  if (current === "run") {
+    if (k === "ENTER") { nextRun(); return; }
+    const idx = "ABCD".indexOf(k); if (idx >= 0 && !run.answered && idx < run.order.length) { answerRun(run.order[idx]); e.preventDefault(); }
+  } else if (current === "taste") {
+    if (k === "ENTER") { nextTaste(); return; }
+    const it = taste.items[taste.i];
+    if (!taste.conf && ["1","2","3"].includes(k) && taste.picked !== null) { revealTaste(CONF[Number(k) - 1]); return; }
+    const idx = "ABCD".indexOf(k);
+    if (idx >= 0 && !taste.conf) {
+      if (it.kind === "pair" && idx < 2) pickTaste((taste.flip ? ["b","a"] : ["a","b"])[idx]);
+      else if (it.kind === "flaw" && idx < taste.order.length) pickTaste(taste.order[idx]);
+    }
+  }
+});
+
+/* deep links: ?domain=ml_theory&mode=run|taste|guide */
+(function init() {
+  const q = new URLSearchParams(location.search);
+  const d = q.get("domain"); if (d && DOMAINS.some(x => x.id === d)) { store.domain = d; saveStore(); }
+  renderDomChips(); show("home");
+  const m = q.get("mode");
+  if (m === "run") startRun(); else if (m === "taste") startTaste(); else if (m === "guide") { renderGuide(); show("guide"); }
+})();
+</script>
+</body>
+</html>
