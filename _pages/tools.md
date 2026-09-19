@@ -43,7 +43,9 @@ nothing is sent anywhere.
 
 The sister game, for the year you first lead a project. **Run a project**: nine months, a
 supervisor with no time, a senior collaborator with many projects, a master's student you are
-responsible for, and a deadline. Every decision moves six hidden dials (alignment, trust, buffer,
+responsible for, and a deadline. The four people get a personality each run (a supervisor who
+wants to be asked or one who trusts you to decide, a student who asks early or hides being
+stuck), and when the sound move depends on who they are, the reveal says so. Every decision moves six hidden dials (alignment, trust, buffer,
 credit, energy, loop) and seeds the classic problems: misaligned expectations, silence, scope
 creep, late feedback, hero mode, the authorship fight, the dropped ball, burnout. Most can be
 prevented or repaired, and the **debrief** traces every problem that fired, and every one that did
@@ -58,7 +60,8 @@ browser; nothing is sent anywhere.
 
 ## Principles for (agentic) research
 
-The talk as an interactive page, principles only. Five parts: why do research at all, how
+The talk as an interactive page, with the talk's own drawings and the argument behind each
+principle, not only the headline. Five parts: why do research at all, how
 taste is trained, what an agent actually is (the same model, reached through six rungs of access
 and permission), how to run one as a supervisor, and an audit for the next task you think of
 delegating. Every agent practice is attached to the research principle it applies, and the
