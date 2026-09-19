@@ -187,7 +187,6 @@
   /* ---- verdict with icon ---- */
   .verdict{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:start}
   .verdict .vic{width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--on-status); flex:none}
-  .verdict:focus{outline:none}
   .verdict.sound .vic{background:var(--good)} .verdict.pit .vic{background:var(--bad)} .verdict.meh .vic{background:var(--meh)}
   .verdict .vic .ic{width:20px; height:20px; stroke-width:2.6}
 
@@ -339,7 +338,7 @@
       <h2 id="run-title" tabindex="-1"></h2>
       <p class="situation" id="run-situation"></p>
       <div class="opts" id="run-opts"></div>
-      <div id="run-verdict" class="hidden" aria-live="polite" tabindex="-1"></div>
+      <div id="run-verdict" aria-live="polite"></div>
       <div class="underbar">
         <span class="small muted" id="run-keys">Keys: <kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> · <kbd>Enter</kbd> next</span>
         <button class="btn hidden" id="run-next">Next →</button>
@@ -414,7 +413,7 @@
         <label class="small muted" for="t-why-text">Before you find out: why? (optional, one line, kept on this device). Saying <em>why</em> before the reveal is what trains the judge; after it, you would only be rationalising.</label>
         <textarea id="t-why-text" placeholder="What feature decides it?"></textarea>
       </div>
-      <div id="t-verdict" class="hidden" aria-live="polite" tabindex="-1"></div>
+      <div id="t-verdict" aria-live="polite"></div>
       <div class="underbar">
         <div class="tastehud"><span>Round: <span class="pts" id="t-pts">0</span> pts</span><span class="streak" id="t-streak"></span></div>
         <button class="btn hidden" id="t-next">Next →</button>
@@ -486,7 +485,7 @@
           how often you were right at that level; the weighted average of the gaps is the calibration error, the same
           quantity as expected calibration error for a classifier. The over/under verdict uses the signed gap.</p>
         <p><b>Level.</b> Points count toward your level only the first time you see an item, so repeating a round
-          does not level you up. The pool is 11 to 22 items per domain, so the top level needs more than one domain.</p>
+          does not level you up. A flawless, all-sure round reaches the top level; in practice it takes more than one domain.</p>
         <p>The answers are opinionated: one reviewer's taste, argued in each reveal. Disagreeing with a reason is
           allowed. That is also how taste gets built.</p>
       </div>
@@ -504,6 +503,11 @@
     <p class="sub">Every pitfall in the game, by phase. Open a tile for what it is, what it smells like, and the fix.
       Dots show what your runs on this device hit (red) or walked past (green).</p>
     <div id="guide-body"></div>
+    <div class="card hidden" style="margin-top:18px" id="guide-notes-card">
+      <h3 style="margin-bottom:2px">Your notes</h3>
+      <p class="small muted" style="margin:0 0 6px">The “why” lines you wrote in the taste gym, kept on this device.</p>
+      <div id="guide-notes"></div>
+    </div>
     <div class="card" style="margin-top:18px">
       <h3 style="margin-bottom:2px">Glossary</h3>
       <p class="small muted" style="margin:0 0 8px">Terms the game uses, in one line each.</p>
@@ -1624,7 +1628,17 @@ const GLOSSARY = [
   ["interquartile mean", "The mean of the middle 50% of values; robust to a few extreme runs."],
   ["multiverse analysis", "Reporting the result under every defensible analysis choice, so the reader sees how much the choice matters."],
   ["mixed-effects model", "A model with both fixed effects (treatment) and random effects (animal, participant, batch), using nested data correctly."],
-  ["Goodhart's law", "When a measure becomes a target, it stops being a good measure."]
+  ["Goodhart's law", "When a measure becomes a target, it stops being a good measure."],
+  ["Bonferroni correction", "Dividing the significance threshold by the number of tests, so many comparisons don't produce false positives."],
+  ["state of the art", "The best reported result on a benchmark at the time of writing."],
+  ["convex / strongly convex / smooth", "Assumptions on a loss function's shape that make optimisation proofs go through; deep-network losses satisfy none of them globally."],
+  ["SGD", "Stochastic gradient descent: the optimiser that trains most neural networks on mini-batches of data."],
+  ["chance level", "The accuracy a trivial rule reaches: random guessing, or always predicting the majority class."],
+  ["majority class", "The most frequent label; predicting it every time is a baseline every classifier must beat."],
+  ["covariate", "A variable you record and adjust for in the analysis, such as batch, age or site."],
+  ["confidence interval", "A range of values consistent with the data at a stated level; the interval, not the point, is the result."],
+  ["discretisation artefact", "A feature of a simulation caused by the grid or time step rather than by the equations."],
+  ["false positive", "Reporting an effect that isn't there; the rate is what α controls when the analysis is fixed in advance."]
 ];
 
 /* Level points count only the first time an item is seen, so repetition does not level you up. */
@@ -1918,7 +1932,7 @@ function renderRunCard() {
     b.addEventListener("click", () => { if (!run.answered) answerRun(k); });
     host.appendChild(b);
   });
-  $("run-verdict").classList.add("hidden"); $("run-verdict").innerHTML = "";
+  $("run-verdict").innerHTML = "";
   $("run-next").classList.add("hidden");
   $("run-keys").innerHTML = `Keys: ${run.order.map((_, i) => `<kbd>${"ABCD"[i]}</kbd>`).join(" ")} · <kbd>Enter</kbd> next`;
   renderMeters();
@@ -1951,7 +1965,7 @@ function answerRun(k) {
     const names = pitsHere.filter((p, i, a) => a.indexOf(p) === i).map(p => PITFALLS[p].name);
     html += `<p class="small muted" style="margin-top:10px">Dodged: ${esc(names.join(" · "))}. <button class="link" id="run-showpit">Show what it looks like</button></p><div id="run-pitdetails" class="hidden">${pitsHere.filter((p, i, a) => a.indexOf(p) === i).map(pitboxHTML).join("")}</div>`;
   }
-  $("run-verdict").classList.remove("hidden"); $("run-verdict").innerHTML = html;
+  $("run-verdict").innerHTML = html;
   const sp = $("run-showpit"); if (sp) sp.addEventListener("click", () => { const el = $("run-pitdetails"); if (el) el.classList.toggle("hidden"); });
   $("run-next").textContent = run.i + 1 < run.deck.length ? "Next →" : "To the postmortem →";
   $("run-next").classList.remove("hidden"); $("run-next").focus();
@@ -1985,7 +1999,6 @@ function trajectorySVG() {
 }
 function bingoHTML() {
   const hit = new Set(run.hit.map(h => h.opt.p)); const dod = new Set(run.dodged);
-  const mehP = new Set(); run.meh.forEach(m => m.card.o.filter(o => o.p).forEach(o => mehP.add(o.p)));
   const seen = new Set(); run.deck.forEach(c => c.o.forEach(o => { if (o.p) seen.add(o.p); }));
   return PHASES.map(ph => {
     const ids = Object.keys(PITFALLS).filter(id => PITFALLS[id].ph === ph.id);
@@ -2083,7 +2096,7 @@ function renderTasteItem() {
       b.addEventListener("click", () => pickTaste(k)); host.appendChild(b);
     });
   }
-  $("t-confrow").classList.add("hidden"); $("t-verdict").classList.add("hidden"); $("t-verdict").innerHTML = "";
+  $("t-confrow").classList.add("hidden"); $("t-verdict").innerHTML = "";
   $("t-why").classList.add("hidden"); $("t-why-text").value = ""; $("t-why-text").readOnly = false;
   $("t-next").classList.add("hidden");
   $("t-q").focus();
@@ -2127,7 +2140,7 @@ function revealTaste(c) {
   else html += `<div><span class="feat">${esc(item.opts[item.ans])}</span></div><div style="margin-top:6px">${esc(item.why)}</div><div style="margin-top:6px">${icon("i-wrench")} <b>The repair:</b> ${esc(item.repair)}</div>`;
   html += `<details style="margin-top:8px"><summary class="small" style="cursor:pointer;color:var(--accent-dark)">${icon("i-book")} Read (${item.res.length})</summary><ul class="reads">${readsHTML(item.res)}</ul></details></div></div>`;
   if (it.kind === "flaw" && item.p) html += `<details class="lesson" style="margin-top:10px"><summary>${icon("i-warn")} What “${esc(PITFALLS[item.p].name)}” looks like</summary><div class="inner">${pitboxHTML(item.p)}</div></details>`;
-  $("t-verdict").classList.remove("hidden"); $("t-verdict").innerHTML = html;
+  $("t-verdict").innerHTML = html;
   $("t-next").textContent = taste.i + 1 < taste.items.length ? "Next →" : "See your discriminator →";
   $("t-next").classList.remove("hidden"); $("t-next").focus();
 }
@@ -2215,6 +2228,9 @@ function renderGuide() {
           </div>${lessonHTML(id)}</div></details>`; }).join("")}</div>`;
     host.appendChild(sec);
   });
+  const noteItems = Object.entries(store.notes).map(([id, t]) => { const it = PAIRS.find(x => x.id === id) || FLAWS.find(x => x.id === id); if (!it) return null; const feat = it.feat || it.opts[it.ans]; return `<div class="verdict sound" style="margin:8px 0"><div class="small muted">${esc(feat)}</div><div>${esc(t)}</div></div>`; }).filter(Boolean);
+  $("guide-notes-card").classList.toggle("hidden", !noteItems.length);
+  $("guide-notes").innerHTML = noteItems.join("");
   $("guide-gloss").innerHTML = GLOSSARY.map(([t, d]) => `<div class="gl"><b>${esc(t)}</b><span>${esc(d)}</span></div>`).join("");
   $("guide-reads").innerHTML = readsHTML(Object.keys(RESOURCES));
 }
@@ -2253,10 +2269,10 @@ document.addEventListener("keydown", e => {
   if (e.target && (e.target.tagName === "TEXTAREA" || e.target.tagName === "INPUT")) return;
   const k = e.key.toUpperCase();
   if (current === "run") {
-    if (k === "ENTER") { if (e.target.closest("button, a, summary")) return; /* native activation, no double fire */ e.preventDefault(); nextRun(); return; }
+    if (k === "ENTER") { if (e.target.closest && e.target.closest("button, a, summary")) return; /* native activation, no double fire */ e.preventDefault(); nextRun(); return; }
     const idx = "ABCD".indexOf(k); if (idx >= 0 && !run.answered && idx < run.order.length) { answerRun(run.order[idx]); e.preventDefault(); }
   } else if (current === "taste") {
-    if (k === "ENTER") { if (e.target.closest("button, a, summary")) return; e.preventDefault(); nextTaste(); return; }
+    if (k === "ENTER") { if (e.target.closest && e.target.closest("button, a, summary")) return; e.preventDefault(); nextTaste(); return; }
     const it = taste.items[taste.i];
     if (!taste.conf && ["1","2","3"].includes(k) && taste.picked !== null) { revealTaste(CONF[Number(k) - 1]); return; }
     const idx = "ABCD".indexOf(k);

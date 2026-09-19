@@ -47,8 +47,8 @@ convergence studies). "General" shows only the domain-neutral cards.
 ## Content
 
 - 45 pitfalls (each with a worked example and a longer explanation), 59 scenario cards, 15
-  pairwise items, 20 spot-the-flaw items (options use the catalogue's pitfall names), 50
-  glossary entries, 68 resources.
+  pairwise items, 20 spot-the-flaw items (options use the catalogue's pitfall names), 60
+  glossary entries, 68 resources. The "why" notes from the taste gym are listed in the field guide.
 - Reviewed with an audience-persona pass (five first-year personas across domains) and a
   devil's-advocate pass (factual claims about cited papers verified, game logic simulated,
   scoring fairness, accessibility); both rounds' findings are folded in. Option texts are
@@ -71,8 +71,9 @@ convergence studies). "General" shows only the domain-neutral cards.
 
 ## Accessibility and UX
 
-Keyboard: A/B/C(/D) to choose, 1/2/3 for confidence, Enter for next. Focus moves to the new
-card and to the verdict (live region); revealed options carry text badges, not colour alone;
+Keyboard: A/B/C(/D) to choose, 1/2/3 for confidence, Enter for next (native activation is left
+alone for focused buttons, links and summaries). Focus moves to the new card's title and, after
+answering, to the Next button; the verdict is a polite live region; revealed options carry text badges, not colour alone;
 contrast tokens (`--on-accent`, `--btn`) keep button and badge text at AA in both themes;
 `prefers-reduced-motion` honoured; dark mode via `prefers-color-scheme` (with `data-theme`
 overrides); no horizontal scroll at 375 px. Copy-summary buttons on both result screens.
