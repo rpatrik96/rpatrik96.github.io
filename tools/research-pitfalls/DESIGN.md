@@ -32,8 +32,9 @@ convergence studies). "General" shows only the domain-neutral cards.
    pitfall looks like). After picking and *before* the reveal the player can write a one-line
    "why" (that is what trains the judge) and states confidence: guess (50% for pairs, 25% for
    four-option items) / leaning (70% / 60%) / sure (90%). Scoring is a roughly proper rule so the
-   point-maximising choice is the honest one: right: sure +3, leaning +2, guess +1; wrong: sure
-   −2, leaning 0, guess +1. The result screen reports accuracy, points, average stated
+   point-maximising choice is the honest one: right: sure +4, leaning +3, guess +1; wrong: sure
+   −6, leaning −2, guess +1 (leaning beats guess above 60% belief, sure beats leaning above 80%,
+   the midpoints between the stated probabilities). The result screen reports accuracy, points, average stated
    confidence, a **calibration** verdict with a reliability diagram (per-confidence-bin accuracy
    against stated probability; the weighted gap is an expected calibration error), the
    discriminating features missed, the player's own notes, and a cumulative **discriminator
@@ -45,8 +46,9 @@ convergence studies). "General" shows only the domain-neutral cards.
 
 ## Content
 
-- 45 pitfalls (each with a worked example and a longer explanation), 58 scenario cards, 15
-  pairwise items, 20 spot-the-flaw items, 32 glossary entries, 66 resources.
+- 45 pitfalls (each with a worked example and a longer explanation), 59 scenario cards, 15
+  pairwise items, 20 spot-the-flaw items (options use the catalogue's pitfall names), 50
+  glossary entries, 68 resources.
 - Reviewed with an audience-persona pass (five first-year personas across domains) and a
   devil's-advocate pass (factual claims about cited papers verified, game logic simulated,
   scoring fairness, accessibility); both rounds' findings are folded in. Option texts are
