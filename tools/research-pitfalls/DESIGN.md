@@ -33,22 +33,46 @@ convergence studies). "General" shows only the domain-neutral cards.
    and the rest to universal ones, then shuffled. The Analysis phase has no universal card left
    after the theory split, so it draws only from the domain's own pool.
 2. **Train your taste** — gamifies the discriminative skill from *P2P No. 135 — Developing taste*
-   (taste is trainable by judging many examples with dense feedback and articulating why). Two
-   drills alternate for 10 items: *Which is stronger?* (two plans/abstracts/claims that differ in
-   one discriminating feature; sides are shown in random order and the explanation's A/B letters
-   are relabelled to match) and *Spot the flaw* (a plan, four same-phase diagnoses, one right;
-   the reveal includes the repair — recognition vs repair — and a collapsed box showing what the
-   pitfall looks like). After picking and *before* the reveal the player can write a one-line
-   "why" (that is what trains the judge) and states confidence: guess (50% for pairs, 25% for
-   four-option items) / leaning (70% / 60%) / sure (90%). Scoring is a roughly proper rule so the
-   point-maximising choice is the honest one: right: sure +4, leaning +3, guess +1; wrong: sure
-   −6, leaning −2, guess +1 (leaning beats guess above 60% belief, sure beats leaning above 80%,
-   the midpoints between the stated probabilities). The result screen reports accuracy, points, average stated
-   confidence, a **calibration** verdict with a reliability diagram (per-confidence-bin accuracy
-   against stated probability; the weighted gap is an expected calibration error), the
-   discriminating features missed, the player's own notes, and a cumulative **discriminator
-   level** (Untrained → Calibrating → Sharp → The reviewer authors ask for). Level points count
-   only the first exposure to an item, so repetition does not level you up.
+   (taste is trainable by judging many examples with dense feedback and articulating why). The
+   player picks one of two **tracks** per round, because they are different skills and most
+   students struggle with the first:
+   - *Taste for developing ideas* (default): pairs of full **idea pitches** for the same kind
+     of work that differ in one feature (a measurement that can say no, a mechanism with a
+     prediction, a confound named and separated, rule out before you prove, relax the
+     assumption that fails); **grow a weak idea** (a weak pitch and four next moves, one of
+     which turns it into a question); **triage** (five ideas, one month, pick the first; the
+     reveal shows the author's full ranking with reasons); and the short idea pairs.
+   - *Taste for writing and evaluating*: pairs of **abstracts** for the same study (claims sized
+     to evidence, source of the gain identified, failure cases in the abstract, comparable
+     baselines, assumptions and regime stated, the bound instantiated); *Spot the flaw* (a
+     plan, four same-phase diagnoses, one right; the reveal includes the repair and a collapsed
+     box showing what the pitfall looks like); and the short paper pairs.
+
+   The long-form pitches and abstracts are written for machine learning (experimental and
+   theory); other domains get the short items only, and the track picker says so. Every pair
+   is like-for-like (two empirical ideas or two theory ideas, never one of each) and the reveal
+   names the feature and a stated **principle**. Sides are shown in random order and the
+   explanation's A/B letters (and the grow items' move numbers) are relabelled to match.
+   After picking and *before* the reveal the player can write a one-line "why" (that is what
+   trains the judge) and states confidence: guess (50% for pairs, 25% for four-option items,
+   20% for triage) / leaning (70% / 60% / 50%) / sure (90% / 90% / 85%). Scoring is a roughly
+   proper rule so the point-maximising choice is the honest one: right: sure +4, leaning +3,
+   guess +1; wrong: sure −6, leaning −2, guess +1 (leaning beats guess above 60% belief, sure
+   beats leaning above 80%, the midpoints between the stated probabilities).
+
+   Two **preference items** per round have no right answer: both sides are sound and the pick
+   is a reading on one spectrum (no points, no confidence step). The result screen reports
+   accuracy, points, average stated confidence, a **calibration** verdict with a reliability
+   diagram (per-confidence-bin accuracy against stated probability; the weighted gap is an
+   expected calibration error), the discriminating features missed, the player's own notes, a
+   cumulative **discriminator level** (Untrained → Calibrating → Sharp → The reviewer authors
+   ask for; level points count only the first exposure to an item, so repetition does not level
+   you up), and a **taste profile**: six spectra (generalist–specialist, performance–mechanism,
+   builder–pilot-first, headline–rigor, method-led–question-led, provable-first–phenomenon-first),
+   each with a virtue and a vice per pole, fed by the preference picks and by the graded items
+   (where the game's answer sits at the right-hand pole, so a miss records the instinct that
+   pulled the pick left). Hollow mark: this round; filled mark: all rounds on the device. The
+   profile is descriptive, not graded, and says so.
 3. **Field guide** — the full pitfall catalog by phase as expandable tiles (what / smells like /
    instead / read, plus the worked example), hit/dodged marks from this device, a glossary of
    every term the game uses, the player's taste-gym notes, and every linked resource in one list.
@@ -156,7 +180,7 @@ not). Idioms that a non-native reader might miss were reworded in the cards.
 
 ## Deep links
 
-`?domain=ml_exp|ml_theory|comp|lab|social|any` and `?mode=run|taste|guide`.
+`?domain=ml_exp|ml_theory|comp|lab|social|any`, `?mode=run|taste|scope|guide`, and `?mode=taste&track=ideas|papers`.
 
 ## Accessibility and UX
 

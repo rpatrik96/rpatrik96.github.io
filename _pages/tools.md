@@ -26,9 +26,11 @@ every wrong turn names the pitfall you walked into — leakage, untuned baseline
 conclusions, HARKing, vacuous bounds, "it is easy to see that", sunk cost — with what it smells
 like, what to do instead, and what to read. It ends in a postmortem with a reading list built
 from your mistakes. **Train your taste** gamifies the discriminative skill from
-[Developing taste](https://path2phd.substack.com/p/developing-taste): pick the stronger of two
-plans, spot the flaw in a third, say how sure you are, and get scored on accuracy *and*
-calibration. Machine learning (experimental and theory) is the main focus; a domain selector
+[Developing taste](https://path2phd.substack.com/p/developing-taste) on two tracks, taste for
+developing ideas and taste for writing and evaluating: pick the stronger of two idea pitches or
+abstracts, grow a weak idea, triage a batch, spot the flaw in a plan, say how sure you are, and
+get scored on accuracy *and* calibration, plus a taste profile that places you on six spectra
+such as generalist–specialist and method-led–question-led. Machine learning (experimental and theory) is the main focus; a domain selector
 re-voices the traps for computational, lab, and social science. **Scope an idea** sizes up a project on
 novelty (ten named kinds, from a new method to connecting fields), impact, feasibility, killability
 and fit, and shows how three scorers rated the same idea. A field guide lists every pitfall with its

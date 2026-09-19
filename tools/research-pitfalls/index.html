@@ -318,6 +318,16 @@
   .scopeform input{border:1.5px solid var(--line); border-radius:8px; padding:7px 10px; font:inherit; background:var(--bg); color:var(--ink)}
   pre.statement{white-space:pre-wrap; font:inherit; background:var(--soft); border-radius:10px; padding:12px 14px; margin:6px 0 10px; border-left:3px solid var(--accent)}
   .principle{margin-top:8px; padding:8px 10px; border-radius:8px; background:var(--soft); border-left:3px solid var(--accent); font-size:.93rem}
+  .pair.long{grid-template-columns:1fr}
+  .pair.long .opt{padding:38px 16px 16px 16px; font-size:.95rem; line-height:1.5}
+  ol.rankl{margin:6px 0 0; padding-left:1.3em} ol.rankl li{margin:6px 0}
+  .axis{margin:10px 0 14px}
+  .axlab{display:flex; justify-content:space-between; font-size:.82rem; font-weight:600; color:var(--muted)}
+  .axbar{position:relative; height:10px; background:var(--kbd); border-radius:999px; margin:4px 0}
+  .axbar::after{content:""; position:absolute; left:50%; top:-3px; width:1px; height:16px; background:var(--line)}
+  .axbar .mark{position:absolute; top:-3px; width:16px; height:16px; border-radius:50%; transform:translateX(-50%); box-sizing:border-box}
+  .axbar .mark.all{background:var(--btn); border:2px solid var(--bg)}
+  .axbar .mark.now{background:transparent; border:2px solid var(--accent-dark)}
   .callout{border-left:3px solid var(--accent); background:rgba(74,143,227,.08); padding:10px 14px; border-radius:8px; margin:10px 0; font-size:.94rem}
 </style>
 </head>
@@ -394,8 +404,8 @@
         <span class="icon"><svg class="ic"><use href="#i-scale"/></svg></span>
         <span class="tag">Train · ~8 min</span>
         <h3>Train your taste</h3>
-        <p class="muted small" style="margin:0">Pick the stronger of two plans. Spot the flaw in a third. Say how
-          sure you are. Find out whether you know what you know.</p>
+        <p class="muted small" style="margin:0">Two tracks: developing ideas (pitches, triage, growing a weak idea)
+          and writing papers (abstracts, evaluations, flaws). Get a calibration read and a taste profile.</p>
       </button>
       <button class="card mode" id="go-scope">
         <span class="icon"><svg class="ic"><use href="#i-compass"/></svg></span>
@@ -499,13 +509,34 @@
     </div>
   </section>
 
+  <!-- TRACK PICKER -->
+  <section id="screen-track" class="hidden">
+    <h1>Which taste do you want to train?</h1>
+    <p class="sub">Two different skills. Most students struggle with the first.</p>
+    <p class="small muted" id="track-note" style="margin:6px 0 0"></p>
+    <div class="modegrid" style="grid-template-columns:1fr 1fr">
+      <button class="card mode" id="track-ideas">
+        <span class="icon"><svg class="ic"><use href="#i-compass"/></svg></span>
+        <span class="tag">Ideas · default</span>
+        <h3>Taste for developing ideas</h3>
+        <p class="muted small" style="margin:0">Pairs of idea pitches, a weak idea to grow, and a batch to triage. What makes a question worth a month, a mechanism worth a prediction, an idea killable.</p>
+      </button>
+      <button class="card mode" id="track-papers">
+        <span class="icon"><svg class="ic"><use href="#i-doc"/></svg></span>
+        <span class="tag">Papers</span>
+        <h3>Taste for writing and evaluating</h3>
+        <p class="muted small" style="margin:0">Pairs of abstracts for the same study, evaluation write-ups, and plans with a flaw to name. Claims sized to evidence, sources of gains, honest comparisons.</p>
+      </button>
+    </div>
+  </section>
+
   <!-- TASTE -->
   <section id="screen-taste" class="hidden">
     <div class="counter"><span id="t-left"></span><span id="t-right"></span></div>
     <div class="progress"><i id="t-bar"></i></div>
     <div class="card">
       <div class="phasehead" id="t-kind"></div>
-      <p class="small muted" id="t-intro" style="margin:0 0 6px">Each pair is two versions of the same kind of work that differ in one feature; the reveal names the feature and the principle behind it.</p>
+      <p class="small muted" id="t-intro" style="margin:0 0 6px"></p>
       <h2 id="t-q" tabindex="-1"></h2>
       <div id="t-plan" class="plan hidden"></div>
       <div id="t-opts" class="opts"></div>
@@ -566,6 +597,11 @@
         </svg>
       </div>
     </div>
+    <div class="card" style="margin-top:16px">
+      <h3 style="margin-bottom:2px">Your taste profile</h3>
+      <p class="small muted" style="margin:0 0 8px">Descriptive, not graded. Two sources feed it: the preference items, where both sides are sound and your pick is the only signal, and the graded items, where the game's answer sits at the right-hand pole, so a miss records the instinct that pulled you left. Hollow mark: this round. Filled mark: all rounds on this device. Each pole has a virtue and a vice; neither is the goal.</p>
+      <div id="tr-profile"></div>
+    </div>
     <div class="card" style="margin-top:16px" id="tr-missed-card">
       <h3 style="margin-bottom:2px">Features you missed</h3>
       <p class="small muted" style="margin:0 0 4px">The thing that separated strong from weak. Open one for the argument.</p>
@@ -598,6 +634,7 @@
     </details>
     <div class="underbar" style="justify-content:flex-start; margin-top:20px">
       <button class="btn" id="tr-again">Another round</button>
+      <button class="btn ghost" id="tr-other">Try the other track</button>
       <button class="btn ghost" id="tr-run">Run a study</button>
       <button class="btn gray" id="tr-copy">Copy summary</button>
     </div>
@@ -1565,12 +1602,12 @@ const PAIRS = [
    principle:"A number without an identified source is not knowledge. Ablate until you can say which change produced the gain, and give the baselines the same change.",
    why:"Same method, same number. B knows where the 2.1 points come from and tells the field what to adopt; A leaves readers to guess and will be caught by the first reviewer who runs the ablation. The principle is “identify the source of the gain”, not “state of the art is bad”.",
    res:["lipton","melis","musgrave"]},
-  {id:"P_scope", dom:"all", q:"Which claim would you rather have your name on?",
+  {id:"P_scope", dom:"all", q:"Two unifying frameworks. Which claim would you rather have your name on?",
    a:"“A general theory of learning in realistic settings, unifying several existing results under one framework.”",
-   b:"“For the case of …, we characterize when … holds and where it fails.”",
-   better:"b", feat:"A claim with a boundary",
-   principle:"Make the claim exactly as large as the evidence, with a stated boundary. A boundary is testable; “general” is a promise.",
-   why:"B knows where it stops. Having a boundary makes the claim testable; “general” is a promise. Ambition is fine, but the claim should be exactly as big as the evidence.",
+   b:"“A framework that unifies three existing results on learning under distribution shift; we characterize the class of shifts it covers and exhibit a shift outside it where its predictions fail.”",
+   better:"b", feat:"A stated boundary",
+   principle:"Big claims are fine; unification is one of the most valuable kinds of novelty. What makes the claim a result rather than a promise is saying where it stops, and showing one case beyond the line.",
+   why:"Both are unifications and both have value. A's “general” and “realistic” are unbounded, so a reader cannot tell what it covers; B names the class it covers and the case it does not, which is what makes it checkable. The same ambition, sized to the evidence.",
    res:["convictions","spectrum"]},
   {id:"P_assume", dom:["ml_theory"], q:"Which theory paper makes the sounder claim?",
    a:"A theorem about deep networks with six assumptions, one of which is convexity of the loss, presented as explaining practical training.",
@@ -2412,6 +2449,244 @@ function scopeStatementText() {
 function renderScopeStatement() { $("scope-statement").textContent = scopeStatementText(); }
 
 /* ============================================================================
+   TASTE, TRACK 2 CONTENT. Two tracks: "ideas" (developing research ideas) and "papers" (writing and evaluating them).
+   Idea pitches and abstracts are written for the game: realistic, ML only, and each pair differs in one feature.
+   ========================================================================== */
+
+/* which existing short pairs belong to which track */
+const PAIR_TRACK = {P_hyp:"ideas", P_scope:"ideas", P_plan:"ideas", P_boundary:"ideas", P_boundary_th:"ideas", P_haunt:"ideas", P_assume:"ideas",
+  P_sota:"papers", P_eval:"papers", P_prereg:"papers", P_ablate:"papers", P_exist:"papers", P_conv:"papers", P_abstract:"papers", P_baselines:"papers", P_null:"papers"};
+
+/* ---- Idea pitches: one paragraph each (question, why now, what would be shown, how it could fail). better: a|b ---- */
+const IDEA_PAIRS = [
+  {id:"I_memo", res:["predictive", "disprove", "measure"], dom:["ml_exp"], q:"Two pitches for the same month. Which would you fund?",
+   a:"Do large language models memorize their evaluation benchmarks? We will run the ten most-used reasoning benchmarks through the five largest open models, across three prompting styles and with and without chain-of-thought, and report accuracy for every combination with confidence intervals over prompts. If accuracy is high, memorization is likely; we will discuss the implications for leaderboards, for benchmark design, and for how the community should report results going forward, and release a dashboard.",
+   b:"Do large language models score well on reasoning benchmarks because they have seen the items? For each of five open models we will measure n-gram overlap between benchmark items and the model's public pretraining corpus, then compare accuracy on high-overlap items against accuracy on freshly written items of matched difficulty. If the gap is under two points, memorization is not the story and we say so. Two weeks: 200 fresh items, one model.",
+   better:"b", feat:"A measurement that can say no",
+   principle:"A research idea is a question plus the measurement that could answer it either way. If you cannot say what result would make you drop the idea, it is not yet an idea.",
+   why:"Both start from the same question. A measures accuracy, which cannot separate memorization from ability, so any result confirms the suspicion. B names the contrast (high-overlap versus fresh items of matched difficulty), the threshold that would kill the story, and the two-week pilot. That is the difference between a topic and a project."},
+  {id:"I_aug", res:["predictive", "strong", "platt"], dom:["ml_exp"], q:"Which pitch is the better use of a semester?",
+   a:"A new data-augmentation method for vision transformers. We will combine three existing augmentations with a learned schedule and show improved accuracy on ImageNet and four transfer datasets against the standard recipe, with additional experiments on robustness benchmarks, on three model sizes, and under two training budgets, plus a study of the learned schedules. The method is simple to add to any pipeline and we will release it as a drop-in library.",
+   b:"Why does augmentation help vision transformers more than convolutional networks? We hypothesize it substitutes for the inductive bias convolutions carry. Prediction: the benefit of augmentation shrinks as we add convolutional stem layers, and vanishes at a measurable depth. If the benefit does not shrink, the substitution story is wrong. Pilot: one model family, three stem depths, two weeks.",
+   better:"b", feat:"A mechanism with a prediction",
+   principle:"Prefer the idea that explains a known effect with a prediction over the idea that adds one more instance of the effect. Explanations transfer; instances do not.",
+   why:"A is a method paper with a plausible gain and no reason it should work; it competes with fifty similar papers and teaches the field nothing it did not know. B takes a known effect and asks why, with a prediction that can fail on a two-week pilot. Even if B's story is wrong, the field learns something."},
+  {id:"I_scale", res:["mwh", "strong", "lipton"], dom:["ml_exp"], q:"Which pitch would you tell a student to pursue?",
+   a:"Does chain-of-thought prompting help small models? We will test eight prompting variants on twelve benchmarks across four model sizes and three model families, with five prompt paraphrases each, and report which variants help where, with an interactive map for practitioners, recommendations per task type, and a cost-per-point analysis for each variant. We additionally evaluate on two held-out benchmarks released after our study began. All experiments are repeated for three random seeds and we report the mean.",
+   b:"Chain-of-thought prompting is reported to help only above a model-size threshold. We ask whether the threshold is about size or about instruction-tuning data, which correlates with size in the published models. We will hold size fixed and vary the instruction data, and hold the data fixed and vary size. If the effect tracks data, the “emergence with scale” story for this ability is a confound. Pilot: two sizes, two data mixes.",
+   better:"b", feat:"A confound named and a design that separates it",
+   principle:"When two explanations are confounded in the published evidence, the idea is the design that separates them. A map of results without a question is a report, not a study.",
+   why:"A is a lot of runs in search of a question; it will produce a table and a shrug. B has noticed that size and instruction data move together in every published model and designs the two-by-two that pulls them apart. Whatever the outcome, it changes what people believe about the threshold."},
+  {id:"I_bench", res:["measure", "gururangan", "recht"], dom:["ml_exp"], q:"Two dataset ideas. Which one is the contribution?",
+   a:"A new benchmark of 50,000 multi-step reasoning questions, collected by crowd workers across ten domains with a two-stage quality review, larger and more diverse than existing sets, with difficulty ratings, a taxonomy of reasoning types, a public leaderboard, an evaluation harness, and baseline results for twenty models at launch. We additionally evaluate on two held-out benchmarks released after our study began. All experiments are repeated for three random seeds and we report the mean.",
+   b:"A benchmark of 2,000 reasoning questions where each item comes with a minimal perturbation (changed numbers, renamed entities) that leaves the reasoning identical. The score that matters is consistency across the pair. A model that solves the original but fails the perturbation is using a shortcut, and we report that rate for every public model. Contamination is checked by construction, since perturbations are new.",
+   better:"b", feat:"The benchmark measures the thing, not the score",
+   principle:"A dataset idea is only as good as the question it can answer. Ask what a high score would prove; if the answer is “a high score”, design the measurement again.",
+   why:"A is bigger, and bigger is not a question; its high scores will mean whatever contamination and shortcuts let them mean. B is small and builds the diagnostic into the data: the paired perturbation separates the concept from the cue, and the freshness of the perturbations handles contamination. Two thousand items that can say something beat fifty thousand that cannot."},
+  {id:"I_neg", res:["disprove", "story", "failure"], dom:["ml_exp"], q:"Which pitch would you rather have your name on in five years?",
+   a:"A method for continual learning that reduces forgetting by 30% on the standard split-CIFAR benchmark, using a new regularizer on the parameter drift between tasks, with extensions to class-incremental and task-free settings, experiments on three further benchmarks, an analysis of the regularizer's effect on the loss landscape, and a theoretical motivation from a simplified two-task model.",
+   b:"Do the reported gains of continual-learning regularizers survive equal tuning of the replay baseline? We rerun the six most-cited methods and a tuned replay buffer under one protocol with five seeds. If replay matches them, the field's ranking is a tuning artifact and we say which methods still win. If it does not, we have a fair leaderboard. Either outcome is a paper.",
+   better:"b", feat:"Both outcomes are results",
+   principle:"Choose questions where the answer matters whichever way it comes out. A method that must win to be publishable is a bet; a fair comparison is a finding.",
+   why:"A is a bet on a number that may not survive a tuned baseline, and if it does not, there is no paper. B is a question about the field's evidence with a paper at either end; it is also the study that decides whether A would have meant anything."},
+  {id:"I_probe", res:["geirhos", "strong", "lipton"], dom:["ml_exp"], q:"Which interpretability pitch is the stronger idea?",
+   a:"We will train linear probes on every layer of three language models of different sizes for forty linguistic and factual properties, compare linear against nonlinear probes with matched capacity, track how the encoding shifts during training using public checkpoints, and publish an interactive map of where each property is encoded, with visualizations and a probing toolkit. We additionally evaluate on two held-out benchmarks released after our study began.",
+   b:"If a property is encoded in a layer, editing it there should change the model's behavior on tasks that need it and nothing else. We will train probes for six properties, then ablate the probe direction and measure behavior change on a matched task and a control task. A property that probes well but ablates to nothing is not used by the model. Pilot: one property, one layer, one week.",
+   better:"b", feat:"An intervention, not only a correlation",
+   principle:"Reading a property out of a representation shows it is there; only an intervention shows the model uses it. Build the intervention into the idea from the start.",
+   why:"Probing accuracy is a correlation and famously does not tell you whether the model uses the property. A produces a map that a reader cannot act on. B asks the causal question with a control, and its one-week pilot can fail, which is what makes it an idea rather than a catalog."},
+  {id:"I_bound", res:["tao_rigour", "nagarajan", "zhang"], dom:["ml_theory"], q:"Two theory pitches on generalization. Which is the better project?",
+   a:"Derive a tighter generalization bound for deep networks under a new complexity measure that depends on the trained weights, prove it dominates three existing bounds, extend it to residual and attention architectures, and show numerically that it is smaller than existing bounds on standard architectures across datasets and training budgets. We further discuss connections to related analyses in the optimization and statistics literature. All results are stated for both the population and the empirical risk.",
+   b:"Existing weight-dependent bounds are known to be vacuous and sometimes to grow with the sample size on real networks. We ask which property of trained networks a bound would need to capture to become non-vacuous, by measuring how each candidate quantity (norms, margins, sharpness, compressibility) scales with n on one family of models. A quantity that grows with n cannot be the basis of a useful bound; we rule candidates out before proving anything.",
+   better:"b", feat:"Rule out before you prove",
+   principle:"Before proving a bound, measure whether the quantity it would depend on behaves the way the bound needs. A month of measurement can save a year of proving something vacuous.",
+   why:"A adds one more bound to a family known to be vacuous, and “smaller than existing bounds” can still be a thousand. B turns the known failure into a question and uses cheap measurement to decide what is worth proving. It is the empirical pilot for a theory project."},
+  {id:"I_conv", res:["tao_dumb", "zhang", "alon"], dom:["ml_theory"], q:"Which convergence-analysis pitch would you pursue?",
+   a:"Prove convergence of Adam on non-convex objectives under standard smoothness assumptions with an improved dependence on the dimension, closing the gap to the known lower bound, extend the analysis to the weight-decay and warmup variants used in practice, and verify the predicted rate numerically on quadratic and logistic problems. We further discuss connections to related analyses in the optimization and statistics literature. All results are stated for both the population and the empirical risk.",
+   b:"Practitioners report that Adam beats SGD on transformers but not on convolutional networks. We ask what property of the loss landscape decides this, and hypothesize heavy-tailed gradient noise. Prediction: the Adam advantage should track a measurable tail index across architectures. We will measure the index and the advantage on six models; if they do not track, the hypothesis dies in a month. A theorem comes after, for the regime the data picks out.",
+   better:"b", feat:"Let the data pick the regime to prove",
+   principle:"A theory project starts from a phenomenon that needs explaining, then proves in the regime the phenomenon picks out. Closing a gap in a rate is a contribution only if someone needs the rate.",
+   why:"A is a rate-improvement in a setting nobody has shown to matter; even done well, it answers a question nobody asked. B starts from an observed gap between optimizers, names a mechanism, and checks it cheaply before committing to a proof. The theorem it eventually proves will be about something."},
+  {id:"I_ident", res:["tao_rigour", "alon", "method"], dom:["ml_theory"], q:"Two identifiability pitches. Which is the stronger idea?",
+   a:"Prove that a new latent-variable model is identifiable up to permutation under a set of assumptions on the mixing function, extending a known result to a broader function class, give a constructive estimator with sample-complexity guarantees, and demonstrate recovery on synthetic data generated under the assumptions across a range of dimensions and noise levels. We further discuss connections to related analyses in the optimization and statistics literature. All results are stated for both the population and the empirical risk.",
+   b:"Identifiability results assume conditions that practitioners cannot check. We ask which of the standard assumptions actually fails on real data, by constructing a test for each (sparsity of the mixing, independence of the latents, sufficient variability of the auxiliary variable) and running it on three real datasets where identifiability has been claimed. The assumption that fails most often is the one worth relaxing; we then prove the relaxation for that one.",
+   better:"b", feat:"Relax the assumption that fails, not the one that is easy",
+   principle:"Choose which assumption to relax by finding which one fails in practice, not by which one your technique can handle. Otherwise the theorem extends in a direction nobody needs.",
+   why:"A extends a result along the axis that the proof technique allows, which is the usual and least useful direction. B first finds out which assumption is actually violated where the theory is applied, then relaxes that one. The empirical step costs a month and makes the theorem land."},
+  {id:"I_double", res:["zhang", "nagarajan", "tao_dumb"], dom:["ml_theory"], q:"Which pitch about double descent is worth a year?",
+   a:"Characterize the double-descent curve for a new model class (kernel machines with a specific spectrum), derive the location and height of the interpolation peak in closed form, extend to the multi-descent case, and confirm the predictions numerically on synthetic data and on kernels fitted to two image datasets. We further discuss connections to related analyses in the optimization and statistics literature. All results are stated for both the population and the empirical risk.",
+   b:"Double descent has closed-form characterizations in several linear and kernel settings, yet practitioners rarely see it in trained networks with standard regularization. We ask what in standard practice suppresses it, and hypothesize early stopping. Prediction: the peak reappears as the stopping time grows, at a location the linear theory predicts from the effective rank. We test on two network families; the theorem is about when early stopping removes the peak.",
+   better:"b", feat:"Explain the gap between theory and practice",
+   principle:"The most useful theory questions live where the existing theory and everyday practice disagree. Ask what practice does that the theory leaves out, and prove that.",
+   why:"A is another closed-form curve for another setting; it will be correct and unread. B notices that the celebrated phenomenon is rarely seen in practice and asks why, with a prediction the linear theory already supports. It connects the theory people have to the practice people do."}
+];
+
+/* ---- Triage: five ideas, pick the one worth the next month; author's ranking with reasons revealed ---- */
+const TRIAGE = [
+  {id:"T_llm", res:["triage", "heilmeier", "barbell"], dom:["ml_exp"], q:"Your supervisor gives you five ideas and one month. Which one gets it?",
+   ideas:[
+     {t:"Fine-tune an open model on a new instruction dataset and report benchmark gains.", rank:5, why:"Crowded, no question, and the gain will not survive contamination checks. A drill, not a project."},
+     {t:"Measure whether benchmark scores track human ratings on tasks the benchmark claims to measure, for three widely used benchmarks.", rank:1, why:"A question about the field's instruments with a paper at either end, and a two-week pilot on one benchmark."},
+     {t:"Propose a new attention variant and test it on language modeling.", rank:4, why:"A bet on a number; attention variants have a long graveyard and the baselines are strong."},
+     {t:"Replicate a famous emergent-ability result with ten seeds and matched tokenizers.", rank:2, why:"New evidence at power on a claim people repeat; it is killable in two weeks and matters whichever way it goes."},
+     {t:"Build a comprehensive survey of prompting methods.", rank:3, why:"Useful to others but not a research result; fine as the safe half of a barbell, not as the month."}
+   ],
+   principle:"Triage by what the answer would change and whether a two-week pilot can kill it. Crowded method races and surveys lose to questions about the evidence everyone relies on."},
+  {id:"T_theory", res:["triage", "tao_rigour", "alon"], dom:["ml_theory"], q:"Five theory ideas, one month for a pilot. Which one?",
+   ideas:[
+     {t:"Extend a known convergence rate to a slightly larger function class.", rank:4, why:"Extends in the direction the technique allows; nobody was blocked by the smaller class."},
+     {t:"Measure which quantity in existing generalization bounds grows with sample size on real networks, to decide what is worth bounding.", rank:1, why:"A month of measurement that decides a year of proving; rules candidates out cheaply."},
+     {t:"Prove a lower bound for a problem whose upper bound is already tight up to constants.", rank:5, why:"The gap is constants; closing it changes no decision."},
+     {t:"Find which assumption of a popular identifiability theorem fails on the datasets where it is applied.", rank:2, why:"Points the next theorem at the assumption people actually violate; also killable quickly."},
+     {t:"Write a unified framework that contains three existing analyses as special cases.", rank:3, why:"Valuable if it predicts something new; as stated it re-derives known results, so it is the safe project, not the month."}
+   ],
+   principle:"For theory, the best pilot is often a measurement: find the quantity or assumption that matters in practice before proving anything about it."},
+  {id:"T_student", res:["triage", "hamming", "pg_great"], dom:["ml_exp","ml_theory"], q:"Your own five ideas from the last month. Which one gets the next one?",
+   ideas:[
+     {t:"The clever trick you thought of yesterday that fits the data you already have.", rank:4, why:"Yesterday's idea has passed no filter yet; write it down and see if it comes back."},
+     {t:"The question that has bothered you since a reading group three months ago, which nobody in the group could answer.", rank:1, why:"The haunt filter: it returned for months and stayed unanswered. That is the strongest cheap signal you have."},
+     {t:"An extension your supervisor suggested that you find dull but feasible.", rank:3, why:"Feasible and dull is the safe half of a barbell; do it alongside, not instead."},
+     {t:"A moonshot that would need compute you do not have.", rank:5, why:"Keep it on the list; find the pilot that needs no compute before spending a month."},
+     {t:"A replication of the result your whole subfield builds on, which you have never seen anyone rerun.", rank:2, why:"If it fails, everyone needs to know; if it holds, you understand the foundation. Killable in weeks."}
+   ],
+   principle:"Persistence, unanswered, is the signal. The idea that keeps coming back and that nobody has answered beats the clever one from yesterday."}
+];
+
+/* ---- Grow a weak idea: a weak pitch and four moves; one adds the most ---- */
+const GROW = [
+  {id:"G_transfer", res:["greatideas", "disprove", "alon"], dom:["ml_exp"],
+   pitch:"“I want to apply contrastive learning to medical images.”",
+   moves:["Pick the largest public medical-imaging dataset and start training.", "Ask what is different about medical images that would make contrastive learning fail, and write the prediction down.", "Survey all contrastive methods and pick the most cited.", "Add a new augmentation designed for medical images."],
+   ans:1, feat:"Find the reason it could fail",
+   principle:"The fastest way to turn “apply X to Y” into an idea is to ask what about Y would break X. The answer is the hypothesis; the pitch writes itself around it.",
+   why:"Move 2 turns a method transfer into a question: medical images have small, subtle, localized differences, so augmentations that preserve global content may destroy the label. Now there is a prediction (contrastive learning underperforms when the diagnostic region is small) and a study. The other moves add work before there is a question."},
+  {id:"G_survey", res:["mwh", "method", "greatideas"], dom:["ml_exp"],
+   pitch:"“I will run a big comparison of all the optimizers on all the benchmarks.”",
+   moves:["Add more optimizers and more benchmarks so the comparison is complete.", "Pick the two optimizers whose reported gap is most cited, and find the one variable (batch size, schedule, tuning budget) that could explain it.", "Use the best hyperparameters from each optimizer's paper.", "Report the results as a leaderboard with a website."],
+   ans:1, feat:"Replace the map with a question",
+   principle:"A comparison becomes a study when it is designed to separate two explanations of one gap. Ask which gap matters and what could explain it away.",
+   why:"Move 2 converts an unbounded map into a scoped question with a confound to test; the result changes what people believe about one gap. Completeness (move 1) makes the map bigger, not more informative; paper defaults (move 3) is the asymmetric-tuning pitfall; a website (move 4) is not research."},
+  {id:"G_prove", res:["tao_dumb", "tao_rigour", "alon"], dom:["ml_theory"],
+   pitch:"“I want to prove something about transformers.”",
+   moves:["Pick the simplest transformer variant that still has attention, and prove whatever is provable about it.", "Find one behavior of trained transformers that people observe and cannot explain, and ask what the smallest model is in which it still appears.", "Read the ten most-cited transformer theory papers and extend the most recent one.", "Formalize the full architecture and state its expressivity class."],
+   ans:1, feat:"Start from a phenomenon, then find the minimal model",
+   principle:"Theory ideas start from a phenomenon that needs explaining and then look for the smallest model in which it survives. Starting from what is provable gives theorems about nothing.",
+   why:"Move 2 anchors the theory to something observed (say, in-context learning of linear functions) and then asks for the minimal model, which is where clean proofs live. Move 1 proves whatever falls out; move 3 extends along the technique; move 4 is a taxonomy exercise."},
+  {id:"G_scope", res:["heilmeier", "darlings", "spj"], dom:["ml_exp"],
+   pitch:"“Our new method improves robustness, fairness, efficiency, and interpretability.”",
+   moves:["Keep all four and add experiments for each.", "Pick the one claim you could defend against a hostile reviewer and make the others future work.", "Rename the method so the four claims sound like one.", "Add a theory section that unifies the four."],
+   ans:1, feat:"One claim you can defend",
+   principle:"An idea with four claims has none. Choose the claim that would survive a hostile reviewer and let the others wait for their own evidence.",
+   why:"Move 2 produces a paper with one message and the experiments to carry it. Moves 1 and 4 add weight without a spine; move 3 hides the problem in a name."},
+  {id:"G_kill", res:["triage", "proto", "quitgrit"], dom:["ml_exp","ml_theory"],
+   pitch:"“I think this will work; I will spend the semester building the full system and then evaluate.”",
+   moves:["Write the two-week experiment whose failure would make you stop, and run that first.", "Build the system faster by skipping tests.", "Ask for more compute so the full system finishes sooner.", "Write the paper introduction first so the story is clear."],
+   ans:0, feat:"The cheapest experiment that could kill it",
+   principle:"Before building, find the smallest experiment whose failure would stop you. If none exists, the idea cannot fail, and an idea that cannot fail cannot succeed either.",
+   why:"Move 1 is the pilot and the kill criterion in one. The other moves make the expensive path faster or prettier without asking whether it should be walked."},
+  {id:"G_novel", res:["greatideas", "alon", "hamming"], dom:["ml_exp","ml_theory"],
+   pitch:"“Nobody has done X on Y before.”",
+   moves:["Do it, since it is new.", "Ask why nobody has done it: is it hard, unimportant, or unnoticed? Only the third case is an idea.", "Do it on Y and Z to be more novel.", "Check whether it works on a toy version of Y and then scale up."],
+   ans:1, feat:"Why has nobody done it?",
+   principle:"“Nobody has done it” is evidence about the idea, not for it. Ask which of three reasons applies; only unnoticed is good news.",
+   why:"Move 2 is the question that separates a gap in the literature from a gap in the sense. Move 4 is the right second step if the answer is “unnoticed”; moves 1 and 3 skip the question."}
+];
+
+/* ---- Abstract pairs for the papers track: same study, two abstracts, one feature apart ---- */
+const ABSTRACT_PAIRS = [
+  {id:"A_claim", res:["lipton", "spj", "reviewer"], dom:["ml_exp"], q:"Same study, two abstracts. Which one would you rather have reviewed?",
+   a:"We introduce RetrievalMix, a training procedure that interleaves retrieved passages with the pretraining stream. RetrievalMix improves downstream question-answering accuracy by 4.2 points on average over five benchmarks, reduces hallucination as measured by three automatic metrics, and transfers to summarization and dialogue with no further training. Our analysis shows that the model learns to ground its answers in retrieved evidence, explaining the improvement, and qualitative examples illustrate the grounding. We release code, checkpoints, and a demo. We additionally evaluate on two held-out benchmarks released after our study began.",
+   b:"We introduce RetrievalMix, a training procedure that interleaves retrieved passages with the pretraining stream. Across five question-answering benchmarks, RetrievalMix improves accuracy by 4.2 points on average (95% interval 2.9 to 5.5 over five seeds), with gains concentrated on the two benchmarks whose questions overlap the retrieval corpus; on the other three the gain is within seed variance. We hypothesize that the model grounds answers in retrieved evidence and test one prediction of that story: gains vanish when retrieval is replaced by random passages. We release code, checkpoints and the retrieval index.",
+   better:"b", feat:"Claims sized to the evidence",
+   principle:"Write the abstract the results support, including where the gain is not there. The mechanism is a hypothesis with a test, not a finding.",
+   why:"Same study. A reports the average, calls a hypothesis an analysis, and hides that three of five benchmarks did not move. B gives the interval, says where the gain lives, and turns “explains” into a tested prediction. Reviewers trust B's 4.2 more than A's."},
+  {id:"A_source", res:["lipton", "melis", "dodge"], dom:["ml_exp"], q:"Two abstracts for one method paper. Which is the stronger paper?",
+   a:"We propose SparseFormer, a transformer with learned sparse attention, and show that it outperforms dense attention on long-document classification by 3.1 points while using 40% less memory. SparseFormer combines a new sparsity prior, a modified positional encoding and a curriculum over sequence length, and further improves on three summarization datasets and two retrieval benchmarks; we analyze the learned sparsity patterns and find that they align with document structure, and we release code and pretrained models.",
+   b:"We propose SparseFormer, a transformer with learned sparse attention. On long-document classification it outperforms dense attention by 3.1 points with 40% less memory. Ablations attribute 2.4 of the 3.1 points to the sequence-length curriculum, which also improves the dense baseline by 2.0 points; the sparsity prior accounts for the memory saving and 0.5 points. We recommend the curriculum for any long-document model and release both.",
+   better:"b", feat:"The source of the gain is identified",
+   principle:"Ablate until you can say which change produced the gain, then say it in the abstract, even when it makes the headline method smaller.",
+   why:"A bundles three changes and credits the architecture. B has run the ablation and tells the reader the useful truth: most of the gain is a training curriculum that works for everyone. B's method is smaller and B's paper is bigger."},
+  {id:"A_limits", res:["lipton", "zech", "spj"], dom:["ml_exp"], q:"Which abstract makes the more credible claim?",
+   a:"We present a self-supervised pretraining method for tabular data that improves downstream accuracy on 12 public datasets spanning finance, healthcare and e-commerce, establishing that self-supervision transfers to the tabular domain; we further show gains in the few-label regime, robustness to missing values, and an analysis of which pretext tasks matter, and release a library. We additionally evaluate on two held-out benchmarks released after our study began.",
+   b:"We present a self-supervised pretraining method for tabular data. It improves downstream accuracy on 9 of 12 public datasets, by 1.8 points on average, and hurts on the 3 datasets with fewer than 5,000 rows, where a tuned gradient-boosted baseline remains best. Self-supervision transfers to tabular data when there is enough unlabeled data to learn from; we give the threshold we observed.",
+   better:"b", feat:"The failure cases are in the abstract",
+   principle:"The condition under which a method fails is part of the result. State it in the abstract; readers will build on it exactly where it fails otherwise.",
+   why:"A's “establishing” is doing work the 12 datasets do not support. B reports the three failures, names the reason, and turns them into a usable threshold. The claim is smaller and it will hold."},
+  {id:"A_eval", res:["henderson", "bouthillier", "melis"], dom:["ml_exp"], q:"Same numbers, two abstracts. Which evaluation would you trust?",
+   a:"Our method achieves a new state of the art of 91.4% on the benchmark, surpassing the previous best result of 89.7% reported in the literature, with consistent improvements across all twelve categories, faster convergence, and qualitative analysis showing that the errors that remain are concentrated in ambiguous examples; code will be released upon acceptance. We additionally evaluate on two held-out benchmarks released after our study began.",
+   b:"Our method reaches 91.4% on the benchmark. Under our protocol, with identical splits and equal tuning budgets, the strongest published baseline reaches 90.9% (its paper reports 89.7% on a different split); the 0.5-point difference is within the seed variance we measured (std 0.6, five seeds). We therefore claim parity at lower cost, not a new state of the art.",
+   better:"b", feat:"Comparable baselines and an honest margin",
+   principle:"A comparison is a claim about conditions. Rerun the baseline under yours, report the seed variance, and let the margin be what it is.",
+   why:"A compares a fresh number with a copied one and calls the gap a record. B reran the baseline, found the gap inside the noise, and claims what survives: parity at lower cost. The second is a contribution readers can use; the first is a number that will not replicate."},
+  {id:"A_theory", res:["nagarajan", "spj", "clarity"], dom:["ml_theory"], q:"Two abstracts for one theorem. Which claims what it proves?",
+   a:"We prove that gradient descent on two-layer networks converges to a global minimum, explaining the empirical success of deep learning optimization; our analysis introduces a new potential function, extends to stochastic gradients and to several activation functions, and recovers known rates for linear models as a special case. We further discuss connections to related analyses in the optimization and statistics literature.",
+   b:"We prove that gradient descent on two-layer networks with width at least n⁴ converges to a global minimum of the training loss at a linear rate, under a separability assumption on the data. The width requirement is far above practical regimes; we show numerically that convergence persists at width n on synthetic data, and state the practical-width case as open.",
+   better:"b", feat:"Assumptions and regime in the abstract",
+   principle:"State the assumptions and the regime where the theorem applies, and say how far that is from practice. “Explains deep learning” is a claim a theorem about two layers cannot make.",
+   why:"A is the same theorem with the assumptions removed from the abstract and the conclusion inflated to all of deep learning. B says what was proved, for which width, under which assumption, and how far that is from the models people train, then gives the cheapest evidence about the gap."},
+  {id:"A_bound", res:["nagarajan", "zhang", "tao_rigour"], dom:["ml_theory"], q:"Two abstracts for one bound. Which is the stronger paper?",
+   a:"We derive a generalization bound for neural networks that depends on the product of layer norms and is tighter than existing bounds by a polynomial factor in depth; the proof introduces a covering argument that may be of independent interest, extends to networks with skip connections and normalization layers, and recovers the known bounds for linear models as special cases. We further discuss connections to related analyses in the optimization and statistics literature.",
+   b:"We derive a generalization bound for neural networks that depends on the product of layer norms and is tighter than existing bounds by a polynomial factor in depth. Instantiated on trained networks (Figure 1), the bound is non-vacuous for depth up to 4 at n = 50,000 and vacuous beyond; we identify the layer-norm product as the term that grows with depth and discuss what a bound would need instead.",
+   better:"b", feat:"The bound is instantiated",
+   principle:"Plot the bound against the quantity it bounds, in the regime the paper is about, and say where it stops being informative. A rate without a number is a promise.",
+   why:"Same bound. A leaves the reader to discover that “tighter” can still be vacuous. B instantiates it, states the regime where it says something, and names the term to fix next. B is what a reviewer would ask A to add."}
+];
+
+/* ---- Taste spectra: descriptive, not graded. Each pole has a virtue and a vice. Items carry `lean: {axis, a, b}` (pairs)
+   or `leanOpts: [...]` (moves/ideas) naming which pole a pick sits on: "L" or "R" (or null). ---- */
+const TASTE_AXES = [
+  {id:"scope", L:{name:"Generalist", v:"sees the unifying picture", x:"claims outrun evidence"}, R:{name:"Specialist", v:"claims exactly what is shown", x:"stops before the interesting part"}},
+  {id:"mode", L:{name:"Performance", v:"builds things that work", x:"numbers without understanding"}, R:{name:"Mechanism", v:"asks why, with a prediction", x:"explains before it works"}},
+  {id:"risk", L:{name:"Builder", v:"commits and finishes", x:"finds out late"}, R:{name:"Pilot-first", v:"finds out early and cheaply", x:"never scales"}},
+  {id:"evidence", L:{name:"Headline", v:"communicates the result", x:"trusts the bigger number"}, R:{name:"Rigor", v:"trusts conditions over numbers", x:"buries the result in caveats"}},
+  {id:"origin", L:{name:"Method-led", v:"deep in one tool", x:"a hammer looking for nails"}, R:{name:"Question-led", v:"starts from what is unknown", x:"changes tools too often"}},
+  {id:"theory", L:{name:"Provable-first", v:"gets clean theorems", x:"theorems about nothing"}, R:{name:"Phenomenon-first", v:"theory that lands", x:"measures instead of proving"}}
+];
+const TASTE_LEAN = {
+  P_hyp:{axis:"evidence", a:"L", b:"R"}, P_scope:{axis:"scope", a:"L", b:"R"}, P_plan:{axis:"risk", a:"L", b:"R"}, P_boundary:{axis:"mode", a:"L", b:"R"}, P_boundary_th:{axis:"theory", a:"L", b:"R"},
+  P_haunt:{axis:"origin", a:"L", b:"R"}, P_assume:{axis:"theory", a:"L", b:"R"}, P_sota:{axis:"evidence", a:"L", b:"R"}, P_eval:{axis:"evidence", a:"R", b:"L"}, P_prereg:{axis:"evidence", a:"R", b:"L"},
+  P_ablate:{axis:"evidence", a:"L", b:"R"}, P_exist:{axis:"scope", a:"L", b:"R"}, P_conv:{axis:"evidence", a:"L", b:"R"}, P_abstract:{axis:"scope", a:"L", b:"R"}, P_baselines:{axis:"evidence", a:"L", b:"R"}, P_null:{axis:"evidence", a:"L", b:"R"},
+  I_memo:{axis:"mode", a:"L", b:"R"}, I_aug:{axis:"mode", a:"L", b:"R"}, I_scale:{axis:"mode", a:"L", b:"R"}, I_bench:{axis:"scope", a:"L", b:"R"}, I_neg:{axis:"evidence", a:"L", b:"R"}, I_probe:{axis:"mode", a:"L", b:"R"},
+  I_bound:{axis:"theory", a:"L", b:"R"}, I_conv:{axis:"theory", a:"L", b:"R"}, I_ident:{axis:"theory", a:"L", b:"R"}, I_double:{axis:"theory", a:"L", b:"R"},
+  A_claim:{axis:"scope", a:"L", b:"R"}, A_source:{axis:"evidence", a:"L", b:"R"}, A_limits:{axis:"scope", a:"L", b:"R"}, A_eval:{axis:"evidence", a:"L", b:"R"}, A_theory:{axis:"scope", a:"L", b:"R"}, A_bound:{axis:"evidence", a:"L", b:"R"},
+  G_transfer:{axis:"origin", opts:["L","R",null,"L"]}, G_survey:{axis:"mode", opts:["L","R","L",null]}, G_prove:{axis:"theory", opts:["L","R","L","L"]}, G_scope:{axis:"scope", opts:["L","R",null,"L"]}, G_kill:{axis:"risk", opts:["R","L","L",null]}, G_novel:{axis:"origin", opts:["L","R","L","R"]},
+  T_llm:{axis:"mode", opts:["L","R","L","R",null]}, T_theory:{axis:"theory", opts:["L","R","L","R","L"]}, T_student:{axis:"origin", opts:["L","R","L",null,"R"]}
+};
+/* preference items: both sides are sound; the pick is a reading on one spectrum, not a graded answer */
+const PREFS = [
+  {id:"X_scope", axis:"scope", dom:["ml_exp","ml_theory"], q:"Two thesis plans, both scoped, both with a pilot that could kill them. Which would you rather spend three years on?",
+   a:"One framework that covers three model families, with the boundary of each stated and a chapter per family.",
+   b:"One model family understood completely: every regime measured, every assumption tested, a bound that matches practice.",
+   sayA:"You reach for the unifying frame. What it buys: seeing that one mechanism shows up in three places. What to watch: a framework whose claims outrun any single family's evidence.",
+   sayB:"You reach for depth. What it buys: results that survive scrutiny. What to watch: missing that the phenomenon you understand here appears next door too."},
+  {id:"X_mode", axis:"mode", dom:["ml_exp"], q:"Same phenomenon, same budget, both projects sound. Which one?",
+   a:"Make the method work on the hardest benchmark, with matched baselines, seeds, and the failure cases reported.",
+   b:"Explain why the method works on the easy benchmark, with an intervention that switches the effect off.",
+   sayA:"You go for performance. What it buys: a thing that works is hard to argue with. What to watch: a number without a reason does not tell you where it stops working.",
+   sayB:"You go for mechanism. What it buys: a mechanism predicts, so the result travels. What to watch: an explanation of a method nobody uses."},
+  {id:"X_risk", axis:"risk", dom:["ml_exp","ml_theory"], q:"A well-scoped idea and one semester. Which plan?",
+   a:"Build the full system in two months, then evaluate it in the third with the comparison designed in advance.",
+   b:"Run three two-week pilots on the riskiest parts first, then build only what survived.",
+   sayA:"You build. What it buys: things get finished. What to watch: finding out in month three what a week could have told you.",
+   sayB:"You pilot first. What it buys: cheap surprises, early. What to watch: a stack of pilots and nothing shipped."},
+  {id:"X_evidence", axis:"evidence", dom:["ml_exp","ml_theory"], q:"Two honest abstracts for the same result. Which would you write?",
+   a:"Leads with the gain and the setting where it holds, then one sentence on where it does not.",
+   b:"Leads with the conditions and the comparison, then the gain as one number with its interval.",
+   sayA:"You lead with the headline. What it buys: readers know what you found. What to watch: the caveat sentence is the one nobody reads.",
+   sayB:"You lead with the conditions. What it buys: nobody can misquote you. What to watch: a result the reader had to dig for."},
+  {id:"X_origin", axis:"origin", dom:["ml_exp","ml_theory"], q:"Choosing your next project. Which one?",
+   a:"A method you know deeply, applied to a question where it should fail in an informative way.",
+   b:"A question that has haunted you for a year, with a method you would have to learn.",
+   sayA:"You start from the method. What it buys: depth compounds; you see what the tool can really do. What to watch: a hammer that keeps finding nails.",
+   sayB:"You start from the question. What it buys: the question picks the tool, so the tool fits. What to watch: a new tool every year and no depth in any."},
+  {id:"X_theory", axis:"theory", dom:["ml_theory"], q:"Two theory projects, both with the regime stated up front. Which one?",
+   a:"A clean theorem in a model you can analyze completely, with the gap to practice stated in the introduction.",
+   b:"A measurement of the quantity that matters in practice, then a theorem in the regime the data picks.",
+   sayA:"You start from what is provable. What it buys: clean results with no hedging. What to watch: theorems about a model nobody trains.",
+   sayB:"You start from the phenomenon. What it buys: theory that lands where practice is. What to watch: a semester of measuring and no theorem."}
+];
+
+/* ============================================================================
    APP. Vanilla JS, no deps. State in localStorage under STORE_KEY.
    ========================================================================== */
 const STORE_KEY = "rp_v1";
@@ -2434,7 +2709,7 @@ function saveStore() { try { localStorage.setItem(STORE_KEY, JSON.stringify(stor
 let store = loadStore();
 
 /* ---- screens ---- */
-const SCREENS = ["home","run","postmortem","taste","tasteres","guide","scope"];
+const SCREENS = ["home","run","postmortem","taste","tasteres","guide","scope","track"];
 let current = "home";
 function show(id) {
   if (id === "home") renderHome();
@@ -2769,22 +3044,45 @@ function runSummaryText() {
    TASTE GYM
    ========================================================================== */
 let taste = null;
-function buildTasteRound(dom) {
-  const pairs = shuffle(PAIRS.filter(x => inDom(x, dom))).map(x => ({kind:"pair", item:x}));
-  const flaws = shuffle(FLAWS.filter(x => inDom(x, dom))).map(x => ({kind:"flaw", item:x}));
-  const out = []; let pi = 0, fi = 0;
-  /* alternate kinds while both last, then fill from whichever remains */
-  while (out.length < TASTE_ROUND && (pi < pairs.length || fi < flaws.length)) {
-    if (out.length % 2 === 0 ? pi < pairs.length : fi >= flaws.length) out.push(pairs[pi++]); else out.push(flaws[fi++]);
-  }
+/* interleave several queues round-robin until the round is full */
+function interleave(queues, n) {
+  const out = []; let guard = 0;
+  while (out.length < n && queues.some(q => q.length) && guard++ < 200) queues.forEach(q => { if (out.length < n && q.length) out.push(q.shift()); });
   return out;
 }
-function startTaste() {
-  taste = {items: buildTasteRound(store.domain), i: 0, picked: null, conf: null, results: [], streak: 0, points: 0};
+function buildTasteRound(dom, track) {
+  const mlOnly = ["ml_exp", "ml_theory"].includes(dom);
+  if (track === "ideas") {
+    const shortPairs = shuffle(PAIRS.filter(x => inDom(x, dom) && PAIR_TRACK[x.id] === "ideas")).map(x => ({kind:"pair", item:x}));
+    const ideaPairs = mlOnly ? shuffle(IDEA_PAIRS.filter(x => inDom(x, dom))).map(x => ({kind:"pair", item:x, long:true})) : [];
+    const grows = mlOnly ? shuffle(GROW.filter(x => inDom(x, dom))).map(x => ({kind:"grow", item:x})) : [];
+    const triage = mlOnly ? shuffle(TRIAGE.filter(x => inDom(x, dom))).slice(0, 1).map(x => ({kind:"triage", item:x})) : [];
+    return placePrefs(interleave([ideaPairs, grows, shortPairs, triage], TASTE_ROUND - 2), dom);
+  }
+  const shortPairs = shuffle(PAIRS.filter(x => inDom(x, dom) && PAIR_TRACK[x.id] === "papers")).map(x => ({kind:"pair", item:x}));
+  const abstracts = mlOnly ? shuffle(ABSTRACT_PAIRS.filter(x => inDom(x, dom))).map(x => ({kind:"pair", item:x, long:true})) : [];
+  const flaws = shuffle(FLAWS.filter(x => inDom(x, dom))).map(x => ({kind:"flaw", item:x}));
+  return placePrefs(interleave([abstracts, flaws, shortPairs], TASTE_ROUND - 2), dom);
+}
+/* two preference items (no right answer) per round, at positions 3 and 7 or so, never first */
+function placePrefs(items, dom) {
+  const prefs = shuffle(PREFS.filter(x => inDom(x, dom))).slice(0, 2).map(x => ({kind:"pref", item:x}));
+  if (!items.length) return items;
+  prefs.forEach((p, i) => items.splice(Math.min(items.length, 2 + i * 4), 0, p));
+  return items;
+}
+function startTaste(track) {
+  if (!track) { $("track-note").textContent = ["ml_exp", "ml_theory"].includes(store.domain) ? "" : "The long-form idea pitches and abstracts are written for machine learning; in this domain the tracks use the short pairs and spot-the-flaw items."; show("track"); return; }
+  taste = {track, items: buildTasteRound(store.domain, track), i: 0, picked: null, conf: null, results: [], streak: 0, points: 0};
+  if (!taste.items.length) { toast("Nothing in this track for this domain"); return; }
   show("taste"); renderTasteItem();
 }
-const confP = (c, it) => it.kind === "pair" ? c.pPair : c.pFlaw;
+const confP = (c, it) => it.kind === "pair" ? c.pPair : it.kind === "triage" ? (c.id === "coin" ? 0.2 : c.id === "lean" ? 0.5 : 0.85) : c.pFlaw;
+const itemAnswer = it => it.kind === "pair" ? it.item.better : it.kind === "flaw" || it.kind === "grow" ? it.item.ans : it.item.ideas.findIndex(x => x.rank === 1);
+const itemFeat = it => it.kind === "pref" ? "Preference: " + TASTE_AXES.find(a => a.id === it.item.axis).L.name + " or " + TASTE_AXES.find(a => a.id === it.item.axis).R.name : it.kind === "pair" ? it.item.feat : it.kind === "flaw" ? it.item.opts[it.item.ans] : it.kind === "grow" ? it.item.feat : "Triage: " + it.item.ideas.find(x => x.rank === 1).t;
 /* pair explanations are written with the canonical A = item.a, B = item.b; the screen may show them flipped */
+/* grow explanations are written with the canonical move numbers; the screen shuffles them, so map to the displayed letter */
+function relabelMoves(text, order) { return text.replace(/\b([Mm]ove)s? (\d)(?: and (\d))?/g, (m, w, a, b) => { const L = n => "ABCDE"[order.indexOf(Number(n) - 1)]; return b ? `${w}s ${L(a)} and ${L(b)}` : `${w} ${L(a)}`; }); }
 function relabel(text, flip) { return flip ? text.replace(/\b([AB])(?=['’]s\b|\b)/g, m => (m === "A" ? "B" : "A")) : text; }
 function renderTasteItem() {
   const it = taste.items[taste.i]; taste.picked = null; taste.conf = null;
@@ -2792,10 +3090,11 @@ function renderTasteItem() {
   $("t-right").textContent = domLabel(store.domain, true);
   $("t-bar").style.width = (taste.i / taste.items.length * 100) + "%";
   const host = $("t-opts"); host.innerHTML = ""; host.className = "opts"; const found = new Set(), seen = new Set();
-  if (it.kind === "pair") {
+  $("t-intro").textContent = it.kind === "pref" ? "No right answer: both are sound. Your pick is a reading on one spectrum of taste, not a score." : it.kind === "pair" ? "Two versions of the same kind of work that differ in one feature; the reveal names the feature and the principle." : it.kind === "grow" ? "A weak idea and four possible next moves. Which move adds the most?" : it.kind === "triage" ? "Five ideas, one month. Pick the one that gets it; the reveal shows a full ranking with reasons." : "A plan with one main problem. Name it.";
+  if (it.kind === "pair" || it.kind === "pref") {
     const p = it.item; taste.flip = Math.random() < 0.5;
-    $("t-kind").textContent = "Which is stronger?"; $("t-q").innerHTML = annotate(p.q, found, seen).html; $("t-plan").classList.add("hidden");
-    host.className = "opts pair";
+    $("t-kind").textContent = it.kind === "pref" ? "Which would you choose?" : it.long ? (taste.track === "ideas" ? "Which idea is stronger?" : "Which abstract is stronger?") : "Which is stronger?"; $("t-q").innerHTML = annotate(p.q, found, seen).html; $("t-plan").classList.add("hidden");
+    host.className = it.long || it.kind === "pref" ? "opts pair long" : "opts pair";
     const order = taste.flip ? ["b","a"] : ["a","b"];
     order.forEach((side, idx) => {
       const b = document.createElement("button"); b.className = "opt"; b.dataset.side = side;
@@ -2803,12 +3102,16 @@ function renderTasteItem() {
       b.addEventListener("click", () => pickTaste(side)); host.appendChild(b);
     });
   } else {
-    const f = it.item; taste.order = shuffle(f.opts.map((_, k) => k));
-    $("t-kind").textContent = "Spot the flaw"; $("t-q").textContent = "What is the main problem with this plan?";
-    $("t-plan").innerHTML = annotate(f.plan, found, seen).html; $("t-plan").classList.remove("hidden");
+    const f = it.item;
+    const opts = it.kind === "flaw" ? f.opts : it.kind === "grow" ? f.moves : f.ideas.map(x => x.t);
+    taste.order = shuffle(opts.map((_, k) => k));
+    $("t-kind").textContent = it.kind === "flaw" ? "Spot the flaw" : it.kind === "grow" ? "Grow a weak idea" : "Triage";
+    $("t-q").innerHTML = it.kind === "flaw" ? "What is the main problem with this plan?" : it.kind === "grow" ? "Which move adds the most?" : annotate(f.q, found, seen).html;
+    if (it.kind === "triage") $("t-plan").classList.add("hidden");
+    else { $("t-plan").innerHTML = annotate(it.kind === "flaw" ? f.plan : f.pitch, found, seen).html; $("t-plan").classList.remove("hidden"); }
     taste.order.forEach((k, idx) => {
       const b = document.createElement("button"); b.className = "opt"; b.dataset.k = k;
-      b.innerHTML = `<span class="ltr">${"ABCD"[idx]}</span><span class="txt">${annotate(f.opts[k], found, seen).html}</span>`;
+      b.innerHTML = `<span class="ltr">${"ABCDE"[idx]}</span><span class="txt">${annotate(opts[k], found, seen).html}</span>`;
       b.addEventListener("click", () => pickTaste(k)); host.appendChild(b);
     });
   }
@@ -2826,20 +3129,35 @@ function pickTaste(v) {
   if (!taste || taste.conf) return;
   taste.picked = v;
   document.querySelectorAll("#t-opts .opt").forEach(b => { const mine = (b.dataset.side !== undefined ? b.dataset.side === v : Number(b.dataset.k) === v); b.classList.toggle("picked", mine); });
+  if (taste.items[taste.i].kind === "pref") { revealPref(v); return; }
   $("t-why").classList.remove("hidden");
-  $("t-conf-label").textContent = `How sure are you? (${taste.items[taste.i].kind === "pair" ? "2 options" : "4 options"})`;
+  const nOpt = taste.items[taste.i].kind === "pair" ? 2 : taste.items[taste.i].kind === "triage" ? 5 : 4;
+  $("t-conf-label").textContent = `How sure are you? (${nOpt} options)`;
   $("t-confrow").classList.remove("hidden");
   if (window.matchMedia && window.matchMedia("(hover:hover)").matches) $("t-why-text").focus({preventScroll:true});
+}
+function revealPref(v) {
+  const it = taste.items[taste.i]; const item = it.item; const ax = TASTE_AXES.find(a => a.id === item.axis);
+  taste.conf = {id:"pref"};
+  const pole = v === "a" ? "L" : "R"; const mine = ax[pole], other = ax[pole === "L" ? "R" : "L"];
+  taste.results.push({it, pref: true, pick: v, flip: taste.flip, first: !store.seen[item.id]}); store.seen[item.id] = true; saveStore();
+  document.querySelectorAll("#t-opts .opt").forEach(b => { b.setAttribute("aria-disabled", "true"); if (b.dataset.side === v) b.insertAdjacentHTML("beforeend", `<span class="badge">your pick · ${esc(mine.name.toLowerCase())}</span>`); else b.classList.add("dim"); });
+  $("t-verdict").innerHTML = `<div class="verdict"><div class="vic">${icon("i-compass")}</div><div><div class="vt">Both are sound. This one reads as <b>${esc(mine.name.toLowerCase())}</b>.</div>
+    <div class="axis" style="margin:8px 0 4px"><div class="axlab"><span>${esc(ax.L.name)}</span><span>${esc(ax.R.name)}</span></div><div class="axbar"><i class="mark now" style="left:${pole === "L" ? 8 : 92}%"></i></div></div>
+    <div style="margin-top:6px">${annotate(v === "a" ? item.sayA : item.sayB).html}</div>
+    <div class="small muted" style="margin-top:6px">The other pole, ${esc(other.name.toLowerCase())}: ${esc(other.v)}; its vice: ${esc(other.x)}. Neither pole is the goal. Taste is knowing which one the problem in front of you needs.</div></div></div>`;
+  $("t-next").textContent = taste.i + 1 < taste.items.length ? "Next →" : "See your taste score →";
+  $("t-next").classList.remove("hidden"); $("t-next").focus({preventScroll:true});
 }
 function revealTaste(c) {
   if (!taste || taste.picked === null || taste.conf) return;
   taste.conf = c;
   const it = taste.items[taste.i]; const item = it.item;
-  const correct = it.kind === "pair" ? taste.picked === item.better : taste.picked === item.ans;
+  const correct = taste.picked === itemAnswer(it);
   const pts = correct ? c.right : c.wrong; const p = confP(c, it);
   taste.points += pts; taste.streak = correct ? taste.streak + 1 : 0;
   const first = !store.seen[item.id]; store.seen[item.id] = true;
-  taste.results.push({it, correct, conf: c, p, pts, flip: taste.flip, first});
+  taste.results.push({it, correct, conf: c, p, pts, flip: taste.flip, order: taste.order, first, pick: taste.picked});
   $("t-pts").textContent = (taste.points >= 0 ? "+" : "") + taste.points;
   $("t-streak").innerHTML = taste.streak >= 2 ? `${icon("i-check")} streak ${taste.streak}` : "";
   if (first) store.taste.points += pts;
@@ -2847,19 +3165,23 @@ function revealTaste(c) {
   const note = $("t-why-text").value.trim(); if (note) { store.notes[item.id] = note; saveStore(); } $("t-why-text").readOnly = true;
   taste.results[taste.results.length - 1].note = note;
   document.querySelectorAll("#t-confs .conf").forEach(b => { b.setAttribute("aria-pressed", String(b.dataset.id === c.id)); b.setAttribute("aria-disabled", "true"); });
+  const ans = itemAnswer(it);
   document.querySelectorAll("#t-opts .opt").forEach(b => {
     b.setAttribute("aria-disabled", "true");
-    const isAns = it.kind === "pair" ? b.dataset.side === item.better : Number(b.dataset.k) === item.ans;
+    const isAns = it.kind === "pair" ? b.dataset.side === item.better : Number(b.dataset.k) === ans;
     const mine = it.kind === "pair" ? b.dataset.side === taste.picked : Number(b.dataset.k) === taste.picked;
     if (isAns) b.classList.add("sound"); else if (mine) b.classList.add("pit"); else b.classList.add("dim");
-    b.insertAdjacentHTML("beforeend", `<span class="badge">${isAns ? (it.kind === "pair" ? "stronger" : "the flaw") : mine ? "your pick" : ""}</span>`);
+    const rk = it.kind === "triage" ? item.ideas[Number(b.dataset.k)].rank : null;
+    b.insertAdjacentHTML("beforeend", `<span class="badge">${isAns ? (it.kind === "pair" ? "stronger" : it.kind === "flaw" ? "the flaw" : it.kind === "grow" ? "best move" : "first") : (rk ? `ranked ${rk}` : "")}${mine ? (isAns || rk ? " · your pick" : "your pick") : ""}</span>`);
   });
   const head = correct ? `Right${c.id === "sure" ? ", and sure" : ""}.` : (c.id === "sure" ? "Wrong, and sure: the expensive case, and the useful one. Note the feature you missed." : "Not this one.");
-  const ptsNote = c.id === "coin" ? `+1 · a guess is never penalized${taste.results.filter(r => r.conf.id === "coin").length === 1 ? "; it is the honest choice below 60% belief" : ""}` : `${pts >= 0 ? "+" : ""}${pts} pts`;
+  const ptsNote = c.id === "coin" ? `+1 · a guess is never penalized${taste.results.filter(r => !r.pref && r.conf.id === "coin").length === 1 ? "; it is the honest choice below 60% belief" : ""}` : `${pts >= 0 ? "+" : ""}${pts} pts`;
   const tip = it.kind === "pair" ? ((item.better === "a") !== taste.flip ? -1 : 1) : 0;
   let html = `<div class="verdict ${correct ? "sound" : "pit"}"><div class="vic">${icon(correct ? "i-check" : "i-x")}</div><div>${it.kind === "pair" ? `<div class="scalewrap">${scaleSVG(tip)}</div>` : ""}<div class="vt">${head} <span class="small muted" style="font-weight:400">(${ptsNote})</span></div>`;
   if (it.kind === "pair") html += `<div><span class="feat">${esc(item.feat)}</span></div><div style="margin-top:6px">${annotate(relabel(item.why, taste.flip)).html}</div>${item.principle ? `<div class="principle">${icon("i-flag")} <b>Principle.</b> ${annotate(item.principle).html}</div>` : ""}`;
-  else html += `<div><span class="feat">${esc(item.opts[item.ans])}</span></div><div style="margin-top:6px">${annotate(item.why).html}</div><div style="margin-top:6px">${icon("i-wrench")} <b>The repair:</b> ${annotate(item.repair).html}</div>`;
+  else if (it.kind === "flaw") html += `<div><span class="feat">${esc(item.opts[item.ans])}</span></div><div style="margin-top:6px">${annotate(item.why).html}</div><div style="margin-top:6px">${icon("i-wrench")} <b>The repair:</b> ${annotate(item.repair).html}</div>`;
+  else if (it.kind === "grow") html += `<div><span class="feat">${esc(item.feat)}</span></div><div style="margin-top:6px">${annotate(relabelMoves(item.why, taste.order)).html}</div><div class="principle">${icon("i-flag")} <b>Principle.</b> ${annotate(item.principle).html}</div>`;
+  else html += `<div><span class="feat">The author's ranking</span></div><ol class="rankl">${item.ideas.slice().sort((x, y) => x.rank - y.rank).map(x => `<li><b>${esc(x.t)}</b><div class="small muted">${esc(x.why)}</div></li>`).join("")}</ol><div class="principle">${icon("i-flag")} <b>Principle.</b> ${annotate(item.principle).html}</div>`;
   html += `<details style="margin-top:8px"><summary class="small" style="cursor:pointer;color:var(--accent-dark)">${icon("i-book")} Read (${item.res.length})</summary><ul class="reads">${readsHTML(item.res)}</ul></details></div></div>`;
   if (it.kind === "flaw" && item.p) html += `<details class="lesson" style="margin-top:10px"><summary>${icon("i-warn")} What “${esc(PITFALLS[item.p].name)}” looks like</summary><div class="inner">${pitboxHTML(item.p)}</div></details>`;
   $("t-verdict").innerHTML = html;
@@ -2875,7 +3197,7 @@ function levelFor(points) { let L = LEVELS[0]; LEVELS.forEach(l => { if (points 
 function reliabilitySVG() {
   const W = 260, H = 240, L = 34, R = 10, T = 12, B = 34;
   const x = p => L + (W - L - R) * p; const y = p => T + (H - T - B) * (1 - p);
-  const bins = CONF.map(c => { const rs = taste.results.filter(r => r.conf.id === c.id); const p = rs.length ? rs.reduce((s, r) => s + r.p, 0) / rs.length : c.pPair; return {c: Object.assign({}, c, {p}), n: rs.length, acc: rs.length ? rs.filter(r => r.correct).length / rs.length : null}; });
+  const bins = CONF.map(c => { const rs = taste.results.filter(r => !r.pref && r.conf.id === c.id); const p = rs.length ? rs.reduce((s, r) => s + r.p, 0) / rs.length : c.pPair; return {c: Object.assign({}, c, {p}), n: rs.length, acc: rs.length ? rs.filter(r => r.correct).length / rs.length : null}; });
   const ticks = [0, .5, 1].map(v => `<text x="${x(v)}" y="${H - B + 14}" font-size="9" text-anchor="middle" fill="var(--muted)">${Math.round(v * 100)}%</text><text x="${L - 5}" y="${y(v) + 3}" font-size="9" text-anchor="end" fill="var(--muted)">${Math.round(v * 100)}%</text>`).join("");
   const dots = bins.map(b => b.n ? `<line x1="${x(b.c.p)}" x2="${x(b.c.p)}" y1="${y(b.c.p)}" y2="${y(b.acc)}" stroke="var(--${b.acc < b.c.p - .05 ? "bad" : "good"})" stroke-width="1.5" stroke-dasharray="3 2"/>
       <circle cx="${x(b.c.p)}" cy="${y(b.acc)}" r="${5 + Math.min(b.n, 6)}" fill="var(--accent)" opacity=".85"><title>${b.c.label}: ${Math.round(b.acc * 100)}% right over ${b.n} item${b.n === 1 ? "" : "s"}</title></circle>
@@ -2891,18 +3213,19 @@ function reliabilitySVG() {
     <text x="10" y="${(T + H - B) / 2}" font-size="9" text-anchor="middle" fill="var(--muted)" transform="rotate(-90 10 ${(T + H - B) / 2})">actually right</text></svg>`;
 }
 function finishTaste() {
-  const n = taste.results.length; const correct = taste.results.filter(r => r.correct).length;
-  const acc = correct / n; const avgConf = taste.results.reduce((s, r) => s + r.p, 0) / n;
+  const graded = taste.results.filter(r => !r.pref);
+  const n = graded.length; const correct = graded.filter(r => r.correct).length;
+  const acc = correct / n; const avgConf = graded.reduce((s, r) => s + r.p, 0) / n;
   const gap = avgConf - acc;
   /* expected calibration error over the three confidence bins */
-  const ece = CONF.reduce((s, c) => { const rs = taste.results.filter(r => r.conf.id === c.id); if (!rs.length) return s; const pa = rs.reduce((t, r) => t + r.p, 0) / rs.length; const aa = rs.filter(r => r.correct).length / rs.length; return s + rs.length / n * Math.abs(pa - aa); }, 0);
+  const ece = CONF.reduce((s, c) => { const rs = graded.filter(r => r.conf.id === c.id); if (!rs.length) return s; const pa = rs.reduce((t, r) => t + r.p, 0) / rs.length; const aa = rs.filter(r => r.correct).length / rs.length; return s + rs.length / n * Math.abs(pa - aa); }, 0);
   const L = levelFor(store.taste.points);
   $("tr-level").textContent = L.name; $("tr-levelnote").textContent = L.note;
   const li = LEVELS.indexOf(L); const next = LEVELS[li + 1]; const lo = li === 0 ? 0 : L.min;
   const lp = Math.max(0, store.taste.points);
   const frac = next ? clamp((lp - lo) / (next.min - lo), 0, 1) : 1;
   $("tr-lvlbar").style.width = Math.round(frac * 100) + "%";
-  const firsts = taste.results.filter(r => r.first).length;
+  const firsts = graded.filter(r => r.first).length;
   $("tr-lvlnext").textContent = (next ? `${lp} level points on this device · ${next.min - lp} to “${next.name}”` : `${lp} level points on this device · top level`) + (firsts < n ? ` · ${n - firsts} repeated item${n - firsts === 1 ? "" : "s"} this round did not count` : "");
   $("tr-acc").textContent = `${correct}/${n}`; $("tr-points").textContent = (taste.points >= 0 ? "+" : "") + taste.points;
   $("tr-conf").textContent = Math.round(avgConf * 100) + "%";
@@ -2913,21 +3236,50 @@ function finishTaste() {
   else { cal = "underconfident"; note = `You were right ${Math.round(acc * 100)}% of the time but only claimed ${Math.round(avgConf * 100)}%. Your discriminator is better than you think; trust the feature you noticed. Underconfidence has a cost too: it is what keeps you silent until you have results.`; }
   if (n >= 5) note += ` Calibration error: ${Math.round(ece * 100)} points (how far the dots sit from the diagonal). One round is a hint; three rounds tell you something.`;
   $("tr-cal").textContent = cal; $("tr-calnote").textContent = note; $("tr-rel").innerHTML = reliabilitySVG();
-  const missed = taste.results.filter(r => !r.correct);
+  const missed = graded.filter(r => !r.correct);
   $("tr-missed-card").classList.toggle("hidden", !missed.length);
-  $("tr-missed").innerHTML = missed.map(r => { const it = r.it.item; const feat = r.it.kind === "pair" ? it.feat : it.opts[it.ans];
-    return `<details class="pm"><summary><span class="sw" style="background:var(--bad)"></span><span class="ph">${r.it.kind === "pair" ? "pair" : "flaw"}</span><b>${esc(feat)}</b><span class="chev">▾</span></summary><div class="inner">${esc(r.it.kind === "pair" ? relabel(it.why, r.flip) : it.why)}${it.repair ? `<div style="margin-top:4px">${icon("i-wrench")} ${esc(it.repair)}</div>` : ""}</div></details>`; }).join("");
+  $("tr-missed").innerHTML = missed.map(r => { const it = r.it.item; const feat = itemFeat(r.it);
+    return `<details class="pm"><summary><span class="sw" style="background:var(--bad)"></span><span class="ph">${r.it.kind}</span><b>${esc(feat)}</b><span class="chev">▾</span></summary><div class="inner">${esc(r.it.kind === "pair" ? relabel(it.why, r.flip) : r.it.kind === "grow" ? relabelMoves(it.why, r.order) : (it.why || it.principle || ""))}${it.repair ? `<div style="margin-top:4px">${icon("i-wrench")} ${esc(it.repair)}</div>` : ""}</div></details>`; }).join("");
   const notes = taste.results.map(r => ({r, t: r.note})).filter(x => x.t);
   $("tr-notes-card").classList.toggle("hidden", !notes.length);
-  $("tr-notes").innerHTML = notes.map(x => `<div class="verdict ${x.r.correct ? "sound" : "pit"}" style="margin:8px 0"><div class="small muted">${esc(x.r.it.kind === "pair" ? x.r.it.item.feat : x.r.it.item.opts[x.r.it.item.ans])}</div><div>${esc(x.t)}</div></div>`).join("");
+  $("tr-notes").innerHTML = notes.map(x => `<div class="verdict ${x.r.correct ? "sound" : "pit"}" style="margin:8px 0"><div class="small muted">${esc(itemFeat(x.r.it))}</div><div>${esc(x.t)}</div></div>`).join("");
+  renderTasteProfile();
   const reads = ["taste"]; missed.forEach(r => reads.push(...r.it.item.res)); if (missed.length === 0) reads.push("pg_taste", "hamming", "triage");
   $("tr-reads").innerHTML = readsHTML(reads);
   show("tasteres");
 }
+/* taste profile: which pole each pick sat on, this round and cumulatively */
+function leanOf(r) {
+  if (r.pref) return {axis: r.it.item.axis, pole: r.pick === "a" ? "L" : "R"};
+  const L = TASTE_LEAN[r.it.item.id]; if (!L) return null;
+  const pole = r.it.kind === "pair" ? L[r.pick] : (L.opts ? L.opts[r.pick] : null);
+  return pole ? {axis: L.axis, pole} : null;
+}
+function renderTasteProfile() {
+  store.taste.axes = store.taste.axes || {};
+  taste.results.forEach(r => { const l = leanOf(r); if (!l) return; const ax = store.taste.axes[l.axis] = store.taste.axes[l.axis] || {L:0, R:0}; ax[l.pole]++; });
+  saveStore();
+  const rows = TASTE_AXES.map(ax => {
+    const now = {L:0, R:0}; taste.results.forEach(r => { const l = leanOf(r); if (l && l.axis === ax.id) now[l.pole]++; });
+    const all = store.taste.axes[ax.id] || {L:0, R:0};
+    const nNow = now.L + now.R, nAll = all.L + all.R;
+    if (!nAll) return "";
+    const pos = v => 50 + 50 * (v.R - v.L) / Math.max(1, v.L + v.R);
+    const lean = all.R > all.L ? ax.R : all.L > all.R ? ax.L : null;
+    const strength = Math.abs(all.R - all.L) / Math.max(1, nAll);
+    const read = !lean ? "balanced so far" : `${strength >= .6 ? "clearly" : "slightly"} ${lean.name.toLowerCase()}: ${lean.v}. The vice to watch: ${lean.x}.`;
+    return `<div class="axis"><div class="axlab"><span>${esc(ax.L.name)}</span><span>${esc(ax.R.name)}</span></div>
+      <div class="axbar"><i class="mark all" style="left:${pos(all).toFixed(0)}%" title="all rounds: ${all.L} vs ${all.R}"></i>${nNow ? `<i class="mark now" style="left:${pos(now).toFixed(0)}%" title="this round: ${now.L} vs ${now.R}"></i>` : ""}</div>
+      <div class="small muted">${esc(read)} <span class="muted">(${nAll} pick${nAll === 1 ? "" : "s"} so far)</span></div></div>`;
+  }).join("");
+  $("tr-profile").innerHTML = rows || `<p class="muted">No profile yet: this round's items did not carry a spectrum.</p>`;
+}
 function tasteSummaryText() {
-  const n = taste.results.length; const correct = taste.results.filter(r => r.correct).length;
+  const graded = taste.results.filter(r => !r.pref);
+  const n = graded.length; const correct = graded.filter(r => r.correct).length;
   return [`Research Pitfalls · taste gym — ${domLabel(store.domain)}`, `${$("tr-level").textContent}: ${correct}/${n} correct, ${taste.points >= 0 ? "+" : ""}${taste.points} points, ${$("tr-cal").textContent}.`,
-    ...taste.results.filter(r => !r.correct).map(r => `- missed: ${r.it.kind === "pair" ? r.it.item.feat : r.it.item.opts[r.it.item.ans]}`), location.origin + location.pathname].join("\n");
+    ...graded.filter(r => !r.correct).map(r => `- missed: ${itemFeat(r.it)}`),
+    ...TASTE_AXES.filter(ax => (store.taste.axes || {})[ax.id]).map(ax => { const a = store.taste.axes[ax.id]; return `- profile: ${ax.L.name} ${a.L} · ${a.R} ${ax.R.name}`; }), location.origin + location.pathname].join("\n");
 }
 
 /* ============================================================================
@@ -2971,7 +3323,9 @@ function copyText(t) {
   else toast("Clipboard unavailable");
 }
 $("go-run").addEventListener("click", startRun);
-$("go-taste").addEventListener("click", startTaste);
+$("go-taste").addEventListener("click", () => startTaste());
+$("track-ideas").addEventListener("click", () => startTaste("ideas"));
+$("track-papers").addEventListener("click", () => startTaste("papers"));
 $("go-guide").addEventListener("click", () => { renderGuide(); show("guide"); });
 $("nav-home").addEventListener("click", () => show("home"));
 $("nav-guide").addEventListener("click", () => { renderGuide(); show("guide"); });
@@ -2993,16 +3347,17 @@ $("scope-run").addEventListener("click", startRun);
 $("scope-restart").addEventListener("click", startScope);
 $("scope-reads").innerHTML = readsHTML(["heilmeier","alon","hamming","pg_great","greatideas","triage","barbell","disprove","method","contingency","planning"]);
 $("pm-again").addEventListener("click", startRun);
-$("pm-taste").addEventListener("click", startTaste);
+$("pm-taste").addEventListener("click", () => startTaste());
 $("pm-copy").addEventListener("click", () => copyText(runSummaryText()));
 $("pm-checklist").addEventListener("click", () => copyText(checklistText()));
 $("pm-domain").addEventListener("click", () => show("home"));
 $("t-next").addEventListener("click", nextTaste);
-$("tr-again").addEventListener("click", startTaste);
+$("tr-again").addEventListener("click", () => startTaste(taste.track));
+$("tr-other").addEventListener("click", () => startTaste(taste.track === "ideas" ? "papers" : "ideas"));
 $("tr-run").addEventListener("click", startRun);
 $("tr-copy").addEventListener("click", () => copyText(tasteSummaryText()));
 $("guide-run").addEventListener("click", startRun);
-$("guide-taste").addEventListener("click", startTaste);
+$("guide-taste").addEventListener("click", () => startTaste());
 $("gloss-filter").addEventListener("input", e => { const q = e.target.value.trim().toLowerCase(); document.querySelectorAll("#guide-gloss .gl").forEach(el => { el.classList.toggle("hidden", !!q && !el.textContent.toLowerCase().includes(q)); }); });
 $("guide-reset").addEventListener("click", () => {
   if (!confirm("Reset hits, dodges, taste points and notes on this device?")) return;
@@ -3026,11 +3381,11 @@ document.addEventListener("keydown", e => {
     if (k === "ENTER") { if (e.target.closest && e.target.closest("button, a, summary")) return; e.preventDefault(); nextTaste(); return; }
     const it = taste.items[taste.i];
     if (!taste.conf && ["1","2","3"].includes(k) && taste.picked !== null) { revealTaste(CONF[Number(k) - 1]); return; }
-    const idx = "ABCD".indexOf(k);
+    const idx = "ABCDE".indexOf(k);
     if (idx >= 0 && !taste.conf) {
       e.preventDefault();
-      if (it.kind === "pair" && idx < 2) pickTaste((taste.flip ? ["b","a"] : ["a","b"])[idx]);
-      else if (it.kind === "flaw" && idx < taste.order.length) pickTaste(taste.order[idx]);
+      if ((it.kind === "pair" || it.kind === "pref") && idx < 2) pickTaste((taste.flip ? ["b","a"] : ["a","b"])[idx]);
+      else if (it.kind !== "pair" && it.kind !== "pref" && idx < taste.order.length) pickTaste(taste.order[idx]);
     }
   }
 });
@@ -3041,7 +3396,7 @@ document.addEventListener("keydown", e => {
   const d = q.get("domain"); if (d && DOMAINS.some(x => x.id === d)) { store.domain = d; saveStore(); }
   renderDomChips(); renderHome(); show("home");
   const m = q.get("mode");
-  if (m === "run") startRun(); else if (m === "taste") startTaste(); else if (m === "scope") startScope(); else if (m === "guide") { renderGuide(); show("guide"); }
+  if (m === "run") startRun(); else if (m === "taste") startTaste(q.get("track") || undefined); else if (m === "scope") startScope(); else if (m === "guide") { renderGuide(); show("guide"); }
 })();
 </script>
 </body>
