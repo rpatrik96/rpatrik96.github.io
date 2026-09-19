@@ -26,20 +26,32 @@ convergence studies). "General" shows only the domain-neutral cards.
 2. **Train your taste** — gamifies the discriminative skill from *P2P No. 135 — Developing taste*
    (taste is trainable by judging many examples with dense feedback and articulating why). Two
    drills alternate for 10 items: *Which is stronger?* (two plans/abstracts/claims that differ in
-   one discriminating feature) and *Spot the flaw* (a plan, four diagnoses, one right; reveal
-   includes the repair — recognition vs repair). Before the reveal the player states confidence
-   (coin flip 50% / leaning 70% / sure 90%). Scoring: right & sure +3, right & leaning +2, right &
-   coin +1; wrong & sure −3, wrong & leaning −1, wrong & coin 0. The result screen reports
-   accuracy, taste points, average stated confidence, a **calibration** verdict (three-bin
-   ECE-lite, explained with the weather-forecaster analogy), the discriminating features missed,
-   the player's own "why" notes, and a cumulative **discriminator level** (Untrained → Calibrating
-   → Sharp → Reviewer they ask for).
-3. **Field guide** — the full pitfall catalogue by phase with hit/dodged counts from this device,
-   and every linked resource in one list.
+   one discriminating feature; sides are shown in random order and the explanation's A/B letters
+   are relabelled to match) and *Spot the flaw* (a plan, four same-phase diagnoses, one right;
+   the reveal includes the repair — recognition vs repair — and a collapsed box showing what the
+   pitfall looks like). After picking and *before* the reveal the player can write a one-line
+   "why" (that is what trains the judge) and states confidence: guess (50% for pairs, 25% for
+   four-option items) / leaning (70% / 60%) / sure (90%). Scoring is a roughly proper rule so the
+   point-maximising choice is the honest one: right: sure +3, leaning +2, guess +1; wrong: sure
+   −2, leaning 0, guess +1. The result screen reports accuracy, points, average stated
+   confidence, a **calibration** verdict with a reliability diagram (per-confidence-bin accuracy
+   against stated probability; the weighted gap is an expected calibration error), the
+   discriminating features missed, the player's own notes, and a cumulative **discriminator
+   level** (Untrained → Calibrating → Sharp → The reviewer authors ask for). Level points count
+   only the first exposure to an item, so repetition does not level you up.
+3. **Field guide** — the full pitfall catalogue by phase as expandable tiles (what / smells like /
+   instead / read, plus the worked example), hit/dodged marks from this device, a glossary of
+   every term the game uses, and every linked resource in one list.
 
 ## Content
 
-- 39 pitfalls, 47 scenario cards, 15 pairwise items, 16 spot-the-flaw items, 62 resources.
+- 45 pitfalls (each with a worked example and a longer explanation), 58 scenario cards, 15
+  pairwise items, 20 spot-the-flaw items, 32 glossary entries, 66 resources.
+- Reviewed with an audience-persona pass (five first-year personas across domains) and a
+  devil's-advocate pass (factual claims about cited papers verified, game logic simulated,
+  scoring fairness, accessibility); both rounds' findings are folded in. Option texts are
+  length-balanced so the sound answer is not the longest one; pitfall options carry a plausible
+  justification.
 - Resources are Path to PhD posts (developing taste, idea triage, hypotheses need to be
   predictive, multiple working hypotheses, strong inference, method vs problem orientation,
   contingency plans, quit-and-grit, open-loop postmortems, single measure/complex thing, …) plus
@@ -48,8 +60,8 @@ convergence studies). "General" shows only the domain-neutral cards.
   Nagarajan & Kolter; Zhang et al.; Gelman & Loken; Simmons et al.; Kerr; Ioannidis; Button et al.;
   Nosek et al.; Hurlbert; Leek et al.; Platt; Chamberlin; Hamming; Feynman; Tao; Peyton Jones;
   Karpathy).
-- All content lives in the `DOMAINS / PHASES / RESOURCES / PITFALLS / CARDS / PAIRS / FLAWS`
-  constants at the top of the script; adding a card is adding an object.
+- All content lives in the `DOMAINS / PHASES / RESOURCES / PITFALLS / CARDS / PAIRS / FLAWS /
+  GLOSSARY / LESSONS` constants at the top of the script; adding a card is adding an object.
 
 ## Deep links
 
@@ -57,6 +69,8 @@ convergence studies). "General" shows only the domain-neutral cards.
 
 ## Accessibility and UX
 
-Keyboard: A/B/C(/D) to choose, 1/2/3 for confidence, Enter for next. Visible focus rings,
-`aria-pressed` chips, dark mode via `prefers-color-scheme` (with `data-theme` overrides), no
-horizontal scroll at 375 px. Copy-summary buttons on both result screens.
+Keyboard: A/B/C(/D) to choose, 1/2/3 for confidence, Enter for next. Focus moves to the new
+card and to the verdict (live region); revealed options carry text badges, not colour alone;
+contrast tokens (`--on-accent`, `--btn`) keep button and badge text at AA in both themes;
+`prefers-reduced-motion` honoured; dark mode via `prefers-color-scheme` (with `data-theme`
+overrides); no horizontal scroll at 375 px. Copy-summary buttons on both result screens.
