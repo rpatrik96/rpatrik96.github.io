@@ -223,6 +223,9 @@
   details.pm>summary b{flex:1; min-width:0}
   details.pm>summary .chev{color:var(--muted); font-size:.8rem}
   details.pm .inner{padding:0 14px 12px}
+  details.ggroup>summary .count{font-size:.78rem; color:var(--muted); background:var(--soft); border-radius:999px; padding:1px 8px; flex:none}
+  details.ggroup .gloss .gl:first-child{border-top:none}
+  details.ggroup .reads{margin:0; padding-left:1.1em} details.ggroup .reads li{margin:5px 0; line-height:1.45}
   .resgrid{display:grid; grid-template-columns:1.1fr 1fr; gap:16px; margin-top:16px}
   @media(max-width:700px){.resgrid{grid-template-columns:1fr}}
 
@@ -711,14 +714,14 @@
     </div>
     <div class="card" style="margin-top:18px">
       <h3 style="margin-bottom:2px" id="guide-glossary">Glossary</h3>
-      <p class="small muted" style="margin:0 0 8px">Terms the game uses, in one line each.</p>
-      <input class="filter" id="gloss-filter" type="search" placeholder="Filter terms…" aria-label="Filter glossary">
+      <p class="small muted" style="margin:0 0 8px">Every term the game uses, one line each, in nine groups. Open a group, or type to search across all of them.</p>
+      <input class="filter" id="gloss-filter" type="search" placeholder="Search all terms…" aria-label="Search glossary">
       <div class="gloss" id="guide-gloss"></div>
     </div>
     <div class="card" style="margin-top:18px" id="guide-reading">
       <h3>Further reading</h3>
-      <p class="small muted" style="margin:0 0 6px">Everything linked in the game, in one place. P2P is The Path to PhD, the newsletter this game grew out of.</p>
-      <ul class="reads" id="guide-reads"></ul>
+      <p class="small muted" style="margin:0 0 6px">Everything linked in the game, in seven groups by what it helps with. P2P is The Path to PhD, the newsletter this game grew out of.</p>
+      <div id="guide-reads"></div>
     </div>
     <div class="underbar" style="justify-content:flex-start; margin-top:20px">
       <button class="btn" id="guide-run">Run a study</button>
@@ -1590,11 +1593,11 @@ const CARDS = [
    Never begin a sentence with the article “A” in a why string: relabel() swaps every single-letter A/B. ---- */
 const PAIRS = [
   {id:"P_hyp", dom:"all", q:"Which hypothesis would you rather defend?",
-   a:"“We study whether X affects Y across a broad set of settings, using a large and diverse dataset.”",
-   b:"“If X causes Y through M, then removing M should abolish the effect. We test this by …”",
+   a:"“X improves Y, and the size of the effect depends on the setting, so we expect it to be clear in some settings and weaker in others. We test this across a broad set of settings, using a large and diverse dataset.”",
+   b:"“X improves Y through M, so removing M should abolish the effect and the effect should be largest where M is strongest. We test this across the same settings, using the same dataset.”",
    better:"b", feat:"A prediction you can lose",
    principle:"State hypotheses so that some outcome would refute them. A hypothesis that survives every result supports none.",
-   why:"B commits to a mechanism and a way to be wrong; A can absorb any result. Taste, here, is preferring the sentence that risks something.",
+   why:"Same claim, same settings, same data. B commits to a mechanism and a way to be wrong; A can absorb any result, since a clear effect confirms it and a weak one was expected. Taste, here, is preferring the sentence that risks something.",
    res:["predictive","disprove","platt"]},
   {id:"P_sota", dom:["ml_exp"], q:"Which abstract makes the sounder claim?",
    a:"“We propose NewNet, a new architecture that achieves state of the art on five standard benchmarks, improving the average by 2.1 points over the strongest prior method.”",
@@ -1604,11 +1607,11 @@ const PAIRS = [
    why:"Same method, same number. B knows where the 2.1 points come from and tells the field what to adopt; A leaves readers to guess and will be caught by the first reviewer who runs the ablation. The principle is “identify the source of the gain”, not “state of the art is bad”.",
    res:["lipton","melis","musgrave"]},
   {id:"P_scope", dom:"all", q:"Two unifying frameworks. Which claim would you rather have your name on?",
-   a:"“A general theory of learning in realistic settings, unifying several existing results under one framework.”",
+   a:"“A general framework for learning when the data distribution changes, unifying three existing results and covering the realistic kinds of change practitioners meet; we show that each of the three results falls out as a special case.”",
    b:"“A framework that unifies three existing results on learning when the data distribution changes; we say which kinds of change it covers and show one kind outside that set where its predictions fail.”",
    better:"b", feat:"A stated boundary",
    principle:"Big claims are fine; unification is one of the most valuable kinds of novelty. What makes the claim a result rather than a promise is saying where it stops, and showing one case beyond the line.",
-   why:"Both are unifications and both have value. A's “general” and “realistic” are unbounded, so a reader cannot tell what it covers; B names the class it covers and the case it does not, which is what makes it checkable. The same ambition, sized to the evidence.",
+   why:"Both unify the same three results and both have value. A's “general” and “realistic” are unbounded, so a reader cannot tell which kinds of change it covers, and recovering the three results as special cases only shows the framework contains what it started from; B names the class it covers and the case it does not, which is what makes it checkable. The same ambition, sized to the evidence.",
    res:["convictions","spectrum"]},
   {id:"P_assume", dom:["ml_theory"], q:"Which theory paper makes the sounder claim?",
    a:"A theorem about deep networks with six assumptions, one of which is convexity of the loss, presented as explaining practical training.",
@@ -1639,18 +1642,18 @@ const PAIRS = [
    why:"Same goal, same dataset, same year, and stating the goal at this level is fine for both. A spends its detail on breadth; B spends it on a prediction, saying in advance what each outcome would mean, so a success and a failure both move your understanding. In A, only a failure does, and even then you don't know why.",
    res:["predictive","disprove","platt"]},
   {id:"P_boundary_th", dom:["ml_theory"], q:"Same extension, same setting, one year. Which plan do you start from?",
-   a:"“Extend the theorem to setting D, the one practitioners care about, by working through the proof step by step and reporting which steps go through and which need a new assumption, with a numerical check of each step on small instances.”",
-   b:"“Extend the theorem to setting D. The proof needs assumption M, which holds there for one class of models and fails for another; the theorem should extend for the first and break for the second. Check both.”",
-   better:"b", feat:"A prediction attached to the extension",
-   principle:"Attach a prediction to every extension: say in advance where the argument should survive and where it should break. Then both outcomes are results.",
-   why:"Same goal, same setting, same year, and a goal stated at this level is fine for both. The difference is what each commits to in advance: B names the assumption that carries the result and predicts where the extension breaks, so a failure is a finding about M and a success confirms the mechanism. A reports which steps went through, and a step that fails leaves you where you started.",
-   res:["tao_dumb","nagarajan","disprove"]},
+   a:"“Extend the theorem to setting D, the one practitioners care about, adding the assumptions the proof turns out to need as they come up, and state the result under the final list; check each step numerically on small instances along the way.”",
+   b:"“Extend the theorem to setting D, checking first which of the current assumptions actually hold there; where one fails, either prove without it or state that case as the boundary of the result.”",
+   better:"b", feat:"Assumptions checked against the setting, not added for the proof",
+   principle:"Extending a theorem to a setting people care about is worth a year on its own; no prediction is needed. The trap is adding assumptions until the proof goes through. Check which assumptions the setting satisfies, and let the ones that fail mark the boundary of the result.",
+   why:"Both extensions are valid work and both improve understanding. A grows its assumption list to fit the proof, so the final theorem may hold only in a setting nobody trains in, and neither the author nor the reader can tell. B starts from what setting D satisfies, so the result lands where it is used, and a failed assumption becomes a stated boundary instead of a hidden one.",
+   res:["tao_dumb","nagarajan","tao_rigour"]},
   {id:"P_prereg", dom:["social","lab"], q:"Which study design would you fund?",
-   a:"Pre-registered primary outcome, sample size from a power analysis, exploratory analyses labeled.",
-   b:"Twelve outcomes with a Bonferroni correction for multiple tests, n = 200, hypotheses fixed after a first look at the data.",
+   a:"Twelve outcomes measured; one primary outcome and its analysis fixed before data collection, sample size from a power analysis for it, the other eleven reported as exploratory.",
+   b:"Twelve outcomes measured; sample size from a power analysis for a medium effect, the primary outcome and its analysis chosen after a first look at the data, with a Bonferroni correction across the twelve tests.",
    better:"a", feat:"Decisions before data",
    principle:"Fix the hypothesis and the analysis before the data. Hypotheses fixed after a look at the data are findings, not predictions.",
-   why:"A can be wrong; B cannot. The correction helps, but hypotheses fixed after a look at the data are not predictions.",
+   why:"Same outcomes, same sample size, same power. A can be wrong, because it named its outcome before seeing the data. B cannot: whichever outcome moved becomes the primary one, and the correction across twelve tests does not undo that choice. Hypotheses fixed after a look at the data are findings, not predictions.",
    res:["nosek","simmons","button"]},
   {id:"P_ablate", dom:["ml_exp"], q:"Which ablation write-up shows better judgment?",
    a:"“Removing component C drops accuracy by 0.3 points (the spread across seeds is 0.6), showing C is essential to the architecture; we keep it and recommend it as the default.”",
@@ -1660,11 +1663,11 @@ const PAIRS = [
    why:"B reads its own error bars, does not mistake absence of evidence for evidence of absence, and simplifies. A turns noise into a story because the story was wanted.",
    res:["henderson","bouthillier","darlings"]},
   {id:"P_exist", dom:["ml_theory"], q:"Same theorem, two write-ups. Which claims what it proves?",
-   a:"“For every ε there exists a network achieving error ε” (constructive proof), presented in the introduction as explaining why training reaches low error.",
+   a:"“For every ε there exists a network achieving error ε” (constructive proof), presented in the introduction as explaining why training reaches low error, with the numerical check on small instances in Section 5 cited as confirmation.",
    b:"“For every ε there exists a network achieving error ε” (constructive proof); whether gradient descent finds it is stated as open, with a numerical check on small instances in Section 5.",
    better:"b", feat:"The claim matches the proof",
    principle:"State exactly what the theorem establishes. An existence result says nothing about what an algorithm finds; the algorithmic question is a separate theorem, or an honest open question with a numerical check.",
-   why:"The mathematics is identical. A's introduction claims an algorithmic explanation the proof does not contain; B keeps the claim the size of the proof and adds the cheapest evidence about the open part.",
+   why:"The mathematics is identical, and so is Section 5. A's introduction claims an algorithmic explanation the proof does not contain and reads the small-instance check as confirming it; B keeps the claim the size of the proof and reads the same check as the cheapest evidence about the open part.",
    res:["nagarajan","zhang"]},
   {id:"P_haunt", dom:"all", q:"Which idea deserves the next month?",
    a:"The idea you had yesterday: it fits the deadline and a dataset you already have.",
@@ -2461,11 +2464,11 @@ const PAIR_TRACK = {P_hyp:"ideas", P_scope:"ideas", P_plan:"ideas", P_boundary:"
 /* ---- Idea pitches: one paragraph each (question, why now, what would be shown, how it could fail). better: a|b ---- */
 const IDEA_PAIRS = [
   {id:"I_memo", res:["predictive", "disprove", "measure"], dom:["ml_exp"], q:"Two pitches for the same month. Which would you fund?",
-   a:"Do large language models memorize their evaluation benchmarks? We will run the ten most-used reasoning benchmarks through the five largest open models, across three prompting styles and with and without chain-of-thought, and report accuracy for every combination with confidence intervals over prompts. If accuracy is high, memorization is likely; we will discuss the implications for leaderboards, for benchmark design, and for how the community should report results going forward, and release a dashboard.",
+   a:"Do large language models memorize their evaluation benchmarks? We will run the ten most-used reasoning benchmarks through the five largest open models, across three prompting styles and with and without chain-of-thought, and report accuracy for every combination with confidence intervals over prompts, next to each benchmark's release date and each model's training cutoff. High accuracy on benchmarks older than the cutoff points to memorization; high accuracy on newer ones shows the ability is real. We will discuss the implications for leaderboards, for benchmark design, and for how the community should report results going forward, and release a dashboard.",
    b:"Do large language models score well on reasoning benchmarks because they have seen the items? For each of five open models we will measure n-gram overlap between benchmark items and the model's public pretraining corpus, then compare accuracy on high-overlap items against accuracy on freshly written items of matched difficulty. If the gap is under two points, memorization is not the story and we say so. Two weeks: 200 fresh items, one model.",
    better:"b", feat:"A measurement that can say no",
    principle:"A research idea is a question plus the measurement that could answer it either way. If you cannot say what result would make you drop the idea, it is not yet an idea.",
-   why:"Both start from the same question. A measures accuracy, which cannot separate memorization from ability, so any result confirms the suspicion. B names the contrast (high-overlap versus fresh items of matched difficulty), the threshold that would kill the story, and the two-week pilot. That is the difference between a topic and a project."},
+   why:"Both start from the same question. A measures accuracy, which cannot separate memorization from ability, and reads every cell of its table as support: high scores on old benchmarks are memorization, high scores on new ones are ability, so no outcome makes it drop the suspicion. B names the contrast (high-overlap versus fresh items of matched difficulty), the threshold that would kill the story, and the two-week pilot. That is the difference between a topic and a project."},
   {id:"I_aug", res:["predictive", "strong", "platt"], dom:["ml_exp"], q:"Which pitch is the better use of a semester?",
    a:"A new data-augmentation method for vision transformers. We will combine three existing augmentations with a learned schedule and show improved accuracy on ImageNet and four transfer datasets against the standard recipe. We add experiments on robustness benchmarks, on three model sizes and under two training budgets, plus a study of the learned schedules. The method is simple to add to any pipeline and we will release it as a drop-in library.",
    b:"Why does augmentation help vision transformers more than convolutional networks? We hypothesize it substitutes for the inductive bias convolutions carry. Prediction: the benefit of augmentation shrinks as we add convolutional stem layers, and vanishes at a measurable depth. If the benefit does not shrink, the substitution story is wrong. Pilot: one model family, three stem depths, two weeks.",
@@ -2745,11 +2748,11 @@ IDEA_PAIRS.push(
    principle:"When a phenomenon is observed but its controlling variable is unknown, the first project is to find the variable. Theorems about the wrong variable are correct and useless.",
    why:"A proves the phenomenon exists in a setting where it can be proved, which practice already knows. B asks what controls its size, tests candidates against each other, and lets the answer choose what to prove. The measurement is a month; the wrong theorem is a year."},
   {id:"I_privacy", res:["tao_rigour", "measure", "alon"], dom:["ml_theory"], q:"Two differential-privacy pitches. Which is the better project?",
-   a:"Derive a tighter privacy accountant for a new noise mechanism used in private training, and prove that it improves the privacy parameter by a constant factor over the standard accountant at the same utility. Extend the analysis to the subsampled and shuffled variants, and validate the bound numerically on two benchmark training runs. Release an implementation of the accountant with a comparison against three existing accountants across parameter ranges. We further discuss connections to related analyses in the optimization and statistics literature.",
-   b:"Practitioners choose the privacy parameter by convention, and the accountant literature competes on constants. We ask what the parameter protects against in practice: run the strongest known membership-inference attack against models trained at three parameter values. Prediction: if attack success is near chance at the values used in practice, tighter accounting is not the bottleneck; if it is far from chance, the theory is loose exactly where it is used. Either answer redirects the field.",
+   a:"Derive a tighter privacy accountant for a new noise mechanism used in private training, and prove that it improves the privacy parameter by a constant factor over the standard accountant at the same utility. Extend the analysis to the subsampled and shuffled variants, and validate the bound numerically on two benchmark training runs. Release an implementation of the accountant with a comparison against three existing accountants across parameter ranges. We further discuss connections to related analyses in the optimization and statistics literature, and tabulate the parameter values the new accountant certifies at the utility levels reported in prior work.",
+   b:"Practitioners choose the privacy parameter by convention, and the accountant literature competes on constants. We ask what the parameter protects against in practice: run the strongest known membership-inference attack against models trained at three parameter values. Prediction: if attack success is near chance at the values used in practice, tighter accounting is not the bottleneck; if it is far from chance, the theory is loose exactly where it is used. Either answer redirects the field, and the theorem comes after: a tighter accountant for the parameter range where the attack still succeeds, since that is the only range where the constant buys anything.",
    better:"b", feat:"Measure whether the constant matters",
    principle:"Before improving a bound by a constant, find out whether the constant changes any decision. A month of measurement can show that the whole competition is on the wrong axis.",
-   why:"A wins a race on constants that nobody has connected to a threat. B measures the threat at the parameter values people actually use, with a prediction that is informative either way. It is the empirical pilot that tells a theorist which theorem is worth a year."}
+   why:"A wins a race on constants that nobody has connected to a threat. B measures the threat at the parameter values people actually use, with a prediction that is informative either way, and aims the theorem at the range where the threat is real. It is the empirical pilot that tells a theorist which theorem is worth a year."}
 );
 
 TRIAGE.push(
@@ -2838,7 +2841,7 @@ ABSTRACT_PAIRS.push(
    principle:"An exponent is a fit with error bars. Report the range it was fitted on and stop claiming there; the frontier is where the error bars are widest.",
    why:"A turns a two-hundredths difference inside the noise into a promise about scales it never trained. B reports the fit with its uncertainty, refuses the extrapolation, and claims the result that is actually in the data: parity at lower cost."},
   {id:"A_humaneval", res:["lipton", "gururangan", "manyanalysts"], dom:["ml_exp"], q:"Two abstracts for one human evaluation. Which would you trust?",
-   a:"In a human evaluation, annotators preferred our model's outputs 68% of the time over the strongest baseline, demonstrating a clear improvement in response quality. Preferences were consistent across task categories and annotator groups, and qualitative analysis shows the model's answers are more thorough, better organized and more helpful. We release the annotation guidelines. Results are consistent across three annotator pools.",
+   a:"In a human evaluation, annotators preferred our model's outputs 68% of the time over the strongest baseline, demonstrating a clear improvement in response quality. Preferences were consistent across task categories and annotator groups, and qualitative analysis shows the model's answers are more thorough, better organized and more helpful. We release the annotation guidelines. Results hold across three prompt formats.",
    b:"Three annotators judged 200 paired outputs (agreement kappa 0.41). Our model was preferred 68% of the time. Preference tracks answer length: restricted to pairs of matched length, preference falls to 53%, inside the interval for chance. We report both numbers and recommend length-controlled comparisons for this task.",
    better:"b", feat:"The confound is measured, not assumed away",
    principle:"When a known confound could produce the result, measure it inside the study and report the number with and without it. The smaller number is the finding.",
@@ -2909,6 +2912,29 @@ Object.assign(TASTE_LEAN, {
   G_evaltask:{axis:"mode", opts:["L","R",null,"L"]}, G_scaleup:{axis:"risk", opts:["L","R",null,null]}, G_lost:{axis:"evidence", opts:["L","R","L",null]}, G_gauss:{axis:"theory", opts:["L","R","L",null]}, G_unify:{axis:"scope", opts:["L","R","L",null]}, G_repro:{axis:"evidence", opts:[null,"R",null,"L"]},
   T_ssl:{axis:"mode", opts:["L","R","R",null,null]}, T_eval:{axis:"evidence", opts:["L","R","R","L",null]}, T_dynamics:{axis:"theory", opts:["L","R","L","R",null]}, T_ident:{axis:"theory", opts:["L","R","L","R",null]}
 });
+/* ============================================================================
+   FIELD GUIDE STRUCTURE: glossary categories and reading groups, so the two long lists open as sections.
+   ========================================================================== */
+const GLOSS_CATS = [
+  {id:"stats", name:"Statistics and inference", terms:["bootstrap","calibration","confound","control (positive / negative)","forking paths","HARKing","multiple comparisons","null result","power","pseudoreplication","winner's curse","optional stopping","sequential design / planned looks","exploratory vs confirmatory","effect size","standard error","p-value and α","interquartile mean","multiverse analysis","mixed-effects model","Bonferroni correction","covariate","confidence interval","false positive","falsify","hypothesis","rival hypothesis","estimator","variance","point estimate","outlier","prediction (in a hypothesis)","strong inference","subgroup (slice)","histogram"]},
+  {id:"design", name:"Design, pilots and analysis plans", terms:["kill criterion","manipulation check","pilot","prototype","sanity check","replicate","technical replicate","diagnostic","screening (two-stage)","plan B","sunk cost","postmortem","protocol","interleave","batch effect","parameter sweep","paper defaults","tuning","hyperparameter","analysis plan","pre-specify","pre-registration","primary outcome","exclusion rules","randomize","blinding","within-subject / paired design"]},
+  {id:"eval", name:"Evaluation, benchmarks and data splits", terms:["baseline","trivial baseline","constant predictor","chance level","majority class","held-out set","validation set","test set","train / validation / test split","leakage","benchmark","benchmark contamination","leaderboard","state of the art","metric","gaming a metric","Goodhart's law","human-level","shortcut learning","cue","probe","shuffle inputs","distribution shift","generalize","zero-shot","ablation","error norm","overfit","rubric","rater"]},
+  {id:"models", name:"Models and training", terms:["neural network","architecture","parameters","loss","SGD","epoch","early stopping","fine-tuning","pretrained model","augmentation","training length","feature","feature selection","standardize","preprocessing","dataset","scaling","linear model","GAN","discriminative vs generative skill","compositional structure","identity map"]},
+  {id:"theory", name:"Theory and proofs", terms:["vacuous bound","bound","tight vs loose bound","rate vs constant (O-notation)","big-O notation","convex / strongly convex / smooth","non-convex","regime","slope","toy model","δ (delta)","ε (epsilon)","placeholder letters (C, B, M, S, …)","existence proof","constructive proof","algorithmic question","hard instance","trivial or extreme case","full generality","assumption (in a proof)","checkable assumption","“it is easy to see that”","analytic solution","mechanism","physics term"]},
+  {id:"infra", name:"Code and compute", terms:["pipeline","notebook","version control","configuration","library version","patch release","pinned environment","GPU","cluster node","operator","seed","random initialization","numerical instability"]},
+  {id:"comp", name:"Simulation and computational science", terms:["simulator","solver","grid resolution","time step","grid refinement","convergence study","discretization artifact","initial conditions","verification vs validation"]},
+  {id:"lab", name:"Lab and social science", terms:["cell culture","well","pipette","reagent","assay","participant","recruitment","construct","validated instrument","Cronbach's α","convenience sample","validity vs reliability"]},
+  {id:"writing", name:"Writing and reviewing", terms:["discussion section","related work","hedging","anthropomorphic language","referee","scoop"]}
+];
+const RES_GROUPS = [
+  {name:"Choosing problems and developing taste", ids:["taste","triage","greatideas","hamming","pg_taste","pg_great","alon","heilmeier","method","barbell","story","darlings","quitgrit","stopfinish","failure","convictions","change"]},
+  {name:"Hypotheses and inference", ids:["predictive","disprove","mwh","chamberlin","strong","platt","feynman"]},
+  {name:"Running a project", ids:["proto","karpathy","contingency","openloop","relu","measure","planning","simulate","bergstra"]},
+  {name:"Evaluation and reproducibility in machine learning", ids:["lipton","leakage","henderson","bouthillier","agarwal","dodge","melis","musgrave","lucic","recht","zech","gururangan","dwork","geirhos","gorman","pineau","checklist","raff"]},
+  {name:"Theory", ids:["zhang","nagarajan","tao_rigour","tao_dumb"]},
+  {name:"Statistics and open science", ids:["gelman","simmons","kerr","ioannidis","button","nosek","munafo","hurlbert","leek","manyanalysts"]},
+  {name:"Writing, reviewing and reading", ids:["reviewer","clarity","spectrum","spj","reading","finding"]}
+];
 
 /* ============================================================================
    APP. Vanilla JS, no deps. State in localStorage under STORE_KEY.
@@ -3549,8 +3575,12 @@ function renderGuide() {
   $("guide-notes-card").classList.toggle("hidden", !noteItems.length);
   $("guide-notes").innerHTML = noteItems.join("");
   const key = s => s.replace(/^[“"'‘]+/, "");
-  $("guide-gloss").innerHTML = GLOSSARY.filter(g => g[3] !== "pit").sort((x, y) => key(x[0]).localeCompare(key(y[0]), "en", {sensitivity:"base"})).map(([t, d]) => `<div class="gl"><b>${esc(t)}</b><span>${esc(d)}</span></div>`).join("");
-  $("guide-reads").innerHTML = readsHTML(Object.keys(RESOURCES));
+  const byTerm = {}; GLOSSARY.filter(g => g[3] !== "pit").forEach(g => { byTerm[g[0]] = g; });
+  $("guide-gloss").innerHTML = GLOSS_CATS.map(c => {
+    const rows = c.terms.map(t => byTerm[t]).filter(Boolean).sort((x, y) => key(x[0]).localeCompare(key(y[0]), "en", {sensitivity:"base"}));
+    return `<details class="pm ggroup" data-cat="${c.id}"><summary><span class="sw" style="background:var(--accent)"></span><b>${esc(c.name)}</b><span class="count">${rows.length}</span><span class="chev">▾</span></summary><div class="inner gloss">${rows.map(([t, d]) => `<div class="gl"><b>${esc(t)}</b><span>${esc(d)}</span></div>`).join("")}</div></details>`;
+  }).join("") + `<p class="small muted hidden" id="gloss-none" style="margin:8px 0 0">No term matches.</p>`;
+  $("guide-reads").innerHTML = RES_GROUPS.map(g => `<details class="pm ggroup"><summary><span class="sw" style="background:var(--good)"></span><b>${esc(g.name)}</b><span class="count">${g.ids.length}</span><span class="chev">▾</span></summary><div class="inner"><ul class="reads">${readsHTML(g.ids)}</ul></div></details>`).join("");
 }
 
 /* ============================================================================
@@ -3596,7 +3626,14 @@ $("tr-run").addEventListener("click", startRun);
 $("tr-copy").addEventListener("click", () => copyText(tasteSummaryText()));
 $("guide-run").addEventListener("click", startRun);
 $("guide-taste").addEventListener("click", () => startTaste());
-$("gloss-filter").addEventListener("input", e => { const q = e.target.value.trim().toLowerCase(); document.querySelectorAll("#guide-gloss .gl").forEach(el => { el.classList.toggle("hidden", !!q && !el.textContent.toLowerCase().includes(q)); }); });
+$("gloss-filter").addEventListener("input", e => {
+  const q = e.target.value.trim().toLowerCase(); let any = false;
+  document.querySelectorAll("#guide-gloss details.ggroup").forEach(g => {
+    let n = 0; g.querySelectorAll(".gl").forEach(el => { const hit = !q || el.textContent.toLowerCase().includes(q); el.classList.toggle("hidden", !hit); if (hit) n++; });
+    g.classList.toggle("hidden", !!q && !n); if (q && n) { g.open = true; any = true; } if (!q) g.open = false;
+  });
+  $("gloss-none").classList.toggle("hidden", !q || any);
+});
 $("guide-reset").addEventListener("click", () => {
   if (!confirm("Reset hits, dodges, taste points and notes on this device?")) return;
   const dom = store.domain; store = loadStore(); Object.assign(store, {domain: dom, hits:{}, dodges:{}, runs:0, taste:{points:0, n:0, correct:0}, notes:{}, seen:{}, seenAt:{}, picks:{}});
