@@ -17,12 +17,21 @@ convergence studies). "General" shows only the domain-neutral cards.
 
 1. **Run a study** — 13 decisions across five phases (Question → Design → Execution → Analysis →
    Reporting). Each card is a situation with 2–3 options tagged `sound`, `pit` (names a pitfall
-   from the catalogue) or `meh` (defensible but costly). Two meters: weeks spent (budget 26) and
-   rigour (0–100, starts at 45). Every choice gets a verdict paragraph; pitfalls get a box with
-   *what / smells like / instead* and reading. Ends in a **postmortem** (verdict from rigour and
-   budget, pitfalls hit, defensible-but-costly choices, pitfalls dodged, reading list built from
-   the mistakes).
-   Deck: per phase, domain-specific cards are preferred, universal cards fill the rest, shuffled.
+   from the catalogue) or `meh` (defensible but costly). Two meters: weeks spent (budget 22; an
+   all-sound run uses at most 21; going over demotes the verdict one band) and rigour, which
+   starts at 100 and is scored *relative to the deck*: each card can lose at most (best option −
+   worst option) rigour points, so the final number is 100 × (1 − losses / total possible losses)
+   and does not depend on card order. Verdict bands: Ready for review (≥ 82) · Fixable: major
+   revision (≥ 58) · Redesign (≥ 35) · Back to the question. A phase stepper shows one coloured
+   dot per decision; every choice gets a verdict with an icon and a text badge; pitfalls get a
+   *what / smells like / instead* tile row plus a collapsed **worked example and why it happens**
+   with its reading. Ends in a **postmortem**: verdict, a rigour trajectory chart, a collapsed
+   phase-by-phase map of all pitfalls marked hit/dodged, the pitfalls hit as collapsible entries,
+   the defensible-but-costly calls, and a reading list. Only `sound` choices are credited as
+   dodging a card's pitfalls.
+   Deck: per phase, half the slots (rounded randomly for odd picks) go to domain-specific cards
+   and the rest to universal ones, then shuffled. The Analysis phase has no universal card left
+   after the theory split, so it draws only from the domain's own pool.
 2. **Train your taste** — gamifies the discriminative skill from *P2P No. 135 — Developing taste*
    (taste is trainable by judging many examples with dense feedback and articulating why). Two
    drills alternate for 10 items: *Which is stronger?* (two plans/abstracts/claims that differ in
