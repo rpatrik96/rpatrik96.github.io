@@ -97,6 +97,16 @@ convergence studies). "General" shows only the domain-neutral cards.
    lists of about 180 terms and 73 readings were too dense to scan. The glossary search opens
    only the groups with a match and hides the rest.
 
+## Subjectivity
+
+The pitfalls are documented, but which option is "sound", which plan is "stronger" and how a
+sample idea scores are partly one researcher's judgment. The game says so on the home screen,
+on the taste track picker, on the taste results (the calibration numbers measure agreement
+with the game's answers, not truth), in the "How this is scored" box, on the postmortem
+("defensible but costly" calls can be right in a real project), and in the scope tool (each
+dimension has a "why this is partly subjective" expander and three scorers disagree on the
+samples). Every reveal gives its reasons so the player can argue back.
+
 ## Didactic design (after a learning-science review)
 
 - **Contrast at the moment of feedback.** After a pitfall or costly pick, the reveal shows the

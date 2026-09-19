@@ -371,6 +371,7 @@
     <p class="sub">A game for the first year of a PhD. You make the thirteen decisions a study is made of; each one
       names the pitfall it risks, what it costs, and the fix. Then you judge other people's plans and see whether
       your confidence matches your accuracy: that is <b>taste</b>, and it is trainable.</p>
+    <p class="small muted" style="margin:6px 0 0">A disclaimer: the pitfalls are well documented, but which option is “sound” and which plan is “stronger” is partly one researcher's judgment. Where the game disagrees with you, the reveal gives its reasons; you are allowed to disagree back.</p>
     <p class="small muted" id="home-progress" style="margin:6px 0 0"></p>
     <svg class="hero" viewBox="0 0 720 120" aria-label="A study path through five phases with pitfalls along the way" stroke-linecap="round" stroke-linejoin="round">
       <path d="M30 80 C120 20 180 120 270 70 S420 20 500 70 S640 120 690 60" fill="none" stroke="var(--line)" stroke-width="10"/>
@@ -461,6 +462,7 @@
   <section id="screen-postmortem" class="hidden">
     <h1>Postmortem</h1>
     <p class="sub">The outcome is what you're judged on; the process is your biggest lever.</p>
+    <p class="small muted" style="margin:6px 0 0">The verdict is the game's reading of your choices, not a grade. Some “defensible but costly” calls are the right call in a real project; the reveal says why the game scored them as it did.</p>
     <div class="card" style="margin-top:16px">
       <div class="verdict-big" id="pm-verdict"></div>
       <p class="muted" id="pm-line"></p>
@@ -516,6 +518,7 @@
   <section id="screen-track" class="hidden">
     <h1>Which taste do you want to train?</h1>
     <p class="sub">Two different skills. Most students struggle with the first.</p>
+    <p class="small muted" style="margin:6px 0 0">The answers are one researcher's judgment, and taste is partly subjective. Each reveal names the feature and the principle behind its pick so you can argue with it; the preference items have no right answer at all.</p>
     <p class="small muted" id="track-note" style="margin:6px 0 0"></p>
     <div class="modegrid" style="grid-template-columns:1fr 1fr">
       <button class="card mode" id="track-ideas">
@@ -564,7 +567,7 @@
   <!-- TASTE RESULTS -->
   <section id="screen-tasteres" class="hidden">
     <h1>Your taste, measured</h1>
-    <p class="sub">Taste is the judging half of a GAN (the discriminator): it gets sharper by judging many examples and being told the answer.</p>
+    <p class="sub">Taste is the judging half of a GAN (the discriminator): it gets sharper by judging many examples and being told the answer. The answers it is told here are one researcher's judgment; the calibration numbers measure agreement with that judgment, not truth.</p>
     <div class="card" style="margin-top:16px">
       <div class="verdict-big" id="tr-level"></div>
       <p class="muted" id="tr-levelnote"></p>
@@ -622,6 +625,7 @@
     <details class="expander">
       <summary>How this is scored</summary>
       <div class="inner">
+        <p><b>What is being scored.</b> Agreement with the game's answers, which are one researcher's judgment of what a careful reviewer would say. The principles behind them are documented in each reveal; where your reasoning is sound and the game's pick is not, the disagreement is the useful part.</p>
         <p><b>Points.</b> Right: sure +4, leaning +3, guess +1. Wrong: sure −6, leaning −2, guess +1. The table is
           built so that the point-maximizing choice is the honest one: “leaning” pays more than “guess” once you
           believe above 60%, and “sure” pays more than “leaning” above 80%, the midpoints between the stated 50 / 70 /
