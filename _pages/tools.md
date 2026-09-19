@@ -21,7 +21,7 @@ answers — the reasoning is the point. Everything runs in your browser; nothing
 ## Research Pitfalls — *The Study Game*
 
 A text-only game for the first year of a PhD. **Run a study**: thirteen decisions across five
-phases (question, design, execution, analysis, reporting), two meters (weeks spent, rigour), and
+phases (question, design, execution, analysis, reporting), two meters (weeks spent, rigor), and
 every wrong turn names the pitfall you walked into — leakage, untuned baselines, single-seed
 conclusions, HARKing, vacuous bounds, "it is easy to see that", sunk cost — with what it smells
 like, what to do instead, and what to read. It ends in a postmortem with a reading list built

@@ -9,7 +9,7 @@ no backend; progress in `localStorage`.
 
 First-year PhD student about to design a study. Machine learning (experimental and theory) is
 the main focus; a domain selector re-voices the same pitfalls for computational/simulation
-science, experimental/lab science, and social & behavioural science, and adds a few that are
+science, experimental/lab science, and social & behavioral science, and adds a few that are
 native to each (pseudoreplication, batch effects, blinding, measurement validity,
 convergence studies). "General" shows only the domain-neutral cards.
 
@@ -17,15 +17,15 @@ convergence studies). "General" shows only the domain-neutral cards.
 
 1. **Run a study** — 13 decisions across five phases (Question → Design → Execution → Analysis →
    Reporting). Each card is a situation with 2–3 options tagged `sound`, `pit` (names a pitfall
-   from the catalogue) or `meh` (defensible but costly). Two meters: weeks spent (budget 22; an
-   all-sound run uses at most 21; going over demotes the verdict one band) and rigour, which
+   from the catalog) or `meh` (defensible but costly). Two meters: weeks spent (budget 22; an
+   all-sound run uses at most 21; going over demotes the verdict one band) and rigor, which
    starts at 100 and is scored *relative to the deck*: each card can lose at most (best option −
-   worst option) rigour points, so the final number is 100 × (1 − losses / total possible losses)
+   worst option) rigor points, so the final number is 100 × (1 − losses / total possible losses)
    and does not depend on card order. Verdict bands: Ready for review (≥ 82) · Fixable: major
-   revision (≥ 58) · Redesign (≥ 35) · Back to the question. A phase stepper shows one coloured
+   revision (≥ 58) · Redesign (≥ 35) · Back to the question. A phase stepper shows one colored
    dot per decision; every choice gets a verdict with an icon and a text badge; pitfalls get a
    *what / smells like / instead* tile row plus a collapsed **worked example and why it happens**
-   with its reading. Ends in a **postmortem**: verdict, a rigour trajectory chart, a collapsed
+   with its reading. Ends in a **postmortem**: verdict, a rigor trajectory chart, a collapsed
    phase-by-phase map of all pitfalls marked hit/dodged, the pitfalls hit as collapsible entries,
    the defensible-but-costly calls, and a reading list. Only `sound` choices are credited as
    dodging a card's pitfalls.
@@ -49,7 +49,7 @@ convergence studies). "General" shows only the domain-neutral cards.
    discriminating features missed, the player's own notes, and a cumulative **discriminator
    level** (Untrained → Calibrating → Sharp → The reviewer authors ask for). Level points count
    only the first exposure to an item, so repetition does not level you up.
-3. **Field guide** — the full pitfall catalogue by phase as expandable tiles (what / smells like /
+3. **Field guide** — the full pitfall catalog by phase as expandable tiles (what / smells like /
    instead / read, plus the worked example), hit/dodged marks from this device, a glossary of
    every term the game uses, the player's taste-gym notes, and every linked resource in one list.
 
@@ -70,7 +70,7 @@ convergence studies). "General" shows only the domain-neutral cards.
   hit; "Copy as checklist" emits a tick-list of fixes; "Copy for your supervisor" prepends
   "Pitfalls I want to avoid in my study". The reading list shows one item per pitfall first, the
   rest collapsed. The map marks pitfalls that are not in the chosen domain's deck as such.
-- **Honest scoring copy.** A wrong guess shows "+1 · a guess is never penalised" with a one-time
+- **Honest scoring copy.** A wrong guess shows "+1 · a guess is never penalized" with a one-time
   note that guessing is the honest choice below 60% belief; the calibration label is decided by
   the same per-bin error the reliability diagram shows, explained without classifier jargon.
 - **Nuance lines** on absolute-sounding lessons (test set, three seeds, toy models, one message
@@ -110,14 +110,12 @@ leak, weights, confound, cluster, bound, select) drawn as inline SVG with theme 
 pitfall maps to one, shown in the pitfall box with a caption, in the guide tiles, in the
 postmortem entries and next to "one thing to do tomorrow". Phase icons replace numbers in the
 stepper and guide. The home screen opens with a path-with-pits illustration. The taste reveal
-tips a balance scale toward the stronger side. Charts: rigour trajectory, reliability diagram,
+tips a balance scale toward the stronger side. Charts: rigor trajectory, reliability diagram,
 idea-shape radar, novelty × feasibility map, scorer dot plot.
 
 ## Voice (after an audit against the author's newsletter)
 
-The copy is written as the author speaking to a peer: first person where it owns a judgement
-("they are my taste, argued in each reveal"; "I met most of these pitfalls the expensive way";
-"my early self included"), "you" everywhere else, British spelling, sentence-case headings,
+The copy addresses the player as a peer ("you"), with no first person, American spelling, sentence-case headings,
 typographic quotes, names in running prose as "Lipton and Steinhardt" (ampersands only in
 citations), three-author papers named in full, no emoji, jokes at the system's expense and never
 the player's. Feedback strings are kept under about 35 words and worked examples under about
@@ -130,14 +128,14 @@ hover tooltip with a one-line definition, and each card lists its terms in a tap
 underneath (the options are buttons, so a tap on an underlined word would otherwise pick the
 answer). The index is built from `GLOSSARY` (`[term, definition, surface forms]`, ~180 entries
 after an exhaustive audit of every decision and option text) plus the 45 pitfall names, whose
-tooltip is the catalogue's one-line *what*. Only the first occurrence of a term in a text block is
+tooltip is the catalog's one-line *what*. Only the first occurrence of a term in a text block is
 marked; surface forms are chosen to avoid ordinary English words (so "wells" is marked, "well" is
 not). Idioms that a non-native reader might miss were reworded in the cards.
 
 ## Content
 
 - 45 pitfalls (each with a worked example and a longer explanation), 59 scenario cards, 15
-  pairwise items, 20 spot-the-flaw items (options use the catalogue's pitfall names), 60
+  pairwise items, 20 spot-the-flaw items (options use the catalog's pitfall names), 60
   glossary entries (about 180 with the tooltip audit), 70 resources. The "why" notes from the taste
   gym are listed in the field guide.
 - Reviewed with an audience-persona pass (five first-year personas across domains) and a
@@ -148,7 +146,7 @@ not). Idioms that a non-native reader might miss were reworded in the cards.
 - Resources are Path to PhD posts (developing taste, idea triage, hypotheses need to be
   predictive, multiple working hypotheses, strong inference, method vs problem orientation,
   contingency plans, quit-and-grit, open-loop postmortems, single measure/complex thing, …) plus
-  the canonical rigour literature (Lipton & Steinhardt; Kapoor & Narayanan; Henderson et al.;
+  the canonical rigor literature (Lipton & Steinhardt; Kapoor & Narayanan; Henderson et al.;
   Bouthillier et al.; Agarwal et al.; Dodge et al.; Melis et al.; Recht et al.; Geirhos et al.;
   Nagarajan & Kolter; Zhang et al.; Gelman & Loken; Simmons et al.; Kerr; Ioannidis; Button et al.;
   Nosek et al.; Hurlbert; Leek et al.; Platt; Chamberlin; Hamming; Feynman; Tao; Peyton Jones;
@@ -164,7 +162,7 @@ not). Idioms that a non-native reader might miss were reworded in the cards.
 
 Keyboard: A/B/C(/D) to choose, 1/2/3 for confidence, Enter for next (native activation is left
 alone for focused buttons, links and summaries). Focus moves to the new card's title and, after
-answering, to the Next button; the verdict is a polite live region; revealed options carry text badges, not colour alone;
+answering, to the Next button; the verdict is a polite live region; revealed options carry text badges, not color alone;
 contrast tokens (`--on-accent`, `--btn`) keep button and badge text at AA in both themes;
 `prefers-reduced-motion` honoured; dark mode via `prefers-color-scheme` (with `data-theme`
 overrides); no horizontal scroll at 375 px. Copy-summary buttons on both result screens.
