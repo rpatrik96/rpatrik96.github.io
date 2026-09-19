@@ -1734,7 +1734,7 @@ const GLOSSARY = [
   ["trivial or extreme case", "The simplest or boundary input a theorem allows; errors in proofs often show up there.", ["trivial case", "extreme case", "dumb case", "special case"]],
   ["rubric", "A written scoring guide with explicit criteria for rating outputs by hand.", ["rubric", "rubrics", "written rubric"]],
   ["blinding", "Hiding which condition a sample belongs to from the person scoring it.", ["blind", "blinded", "blinding", "unblinded", "blind the rater", "unblinded scoring"]],
-  ["rater", "The person who scores outcomes by hand.", ["rater", "raters", "rated by hand", "rate them yourself"]],
+  ["rater", "The person who scores outcomes by hand.", ["rater", "raters", "rated by hand"]],
   ["randomise", "Assign or order by chance so that hidden patterns cannot bias the result.", ["randomise", "randomize", "randomised", "randomized", "randomise the order"]],
   ["pre-specify", "Decide and write down before seeing the data.", ["pre-specify", "pre-specified", "prespecify", "pre-specifying"]],
   ["parameter sweep", "Running the experiment across a range of parameter values.", ["sweep", "sweeps", "parameter sweep", "full sweep", "narrower range"]],
@@ -2005,8 +2005,8 @@ const TERM_INDEX = (() => {
   return {rx, byForm};
 })();
 /* returns {html, found:Set<index>}; text is raw (unescaped) */
-function annotate(text, found) {
-  found = found || new Set(); const seen = new Set();
+function annotate(text, found, seen) {
+  found = found || new Set(); seen = seen || new Set();
   const html = esc(text).replace(TERM_INDEX.rx, m => {
     const i = TERM_INDEX.byForm[m.toLowerCase()];
     if (i === undefined || seen.has(i)) return m;
@@ -2106,13 +2106,13 @@ function renderRunCard() {
   $("run-right").textContent = domLabel(store.domain, true);
   renderStepper();
   $("run-phase").textContent = `Phase · ${ph.name} — ${ph.blurb}`;
-  const found = new Set();
-  $("run-title").textContent = c.title; $("run-situation").innerHTML = annotate(c.s, found).html;
+  const found = new Set(), seen = new Set();
+  $("run-title").textContent = c.title; $("run-situation").innerHTML = annotate(c.s, found, seen).html;
   const host = $("run-opts"); host.innerHTML = "";
   run.order.forEach((k, idx) => {
     const o = c.o[k]; const b = document.createElement("button");
     b.className = "opt"; b.dataset.k = k;
-    b.innerHTML = `<span class="ltr">${"ABCD"[idx]}</span><span class="txt">${annotate(o.t, found).html}</span>`;
+    b.innerHTML = `<span class="ltr">${"ABCD"[idx]}</span><span class="txt">${annotate(o.t, found, seen).html}</span>`;
     b.addEventListener("click", () => { if (!run.answered) answerRun(k); });
     host.appendChild(b);
   });
@@ -2260,24 +2260,24 @@ function renderTasteItem() {
   $("t-left").textContent = `Item ${taste.i + 1} of ${taste.items.length}`;
   $("t-right").textContent = domLabel(store.domain, true);
   $("t-bar").style.width = (taste.i / taste.items.length * 100) + "%";
-  const host = $("t-opts"); host.innerHTML = ""; host.className = "opts"; const found = new Set();
+  const host = $("t-opts"); host.innerHTML = ""; host.className = "opts"; const found = new Set(), seen = new Set();
   if (it.kind === "pair") {
     const p = it.item; taste.flip = Math.random() < 0.5;
-    $("t-kind").textContent = "Which is stronger?"; $("t-q").innerHTML = annotate(p.q, found).html; $("t-plan").classList.add("hidden");
+    $("t-kind").textContent = "Which is stronger?"; $("t-q").innerHTML = annotate(p.q, found, seen).html; $("t-plan").classList.add("hidden");
     host.className = "opts pair";
     const order = taste.flip ? ["b","a"] : ["a","b"];
     order.forEach((side, idx) => {
       const b = document.createElement("button"); b.className = "opt"; b.dataset.side = side;
-      b.innerHTML = `<span class="ltr">${"AB"[idx]}</span><span class="txt">${annotate(p[side], found).html}</span>`;
+      b.innerHTML = `<span class="ltr">${"AB"[idx]}</span><span class="txt">${annotate(p[side], found, seen).html}</span>`;
       b.addEventListener("click", () => pickTaste(side)); host.appendChild(b);
     });
   } else {
     const f = it.item; taste.order = shuffle(f.opts.map((_, k) => k));
     $("t-kind").textContent = "Spot the flaw"; $("t-q").textContent = "What is the main problem with this plan?";
-    $("t-plan").innerHTML = annotate(f.plan, found).html; $("t-plan").classList.remove("hidden");
+    $("t-plan").innerHTML = annotate(f.plan, found, seen).html; $("t-plan").classList.remove("hidden");
     taste.order.forEach((k, idx) => {
       const b = document.createElement("button"); b.className = "opt"; b.dataset.k = k;
-      b.innerHTML = `<span class="ltr">${"ABCD"[idx]}</span><span class="txt">${annotate(f.opts[k], found).html}</span>`;
+      b.innerHTML = `<span class="ltr">${"ABCD"[idx]}</span><span class="txt">${annotate(f.opts[k], found, seen).html}</span>`;
       b.addEventListener("click", () => pickTaste(k)); host.appendChild(b);
     });
   }
