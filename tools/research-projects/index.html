@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Research Projects — The Management Game</title>
+<meta name="description" content="A game for the year you first lead a research project: nine months, a supervisor with no time, a senior collaborator, a junior, and a deadline. Six hidden dials, the classic problems, and a debrief that traces each one back to a decision. Runs in your browser; nothing is sent anywhere.">
+<style>
+  :root{
+    --accent:#4A8FE3; --accent-dark:#2f6fbf; --ink:#1c2430; --muted:#525c6b;
+    --bg:#ffffff; --soft:#f4f7fb; --line:#e3e9f1; --b:#fbfdff; --chip:#ffffff; --kbd:#eef2f7;
+    --good:#2e8b57; --good-bg:rgba(46,139,87,.10); --bad:#c0392b; --bad-bg:rgba(192,57,43,.09);
+    --meh:#b8860b; --meh-bg:rgba(184,134,11,.10);
+    --on-accent:#ffffff; --on-status:#ffffff; --btn:#2f6fbf; --meh-badge:#8a6508;
+    --radius:16px; --shadow:0 6px 24px rgba(31,52,84,.10); --maxw:880px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --accent:#6ea6ee; --accent-dark:#9cc1f5; --ink:#e8edf4; --muted:#a4afbe;
+      --bg:#161b24; --soft:#0f131a; --line:#2a3342; --b:#1a2130; --chip:#1a2130; --kbd:#232b38;
+      --good:#5fc48a; --good-bg:rgba(95,196,138,.14); --bad:#f08a7c; --bad-bg:rgba(240,138,124,.12);
+      --meh:#e0b74a; --meh-bg:rgba(224,183,74,.14); --shadow:0 6px 24px rgba(0,0,0,.35);
+      --on-accent:#0f131a; --on-status:#0f131a; --btn:#8fbaf3; --meh-badge:#e0b74a;
+    }
+  }
+  :root[data-theme="dark"]{
+    --accent:#6ea6ee; --accent-dark:#9cc1f5; --ink:#e8edf4; --muted:#a4afbe;
+    --bg:#161b24; --soft:#0f131a; --line:#2a3342; --b:#1a2130; --chip:#1a2130; --kbd:#232b38;
+    --good:#5fc48a; --good-bg:rgba(95,196,138,.14); --bad:#f08a7c; --bad-bg:rgba(240,138,124,.12);
+    --meh:#e0b74a; --meh-bg:rgba(224,183,74,.14); --shadow:0 6px 24px rgba(0,0,0,.35);
+    --on-accent:#0f131a; --on-status:#0f131a; --btn:#8fbaf3; --meh-badge:#e0b74a;
+  }
+  *{box-sizing:border-box}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important} html{scroll-behavior:auto} }
+  html,body{margin:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       color:var(--ink); background:var(--soft); line-height:1.5; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:24px 16px 64px}
+  a{color:var(--accent-dark)}
+  h1,h2,h3{line-height:1.2; margin:0 0 .4em}
+  h1{font-size:1.9rem; letter-spacing:-.01em}
+  h2{font-size:1.35rem}
+  h3{font-size:1.1rem}
+  p{margin:.4em 0}
+  .sub{color:var(--muted); font-size:1.02rem; margin:.2em 0 0}
+  .muted{color:var(--muted)} .small{font-size:.86rem} .center{text-align:center}
+  button{font:inherit; cursor:pointer; border:0; background:none; color:inherit}
+  :focus-visible{outline:2px solid var(--accent-dark); outline-offset:2px; border-radius:8px}
+  .btn{display:inline-block; background:var(--btn); color:var(--on-accent); padding:.65em 1.15em; border-radius:999px;
+       font-weight:600; box-shadow:0 4px 12px rgba(74,143,227,.28); transition:transform .08s, box-shadow .15s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.ghost{background:var(--chip); color:var(--accent-dark); border:1.5px solid var(--accent); box-shadow:none}
+  .btn.gray{background:var(--kbd); color:var(--ink); box-shadow:none}
+  .btn.sm{padding:.4em .85em; font-size:.86rem}
+  .card{background:var(--bg); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px}
+  .hidden{display:none !important}
+  .row{display:flex; gap:12px; flex-wrap:wrap; align-items:center}
+  .spread{justify-content:space-between}
+  .link{color:var(--accent-dark); font-size:.92rem; text-decoration:underline; text-underline-offset:2px}
+  .link.gray{color:var(--muted)}
+  kbd{font:.8em ui-monospace,Menlo,monospace; background:var(--kbd); border:1px solid var(--line);
+      border-bottom-width:2px; border-radius:5px; padding:.1em .45em}
+
+  header.top{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:18px; flex-wrap:wrap}
+  .brandmark{font-weight:700}
+  .topnav{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .dompill{font-size:.8rem; background:var(--kbd); border:1px solid var(--line); border-radius:999px; padding:.2em .7em; color:var(--muted)}
+
+  .modegrid{display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:14px; margin-top:20px}
+  @media(max-width:900px){.modegrid{grid-template-columns:1fr 1fr}}
+  @media(max-width:520px){.modegrid{grid-template-columns:1fr}}
+  .mode{cursor:pointer; text-align:left; transition:transform .1s, box-shadow .15s; display:block}
+  .mode:hover{transform:translateY(-2px)}
+  .tag{display:inline-block; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em;
+       color:var(--accent-dark); background:rgba(74,143,227,.12); padding:.25em .7em; border-radius:999px; margin-bottom:8px}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 0}
+  .chip{border:1.5px solid var(--line); background:var(--chip); padding:.45em .95em; border-radius:999px; font-size:.9rem; transition:all .12s}
+  @media(max-width:520px){.chip{padding:.3em .75em; font-size:.84rem}}
+  .chip:hover{border-color:var(--accent)}
+  .chip[aria-pressed="true"]{background:var(--btn); color:var(--on-accent); border-color:var(--btn)}
+
+  .progress{height:6px; background:var(--kbd); border-radius:999px; overflow:hidden; margin:4px 0 16px}
+  .progress>i{display:block; height:100%; background:var(--accent); width:0; transition:width .3s}
+  .counter{font-size:.85rem; color:var(--muted); display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:6px}
+
+  .meters{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:0 0 14px}
+  @media(max-width:520px){.meters{grid-template-columns:1fr}}
+  .meter{background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:10px 14px}
+  .meter .lab{font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); display:flex; justify-content:space-between}
+  .meter .bar{height:8px; background:var(--kbd); border-radius:999px; overflow:hidden; margin-top:6px}
+  .meter .bar>i{display:block; height:100%; width:0; background:var(--accent); transition:width .35s}
+  .meter.warn .bar>i{background:var(--bad)}
+
+  .phasehead{font-size:.82rem; color:var(--muted); margin:0 0 4px}
+  .phasehead b{text-transform:uppercase; letter-spacing:.06em; font-size:.76rem; color:var(--accent-dark)}
+  .situation{font-size:1.08rem; margin:.3em 0 14px}
+  .opts{display:grid; gap:10px}
+  .opt{position:relative; text-align:left; border:2px solid var(--line); background:var(--b); border-radius:12px;
+       padding:14px 14px 14px 46px; transition:border-color .12s, transform .08s; font-size:.98rem}
+  .opt:hover:not([aria-disabled="true"]){border-color:var(--accent); transform:translateY(-1px); z-index:2}
+  .opt[aria-disabled="true"]{cursor:default}
+  .opt .badge{display:block; margin-top:6px; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--muted)}
+  .opt.sound .badge{color:var(--good)} .opt.pit .badge{color:var(--bad)} .opt.meh .badge{color:var(--meh-badge)}
+  .opt.picked{outline:2px solid var(--btn); outline-offset:1px}
+  .opt .ltr{position:absolute; top:12px; left:12px; width:24px; height:24px; border-radius:50%; background:var(--btn);
+       color:var(--on-accent); font-weight:700; font-size:.8rem; display:flex; align-items:center; justify-content:center}
+  .opt.picked{border-color:var(--accent)}
+  .opt.sound{border-color:var(--good); background:var(--good-bg)} .opt.sound .ltr{background:var(--good); color:var(--on-status)}
+  .opt.pit{border-color:var(--bad); background:var(--bad-bg)} .opt.pit .ltr{background:var(--bad); color:var(--on-status)}
+  .opt.meh{border-color:var(--meh); background:var(--meh-bg)} .opt.meh .ltr{background:var(--meh); color:var(--on-status)}
+  .opt.dim{opacity:.55}
+
+  .verdict{margin-top:16px; border-radius:12px; padding:14px 16px; border-left:4px solid var(--line); background:var(--soft)}
+  .verdict.sound{border-left-color:var(--good); background:var(--good-bg)}
+  .verdict.pit{border-left-color:var(--bad); background:var(--bad-bg)}
+  .verdict.meh{border-left-color:var(--meh); background:var(--meh-bg)}
+  .verdict .vt{font-weight:700; margin-bottom:4px}
+  .pitbox{margin-top:12px; border:1px dashed var(--line); border-radius:12px; padding:12px 14px; background:var(--bg)}
+  .pitbox .pn{font-weight:700}
+  .pitbox dl{margin:6px 0 0; display:grid; grid-template-columns:auto 1fr; gap:4px 12px; font-size:.93rem}
+  .pitbox dt{color:var(--muted); font-weight:600} .pitbox dd{margin:0}
+  .reads{margin:6px 0 0; padding-left:1.1em; font-size:.92rem} .reads li{margin:2px 0}
+  .reads .by{color:var(--muted)}
+  .underbar{display:flex; gap:10px; align-items:center; justify-content:space-between; margin-top:16px; flex-wrap:wrap}
+
+  .why textarea{width:100%; resize:vertical; min-height:40px; border:1.5px solid var(--line); border-radius:10px;
+       padding:9px 12px; font:inherit; margin-top:6px; background:var(--bg); color:var(--ink)}
+  .confrow{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:14px}
+  .conf{border:1.5px solid var(--line); background:var(--chip); border-radius:999px; padding:.4em .9em; font-size:.9rem}
+  .conf:hover{border-color:var(--accent)}
+  .conf[aria-pressed="true"]{background:var(--btn); color:var(--on-accent); border-color:var(--btn)}
+  .conf[aria-disabled="true"]{cursor:default}
+  .streak{font-size:.85rem; color:var(--muted)}
+  .pair{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  @media(max-width:620px){.pair{grid-template-columns:1fr}}
+  .pair .opt{padding:38px 14px 14px 14px; min-height:110px}
+  .pair .opt .ltr{top:10px; left:12px}
+  .plan{font-size:1.05rem; background:var(--soft); border-radius:10px; padding:12px 14px; margin:8px 0 12px; border:1px solid var(--line)}
+  .feat{display:inline-block; font-size:.78rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--accent-dark);
+        background:rgba(74,143,227,.12); padding:.2em .6em; border-radius:999px}
+
+  .stat{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; margin:12px 0}
+  .stat .s{background:var(--soft); border:1px solid var(--line); border-radius:12px; padding:12px 14px}
+  .stat .s b{font-size:1.5rem; display:block; line-height:1.1}
+  .stat .s span{font-size:.82rem; color:var(--muted)}
+  .verdict-big{font-size:1.4rem; font-weight:700; letter-spacing:-.01em}
+  .list{margin:6px 0 0; padding-left:1.1em} .list li{margin:4px 0}
+  details.expander{margin-top:14px; border:1px solid var(--line); border-radius:12px; background:var(--bg)}
+  details.expander>summary{cursor:pointer; padding:12px 16px; font-weight:600; list-style:none}
+  details.expander>summary::-webkit-details-marker{display:none}
+  details.expander>summary::before{content:"▸ "; color:var(--accent-dark)}
+  details.expander[open]>summary::before{content:"▾ "}
+  details.expander .inner{padding:0 16px 16px; font-size:.94rem; color:var(--muted)}
+
+  .guide .ph{margin-top:18px}
+  .guide table{width:100%; border-collapse:collapse; font-size:.92rem}
+  .guide th,.guide td{text-align:left; vertical-align:top; padding:8px 8px; border-top:1px solid var(--line)}
+  .guide th{color:var(--muted); font-weight:600; font-size:.8rem; text-transform:uppercase; letter-spacing:.04em; border-top:0}
+  .guide td.nm{font-weight:600; white-space:nowrap}
+  .guide .mark{font-size:.78rem; color:var(--muted); white-space:nowrap}
+  .guide .mark.hit{color:var(--bad)} .guide .mark.dodged{color:var(--good)}
+  @media(max-width:620px){.guide td.nm{white-space:normal} .guide th:nth-child(3),.guide td:nth-child(3){display:none}}
+  .toast{position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(20px); background:var(--ink); color:var(--bg);
+         padding:.7em 1.2em; border-radius:999px; font-size:.9rem; opacity:0; transition:all .2s; pointer-events:none; z-index:50}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+
+  /* ---- icons ---- */
+  .ic{width:1.05em; height:1.05em; vertical-align:-.18em; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
+  .ic.big{width:1.6em; height:1.6em}
+  .mode .icon{width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    background:rgba(74,143,227,.12); color:var(--accent-dark); margin-bottom:10px}
+  .mode .icon .ic{width:24px; height:24px}
+
+  /* ---- phase stepper ---- */
+  .stepper{display:flex; align-items:flex-start; gap:0; margin:6px 0 14px; position:relative}
+  .stepper::before{content:""; position:absolute; left:8%; right:8%; top:15px; height:2px; background:var(--line)}
+  .step{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; position:relative; min-width:0}
+  .step .node{width:30px; height:30px; border-radius:50%; background:var(--bg); border:2px solid var(--line); display:flex;
+    align-items:center; justify-content:center; font-size:.78rem; font-weight:700; color:var(--muted)}
+  .step.now .node{border-color:var(--accent); color:var(--accent-dark); box-shadow:0 0 0 4px rgba(74,143,227,.18)}
+  .step.done .node{background:var(--btn); border-color:var(--btn); color:var(--on-accent)}
+  .step .nm{font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); white-space:nowrap}
+  .step.now .nm{color:var(--accent-dark); font-weight:700}
+  .step .dots{display:flex; gap:4px; height:8px}
+  .step .dots i{width:8px; height:8px; border-radius:50%; background:var(--line); display:block}
+  .step .dots i.sound{background:var(--good)} .step .dots i.pit{background:var(--bad)} .step .dots i.meh{background:var(--meh)}
+  @media(max-width:520px){.step .nm{font-size:.7rem} .step:not(.now) .nm{display:none} .step .node{width:26px; height:26px; font-size:.7rem} .stepper::before{top:13px}}
+
+  /* ---- verdict with icon ---- */
+  .verdict{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:start}
+  .verdict .vic{width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--on-status); flex:none}
+  .verdict.sound .vic{background:var(--good)} .verdict.pit .vic{background:var(--bad)} .verdict.meh .vic{background:var(--meh)}
+  .verdict .vic .ic{width:20px; height:20px; stroke-width:2.6}
+
+  /* ---- pitfall box as three tiles ---- */
+  .pitbox dl{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin:10px 0 0}
+  @media(max-width:620px){.pitbox dl{grid-template-columns:1fr}}
+  .pitbox dt{display:flex; gap:6px; align-items:center; font-size:.76rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:700}
+  .pitbox dd{margin:4px 0 0; font-size:.92rem}
+  .pitbox .tile{background:var(--soft); border-radius:10px; padding:10px 12px}
+  .pitbox .tile.what dt{color:var(--bad)} .pitbox .tile.fix dt{color:var(--good)}
+  .pitbox details{margin-top:8px}
+  .pitbox details summary{cursor:pointer; font-size:.86rem; color:var(--accent-dark)}
+
+  /* ---- postmortem visuals ---- */
+  svg.traj{width:100%; max-width:640px; height:auto; display:block; margin:0 auto}
+  .bingo{display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-top:10px}
+  @media(max-width:620px){.bingo{grid-template-columns:repeat(2,1fr)}}
+  .bingo .col h4{margin:0 0 6px; font-size:.74rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted)}
+  .bingo .cell{font-size:.78rem; padding:5px 8px; border-radius:7px; margin:3px 0; border:1px solid var(--line); background:var(--bg); color:var(--muted); line-height:1.25}
+  .bingo .cell.hit{background:var(--bad-bg); border-color:var(--bad); color:var(--ink)}
+  .bingo .cell.dodged{background:var(--good-bg); border-color:var(--good); color:var(--ink)}
+  .bingo .cell.meh{background:var(--meh-bg); border-color:var(--meh); color:var(--ink)}
+  .legend{display:flex; gap:14px; flex-wrap:wrap; font-size:.8rem; color:var(--muted); margin-top:8px}
+  .legend i{display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; vertical-align:-1px}
+  .legend i.sound{background:var(--good)} .legend i.pit{background:var(--bad)} .legend i.meh{background:var(--meh)} .legend i.none{background:var(--line)}
+  details.pm{border:1px solid var(--line); border-radius:12px; background:var(--bg); margin:8px 0}
+  details.pm>summary{cursor:pointer; padding:10px 14px; list-style:none; display:flex; gap:10px; align-items:center}
+  details.pm>summary::-webkit-details-marker{display:none}
+  details.pm>summary .sw{width:10px; height:10px; border-radius:50%; flex:none}
+  details.pm>summary .ph{font-size:.74rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; flex:none}
+  details.pm>summary b{flex:1; min-width:0}
+  details.pm>summary .chev{color:var(--muted); font-size:.8rem}
+  details.pm .inner{padding:0 14px 12px}
+  details.ggroup>summary .count{font-size:.78rem; color:var(--muted); background:var(--soft); border-radius:999px; padding:1px 8px; flex:none}
+  details.ggroup .gloss .gl:first-child{border-top:none}
+  details.ggroup .reads{margin:0; padding-left:1.1em} details.ggroup .reads li{margin:5px 0; line-height:1.45}
+  .resgrid{display:grid; grid-template-columns:1.1fr 1fr; gap:16px; margin-top:16px}
+  @media(max-width:700px){.resgrid{grid-template-columns:1fr}}
+
+  /* ---- taste visuals ---- */
+  svg.rel{width:100%; max-width:300px; height:auto; display:block; margin:0 auto}
+  .lvlbar{height:10px; background:var(--kbd); border-radius:999px; overflow:hidden; margin-top:8px}
+  .lvlbar>i{display:block; height:100%; background:var(--accent); width:0}
+  .ganloop{width:100%; max-width:420px; height:auto; display:block; margin:6px auto 0}
+  .tastehud{display:flex; gap:14px; align-items:center; font-size:.85rem; color:var(--muted); flex-wrap:wrap}
+  .tastehud .pts{font-weight:700; color:var(--ink)}
+  .flame{color:var(--meh)}
+
+  /* ---- field guide as tiles ---- */
+  .guide .tiles{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px}
+  @media(max-width:620px){.guide .tiles{grid-template-columns:1fr}}
+  .guide details.tile{border:1px solid var(--line); border-radius:12px; background:var(--bg)}
+  .guide details.tile>summary{cursor:pointer; padding:10px 12px; list-style:none; display:flex; gap:8px; align-items:center; font-weight:600; font-size:.95rem}
+  .guide details.tile>summary::-webkit-details-marker{display:none}
+  .guide details.tile>summary .sw{width:9px; height:9px; border-radius:50%; background:var(--line); flex:none}
+  .guide details.tile>summary .sw.hit{background:var(--bad)} .guide details.tile>summary .sw.dodged{background:var(--good)}
+  .guide details.tile>summary .cnt{margin-left:auto; font-size:.76rem; color:var(--muted); font-weight:400; white-space:nowrap}
+  .guide details.tile .inner{padding:0 12px 12px; font-size:.9rem}
+  .guide details.tile .inner .tri{display:grid; gap:6px}
+  .guide details.tile .inner .tri div{display:flex; gap:6px; align-items:flex-start}
+  .guide details.tile .inner .tri .k{font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; font-weight:700; color:var(--muted); min-width:64px; padding-top:2px}
+  /* ---- lessons (collapsed by default) ---- */
+  details.lesson{margin-top:10px; border:1px solid var(--line); border-radius:10px; background:var(--bg)}
+  details.lesson>summary{cursor:pointer; padding:9px 12px; list-style:none; font-size:.9rem; font-weight:600; color:var(--accent-dark)}
+  details.lesson>summary::-webkit-details-marker{display:none}
+  details.lesson .inner{padding:0 12px 10px; font-size:.92rem}
+  details.lesson .inner p{margin:.35em 0}
+  details.lesson .lh{font-size:.74rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:700; margin:10px 0 2px; display:flex; gap:6px; align-items:center}
+  details.lesson code{font:.88em ui-monospace,Menlo,monospace; background:var(--kbd); padding:.05em .3em; border-radius:4px}
+  .gloss{display:grid; grid-template-columns:1fr 1fr; gap:6px 14px; font-size:.88rem}
+  @media(max-width:620px){.gloss{grid-template-columns:1fr}}
+  .gloss .gl{display:grid; grid-template-columns:auto 1fr; gap:8px; padding:5px 0; border-top:1px solid var(--line)}
+  .gloss .gl b{white-space:nowrap} .gloss .gl span{color:var(--muted)}
+  /* ---- term tooltips ---- */
+  .term{border-bottom:1px dotted var(--accent-dark); cursor:help; position:relative; text-decoration:none}
+  .term::after{content:attr(data-tip); position:absolute; left:0; bottom:calc(100% + 8px); background:var(--ink); color:var(--bg);
+    padding:8px 10px; border-radius:8px; font-size:.8rem; line-height:1.35; font-weight:400; text-transform:none; letter-spacing:0;
+    width:max-content; max-width:min(300px, 80vw); z-index:30; display:none; pointer-events:none; box-shadow:var(--shadow)}
+  .term.r::after{left:auto; right:0}
+  @media (hover:hover){ .term:hover::after{display:block} }
+  @media (hover:none){ .term{border-bottom:0; cursor:auto} .kbdhint, #run-keys{display:none !important} }
+  .termstrip{margin-top:12px; padding-top:10px; border-top:1px dashed var(--line); display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+  .tchip{border:1px dotted var(--accent-dark); color:var(--accent-dark); border-radius:999px; padding:.15em .6em; font-size:.8rem; background:var(--chip)}
+  .tchip[aria-expanded="true"]{background:var(--btn); color:var(--on-accent); border-style:solid}
+  .tdef{flex-basis:100%; font-size:.88rem; background:var(--soft); border-radius:8px; padding:8px 10px; margin-top:4px}
+  .contrast{margin-top:8px; padding:8px 10px; border-radius:8px; background:var(--good-bg); border-left:3px solid var(--good); font-size:.93rem}
+  .bingo .cell.na{opacity:.45; border-style:dashed}
+  #tr-notes .verdict, #guide-notes .verdict{display:block}
+  .jumps{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.86rem; margin:8px 0 4px}
+  .filter{width:100%; border:1.5px solid var(--line); border-radius:10px; padding:8px 12px; font:inherit; background:var(--bg); color:var(--ink); margin:6px 0 8px}
+  /* ---- pictograms ---- */
+  svg.diag{display:block; fill:none; stroke-width:1.5; color:var(--ink); flex:none}
+  .pithead{display:flex; gap:14px; align-items:flex-start}
+  .pithead .pwhat{font-size:.93rem; margin-top:4px}
+  .diagf{margin:0; flex:none; width:132px}
+  .diagf figcaption{font-size:.72rem; color:var(--muted); text-align:center; margin-top:2px; line-height:1.2}
+  @media(max-width:520px){.pithead{flex-direction:column} .diagf{width:110px}}
+  .guide details.tile>summary svg.diag{margin-right:4px}
+  details.pm>summary svg.diag{flex:none; margin-right:2px}
+  .scalewrap{margin:-4px 0 4px}
+  svg.scale{display:block}
+  .hero{display:block; width:100%; max-width:720px; height:auto; margin:10px auto 4px}
+  /* ---- scope screen ---- */
+  .scopegrid{display:grid; grid-template-columns:1fr 300px; gap:16px; margin-top:16px; align-items:start}
+  @media(max-width:760px){.scopegrid{grid-template-columns:1fr}}
+  .scopeside{position:sticky; top:12px}
+  @media(max-width:760px){.scopeside{position:static}}
+  .card.dim{margin-bottom:12px}
+  .dimscore{font-size:1.4rem; font-weight:700; color:var(--accent-dark)}
+  .chip.sm{padding:.3em .7em; font-size:.82rem}
+  .kindex{margin-top:8px; font-size:.9rem; background:var(--soft); border-radius:8px; padding:8px 10px}
+  .anchors{display:grid; gap:6px; margin-top:6px}
+  .anchor{display:flex; gap:10px; align-items:center; text-align:left; border:1.5px solid var(--line); border-radius:10px; padding:7px 10px; background:var(--chip); font-size:.9rem}
+  .anchor .an{width:22px; height:22px; border-radius:50%; background:var(--kbd); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.8rem; flex:none}
+  .anchor:hover{border-color:var(--accent)}
+  .anchor[aria-pressed="true"]{border-color:var(--btn); background:var(--good-bg)} .anchor[aria-pressed="true"] .an{background:var(--btn); color:var(--on-accent)}
+  svg.radar{width:100%; height:auto; display:block}
+  .dotplot{margin-top:12px; border-top:1px solid var(--line); padding-top:8px}
+  .dotrow{display:grid; grid-template-columns:100px 1fr 130px; gap:8px; align-items:center; padding:5px 0; border-bottom:1px solid var(--line); font-size:.88rem}
+  .dotrow.head{border-bottom:2px solid var(--line)} .dotrow .dl{font-weight:600}
+  .dots5{display:grid; grid-template-columns:repeat(4,1fr); gap:4px}
+  .dots5 .cell{min-height:26px; display:flex; gap:3px; align-items:center; justify-content:center; border-radius:6px; background:var(--soft); position:relative; flex-wrap:wrap}
+  .dots5 .cell.hd{background:none; color:var(--muted); font-weight:700}
+  .dots5 .cell.me{outline:2px solid var(--accent)} .dots5 .cell b{font-size:.68rem; color:var(--accent-dark); text-transform:uppercase; letter-spacing:.04em}
+  .dots5 .cell i{width:10px; height:10px; border-radius:50%; display:inline-block}
+  @media(max-width:520px){.dotrow{grid-template-columns:80px 1fr} .dotrow > :last-child{display:none}}
+  .scopeform{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:10px}
+  .scopeform label{display:flex; flex-direction:column; gap:4px; font-size:.85rem; color:var(--muted); flex:1; min-width:140px}
+  .scopeform input{border:1.5px solid var(--line); border-radius:8px; padding:7px 10px; font:inherit; background:var(--bg); color:var(--ink)}
+  pre.statement{white-space:pre-wrap; font:inherit; background:var(--soft); border-radius:10px; padding:12px 14px; margin:6px 0 10px; border-left:3px solid var(--accent)}
+  .principle{margin-top:8px; padding:8px 10px; border-radius:8px; background:var(--soft); border-left:3px solid var(--accent); font-size:.93rem}
+  .pair.long{grid-template-columns:1fr}
+  .pair.long .opt{padding:38px 16px 16px 16px; font-size:.95rem; line-height:1.5}
+  ol.rankl{margin:6px 0 0; padding-left:1.3em} ol.rankl li{margin:6px 0}
+  .axis{margin:10px 0 14px}
+  .axlab{display:flex; justify-content:space-between; font-size:.82rem; font-weight:600; color:var(--muted)}
+  .axbar{position:relative; height:10px; background:var(--kbd); border-radius:999px; margin:4px 0}
+  .axbar::after{content:""; position:absolute; left:50%; top:-3px; width:1px; height:16px; background:var(--line)}
+  .axbar .mark{position:absolute; top:-3px; width:16px; height:16px; border-radius:50%; transform:translateX(-50%); box-sizing:border-box}
+  .axbar .mark.all{background:var(--btn); border:2px solid var(--bg)}
+  .axbar .mark.now{background:transparent; border:2px solid var(--accent-dark)}
+  .callout{border-left:3px solid var(--accent); background:rgba(74,143,227,.08); padding:10px 14px; border-radius:8px; margin:10px 0; font-size:.94rem}
+</style>
+</head>
+<body>
+<noscript><p style="padding:16px;font-family:sans-serif">This game needs JavaScript; nothing is loaded from elsewhere and nothing is sent anywhere.</p></noscript>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-tilde" viewBox="0 0 24 24"><path d="M4 13c2-4 5-4 8 0s6 4 8 0"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 3v16"/></symbol>
+  <symbol id="i-path" viewBox="0 0 24 24"><path d="M4 18c4 0 4-12 8-12s4 12 8 12"/><circle cx="4" cy="18" r="1.6"/><circle cx="20" cy="18" r="1.6"/><path d="M11 9l2 0M11 15l2 0"/></symbol>
+  <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 4v16M6 20h12M12 6l-6 2M12 6l6 2M6 8l-3 6h6zM18 8l-3 6h6z"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17v.5"/></symbol>
+  <symbol id="i-nose" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5L20 20"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14 4a4 4 0 0 0-4 6L4 16l4 4 6-6a4 4 0 0 0 6-4l-3 1-2-2 1-3z"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 21V4h11l-2 4 2 4H6"/></symbol>
+  <symbol id="i-question" viewBox="0 0 24 24"><path d="M9 9a3 3 0 1 1 4.5 2.6c-1 .6-1.5 1.4-1.5 2.4M12 18v.5"/></symbol>
+  <symbol id="i-blueprint" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 10v10M14 4v6"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16M8 16v-5M12 16V8M16 16v-3"/></symbol>
+  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></symbol>
+</svg>
+<style>
+  .cast{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin:10px 0}
+  .cast .who{border:1px solid var(--line); border-radius:12px; padding:10px 12px; background:var(--bg)}
+  .cast .who b{display:block} .cast .who .small{display:block; margin-top:2px}
+  .cast .who .rel{height:6px; background:var(--soft); border-radius:999px; margin-top:8px; overflow:hidden} .cast .who .rel i{display:block; height:100%; background:var(--accent); border-radius:999px; transition:width .4s}
+  .incident{border-left:4px solid var(--bad); background:color-mix(in srgb, var(--bad) 8%, var(--bg)); border-radius:12px; padding:10px 14px; margin:8px 0}
+  .incident .ih{display:flex; gap:8px; align-items:center; font-weight:700; color:var(--bad)}
+  .incident .cause{margin-top:6px; font-size:.92rem}
+  .avoided{border-left:4px solid var(--good); background:color-mix(in srgb, var(--good) 8%, var(--bg)); border-radius:12px; padding:8px 14px; margin:8px 0; font-size:.92rem}
+  .months{display:flex; gap:4px; margin:8px 0} .months span{flex:1; height:8px; border-radius:4px; background:var(--soft)} .months span.done{background:var(--accent)} .months span.now{background:var(--accent); opacity:.55} .months span.dl{outline:2px solid var(--bad); outline-offset:1px}
+  .fx{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px} .fx span{font-size:.8rem; border-radius:999px; padding:1px 9px; background:var(--soft)} .fx span.up{color:var(--good)} .fx span.down{color:var(--bad)}
+  .tl{position:relative; margin:10px 0 0; padding-left:22px} .tl::before{content:""; position:absolute; left:7px; top:6px; bottom:6px; width:2px; background:var(--line)}
+  .tl .ev{position:relative; margin:0 0 10px} .tl .ev::before{content:""; position:absolute; left:-19px; top:6px; width:10px; height:10px; border-radius:50%; background:var(--muted)}
+  .tl .ev.inc::before{background:var(--bad)} .tl .ev.avoid::before{background:var(--good)} .tl .ev.pit::before{background:var(--bad)} .tl .ev.sound::before{background:var(--good)} .tl .ev.meh::before{background:var(--warn, #b8860b)}
+  .tl .ev .m{font-size:.74rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em}
+  .tl .ev .link-cause{font-size:.88rem; color:var(--muted); margin-top:2px}
+  svg.mchart{width:100%; height:auto; max-width:760px; display:block}
+  .outgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin-top:10px}
+  .badge.role{background:var(--soft); color:var(--muted)}
+  .drillq{font-weight:600; margin:4px 0 8px}
+  .msg{white-space:pre-wrap; font-family:inherit; background:var(--soft); border-radius:10px; padding:10px 12px; font-size:.95rem; line-height:1.45}
+  .opts.msgs .opt .txt{white-space:pre-wrap}
+  @media (max-width:600px){ .cast{grid-template-columns:1fr 1fr} }
+</style>
+<div class="wrap">
+  <header class="top">
+    <div><div class="brandmark">Research Projects <span class="muted">· The Management Game</span></div></div>
+    <nav class="topnav">
+      <button class="link" id="nav-home">Home</button>
+      <button class="link" id="nav-manual">Field manual</button>
+    </nav>
+  </header>
+
+  <!-- HOME -->
+  <section id="screen-home">
+    <h1>Run a research project without dropping the ball</h1>
+    <p class="sub">A game for the year you first lead a project: a supervisor with no time, a senior collaborator with many projects,
+      a junior you are responsible for, and a deadline. Every decision moves six hidden dials; the classic problems (time pressure,
+      authorship fights, silent collaborators, dropped balls, burnout) fire when the dials say so, and most can be prevented or repaired.
+      The debrief traces every problem back to the decision that seeded it.</p>
+    <p class="small muted" style="margin:6px 0 0">A disclaimer: the situations are drawn from real lab-culture discussions and from the Path to PhD newsletter, but which move is “sound” is one researcher's judgment. Every reveal gives its reasons, so you can disagree back.</p>
+    <p class="small muted" id="home-progress" style="margin:6px 0 0"></p>
+    <div class="modegrid">
+      <button class="card mode" id="go-run">
+        <span class="icon"><svg class="ic"><use href="#i-path"/></svg></span>
+        <span class="tag">Play · about 15 minutes</span>
+        <h3>Run a project</h3>
+        <p class="muted small" style="margin:0">Nine months, twenty-odd decisions, six dials, and the problems that follow from them. Ends in a debrief.</p>
+      </button>
+      <button class="card mode" id="go-drills">
+        <span class="icon"><svg class="ic"><use href="#i-doc"/></svg></span>
+        <span class="tag">Practice · 5 minutes</span>
+        <h3>Say it better</h3>
+        <p class="muted small" style="margin:0">Pairs of messages for the hard moments: the collaborator who went quiet, the authorship talk, the supervisor who cancels, the feedback nobody asked for. Pick the better one.</p>
+      </button>
+      <button class="card mode" id="go-debrief">
+        <span class="icon"><svg class="ic"><use href="#i-chart"/></svg></span>
+        <span class="tag">Analytics</span>
+        <h3>Your management profile</h3>
+        <p class="muted small" style="margin:0">Across runs: which problems you keep hitting, which you prevent, and where you sit on five management spectra.</p>
+      </button>
+      <button class="card mode" id="go-manual">
+        <span class="icon"><svg class="ic"><use href="#i-book"/></svg></span>
+        <span class="tag">Reference</span>
+        <h3>Field manual</h3>
+        <p class="muted small" style="margin:0">Every problem in the game: what it looks like, what causes it, how to prevent it, how to repair it, and what to read.</p>
+      </button>
+    </div>
+  </section>
+
+  <!-- RUN -->
+  <section id="screen-run" class="hidden">
+    <div class="counter"><span id="run-left"></span><span id="run-right"></span></div>
+    <div class="months" id="months" aria-label="Months"></div>
+    <div class="meters" id="meters"></div>
+    <details class="expander" id="cast-box" style="margin:8px 0"><summary>The team and how each relationship stands</summary><div class="inner"><div class="cast" id="cast"></div></div></details>
+    <div class="card">
+      <div class="phasehead" id="run-phase"></div>
+      <div id="run-banner"></div>
+      <h2 id="run-title" tabindex="-1"></h2>
+      <p class="situation" id="run-situation"></p>
+      <div class="opts" id="run-opts"></div>
+      <div id="run-verdict" aria-live="polite"></div>
+      <div id="run-terms"></div>
+      <div class="underbar">
+        <span class="small muted" id="run-keys">Keys: <kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> <kbd>D</kbd> · <kbd>Enter</kbd> next</span>
+        <button class="btn hidden" id="run-next">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEBRIEF -->
+  <section id="screen-debrief" class="hidden">
+    <h1>Debrief</h1>
+    <p class="sub" id="db-sub"></p>
+    <div class="card" style="margin-top:16px">
+      <div class="verdict-big" id="db-verdict"></div>
+      <p id="db-verdict-note" style="margin:4px 0 0"></p>
+      <div class="outgrid" id="db-outcomes"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3 style="margin-bottom:2px">The six dials over the year</h3>
+      <p class="small muted" style="margin:0 0 8px">Every decision moved them; the red marks are the months a problem fired. Hover a line for its name.</p>
+      <div id="db-chart"></div>
+      <div class="legend" id="db-legend"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3 style="margin-bottom:2px">What happened, and what it traces back to</h3>
+      <p class="small muted" style="margin:0 0 8px">Problems that fired, problems you prevented, and the decisions behind each.</p>
+      <div class="tl" id="db-timeline"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3 style="margin-bottom:2px">Your management profile</h3>
+      <p class="small muted" style="margin:0 0 8px">Descriptive, not graded. Where your choices sat on five spectra, this run (hollow) and across all runs on this device (filled). Each pole has a virtue and a vice.</p>
+      <div id="db-profile"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3 style="margin-bottom:2px">Three things to do differently</h3>
+      <div id="db-lessons"></div>
+    </div>
+    <details class="card expander" style="margin-top:16px"><summary>Reading list from this run</summary><ul class="reads" id="db-reads"></ul></details>
+    <details class="card expander" style="margin-top:16px"><summary>How this is scored</summary><div class="inner">
+      <p><b>Six dials, 0 to 100.</b> Alignment (does everyone share the goal, the milestones and the expectations), trust (how safe it is to say hard things in this team), buffer (slack between now and the deadline), credit (how clear roles and authorship are), energy (yours), and loop (how quickly you find out when something is off). Each option moves some of them; the reveal shows which.</p>
+      <p><b>Problems.</b> Each problem in the field manual has triggers: choices that raise its odds and choices that lower them. At its month the game rolls against those odds; a problem that would have fired at high odds but did not, because of something you did, is logged as prevented. A few problems can fire at low odds whatever you do, because some cannot be avoided, only handled.</p>
+      <p><b>Outcome.</b> Submitted on time needs buffer above zero and enough progress; the quality of the paper follows progress and loop; team health follows trust and alignment; sustainability follows energy. The verdict weighs the submission (30 points), then quality, team health, your energy and credit clarity, so a paper shipped over a broken team or an empty tank does not read as a success.</p>
+      <p><b>Profile.</b> Each option carries a lean on one of five spectra; the profile counts where your picks sat. Neither pole is the goal.</p>
+      <p><b>Subjective.</b> Which option is sound is one researcher's judgment, grounded in the readings in the field manual. The reveal always gives the reason.</p>
+    </div></details>
+    <div class="row" style="margin-top:16px">
+      <button class="btn" id="db-again">Play again</button>
+      <button class="btn ghost" id="db-drills">Say it better</button>
+      <button class="btn ghost" id="db-manual">Field manual</button>
+      <button class="btn ghost" id="db-copy">Copy summary</button>
+    </div>
+  </section>
+
+  <!-- DRILLS -->
+  <section id="screen-drills" class="hidden">
+    <div class="counter"><span id="d-left"></span><span id="d-right"></span></div>
+    <div class="progress"><i id="d-bar"></i></div>
+    <div class="card">
+      <div class="phasehead">Say it better</div>
+      <p class="small muted" id="d-intro" style="margin:0 0 6px">Two messages for the same moment. Which one would you send?</p>
+      <h2 id="d-q" tabindex="-1"></h2>
+      <div class="msg hidden" id="d-context"></div>
+      <div class="opts pair long msgs" id="d-opts"></div>
+      <div id="d-verdict" aria-live="polite"></div>
+      <div id="d-terms"></div>
+      <div class="underbar">
+        <span class="small muted">Keys: <kbd>A</kbd> <kbd>B</kbd> · <kbd>Enter</kbd> next</span>
+        <button class="btn hidden" id="d-next">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DRILL RESULTS -->
+  <section id="screen-drillres" class="hidden">
+    <h1>Your messages, scored</h1>
+    <p class="sub">Most management problems are communication problems. The difference between the two messages was never tone; it was whether the message carried context, a concrete ask, and a way for the other person to say no.</p>
+    <div class="card" style="margin-top:16px">
+      <div class="outgrid" id="dr-stats"></div>
+      <div id="dr-missed" style="margin-top:10px"></div>
+    </div>
+    <div class="row" style="margin-top:16px">
+      <button class="btn" id="dr-again">Another round</button>
+      <button class="btn ghost" id="dr-run">Run a project</button>
+    </div>
+  </section>
+
+  <!-- PROFILE (cumulative analytics) -->
+  <section id="screen-profile" class="hidden">
+    <h1>Your management profile</h1>
+    <p class="sub">Across every run on this device. Play twice before reading much into it.</p>
+    <div id="pf-body"></div>
+    <div class="row" style="margin-top:16px"><button class="btn" id="pf-run">Run a project</button></div>
+  </section>
+
+  <!-- MANUAL -->
+  <section id="screen-manual" class="hidden guide">
+    <h1>Field manual</h1>
+    <p class="sub">Every problem in the game. Open one for what it looks like, what causes it, how to prevent it, how to repair it once it has fired, and what to read.</p>
+    <div class="jumps" id="man-jumps"></div>
+    <div id="man-body"></div>
+    <div class="card" style="margin-top:18px">
+      <h3 style="margin-bottom:2px" id="man-glossary">Glossary</h3>
+      <p class="small muted" style="margin:0 0 8px">Terms the game uses, one line each.</p>
+      <input class="filter" id="man-filter" type="search" placeholder="Search terms…" aria-label="Search glossary">
+      <div class="gloss" id="man-gloss"></div>
+    </div>
+    <div class="card" style="margin-top:18px" id="man-reading">
+      <h3>Further reading</h3>
+      <p class="small muted" style="margin:0 0 6px">Everything linked in the game. P2P is The Path to PhD, the newsletter this game grew out of.</p>
+      <div id="man-reads"></div>
+    </div>
+    <div class="row" style="margin-top:16px">
+      <button class="btn" id="man-run">Run a project</button>
+      <button class="link gray" id="man-reset">Reset progress on this device</button>
+    </div>
+  </section>
+
+  <footer class="small muted" style="margin:28px 0 10px">Runs entirely in your browser; nothing is sent anywhere. Part of <a href="/tools/">Tools</a>. Sister game: <a href="/tools/research-pitfalls/">Research Pitfalls</a>.</footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+/* ============================================================================
+   CONTENT. Research Projects · The Management Game.
+   Grounded in the Path to PhD newsletter and in lab-culture discussions (roles only, no names).
+   ========================================================================== */
+const MONTHS = 9, DEADLINE = 8, PER_MONTH = 2, PROG_NEED = 55;
+const METERS = [
+  {id:"align", name:"Alignment", desc:"Does everyone share the goal, the milestones and the expectations, or only think they do?", low:"Expectations were never written down, so each person worked toward a different paper. Check explicitly, top-down, and send the note back.", res:["expectations", "cosuper", "openloop"]},
+  {id:"trust", name:"Trust", desc:"How safe it is in this team to say a hard thing: a failure, a disagreement, a request.", low:"Hard things were said late or not at all. Trust is built by the first honest message about a failure, not by the celebration.", res:["conflict", "nrr", "letfail"]},
+  {id:"buffer", name:"Buffer", desc:"Slack between now and the deadline. Every decision spends some; a few buy it back.", low:"The plan had no margin, so every surprise became a crisis. Write the contingency minimum and keep two weeks nobody may spend.", res:["contingency", "planning", "stopfinish"]},
+  {id:"credit", name:"Credit", desc:"How clear roles and authorship are, in writing, to everyone on the paper.", low:"Nobody said the word authorship until the submission form. Say it in month one and revisit it when contributions change.", res:["expectations", "icmje", "authorship"]},
+  {id:"energy", name:"Energy", desc:"Yours. What a project costs the person running it.", low:"The project was run on weekends and all-nighters. Easy days are what make the hard ones possible; if you do not plan to rest, you will burn out.", res:["rest", "restmastery", "hardeasy"]},
+  {id:"loop", name:"Loop", desc:"How quickly you find out when something is off: feedback loops with the team, the supervisor, the data.", low:"Feedback arrived when it was too late to use. A weekly paragraph with a figure and one question, unprompted, is the cheapest loop there is.", res:["agefeedback", "deadline", "meetings"]}
+];
+const START = {align:45, trust:55, buffer:70, credit:35, energy:75, loop:40};
+const CAST = [
+  {id:"pi", name:"Your supervisor", role:"The PI. Sharp, three ventures, a manager's calendar. Cancels sometimes. Wants you to succeed and does not always show it.", rel:60},
+  {id:"senior", name:"The senior collaborator", role:"A tenured PI at another institute who joined after a chance conversation. Many projects, few time pressures, happy to digest for a year.", rel:55},
+  {id:"peer", name:"The peer", role:"Another PhD student in your lab, on the paper for the theory part. Same incentives as you, hedged across two other projects.", rel:60},
+  {id:"junior", name:"The master's student", role:"Runs the experiments with you. First project. Eager, and quiet when stuck.", rel:60}
+];
+const AXES = [
+  {id:"control", L:{name:"Controller", v:"keeps the plan honest", x:"boards nobody asked for"}, R:{name:"Servant leader", v:"asks how others work and serves them", x:"no plan at all"}},
+  {id:"comms", L:{name:"Assumes", v:"moves fast without ceremony", x:"the illusion of communication"}, R:{name:"Writes it down", v:"context, ask and date in every message", x:"process for its own sake"}},
+  {id:"conflict", L:{name:"Keeps the peace", v:"no fight today", x:"the untold wrath grows"}, R:{name:"Says the hard thing", v:"early, kindly, in private", x:"picks every fight"}},
+  {id:"load", L:{name:"Hero", v:"gets it done tonight", x:"everyone else waits for you"}, R:{name:"Delegates", v:"gives work back with context", x:"hands off what only you can do"}},
+  {id:"pace", L:{name:"Sprinter", v:"rises to the deadline", x:"finds out late and never rests"}, R:{name:"Pacer", v:"plans backwards and keeps easy days", x:"never uses the forcing function"}}
+];
+const VERDICTS = [
+  {min:75, name:"Ran it well", note:"Submitted, the team intact, and you still standing. The problems that fired were handled; most did not fire at all. This is what management looks like when it is invisible."},
+  {min:58, name:"Shipped, at a cost", note:"The paper went out, but something paid for it: a relationship, your energy, or a claim you cannot fully defend. The debrief shows which decision seeded which bill."},
+  {min:40, name:"Survived it", note:"It got done, or nearly, and it hurt. Most of the problems below were preventable in month one or two. Look at what each traces back to."},
+  {min:0, name:"Learned the hard way", note:"The deadline won. Nothing here is unusual; every problem in the timeline has a name, a cause and a cheaper fix. Play again and spend month one differently."}
+];
+
+/* ---------------------------------------------------------------------------
+   PROBLEMS: the field manual. Each has looks / causes / prevent / repair / read.
+   ------------------------------------------------------------------------- */
+const PROBLEMS = {
+  misaligned_expectations:{name:"Misaligned expectations", group:"Alignment and communication", what:"Two people on the project are working toward different papers, and neither knows it.",
+    looks:"The PI says “the workshop paper” in passing; you have been writing for the main conference. The peer thinks the theory is a lemma; you thought it was the paper. Everyone nodded in month one.",
+    causes:"Expectations were exchanged in a conversation and stored in two heads. Nobody wrote the target, the scope and “what enough progress looks like” down and sent it back. Head-nodding is dangerous.",
+    prevent:"In the first meeting bring the questions, not results: what does enough progress look like, who decides scope, what is the target venue, how do we follow up on silence. Write the answers in a one-page note and send it to everyone. Repeat the check at the midpoint.",
+    repair:"Ask the target question out loud in the next meeting, then send the note you should have sent in month one, with what changes if the answer differs from yours.",
+    res:["expectations", "questions", "cosuper"]},
+  silence_stall:{name:"Waiting on silence", group:"Alignment and communication", what:"A decision sits with someone who has not replied, and the project waits with it.",
+    looks:"Three weeks without a decision from the PI on the dataset. The master's student is idle. You have stopped asking because the last three emails got nothing.",
+    causes:"Silence read as judgment when it was busyness and forgetfulness. Reminders felt like nagging. Nobody proposed a default.",
+    prevent:"Reminders are always appreciated; write more of them than feels prudent. Ask early how to follow up on silence. Send a weekly one-paragraph update so the PI never has to reconstruct context.",
+    repair:"Send the decision you would make with a date: “unless you object by Friday, we go with X.” Give the idle person a pilot in the meantime.",
+    res:["expectations", "tetris", "agefeedback"]},
+  scope_creep:{name:"Scope creep", group:"Alignment and communication", what:"The paper keeps acquiring questions and loses its spine.",
+    looks:"The senior collaborator's “much more interesting direction” is now in the plan next to the original one. The draft has three research questions and no claim you could defend alone.",
+    causes:"A senior person's idea absorbed instead of scoped. No written “best version of this paper by the deadline” to compare additions against. Time horizons differ: a tenured collaborator can digest for a year; you have a deadline.",
+    prevent:"Agree at the start what the best version of this paper is and what the minimum is. Every new direction gets the question: does it fit inside that by month eight, or is it the next paper?",
+    repair:"Pick the one claim you could defend against a hostile reviewer, move the rest to future work, and tell the collaborator why, with the deadline arithmetic.",
+    res:["stopfinish", "perfectionism", "killdarlings"]},
+  late_feedback:{name:"Late feedback", group:"Alignment and communication", what:"The people who could have changed the paper see it when it is too late to change.",
+    looks:"The senior collaborator reads the draft for the first time a week before the deadline and wants a different paper. The PI's notes arrive on the day of submission.",
+    causes:"Results were held back until “solid”. The loop ran through a monthly meeting instead of a weekly message. Waiting for results before talking wasted more time than it saved.",
+    prevent:"A weekly one-paragraph update with one figure and one question, to everyone, unprompted. Ask for the kind of feedback you need: appreciation, coaching or evaluation. Book the reviewers' reading slots at the start.",
+    repair:"Sort the late comments into ones that change a claim and ones that change a sentence. Take the first now, park the second, agree a final review slot.",
+    res:["agefeedback", "deadline", "threefb"]},
+  conflict_avoided:{name:"The unsaid disagreement", group:"Alignment and communication", what:"You disagreed, said nothing, and the disagreement went underground.",
+    looks:"The PI rewrote the framing and you let it stand. At the celebration the peer says, half joking, that they never agreed with it and do not want to present the paper.",
+    causes:"Conflict avoided under a power asymmetry. Most researchers are introverts and most avoid conflict; the untold wrath grows.",
+    prevent:"Enter the conflict not to be right but because you respect the other person: “I noticed something and I think it hurts the paper.” Ask what would change their mind. Do it early and in private.",
+    repair:"Take it seriously in private: ask what they would have said, and what they need now to stand behind the work.",
+    res:["conflict", "convictions", "changeopinion"]},
+  unheard_team:{name:"The team nobody asked", group:"Alignment and communication", what:"You told the team how you work and never asked how they do.",
+    looks:"Your “working with me” manual and your task board are ignored. People start working when the deadline is imminent. You are picking up the slack and resent it.",
+    causes:"Process imposed from the most junior seat. Agile boards need a team that meets daily and updates them; academic teams do not. You cannot control a project, only manage it.",
+    prevent:"Run a pre-mortem together (“it is month eight and we failed; why?”) and a pre-victorem, and co-write the ways of working. Find the executive sponsor, the senior person who cares about delivery, and learn each person's levers.",
+    repair:"Ask each person how they work and what would make the project easier for them. Keep agile for yourself; give the team a simple list of who does what by when.",
+    res:["planning", "meetings", "premortem"]},
+  deadline_crunch:{name:"Deadline crunch", group:"Time and load", what:"Everything is due in the same two weeks and nothing was cut in advance.",
+    looks:"Three experiments unfinished, the draft half written, the cluster queue full, the PI traveling, and everyone else on their own deadline too.",
+    causes:"No plan backwards from the deadline, no frozen scope, no written minimum. The deadline was left to do the prioritizing, and it prioritized all-nighters.",
+    prevent:"Plan backwards with owners and dates and a two-week buffer nobody may spend. Freeze scope five weeks out: what is in, what is cut. Book compute and reading slots early, because everyone rushes at the same time.",
+    repair:"Cut to the written minimum, one owner per remaining piece, a ten-minute daily check-in, and a stop time. A paper saved by all-nighters is a Pyrrhic victory.",
+    res:["contingency", "deadline", "planning"]},
+  overcommitment:{name:"Overcommitment", group:"Time and load", what:"Too many yeses, and the project that mattered gets the hours that are left.",
+    looks:"Three projects, two reviews, a reading group you organize, and this project got four hours last week. Overhead eats the week.",
+    causes:"Saying yes on the spot. No calendar test, no budget. Overhead is an inverted U: one project is too few, five are too many.",
+    prevent:"No yes on the spot; answer tomorrow. Put everything on the calendar; if it does not fit there, you cannot do it. Set budgets: reviews per term, projects at once.",
+    repair:"Drop one project and hand over one commitment, with a message that names what you keep. The hustle does not stop by itself.",
+    res:["angry", "overhead", "worksmart"]},
+  hero_mode:{name:"Hero mode", group:"Time and load", what:"You do everyone's part because it is faster, and then everyone waits for you.",
+    looks:"You are running the experiments, the theory and the writing. The master's student learned nothing; the peer drifted; your energy is gone by month six.",
+    causes:"Taking work over instead of giving it back with context. Control mistaken for management. The junior's silence read as slowness rather than as being stuck.",
+    prevent:"When someone is stuck, sit with them for an hour and agree a two-day pilot with a pass/fail. Delegate with guardrails, expect mistakes, step back. Let them fail safely.",
+    repair:"Give pieces back with what, by when, why, and what done looks like. Accept that it will be slower and less yours.",
+    res:["letfail", "twofast", "coxswain"]},
+  burnout:{name:"Burnout", group:"Time and load", what:"The work stopped being sustainable and the person running it is the first thing to break.",
+    looks:"You dread the project. Small tasks take hours. You snapped at the master's student. You have not had a weekend in six weeks and you feel fine, until you do not.",
+    causes:"Every week a sprint. Rest scheduled for “after the deadline”, which moved. All-nighters treated as commitment. If everything is a priority, nothing is.",
+    prevent:"Easy days most of the time so the hard days count. Keep the morning routine and the sport through the crunch. Plan the rest or you will burn out.",
+    repair:"Name it to the PI, take three days off now, and ask the counterfactual: if you burn out, how many people can you not help? Then triage, delegate, set boundaries.",
+    res:["rest", "restmastery", "hardeasy"]},
+  authorship_fight:{name:"The authorship fight", group:"Credit and trust", what:"Author order decided at the submission form, by whoever fills it in.",
+    looks:"The senior collaborator's postdoc appears on the draft. The peer asks why they are third. Someone who “only gave feedback” expects a slot. Nobody remembers agreeing anything.",
+    causes:"Authorship never discussed because it felt early and awkward. Order by seniority or by who showed up, decided unilaterally.",
+    prevent:"Discuss authorship before the work starts, not after tensions build; propose roles and a provisional order in writing, revisited when contributions change. Test: would the project have succeeded without this person? Check the venue's criteria.",
+    repair:"Meet everyone, ask the contribution question for each person, propose an order with reasons in writing, and use the venue's criteria as the tie-breaker.",
+    res:["expectations", "icmje", "authorship"]},
+  hidden_failure:{name:"The hidden failure", group:"Credit and trust", what:"A result died and the team found out from the draft.",
+    looks:"The effect vanished with more seeds. You spent two weeks on rescue variants in silence. The draft's headline claim still rests on it.",
+    causes:"Failure treated as stigma instead of feedback. Fear of bringing bad news to a busy PI. Sunk cost on the story.",
+    prevent:"Say it the same day, with what it means and the fallback. Failure is feedback; a team that hears about it early can reorder the plan.",
+    repair:"Tell everyone today, drop the claim, and lead with the negative result and what it rules out. Something must change after a failure, not only be cleaned up.",
+    res:["failure", "allostasis", "openloop"]},
+  delegated_speed:{name:"Delegated speed", group:"Credit and trust", what:"Something fast went out under your name that nobody verified.",
+    looks:"An agent wrote the evaluation pipeline overnight; the numbers looked great; nobody read the code. A reviewer reran it: the metric double-counts.",
+    causes:"Speed that was delegated rather than earned. No tests, no spot check, no “would you put your name on it?”",
+    prevent:"Delegating, to a junior or to an AI, means guardrails, verification and expected mistakes. Unit-test the metric, spot-check ten examples by hand, and ask whether you can defend every choice.",
+    repair:"Correct it, thank the reviewer, and add the test that would have caught it. Arguing the reviewer misunderstood costs more than the number did.",
+    res:["twofast", "revisitfast", "postmortem_sre"]},
+  dropped_ball:{name:"The dropped ball", group:"Credit and trust", what:"An open loop nobody owned closed at the worst moment.",
+    looks:"A license reply never came and the experiments used the data anyway. The reimbursement, the ethics form, the baseline someone “would run”: nobody did.",
+    causes:"Meetings ended with “we should” instead of who does what by when. No place where open loops are visible. Too many balls per person.",
+    prevent:"Every meeting ends with owners and dates. A weekly ten-minute “what is waiting on whom” round. Fewer commitments per person.",
+    repair:"Own it in writing to the PI, list the open loops with owners, and add the round to the meeting. Hiding it costs trust that took months to build.",
+    res:["meetings", "openloop", "tetris"]},
+  open_loop:{name:"The open-loop project", group:"Credit and trust", what:"The project ended and nobody asked what to change.",
+    looks:"Submitted, celebrated, moved on. The same three problems fire on the next project.",
+    causes:"Everyone is tired and the next deadline is in ten weeks. Postmortems feel like blame.",
+    prevent:"Book a rested one-hour postmortem two weeks after the deadline, with psychological safety: start, stop, continue; who did what by when; the margin of safety; what would need to change to make things easy.",
+    repair:"Run it late rather than never. Then feed it forward: assume the next project has already failed and say why.",
+    res:["openloop", "postmortem_sre", "nrr"]},
+  unkind_feedback:{name:"Feedback that lands wrong", group:"Credit and trust", what:"Criticism that was public, vague, or unasked for, and taught nothing.",
+    looks:"You raised the master's student's thin write-up in the group meeting. They stopped speaking in meetings. Or you rewrote it yourself overnight and they never learned why.",
+    causes:"No permission asked. Praise and criticism mixed up: praise is specific and public, criticism specific, kind and private. Nice instead of kind.",
+    prevent:"Ask “can I give you some feedback?” Then situation, behavior, impact, and what to do next; ask what got in the way. Being clear is kind.",
+    repair:"Apologize for the venue, not the content. Redo it in private with the concrete next step.",
+    res:["nrr", "threefb", "kindnice"]}
+};
+
+/* ---------------------------------------------------------------------------
+   CARDS: decisions by month. Options: k sound|pit|meh, fx on dials, rel on people, seeds set or cleared, ax lean, p problem seeded, later hint.
+   ------------------------------------------------------------------------- */
+const CARDS = [
+  {id:"K_expect", month:1, always:true, phase:"Kickoff", title:"The first meeting. The PI has twenty minutes.",
+   sit:"The project exists on a whiteboard and in three people's heads. The PI is between two calls.",
+   opts:[
+     {t:"Bring three questions: what does “enough progress” look like, who decides scope, how do we follow up on silence. Write the answers into a one-page note and send it to everyone.", k:"sound", fx:{align:12, loop:6, trust:3}, seeds:["expect_written"], ax:{comms:"R"}, f:"Expectations live in a note everyone can read, not in two heads.", why:"You do not need results for a meeting; questions and problems are enough. The note is the point: it turns a conversation into a shared reference you can check against at the midpoint, and it tells the PI what they signed up for."},
+     {t:"Present the plan and your first results; the questions can wait until there is something concrete to discuss.", k:"pit", fx:{align:2, energy:-3}, seeds:["expect_unspoken"], p:"misaligned_expectations", ax:{comms:"L"}, why:"Twenty minutes went to showing instead of asking. The PI now has an impression of the project and you have no idea whether it matches theirs; that gap widens quietly until someone says “the workshop paper”."},
+     {t:"Ask the PI what they expect, nod, and keep the answers in your head.", k:"meh", fx:{align:5}, seeds:["expect_unspoken"], ax:{comms:"L"}, why:"Better than not asking. But head-nodding is dangerous: two people remember the same conversation differently within a week, and there is nothing to check against."}
+   ]},
+  {id:"K_auth", month:1, always:true, phase:"Kickoff", title:"Nobody has said the word authorship.",
+   sit:"The senior collaborator joined after a chance conversation. The peer will do the theory. The master's student runs the experiments. It feels early.",
+   opts:[
+     {t:"Raise it now: propose roles and a provisional author order in writing, with the rule that it is revisited if contributions change.", k:"sound", fx:{credit:25, trust:3}, seeds:["auth_agreed"], ax:{conflict:"R"}, f:"Awkward for ten minutes in month one, or awkward for a month in month eight.", why:"Discuss authorship before a project starts, not after tensions build. “Provisional, revisited if contributions change” takes the sting out: nobody is locked in, everybody knows the rule. Earlier than feels necessary is the right time."},
+     {t:"Too early and awkward; contributions will make the order obvious later.", k:"pit", fx:{credit:-5}, seeds:["auth_unspoken"], p:"authorship_fight", ax:{conflict:"L"}, later:"This will come back at the submission form.", why:"Contributions never make the order obvious, because everyone weighs their own contribution generously. The conversation you skip in month one is the fight you have in month eight, with a deadline attached."},
+     {t:"Mention it to the PI privately and let the PI handle the others.", k:"meh", fx:{credit:8}, seeds:["auth_pi_only"], ax:{conflict:"L"}, why:"The PI may or may not pass it on, and the senior collaborator is not the PI's to manage. Half the team still has never heard the word."}
+   ]},
+  {id:"K_plan", month:1, phase:"Kickoff", title:"Nine months to plan.",
+   sit:"The deadline is in month eight. Exploratory work first, then experiments, then writing; that much everyone agrees on.",
+   opts:[
+     {t:"Plan backwards from the deadline: named owners and dates, a two-week buffer nobody may spend, and a written minimum you would be satisfied with if things go wrong.", k:"sound", fx:{buffer:10, align:8, loop:4}, seeds:["contingency"], ax:{pace:"R"}, f:"Plans are useless, planning is helpful; the written minimum is the insurance.", why:"Just-in-time plans work only when nothing goes wrong. The two questions worth writing down now: what is the minimum I would be satisfied with, and what price am I willing to pay for it? The buffer is the premium."},
+     {t:"Start with experiments; plans are useless for exploratory work and the deadline will focus everyone when it comes.", k:"pit", fx:{buffer:-5, progress:3}, seeds:["no_plan"], p:"deadline_crunch", ax:{pace:"L"}, later:"The deadline will do the prioritizing, and it prioritizes all-nighters.", why:"The deadline is a forcing function, but if it is all your motivation, everything happens in the last two weeks: compute is scarce then, the PI is traveling, and so is everyone else's deadline."},
+     {t:"Build a detailed weekly task board for everyone and ask them to keep it updated.", k:"meh", fx:{buffer:4, align:3, energy:-4}, seeds:["control_board"], ax:{control:"L"}, later:"Boards nobody asked for get ignored by month three.", why:"Planning, yes; but a board imposed from the most junior seat needs a team that meets daily and updates it, and academic teams do not. It will be yours to maintain, and it will be out of date."}
+   ]},
+  {id:"M2_ways", month:2, phase:"Setting up", title:"The team's first joint meeting.",
+   sit:"You have already written a “working with me” note: you dislike last-minute rushes and you plan ahead. The others have not written anything.",
+   opts:[
+     {t:"Ask how each of them works, then run a pre-mortem together: “it is month eight and we failed; why?” Co-write the ways of working from the answers.", k:"sound", fx:{align:10, trust:8, loop:6}, seeds:["premortem"], ax:{control:"R"}, f:"You have told them how you work; now you know how they do.", why:"The least senior person on the team cannot impose process and does not need to. A pre-mortem draws out everyone's risks in their own words, and ways of working the team co-wrote are ways of working the team keeps."},
+     {t:"Send the “working with me” note and the board; ask everyone to keep both updated.", k:"pit", fx:{align:2, trust:-3}, seeds:["control_board"], p:"unheard_team", ax:{control:"L"}, why:"This is control, not management. You have told people how you work and never asked how they do; they will read the note once and work the way they always have."},
+     {t:"Skip the process talk; agree on the science and set the next meeting.", k:"meh", fx:{align:3}, ax:{control:"L"}, why:"Defensible, and the cheapest hour you will ever skip. Nobody knows yet who works late, who needs written asks, or who is on two other deadlines."}
+   ]},
+  {id:"M2_silence", month:2, phase:"Setting up", title:"Eight days, no reply.",
+   sit:"You emailed the PI the plan and asked for one decision: which dataset. Nothing came back.",
+   opts:[
+     {t:"Send a short reminder with the one decision you need and a date, and assume busyness rather than judgment.", k:"sound", fx:{loop:6}, rel:{pi:3}, ax:{comms:"R"}, f:"Silence means busy, not no; reminders are always appreciated.", why:"No reply means busyness and forgetfulness. Write more reminders than feels prudent, each with the one decision and a date; it makes the PI's life easier, which is the whole job."},
+     {t:"Wait. Nagging will not help, and the PI is clearly busy.", k:"pit", fx:{loop:-6, buffer:-3}, seeds:["waits_on_silence"], p:"silence_stall", ax:{comms:"L"}, later:"Every week of waiting is a week the master's student cannot start.", why:"Waiting reads silence as a verdict. It was a lost email. The cost is not yours alone: the people downstream of the decision wait with you."},
+     {t:"Escalate: ask the secretary for an urgent slot this week.", k:"meh", fx:{loop:3, energy:-2}, rel:{pi:-3}, ax:{comms:"R"}, why:"It gets the answer and it spends a favor on a question a two-line reminder would have solved. Save the escalation for the decision that needs a meeting."}
+   ]},
+  {id:"M2_meeting", month:2, phase:"Setting up", title:"The weekly meeting runs over. The master's student says nothing.",
+   sit:"No agenda, lots of “we should”, and the end arrives without anyone knowing who does what.",
+   opts:[
+     {t:"Agenda as questions with the decisions needed, a named note-taker, and a closing round: who does what by when. Attendance optional when nothing on the agenda needs you.", k:"sound", fx:{loop:7, align:5}, rel:{junior:4}, seeds:["meeting_hygiene"], ax:{comms:"R"}, f:"A meeting is a list of decisions; the notes are what survives it.", why:"“We should run more baselines” is a wish. “The master's student runs the two baselines by the 14th, because the reviewer will ask” is a plan. The quiet person speaks when the agenda has a question with their name on it."},
+     {t:"Cancel the weekly meeting; people can write when there is something to say.", k:"pit", fx:{loop:-5, align:-4}, seeds:["no_meetings"], p:"dropped_ball", ax:{comms:"L"}, why:"The meeting was bad, so the fix is a better meeting, not none. Without a place where open loops are visible, they close at the worst moment."},
+     {t:"Keep it, but cap it at thirty minutes.", k:"meh", fx:{loop:2}, ax:{comms:"L"}, why:"Shorter is kinder. It is still a meeting without questions or owners, only faster."}
+   ]},
+  {id:"M3_junior", month:3, phase:"Early work", title:"“Almost working”, for three weeks.",
+   sit:"The master's student's experiments have been nearly there since the last meeting. They do not ask for help.",
+   opts:[
+     {t:"Sit with them for an hour, look at the code and the logs together, and agree a two-day pilot with a clear pass or fail.", k:"sound", fx:{loop:8, progress:6}, rel:{junior:6}, seeds:["junior_supported"], ax:{load:"R"}, f:"An hour of pairing beats three weeks of status updates.", why:"“Almost working” for three weeks means stuck and not saying so. Pairing finds the problem in an hour, and the two-day pilot with a pass/fail gives them a way to be done, or to be wrong, without shame."},
+     {t:"Take the experiments over yourself; it is faster.", k:"pit", fx:{progress:8, energy:-10}, rel:{junior:-8}, seeds:["hero"], p:"hero_mode", ax:{load:"L"}, later:"Faster this week. In month six everyone waits for you.", why:"Faster today, and the master's student learned that being stuck gets your work taken away. You now own the experiments on top of everything else, and they will wait for you from here on."},
+     {t:"Ask for a written status update every Friday.", k:"meh", fx:{loop:3}, rel:{junior:-2}, ax:{control:"L"}, why:"You will get a paragraph that says “almost working” every Friday. Reporting is not the same as unblocking."}
+   ]},
+  {id:"M3_idea", month:3, phase:"Early work", title:"A half-formed idea.",
+   sit:"You think the framing could change. It is not worked out. Group meeting is tomorrow.",
+   opts:[
+     {t:"Share it half-formed. The outcomes are confirmation, improvement, or an early kill; all three are wins.", k:"sound", fx:{loop:6, align:5, trust:4}, ax:{comms:"R"}, f:"Nothing to lose: every outcome of sharing is better than two weeks of polishing.", why:"An idea kept private for polishing costs two weeks and gains nothing the room could not have given you tomorrow. The fear is looking wrong; the actual risk is being wrong for longer."},
+     {t:"Polish it for two more weeks before showing anyone.", k:"pit", fx:{buffer:-5, loop:-3, energy:-3}, p:"late_feedback", ax:{comms:"L"}, why:"Two weeks of buffer spent on making an idea presentable that the room would have improved or killed in ten minutes. Waiting for results before talking wastes more time than it saves."},
+     {t:"Tell only the PI, in a one-to-one.", k:"meh", fx:{loop:2, align:2}, ax:{comms:"L"}, why:"One reader instead of five, and the peer who does the theory is the one whose objection you needed."}
+   ]},
+  {id:"M3_side", month:3, phase:"Early work", title:"A corridor request.",
+   sit:"A postdoc from another group asks you to help with a benchmark for their paper. It sounds interesting and it would be a good connection.",
+   opts:[
+     {t:"No yes on the spot. Check the calendar and your budget, answer tomorrow, and if it fits, name the hours you can give.", k:"sound", fx:{energy:2, buffer:2}, seeds:["says_no"], ax:{load:"R"}, f:"Decide twice with a night between; the calendar tells you whether it fits.", why:"Never say yes on the spot. If the hours do not fit on the calendar, you cannot do it, however interesting. Answering tomorrow with a number of hours keeps the connection and the project."},
+     {t:"Say yes; it is a good connection and it will only take a few days.", k:"pit", fx:{buffer:-8, energy:-8}, seeds:["overcommit"], p:"overcommitment", ax:{load:"L"}, later:"“A few days” is what every side project says in month three.", why:"It never takes a few days. The hustle does not stop by itself; every yes here is hours taken from the project in month seven, when they are scarcest."},
+     {t:"Say no immediately; there is no time for anything else this year.", k:"meh", fx:{energy:2}, ax:{load:"R"}, later:"A flat no to everything costs the network that saves you later.", why:"Protects the project and costs the connection, which is the kind that later gives you feedback nobody in your lab can. A day's delay and a smaller yes would have kept both."}
+   ]},
+  {id:"M4_senior", month:4, phase:"Early work", title:"The senior collaborator has a new direction.",
+   sit:"A long message: a direction that “would make the paper much more interesting”. Two months in, with a plan already agreed.",
+   opts:[
+     {t:"Thank them, and ask the scoping question: what is the best version of this paper by month eight, and does the new direction fit inside it or become the next paper?", k:"sound", fx:{align:8, buffer:3}, rel:{senior:3}, seeds:["scope_agreed"], ax:{conflict:"R"}, f:"A senior person's idea gets scoped, not absorbed or ignored.", why:"The collaborator has fewer time pressures than you and is happy to digest for a year; you are not. Naming the best version by the deadline lets you say yes to the idea and no to the timing, and it surfaces the horizon mismatch before it costs a month."},
+     {t:"Absorb it: the senior knows the field. Add the direction to the plan.", k:"pit", fx:{buffer:-12, align:-6}, seeds:["scope_creep"], p:"scope_creep", ax:{conflict:"L"}, later:"The paper now has two questions; by month six it will have three.", why:"Two questions in one paper, and the plan just lost a month. Seniority is not scope; the collaborator will happily add a third direction in month six."},
+     {t:"Ignore it politely and keep to the plan.", k:"meh", fx:{align:-2}, rel:{senior:-6}, ax:{conflict:"L"}, why:"The plan survives; the relationship does not, and the collaborator's late review in month seven will be the disagreement you avoided now."}
+   ]},
+  {id:"M4_cancel", month:4, phase:"Early work", title:"Cancelled again, at short notice.",
+   sit:"The PI's assistant moves your one-to-one for the second time this month. The decisions you needed wait another two weeks.",
+   opts:[
+     {t:"Say what it costs, kindly and specifically: “when the slot moves twice, the decisions on X wait two weeks.” Propose a standing slot plus one context-rich message from you each week.", k:"sound", fx:{loop:6, trust:5}, rel:{pi:4}, seeds:["async_context"], ax:{conflict:"R"}, f:"Situation, behavior, impact, and a proposal; not a complaint.", why:"Short-notice cancellations are one of the two things students name as making everything worse. Saying so with the concrete cost and a proposal is feedback the PI can act on; it also makes the async message the main channel, which needs no slot."},
+     {t:"Stop asking for meetings; work from what you have.", k:"pit", fx:{loop:-8, align:-5}, rel:{pi:-3}, seeds:["stopped_asking"], p:"silence_stall", ax:{conflict:"L"}, later:"The PI will not notice you stopped asking. That is the problem.", why:"The feedback came late, so you stopped asking; now it will not come at all. The PI reads your silence as “all fine”."},
+     {t:"Rebook and say nothing; the PI is busy.", k:"meh", fx:{loop:-2, energy:-2}, ax:{conflict:"L"}, why:"Cancellations are not personal, and you can still say what they cost. Silence teaches the PI that moving your slot is free."}
+   ]},
+  {id:"M4_loop", month:4, phase:"Early work", title:"Results trickle in.",
+   sit:"The PI sees them at the monthly meeting. The senior collaborator will see the draft when it is ready. Nobody has asked for more.",
+   opts:[
+     {t:"Tighten the loop: a weekly one-paragraph update with one figure and one question, to everyone, unprompted.", k:"sound", fx:{loop:10, align:5}, rel:{senior:3, pi:3}, seeds:["async_context"], ax:{comms:"R"}, f:"The cheapest feedback loop there is: a paragraph, a figure, a question.", why:"The felt problem in most labs is not meeting time but the sense that nobody thinks about the work in between. One substantive message a week is evidence of thinking, it costs ten minutes, and it makes late feedback impossible."},
+     {t:"Wait until the results are solid; nobody wants noise.", k:"pit", fx:{loop:-6}, seeds:["late_feedback"], p:"late_feedback", ax:{comms:"L"}, later:"“Solid” arrives a week before the deadline, and so will the feedback.", why:"Solid results are the ones nobody can change any more. The senior collaborator will read the paper once, late, and want a different one."},
+     {t:"Post raw plots in the channel when you have them, without commentary.", k:"meh", fx:{loop:3, align:-1}, ax:{comms:"L"}, why:"Better than silence. A plot without the question you want answered gets a thumbs-up and no feedback."}
+   ]},
+  {id:"M5_peer", month:5, phase:"Mid-project", title:"The peer has gone quiet.",
+   sit:"Three weeks without a word on the theory part. Their other project has a deadline in two weeks.",
+   opts:[
+     {t:"Write with context and an ask: what you need, by when, why it matters for the deadline, and an offer to take a piece off them. Ask what would make it easier.", k:"sound", fx:{loop:6, trust:4}, rel:{peer:5}, seeds:["peer_engaged"], ax:{comms:"R"}, f:"Context, ask, date, and a way for them to say what they need.", why:"Silence from a peer is usually a deadline, not disinterest. A message with the why and an offer treats them as a collaborator with their own levers, and it makes “I can do the lemma but not the proof until the 20th” an easy reply."},
+     {t:"Do the theory part yourself; it is faster than chasing.", k:"pit", fx:{progress:6, energy:-12, credit:-8}, rel:{peer:-5}, seeds:["hero"], p:"hero_mode", ax:{load:"L"}, later:"Their name is on the paper for the part you now do.", why:"You just took over a second person's work. The credit question this creates is worse than the delay, and the peer will still be on the paper for a part they did not do."},
+     {t:"Ask the PI to have a word with them.", k:"meh", fx:{loop:2}, rel:{peer:-6, pi:1}, ax:{conflict:"L"}, why:"It works once and costs the relationship. Peers who get managed through the PI stop telling you things."}
+   ]},
+  {id:"M5_energy", month:5, phase:"Mid-project", title:"Every weekend for a month.",
+   sit:"The paper is on track. You feel fine. There is always something to run.",
+   opts:[
+     {t:"Take the weekend off and keep the morning routine; easy days are what make the hard days possible.", k:"sound", fx:{energy:10}, seeds:["periodized"], ax:{pace:"R"}, f:"Stress plus rest is growth; stress alone is just stress.", why:"Elite athletes train easy most of the time so the hard sessions count. A project run at full effort in month five has nothing left for month eight, which is when it needs everything."},
+     {t:"Keep going while it works; rest after the deadline.", k:"pit", fx:{energy:-12}, seeds:["no_rest"], p:"burnout", ax:{pace:"L"}, later:"“After the deadline” moves with the deadline.", why:"If you do not plan to rest, you will burn out. Working nonstop feels like commitment and reads, three months later, as the month you could not think."},
+     {t:"Take a half day when it fits.", k:"meh", fx:{energy:2}, ax:{pace:"L"}, why:"It never fits. Rest that is not scheduled is rest that does not happen."}
+   ]},
+  {id:"M5_target", month:5, phase:"Mid-project", title:"Which paper is this?",
+   sit:"You suspect the PI thinks of it as a workshop paper. You have been writing for the main conference.",
+   opts:[
+     {t:"Check explicitly: send the target, the scope and the draft outline, and ask for a yes or a correction.", k:"sound", fx:{align:12, loop:4, credit:3}, seeds:["expect_written"], clear:["expect_unspoken"], ax:{comms:"R"}, f:"A suspicion about expectations is a question, not a bet.", why:"Even when you think you told everyone everything, check explicitly. The cost of the message is two minutes; the cost of being wrong is a paper aimed at the wrong venue."},
+     {t:"Assume you told them at the start; they would have said otherwise.", k:"pit", fx:{align:-8}, seeds:["expect_unspoken"], p:"misaligned_expectations", ax:{comms:"L"}, why:"Most friction comes from assuming the intent of communication was achieved. They would not have said otherwise; they would have said “the workshop paper” in month six."},
+     {t:"Ask a senior student what the PI usually expects.", k:"meh", fx:{align:3}, ax:{comms:"L"}, why:"Useful background, and not an answer about this paper."}
+   ]},
+  {id:"M6_fail", month:6, phase:"Mid-project", title:"The effect disappears.",
+   sit:"With five seeds instead of one, the main result is noise. Two months left.",
+   opts:[
+     {t:"Say it the same day, to everyone, with what it means and the fallback. Reorder the plan around the minimum.", k:"sound", fx:{trust:6, align:6, loop:5, buffer:2, progress:-5}, seeds:["reorder"], ax:{comms:"R"}, f:"Failure is feedback; the team can only use it if it hears it today.", why:"A failure told the same day is a plan change. A failure told in two weeks is a hidden failure, and by then the draft has a headline resting on it. Something has to change after a failure, not just get cleaned up."},
+     {t:"Keep it quiet for two weeks while you try variants that might rescue it.", k:"pit", fx:{loop:-8, trust:-6, buffer:-8, energy:-6}, seeds:["hid_failure"], p:"hidden_failure", ax:{comms:"L"}, later:"The rescue rarely comes, and the draft will still claim the effect.", why:"Two weeks of buffer spent on sunk cost, in silence, while the team writes toward a result that no longer exists."},
+     {t:"Report it, and keep the original plan; more seeds might bring it back.", k:"meh", fx:{loop:2, buffer:-6}, ax:{pace:"L"}, why:"Honest, and the plan is now hoping. Report and reorder, or you are paying for the same experiment twice."}
+   ]},
+  {id:"M6_feedback", month:6, phase:"Mid-project", title:"The write-up is late and thin.",
+   sit:"The master's student's section arrived three days late with half the figures missing. You want to say something.",
+   opts:[
+     {t:"Ask “can I give you some feedback?” Then situation, behavior, impact, and what to do next. Ask what got in the way.", k:"sound", fx:{loop:4, trust:5}, rel:{junior:6}, seeds:["feedback_given"], ax:{conflict:"R"}, f:"Permission, specifics, a next step, and a question; in private.", why:"Criticism is specific, kind and private; praise is specific and public. Asking what got in the way usually finds the real cause, which is often something you can fix."},
+     {t:"Rewrite it yourself tonight; they will learn from the diff.", k:"pit", fx:{energy:-8}, rel:{junior:-4}, seeds:["hero"], p:"unkind_feedback", ax:{load:"L"}, why:"Nobody learns from a diff they did not ask for. You spent an evening and taught them that late work gets rewritten by you."},
+     {t:"Mention it in the group meeting so everyone hears the standard.", k:"pit", fx:{trust:-6}, rel:{junior:-8}, p:"unkind_feedback", ax:{conflict:"L"}, why:"Public criticism teaches the whole room that speaking up is unsafe. The standard was heard; the student stopped talking in meetings."}
+   ]},
+  {id:"M6_compare", month:6, phase:"Mid-project", title:"Four accepted papers.",
+   sit:"A lab mate posts them. You have none this year, and this project is your only one.",
+   opts:[
+     {t:"Compare forwards: log what you learned this week and what you can do now that you could not in month one.", k:"sound", fx:{energy:5}, ax:{pace:"R"}, f:"Papers are a flat signal early; make your rewards dense.", why:"Paper counts in the early years are a step function that hides everything you built. Comparing to your own month one is the only comparison with the confounders removed."},
+     {t:"Start a second project to catch up.", k:"pit", fx:{energy:-8, buffer:-6}, seeds:["overcommit"], p:"overcommitment", ax:{load:"L"}, later:"Two projects at month six is two half-projects at month eight.", why:"A second project now is overhead in the exact months this one needs the hours. The comparison that started it was to someone's stock, not their flow."},
+     {t:"Ignore it and work harder this week.", k:"meh", fx:{energy:-3}, ax:{pace:"L"}, why:"Harder this week changes nothing about the comparison and costs a weekend."}
+   ]},
+  {id:"M7_freeze", month:7, phase:"The run-in", title:"Five weeks out.",
+   sit:"Compute is scarce, the PI is traveling for two of the weeks, and the senior collaborator would like one more experiment.",
+   opts:[
+     {t:"Freeze scope: what is in, what is cut, who does what by when. Book the PI's reading slots now. Move the extra experiment to the appendix or the next paper.", k:"sound", fx:{buffer:8, align:8, loop:4}, seeds:["scope_frozen"], ax:{pace:"R"}, f:"Everything that is not frozen now will be decided at 3 a.m. on the last day.", why:"Everyone rushes at the same time, so compute and supervisor attention are scarcest exactly now. A frozen scope with owners is the difference between a run-in and a crunch."},
+     {t:"Run everything in parallel and decide what fits at the end.", k:"pit", fx:{buffer:-12, energy:-8}, seeds:["no_freeze"], p:"deadline_crunch", ax:{pace:"L"}, later:"“Decide at the end” means decide with no time left.", why:"Parallel runs with no decision is a plan to have three half-finished experiments and one all-nighter."},
+     {t:"Cut the extra experiment without telling the collaborator.", k:"meh", fx:{buffer:4, trust:-4}, rel:{senior:-8}, ax:{conflict:"L"}, why:"The cut is right and the silence is expensive. They will find out from the draft."}
+   ]},
+  {id:"M7_agent", month:7, phase:"The run-in", title:"Overnight numbers.",
+   sit:"The master's student used an AI agent to write the evaluation pipeline overnight. The numbers look great. Nobody has read the code.",
+   opts:[
+     {t:"Verify before trusting: unit tests on the metric, a spot check of ten examples by hand, and the question “would you put your name on it?”", k:"sound", fx:{loop:6, progress:4}, seeds:["verified"], f:"Delegated speed needs guardrails, verification and expected mistakes.", why:"Speed that was delegated is not speed you earned. Ten hand-checked examples and a test on the metric cost an afternoon; a reviewer finding the double-count costs the paper."},
+     {t:"Ship it; the deadline is close and the numbers make sense.", k:"pit", fx:{progress:8, buffer:2}, seeds:["unverified"], p:"delegated_speed", later:"This comes back at the reviews.", why:"Numbers that make sense are the ones that get shipped unverified. Did you verify, or did you trust?"},
+     {t:"Rewrite the pipeline yourself.", k:"meh", fx:{energy:-10, buffer:-6, progress:3}, seeds:["hero"], ax:{load:"L"}, why:"Verification would have taken an afternoon; rewriting takes a week of buffer and teaches the student nothing about testing."}
+   ]},
+  {id:"M7_frame", month:7, phase:"The run-in", title:"The PI rewrites the framing.",
+   sit:"A week before the deadline the PI reads the draft and changes the story. You think the results do not carry the new claims.",
+   opts:[
+     {t:"Say so, with the evidence: which claims the results support and which they do not. Propose the framing the data carry and ask what would change the PI's mind.", k:"sound", fx:{trust:5, align:6}, rel:{pi:2}, seeds:["conflict_direct"], ax:{conflict:"R"}, f:"Disagree with evidence, early, and ask what would change their mind.", why:"State the claim without hedging and treat it as a hypothesis the PI can falsify. Asking what would change their mind turns a status disagreement into a question about the data, which is one you can both answer."},
+     {t:"Accept it; it is the PI's call and there is no time.", k:"pit", fx:{align:-4, credit:-3, energy:-3}, seeds:["avoided_conflict", "overclaim"], p:"conflict_avoided", ax:{conflict:"L"}, later:"Your name goes on claims you do not believe.", why:"There is time for one message. Accepting a framing you think is wrong puts your name on the overclaim and leaves the disagreement to surface later, from someone else."},
+     {t:"Change it back quietly in the next version.", k:"pit", fx:{trust:-8}, rel:{pi:-8}, seeds:["avoided_conflict"], p:"conflict_avoided", ax:{conflict:"L"}, why:"A silent revert is the worst of both: the PI finds out, the disagreement was never argued, and trust pays for it."}
+   ]},
+  {id:"M8_crunch", month:8, always:true, phase:"Deadline", title:"Deadline week.",
+   sit:"The cluster queue is full, the master's student is ill, and one figure is missing.",
+   opts:[
+     {t:"Use the margin: cut to the minimum you wrote down, take the figure yourself, tell everyone the new plan, and stop at midnight.", k:"sound", fx:{progress:6, energy:-6}, seeds:["kept_minimum"], ax:{pace:"R"}, f:"This is what the buffer and the written minimum were for.", why:"Deadline week is where the plan pays out. The minimum was written for this; the stop time is what keeps the last day from eating the first week after."},
+     {t:"All-nighters for the team; everything goes in.", k:"pit", fx:{energy:-18, trust:-4, progress:8}, seeds:["allnighter"], p:"burnout", ax:{pace:"L"}, why:"A paper saved by all-nighters is a Pyrrhic victory. Everything goes in, nothing gets checked, and the team remembers the week."},
+     {t:"Ask the senior collaborator to take the missing figure.", k:"meh", fx:{progress:3, loop:1}, rel:{senior:-3}, ax:{load:"R"}, why:"Delegating is right; delegating a figure in deadline week to the person with the least context is slow. Take it, and give them the read-through instead."}
+   ]},
+  {id:"M8_authors", month:8, always:true, phase:"Deadline", title:"The submission form asks for the author list.",
+   sit:"Five names. The order has to be typed by someone, now.",
+   opts:[
+     {t:"Use the agreed order, check whether contributions changed since, and confirm with everyone in one message before you press submit.", k:"sound", fx:{credit:10, trust:4}, ax:{comms:"R"}, f:"Agreed, checked, confirmed; nobody learns their position from the PDF.", why:"Even an agreed order needs the check: contributions change and the rule was that the order follows. One message to everyone, before submission, is the difference between an agreement and a surprise."},
+     {t:"Order by seniority; that is how it is done.", k:"pit", fx:{credit:-10, trust:-6}, seeds:["order_seniority"], p:"authorship_fight", ax:{conflict:"L"}, why:"Seniority is not contribution, and “how it is done” is the sentence that precedes most authorship fights. The venue's criteria say what authorship is; use them."},
+     {t:"Put yourself first and the rest by how much they showed up; sort it out if anyone complains.", k:"pit", fx:{credit:-6, trust:-8}, seeds:["order_unilateral"], p:"authorship_fight", ax:{conflict:"L"}, why:"Somebody will complain, after the fact, with the order already public. The fight you get is the fight you chose."}
+   ]},
+  {id:"M9_post", month:9, always:true, phase:"After", title:"Submitted. The team wants to move on.",
+   sit:"Everyone is tired. The next deadline is in ten weeks.",
+   opts:[
+     {t:"Book a rested one-hour postmortem two weeks out: start, stop, continue; who did what by when; the margin of safety; what would need to change to make things easy.", k:"sound", fx:{loop:10, trust:6, align:4}, seeds:["postmortem"], ax:{pace:"R"}, f:"A project without a postmortem is an open-loop controller.", why:"An hour, rested, not angry, lonely or tired, with the questions written in advance. Then feed it forward: assume the next project already failed and say why."},
+     {t:"Skip it; everyone is tired and the next deadline is close.", k:"pit", fx:{loop:-8}, seeds:["open_loop"], p:"open_loop", ax:{pace:"L"}, why:"The same three problems will fire on the next project, at the same months, for the same reasons."},
+     {t:"Send a thank-you message and a form for anonymous feedback.", k:"meh", fx:{loop:3, trust:2}, ax:{comms:"L"}, why:"Kind, and thin. Forms collect “it was a pleasure working with you”; the questions that change the next project need a room."}
+   ]},
+  {id:"M9_rest", month:9, phase:"After", title:"Two invitations.",
+   sit:"The week after submission. Two new project invitations in the inbox, both interesting.",
+   opts:[
+     {t:"Take the week off you planned. Answer both next week, one yes at most.", k:"sound", fx:{energy:15}, seeds:["periodized"], ax:{pace:"R"}, f:"Seasonality: the week after a deadline is for rest, and decisions keep.", why:"Never decide angry, lonely or tired, and the week after a deadline is all three. A week's delay costs nothing; a yes on the spot costs the next nine months."},
+     {t:"Say yes to both now while the momentum is there.", k:"pit", fx:{energy:-8}, seeds:["overcommit"], p:"overcommitment", ax:{load:"L"}, why:"Momentum is the feeling of not having rested yet. Two yeses now is the overcommitment card of the next run."},
+     {t:"Start the next project on Monday; rest at the next holiday.", k:"meh", fx:{energy:-4}, ax:{pace:"L"}, why:"If you only rest when the calendar allows, ask whether this is how your life should look."}
+   ]},
+  {id:"M9_reviews", month:9, phase:"After", title:"Reviews.",
+   sit:"One dismissive (“trivial extension”), one careful, one asks for the baseline you cut.",
+   opts:[
+     {t:"Separate the work from your worth. Check whether the dismissive one misread something you wrote unclearly; answer the baseline with numbers.", k:"sound", fx:{energy:3, loop:4}, ax:{conflict:"R"}, f:"Maybe they missed it; maybe it was not clearly written.", why:"Reviews can be unfair and still useful. The dismissive one often points at a paragraph the curse of knowledge made you skip. Detach your worth from the verdict and read it for the sentence you can fix."},
+     {t:"Reply the same evening.", k:"pit", fx:{energy:-6, trust:-2}, rel:{pi:-2}, ax:{conflict:"L"}, why:"Anger pushes you to act; the remedy is delay. The rebuttal written tomorrow is the one you would sign."},
+     {t:"Let the PI handle the rebuttal.", k:"meh", fx:{credit:-4}, rel:{pi:-2}, ax:{load:"L"}, why:"It is your paper. Draft it, then ask for the read."}
+   ]}
+];
+
+/* ---------------------------------------------------------------------------
+   INCIDENTS: problems that fire at the start of a month, with odds set by earlier decisions.
+   risk(s) returns a probability; cause(s, prevented) returns short sentences naming the decisions behind it.
+   ------------------------------------------------------------------------- */
+const S = (s, k) => !!s.seeds[k];
+const INCIDENTS = [
+  {id:"I_silence", p:"silence_stall", months:[3, 4], base:0.15, title:"Three weeks without the dataset decision.",
+   sit:"The PI has not answered. The master's student has nothing to run. Your last two emails got no reply.",
+   risk:s => 0.15 + (S(s, "waits_on_silence") ? 0.45 : 0) + (S(s, "stopped_asking") ? 0.4 : 0) - (S(s, "async_context") ? 0.1 : 0) - (S(s, "expect_written") ? 0.08 : 0),
+   cause:(s, prev) => prev ? [S(s, "async_context") ? "Your weekly updates kept the decision in the PI's view." : "You asked how to follow up on silence in month one, and did."] : [S(s, "waits_on_silence") ? "In month two you waited instead of reminding." : S(s, "stopped_asking") ? "You stopped asking for meetings after the cancellations." : "Some silence is bad luck; the PI's inbox is a lottery."],
+   opts:[
+     {t:"Send the decision you would make, with a date: “unless you object by Friday, we go with X.” Give the student the pilot in the meantime.", k:"sound", fx:{loop:8, buffer:2}, rel:{pi:2}, ax:{comms:"R"}, f:"A default with a date turns silence into consent.", why:"The PI can say no in one line, which is easier than deciding. The student stops waiting. Most of the time, Friday passes and you have your answer."},
+     {t:"Keep waiting; it is the PI's decision.", k:"pit", fx:{buffer:-8}, rel:{junior:-4}, ax:{comms:"L"}, why:"Another two weeks of buffer, and the student learns that waiting is how this project works."},
+     {t:"Make the decision silently and tell nobody.", k:"meh", fx:{loop:2, align:-5, trust:-3}, ax:{comms:"L"}, why:"The decision is probably right; the silence is the problem. The PI finds out in month six, from the draft."}
+   ]},
+  {id:"I_misalign", p:"misaligned_expectations", months:[5, 6], base:0.15, title:"“The workshop paper.”",
+   sit:"The PI says it in passing in the group meeting. You have been writing for the main conference for four months.",
+   risk:s => 0.15 + (S(s, "expect_unspoken") ? 0.45 : 0) - (S(s, "expect_written") ? 0.3 : 0),
+   cause:(s, prev) => prev ? ["Expectations were written down in month one and checked since; there was nothing to discover."] : [S(s, "expect_unspoken") ? "Expectations were exchanged in a conversation and never written down." : "Even written expectations drift; the PI's did."],
+   opts:[
+     {t:"Ask in the meeting what the target is, then send a one-page note with target, scope and what changes if it is the workshop.", k:"sound", fx:{align:12, loop:4}, clear:["expect_unspoken"], seeds:["expect_written"], ax:{comms:"R"}, f:"The note you should have sent in month one, sent now.", why:"Late is far better than never: five months of drift is recoverable in a week if the target is named out loud today."},
+     {t:"Say nothing; you will show them the paper is good enough for the main venue.", k:"pit", fx:{align:-8, trust:-4}, ax:{comms:"L"}, why:"A bet against your supervisor's expectations, placed in silence. If you win, they are surprised; if you lose, so are you."},
+     {t:"Adjust silently to the workshop.", k:"meh", fx:{align:3, credit:-4}, ax:{conflict:"L"}, why:"Aligned, at the cost of a venue you might have had by asking one question."}
+   ]},
+  {id:"I_scope", p:"scope_creep", months:[6], base:0.15, title:"Three research questions, no spine.",
+   sit:"The plan now carries the original question, the senior collaborator's direction, and a third one that appeared in a meeting. The draft has no claim it could defend alone.",
+   risk:s => 0.15 + (S(s, "scope_creep") ? 0.5 : 0) + (S(s, "no_plan") ? 0.2 : 0) - (S(s, "scope_agreed") ? 0.1 : 0) - (S(s, "contingency") ? 0.1 : 0),
+   cause:(s, prev) => prev ? ["The best version of the paper was agreed in month four, so every addition had something to be measured against."] : [S(s, "scope_creep") ? "In month four the senior collaborator's direction was absorbed instead of scoped." : "Questions accrete in meetings when nobody holds the written minimum."],
+   opts:[
+     {t:"Pick the one claim you could defend against a hostile reviewer, move the rest to future work, and tell the collaborator why, with the deadline arithmetic.", k:"sound", fx:{align:10, buffer:6}, rel:{senior:-1}, ax:{conflict:"R"}, f:"One claim you can defend beats three you cannot.", why:"A paper with three claims has none. The deadline arithmetic does the arguing for you: weeks left, experiments per claim, done."},
+     {t:"Keep all three; a broad paper is a strong paper.", k:"pit", fx:{buffer:-10, progress:-4}, ax:{conflict:"L"}, why:"Breadth without a spine is what reviewers call unfocused, and the buffer is gone."},
+     {t:"Ask the PI to choose.", k:"meh", fx:{align:4, buffer:2}, rel:{pi:-1}, ax:{load:"L"}, why:"It works, and it trains the PI to expect that scoping is theirs. Propose, then ask."}
+   ]},
+  {id:"I_hero", p:"hero_mode", months:[6, 7], base:0.1, title:"Everyone is waiting for you.",
+   sit:"You run the experiments, the theory and the writing. The others have learned to wait. Your evenings are gone.",
+   risk:s => 0.1 + (S(s, "hero") ? 0.45 : 0) + (S(s, "control_board") ? 0.1 : 0) - (S(s, "premortem") ? 0.1 : 0) - (S(s, "peer_engaged") ? 0.1 : 0) - (S(s, "junior_supported") ? 0.1 : 0),
+   cause:(s, prev) => prev ? ["You gave work back with context when people were stuck, so it stayed theirs."] : [S(s, "hero") ? "You took over someone's part because it was faster." : "Being the fastest person on a team is a trap on its own."],
+   opts:[
+     {t:"Give pieces back with what, by when, why, and what done looks like. Accept that it will be slower and less yours.", k:"sound", fx:{energy:8, trust:4, progress:-2}, rel:{junior:4, peer:4}, ax:{load:"R"}, f:"Management is not project control; loosen the grip.", why:"Delegating with context is slower this week and faster by the deadline, because two more people are working. The paper becomes theirs too, which is what the author list says anyway."},
+     {t:"Push through; you are fastest and the deadline is close.", k:"pit", fx:{energy:-15, progress:4}, ax:{load:"L"}, why:"Fastest until month eight, when the one person doing everything is the one who breaks."},
+     {t:"Ask the PI for a second student.", k:"meh", fx:{buffer:-2, loop:1}, ax:{load:"R"}, why:"More people is not the fix for work you would not let go of. Onboarding costs a month you do not have."}
+   ]},
+  {id:"I_late", p:"late_feedback", months:[7], base:0.15, title:"The senior collaborator reads the draft. Once.",
+   sit:"A long message: they would have written a different paper. Three weeks to the deadline.",
+   risk:s => 0.15 + (S(s, "late_feedback") ? 0.5 : 0) + (S(s, "no_meetings") ? 0.2 : 0) - (S(s, "async_context") ? 0.25 : 0) - (S(s, "meeting_hygiene") ? 0.1 : 0),
+   cause:(s, prev) => prev ? ["The weekly update meant nobody saw the paper for the first time in month seven."] : [S(s, "late_feedback") ? "Results were held until solid, so the first read was the last one possible." : "A reader who sees a draft once will always want a different paper."],
+   opts:[
+     {t:"Ask which of their points change a claim and which change a sentence. Take the first now, park the second, and agree a final review slot in the last week.", k:"sound", fx:{align:6, loop:4, buffer:-2}, rel:{senior:2}, ax:{conflict:"R"}, f:"Sort the feedback by what it changes, then negotiate the time.", why:"Late feedback is still feedback. Sorting it by consequence makes the conversation about the paper rather than about whose paper it is."},
+     {t:"Rewrite the paper their way.", k:"pit", fx:{buffer:-12, align:-6, energy:-8}, ax:{conflict:"L"}, why:"Three weeks is not enough to write a different paper, and the PI has not agreed to it either."},
+     {t:"Thank them and change nothing.", k:"meh", fx:{trust:-3}, rel:{senior:-8}, ax:{conflict:"L"}, why:"Some of their points would have changed a claim. The relationship pays for the ones you did not read."}
+   ]},
+  {id:"I_dropped", p:"dropped_ball", months:[5, 6, 7], base:0.12, title:"The license.",
+   sit:"The dataset license reply never came and the experiments used the data anyway. The institute's office needs the paperwork now.",
+   risk:s => 0.12 + (S(s, "no_meetings") ? 0.3 : 0) + (S(s, "hero") ? 0.15 : 0) + (S(s, "overcommit") ? 0.2 : 0) - (S(s, "meeting_hygiene") ? 0.2 : 0) - (S(s, "control_board") ? 0.05 : 0),
+   cause:(s, prev) => prev ? ["Meetings ended with owners and dates, so the open loop had a name on it."] : [S(s, "no_meetings") ? "With the weekly meeting gone, nothing showed what was waiting on whom." : S(s, "overcommit") ? "Too many commitments per person; one ball had to drop." : "Open loops nobody owns close at the worst moment."],
+   opts:[
+     {t:"Own it in writing to the PI, list the open loops with owners, and add a weekly ten-minute “what is waiting on whom” round to the meeting.", k:"sound", fx:{loop:8, trust:5, align:3}, ax:{comms:"R"}, f:"Own it, list the loops, fix the process.", why:"A dropped ball owned in writing costs a bad afternoon. The round you add is the reason there is not a second one."},
+     {t:"Hide it and hope the paperwork arrives.", k:"pit", fx:{trust:-10, loop:-4}, ax:{conflict:"L"}, why:"It arrives, late, addressed to the PI. Trust that took months is gone in a message."},
+     {t:"Blame the licensing office in the group channel.", k:"meh", fx:{trust:-6}, rel:{pi:-3}, ax:{conflict:"L"}, why:"Partly true and entirely unhelpful. The office did not run the experiments."}
+   ]},
+  {id:"I_hidden", p:"hidden_failure", months:[7], base:0.05, title:"The rescue did not work.",
+   sit:"The effect still does not replicate. The draft's headline claim rests on it, and the team is writing toward it.",
+   risk:s => 0.05 + (S(s, "hid_failure") ? 0.6 : 0) + (S(s, "unverified") ? 0.1 : 0) - (S(s, "reorder") ? 0.05 : 0),
+   cause:(s, prev) => prev ? ["The failure was reported the same day and the plan was reordered around the minimum."] : [S(s, "hid_failure") ? "In month six the failure was kept quiet while you tried to rescue it." : "Some effects die late, whatever you did."],
+   opts:[
+     {t:"Tell everyone today, drop the claim, and lead with the negative result and what it rules out.", k:"sound", fx:{trust:5, align:5, credit:2, progress:-6}, ax:{comms:"R"}, f:"A negative result told in time is a smaller paper; a hidden one is a retraction.", why:"The team can still write the paper the data support. The cost is a claim; the alternative cost is the paper."},
+     {t:"Keep the claim with softer wording.", k:"pit", fx:{trust:-6, loop:-6}, seeds:["overclaim"], ax:{conflict:"L"}, why:"Softer wording on a result that does not exist is the sentence a reviewer will quote."},
+     {t:"Delay the submission to the next deadline.", k:"meh", fx:{buffer:10, progress:-6, energy:2}, ax:{pace:"R"}, why:"Honest and expensive. Often the right call; sometimes the smaller paper now was available."}
+   ]},
+  {id:"I_deadline", p:"deadline_crunch", months:[8], base:0.2, title:"Two weeks out.",
+   sit:"Three experiments unfinished, the draft half written, and everyone else on their own deadline too.",
+   risk:s => 0.2 + (S(s, "no_plan") ? 0.3 : 0) + (S(s, "no_freeze") ? 0.4 : 0) + (S(s, "scope_creep") ? 0.2 : 0) + (S(s, "overcommit") ? 0.15 : 0) - (S(s, "scope_frozen") ? 0.25 : 0) - (S(s, "contingency") ? 0.15 : 0) - (S(s, "meeting_hygiene") ? 0.05 : 0),
+   cause:(s, prev) => prev ? [S(s, "scope_frozen") ? "Scope was frozen in month seven with owners and dates." : "The plan had a buffer and a written minimum, and you kept both."] : [S(s, "no_freeze") ? "Nothing was cut in month seven; everything ran in parallel." : S(s, "no_plan") ? "The plan was left to the deadline in month one." : "Deadline weeks are crowded whatever you did; the question is how much margin you brought."],
+   opts:[
+     {t:"Cut to the written minimum, one owner per remaining piece, a ten-minute daily check-in, and a stop time.", k:"sound", fx:{buffer:8, progress:4, align:4}, ax:{pace:"R"}, f:"Cut, own, check in, stop.", why:"Two weeks is enough for the minimum if it is the only thing anyone is doing. The daily ten minutes catches the blocked person on day one instead of day nine."},
+     {t:"Everyone works nights; decide what to cut on the last day.", k:"pit", fx:{energy:-15, trust:-5, progress:6}, ax:{pace:"L"}, why:"Deciding on the last day means the cuts are made by exhaustion. The team will remember which week this was."},
+     {t:"Withdraw and aim for the next deadline.", k:"meh", fx:{buffer:15, progress:-10, energy:4}, ax:{pace:"R"}, why:"Missing a deadline is not the end of the world, and sometimes it is the right call. It is also a cost you could have avoided in month seven."}
+   ]},
+  {id:"I_burnout", p:"burnout", months:[8, 9], base:0.1, title:"You dread it.",
+   sit:"Small tasks take hours. You snapped at the master's student. You cannot remember the last free weekend.",
+   risk:s => 0.1 + (S(s, "no_rest") ? 0.35 : 0) + (S(s, "allnighter") ? 0.35 : 0) + (S(s, "hero") ? 0.2 : 0) + (S(s, "overcommit") ? 0.15 : 0) - (S(s, "periodized") ? 0.25 : 0) - (S(s, "says_no") ? 0.1 : 0) + (s.m.energy < 35 ? 0.25 : 0),
+   cause:(s, prev) => prev ? ["Weekends off in month five and a stop time in deadline week kept the tank from emptying."] : [S(s, "allnighter") ? "Deadline week was all-nighters." : S(s, "no_rest") ? "Rest was scheduled for after the deadline, which moved." : S(s, "hero") ? "You carried everyone's work." : "Energy was low for months; nobody, including you, said so."],
+   opts:[
+     {t:"Name it to the PI, take three days off now, and ask the counterfactual: if you burn out, how many people can you not help?", k:"sound", fx:{energy:15, trust:3}, rel:{pi:2}, ax:{pace:"R"}, f:"Triage, delegate, set boundaries; and say it out loud.", why:"Three days now cost three days. Burning out costs the project, the next one, and every person who would have needed you."},
+     {t:"Push through to the deadline; rest after.", k:"pit", fx:{energy:-15, progress:2}, ax:{pace:"L"}, why:"There is no after. The next deadline is in ten weeks and the tank is empty."},
+     {t:"Drop the side commitments and keep the project.", k:"meh", fx:{energy:6}, ax:{load:"R"}, why:"Right and incomplete. The project is the thing that is burning you; it needs a boundary too."}
+   ]},
+  {id:"I_over", p:"overcommitment", months:[6, 7], base:0.1, title:"Four hours last week.",
+   sit:"Three projects, two reviews, a reading group you organize. This project got four hours.",
+   risk:s => 0.1 + (S(s, "overcommit") ? 0.5 : 0) - (S(s, "says_no") ? 0.2 : 0) - (S(s, "periodized") ? 0.05 : 0),
+   cause:(s, prev) => prev ? ["You answered the corridor request a day later, with a number of hours, and the calendar stayed honest."] : [S(s, "overcommit") ? "A yes on the spot in month three (or a second project in month six)." : "Commitments accrete; nobody said no for you."],
+   opts:[
+     {t:"Put everything on the calendar; what does not fit, you cannot do. Drop one project and hand over the reading group, with a message naming what you keep.", k:"sound", fx:{energy:8, buffer:5}, ax:{load:"R"}, f:"The calendar is the budget; what does not fit is a no.", why:"Overhead is an inverted U, and you are on the wrong side of it. Handing over with a message that names what you keep is the difference between quitting and prioritizing."},
+     {t:"Work more hours; it is temporary.", k:"pit", fx:{energy:-12}, ax:{load:"L"}, why:"It is never temporary. The hustle does not stop until you say enough."},
+     {t:"Ask the PI to prioritize for you.", k:"meh", fx:{align:3, energy:2}, rel:{pi:-1}, ax:{load:"L"}, why:"Fine once. The PI cannot see your calendar and will prioritize their project."}
+   ]},
+  {id:"I_auth", p:"authorship_fight", months:[7], base:0.25, title:"Who is on the paper?",
+   sit:"The senior collaborator's postdoc appears on the draft's author list. The peer asks why they are third. Someone who gave feedback in month two expects a slot.",
+   risk:s => 0.2 + (S(s, "auth_unspoken") ? 0.5 : 0) + (S(s, "auth_pi_only") ? 0.2 : 0) - (S(s, "auth_agreed") ? 0.15 : 0) - (S(s, "scope_agreed") ? 0.05 : 0),
+   cause:(s, prev) => prev ? ["Roles and a provisional order were written down in month one, with the rule for revisiting them."] : [S(s, "auth_unspoken") ? "Authorship felt too early to raise in month one." : S(s, "auth_pi_only") ? "Only the PI heard the authorship conversation; the collaborator never did." : "Even agreed orders get contested when contributions change and nobody revisits them."],
+   opts:[
+     {t:"Meet everyone, ask for each person whether the project would have succeeded without them, propose an order with reasons in writing, and offer the venue's criteria as the tie-breaker.", k:"sound", fx:{credit:15, trust:3}, ax:{conflict:"R"}, f:"The contribution question, the reasons in writing, the criteria as referee.", why:"“Would this have succeeded without them?” separates authors from acknowledgments without anyone's feelings deciding it. Written reasons survive the next disagreement."},
+     {t:"Let the PI decide and tell everyone.", k:"pit", fx:{credit:3, trust:-6}, rel:{peer:-5}, ax:{conflict:"L"}, why:"The PI does not know who did what in month five. The peer learns their position from an announcement."},
+     {t:"Add everyone and order by seniority to avoid a fight.", k:"meh", fx:{credit:-5, trust:-3}, ax:{conflict:"L"}, why:"It avoids this fight and creates the next one, with the master's student, who did the work and is last."}
+   ]},
+  {id:"I_review", p:"delegated_speed", months:[9], base:0.05, title:"A reviewer reran the pipeline.",
+   sit:"The metric double-counts. The headline number drops by half.",
+   risk:s => 0.05 + (S(s, "unverified") ? 0.6 : 0) - (S(s, "verified") ? 0.04 : 0),
+   cause:(s, prev) => prev ? ["The pipeline was tested and spot-checked in month seven."] : [S(s, "unverified") ? "The overnight pipeline shipped unverified in month seven." : "Even tested code has bugs; the reviewer found one."],
+   opts:[
+     {t:"Correct it in the rebuttal, thank the reviewer, and add the test that would have caught it.", k:"sound", fx:{trust:4, loop:6, credit:2}, ax:{conflict:"R"}, f:"Correct, thank, and add the test.", why:"A corrected number with a test is a paper reviewers trust more, not less. The alternative is an argument you will lose in public."},
+     {t:"Argue the reviewer misunderstood the metric.", k:"pit", fx:{trust:-8}, rel:{pi:-4}, ax:{conflict:"L"}, why:"They did not. The PI now defends a number nobody verified."},
+     {t:"Withdraw the paper quietly.", k:"meh", fx:{credit:-6, energy:-4}, ax:{conflict:"L"}, why:"Honest and more than the mistake needed. Half the number may still be a result."}
+   ]},
+  {id:"I_unsaid", p:"conflict_avoided", months:[9], base:0.1, title:"At the celebration.",
+   sit:"The peer says, half joking, that they never agreed with the framing and would rather not present the paper.",
+   risk:s => 0.1 + (S(s, "avoided_conflict") ? 0.4 : 0) + (S(s, "overclaim") ? 0.15 : 0) - (S(s, "conflict_direct") ? 0.1 : 0) - (s.m.trust > 70 ? 0.05 : 0),
+   cause:(s, prev) => prev ? ["Disagreements were argued with evidence when they arose, so none went underground."] : [S(s, "avoided_conflict") ? "In month seven you did not argue the framing with the PI; someone else disagreed silently too." : "Half-joking disagreements at celebrations are the ones nobody raised in the meeting."],
+   opts:[
+     {t:"Take it seriously, in private: ask what they would have said, and what they need now to stand behind the work.", k:"sound", fx:{trust:8}, rel:{peer:6}, ax:{conflict:"R"}, f:"A joke about a disagreement is a disagreement; treat it as one.", why:"Conflict entered out of respect deepens the relationship. The question “what would you need to stand behind this?” usually has a small answer."},
+     {t:"Laugh it off.", k:"pit", fx:{trust:-5}, rel:{peer:-6}, ax:{conflict:"L"}, why:"They were not entirely joking, and now they know you would rather not hear it."},
+     {t:"Offer them the presentation anyway, for their profile.", k:"meh", rel:{peer:-2}, ax:{conflict:"L"}, why:"Generous and beside the point. They told you they do not stand behind it."}
+   ]}
+];
+
+/* ---------------------------------------------------------------------------
+   DRILLS: two messages for the same moment. Weaker messages are long on purpose; length is not the tell.
+   ------------------------------------------------------------------------- */
+const DRILLS = [
+  {id:"D_quiet", q:"The peer has been silent on the theory part for three weeks. Which message?",
+   a:"Hey! Hope you're well and that the other project is going OK. Just wanted to check in on the theory part when you get a chance, no rush at all, I know things are hectic. Let me know if there's anything I can do, and we can always catch up whenever suits you. Thanks so much!",
+   b:"Hi. The theory section is the last blocker for the draft: I need the lemma statement by the 20th so the experiments in Section 4 can refer to it; the deadline arithmetic does not work otherwise. If the other deadline makes that impossible, I can take the proof sketch if you send me your notes, and we keep the lemma as yours. What would make it easier on your side?",
+   better:"b", feat:"Context, ask, date, and a way to say what they need",
+   principle:"A message that carries the why, a concrete ask with a date, and an offer gives the other person something to answer. “No rush” is kind and unanswerable.",
+   why:"A is warm and gives the peer nothing to do; it will be read and left. B names what is needed, by when, why, offers a way out, and asks a question that can be answered in one line.", res:["deadline", "meetings", "expectations"]},
+  {id:"D_auth", q:"Month one. You want to raise authorship with the senior collaborator. Which opener?",
+   a:"I know this might be a bit premature and I hope it's not awkward to bring up, but I was wondering whether at some point we could maybe have a conversation about how we're thinking about the paper and things like author order, just so everyone's on the same page eventually. Totally fine if it's too early, of course.",
+   b:"Before we start, one thing I would rather do early than late: I propose we write down roles and a provisional author order now, with the rule that we revisit it if contributions change. My draft: you as senior author, the peer and me sharing first on the theory and experiments, the master's student second. Does that match how you see it?",
+   better:"b", feat:"A concrete proposal with a revisit rule, not a request for permission to talk",
+   principle:"Discuss authorship before the work starts, with a written proposal people can correct. Asking whether it is too early invites the answer yes.",
+   why:"A apologizes four times and asks for a meeting about maybe having a conversation. B makes a proposal, states the rule that makes it safe, and asks one question.", res:["expectations", "icmje", "authorship"]},
+  {id:"D_remind", q:"Eight days without the PI's dataset decision. Which reminder?",
+   a:"Dear Professor, I am sorry to bother you again and I completely understand that you are extremely busy at the moment with everything going on. I sent an email last week about the dataset question and I was just wondering whether you had had a chance to look at it, whenever you have a spare moment. Many thanks in advance and sorry again.",
+   b:"Quick one: we need the dataset decision by Friday so the master's student can start. My recommendation is dataset B (larger, already licensed); if you prefer A or want to discuss, a two-line reply is enough. Otherwise we go with B on Friday.",
+   better:"b", feat:"One decision, one date, a default",
+   principle:"Reminders are always appreciated when they carry the decision, the date and a default. Apologizing for asking makes the ask easier to skip.",
+   why:"A is two sentences of apology around a question with no date and no proposal. B can be answered with “B, go” or not answered at all, and either way the student starts Friday.", res:["expectations", "tetris", "questions"]},
+  {id:"D_sbi", q:"The master's student's section was three days late with half the figures. Which feedback?",
+   a:"Hi, thanks for sending the section. I have to say I was a bit disappointed, to be honest, since we had agreed on a date and it's important that we keep to the plan, especially now. I also noticed it feels a bit thin in places. In future it would be great if you could be more careful about deadlines and completeness. Let me know if you have questions.",
+   b:"Can I give you some feedback on the section? It came Thursday instead of Monday, and figures 3 and 4 were missing, which meant the peer could not start the discussion until Friday. For the next one: send whatever is done on the day, with a line on what is missing. What got in the way this time?",
+   better:"b", feat:"Permission, situation, behavior, impact, next step, and a question",
+   principle:"Situation, behavior, impact, then the concrete next step, and ask what got in the way. “Disappointed” and “be more careful” are feelings and adjectives, not feedback.",
+   why:"A reports your feelings and asks for a character change. B asks permission, names the facts and the impact, gives one concrete practice, and asks the question that usually finds the real cause.", res:["nrr", "threefb", "kindnice"]},
+  {id:"D_advice", q:"You want a senior researcher's view on a half-formed idea. Which ask?",
+   a:"I was wondering if you might be able to give me some feedback on an idea I have been developing. I have attached a six-page document describing the motivation, the related work, the proposed method and some preliminary thoughts on experiments. Any comments at all would be greatly appreciated, whenever you have time.",
+   b:"One question, fifteen seconds: if there were a paper showing that augmentation substitutes for convolutional inductive bias, with the benefit vanishing at a measurable stem depth, would you want to read it? If yes, I will send a one-page pitch; if no, I would rather know now.",
+   better:"b", feat:"Advice, not feedback; one question, answerable in fifteen seconds",
+   principle:"Ask for advice on what to do next, not feedback on what you did. Make the question answerable in fifteen seconds and the six pages conditional on a yes.",
+   why:"A asks a busy person to read six pages before they know whether they care. B gives them the claim in one sentence and a yes/no that costs nothing; the pages come after.", res:["adviceask", "nothingtolose", "sixmn"]},
+  {id:"D_no", q:"A postdoc asks in the corridor for help with their benchmark. Which reply?",
+   a:"Yes, sure, sounds interesting! I'm pretty busy with the deadline but I'm sure I can fit it in somewhere, it shouldn't take too long. Send me the details and I'll have a look as soon as I can, probably this week or next, depending on how things go.",
+   b:"It does sound interesting. Let me check the calendar tonight and answer tomorrow with the hours I can actually give; if it is under a day before the deadline, I am in, and if not, I would rather say so now than drop it in month seven.",
+   better:"b", feat:"No yes on the spot; the calendar answers",
+   principle:"Never say yes on the spot. Answer tomorrow with a number of hours, and let the calendar decide; a yes that becomes a dropped ball costs the relationship the yes was meant to build.",
+   why:"A is a yes with no hours attached and “this week or next” already slipping. B keeps the connection, takes a night, and promises a real answer.", res:["angry", "tetris", "overhead"]},
+  {id:"D_update", q:"The weekly update to the PI and the senior collaborator. Which one?",
+   a:"Hi all, quick update from my side. This week I mainly worked on the experiments, which are progressing, and did some reading for the related work. There were a few issues with the cluster but I think it's sorted now. Next week I plan to continue with the experiments and start on the writing. Let me know if you have any questions!",
+   b:"Update, one minute. Figure attached: the effect holds at three model sizes, but shrinks at the largest (0.8 points, inside seed noise). Question for you: is a result that fades with scale still the paper, or do we lead with the mechanism story? I lean mechanism; I will proceed that way unless you object by Wednesday.",
+   better:"b", feat:"One figure, one question, one default",
+   principle:"A weekly update exists to get a decision, not to prove activity. A figure, the one question it raises, and the default you will take if nobody answers.",
+   why:"A says work happened and asks nothing. B shows the result, names the fork, states a lean and a date. The PI can answer in one word, and the loop is closed either way.", res:["agefeedback", "deadline", "spectrum"]},
+  {id:"D_fail", q:"The main effect vanished with more seeds. Which message to the team?",
+   a:"Hi everyone, a small update on the main experiment. With more seeds the results look a bit less clear than before, and I'm currently investigating a few possible explanations and trying some variants that might help. I'll keep you posted as soon as I understand better what's going on. Nothing to worry about yet!",
+   b:"Bad news, told early: with five seeds the main effect is inside the noise (figure attached). What it means: the headline claim is gone; the mechanism result and the negative result still stand. Proposal: we lead with those and drop Section 5. I would like to decide this week; can we meet Thursday?",
+   better:"b", feat:"The failure named, its consequence stated, a proposal, a date",
+   principle:"Say it the same day, say what it means, and propose the fallback. A failure told as “less clear” is a failure told in month eight.",
+   why:"A hides a dead result inside soft language and promises to keep investigating alone. B says what died, what survives, what to do, and when to decide.", res:["failure", "allostasis", "openloop"]},
+  {id:"D_agenda", q:"Inviting the team to the weekly meeting. Which invite?",
+   a:"Weekly sync, Tuesday 2 pm. Let's go through where everyone is, discuss the experiments and the theory, and talk about next steps. Everyone please join if you can. Thanks!",
+   b:"Tuesday 2 pm, thirty minutes. Two decisions needed: (1) do we keep the ablation on dataset B or drop it (the peer's input needed), (2) who takes the related-work pass by the 12th. The master's student's status is in the doc, no need to present it. Peer, only the first ten minutes need you. Notes: me.",
+   better:"b", feat:"Agenda as decisions, named owners, optional attendance",
+   principle:"An agenda is a list of decisions with the people each one needs. “Go through where everyone is” is a status meeting nobody needed.",
+   why:"A invites everyone to talk about everything. B names the two decisions, who each needs, what is pre-read, who takes notes, and who may leave after ten minutes.", res:["meetings", "tetris", "openloop"]},
+  {id:"D_frame", q:"The PI rewrote the framing and you think the results do not carry it. Which reply?",
+   a:"Thanks a lot for the edits, they really improve the flow! I had a small thought about the new framing, I might be wrong of course, but I was slightly unsure whether the results fully support the claim in the abstract, though maybe it's fine and I'm overthinking it. Happy to go with whatever you think is best.",
+   b:"Thanks for the pass; the intro reads much better. One disagreement, with the evidence: the abstract now claims the effect at all scales, and Table 2 shows it only up to the medium model, with the large one inside noise. I propose “up to medium scale, and we show why it fades”. What would change your mind on this, the extra seeds or the ablation?",
+   better:"b", feat:"Disagreement stated with the table it rests on, and a question",
+   principle:"State the disagreement without hedging, point at the evidence, propose the alternative, and ask what would change their mind. “I might be wrong of course” is not a claim anyone can test.",
+   why:"A buries the disagreement under four hedges and then abandons it. B names the claim, the table, the proposed wording, and asks a question about evidence instead of authority.", res:["convictions", "changeopinion", "conflict"]},
+  {id:"D_cold", q:"Cold email to an external researcher whose paper is close to your project. Which one?",
+   a:"Dear Dr. X, I am a PhD student working on representation learning and I am a great admirer of your work. I am currently developing a project that is related to some of your recent papers and I would love to have the opportunity to discuss it with you at some point, perhaps over a call, if you would be so kind as to have the time. I have attached a description of my project. Thank you very much for your consideration.",
+   b:"Dear Dr. X, your 2025 paper shows the gain vanishes when the projector is removed (Fig. 4). We see the same on a different objective, but only above a data threshold. One question, answerable in a line: did you try below roughly 50k samples, and if so, did the effect hold? If useful, I can send the two plots. Thank you.",
+   better:"b", feat:"Proof you read the paper, one specific question, fifteen seconds to answer",
+   principle:"Cold emails work when they show you thought about the paper and ask one question the recipient can answer in fifteen seconds. Admiration plus an attachment is a request for an hour.",
+   why:"A asks for a call about an attached document, from someone who has not shown they read anything. B cites the figure, states the connection, asks one thing, and offers rather than attaches.", res:["sixmn", "adviceask", "nothingtolose"]},
+  {id:"D_target", q:"You suspect the PI thinks this is a workshop paper. Which check?",
+   a:"Just to double check, I assume we're still going for the main conference with this one, right? I think that's what we discussed at the start but wanted to make sure. Anyway, the draft is coming along, I'll send it when it's in better shape.",
+   b:"Checking one assumption before I write another section: I have been writing for the main conference (eight pages, the ablation study in). If you see it as the workshop paper, the scope changes: four pages, no ablation, and we keep the study for the follow-up. Which is it? A one-word answer is fine.",
+   better:"b", feat:"The assumption named, both branches spelled out, a one-word answer requested",
+   principle:"When you check an assumption, say what changes under each answer. A leading question (“right?”) gets a yes that means nothing.",
+   why:"A asks a question that answers itself and postpones the draft. B states what has been assumed, what each answer costs, and makes the reply trivial.", res:["expectations", "cosuper", "questions"]},
+  {id:"D_post", q:"Inviting the team to a postmortem two weeks after the deadline. Which invite?",
+   a:"Hi all, now that the paper is submitted, it would be nice to have a bit of a retrospective at some point to talk about how things went and what we could do better next time. No pressure, only if people feel like it. Maybe we can find a slot over lunch sometime in the next weeks.",
+   b:"Postmortem, one hour, Thursday the 24th, rested (that is why it is not this week). Three rounds, all blameless: start/stop/continue for how we worked; who did what by when, and where the margin of safety was thin; and the one question, what would need to change to make this easy next time. I will send my own answers first so nobody goes first alone.",
+   better:"b", feat:"A date, a structure, blameless by design, and the organizer goes first",
+   principle:"A postmortem needs a slot, a structure, psychological safety and someone who goes first. “At some point over lunch” is the open loop staying open.",
+   why:"A is an intention. B is a meeting with a time, an agenda, a safety rule and the organizer's own vulnerability up front.", res:["openloop", "postmortem_sre", "nrr"]},
+  {id:"D_burn", q:"You are close to burnout, in deadline month. Which message to the PI?",
+   a:"Hi, sorry to bring this up right now with the deadline so close, and I don't want to make a big thing of it, but I've been feeling pretty tired lately and a bit overwhelmed. I'll of course keep going and make sure everything gets done, I just wanted to mention it. Sorry again.",
+   b:"I need to tell you something about capacity: I have not had a free day in six weeks and I am making mistakes I would not normally make. I am taking Friday to Sunday off, and I have moved the two remaining figures to the peer and the master's student with clear asks. The paper still goes in on time. I wanted you to hear it from me, not from the errors.",
+   better:"b", feat:"The fact, the decision already taken, the plan, and why you are saying it",
+   principle:"Name it with facts, take the boundary rather than asking permission for it, show the plan, and say why you are telling them. Apologizing for being tired asks the PI to reassure you instead of letting you rest.",
+   why:"A apologizes twice, promises to keep going, and asks for nothing, so nothing changes. B states the fact, the decision, the delegation and the outcome, which is what a PI needs to hear to trust the plan.", res:["rest", "hardeasy", "restmastery"]}
+];
+
+/* ---------------------------------------------------------------------------
+   RESOURCES, GROUPS, GLOSSARY
+   ------------------------------------------------------------------------- */
+const RESOURCES = {
+  expectations:{t:"A PhD expectations guide", by:"P2P No. 132", url:"https://path2phd.substack.com/p/a-phd-expectations-guide", n:"Bring questions, not results; clarify expectations and authorship upfront; reminders are always appreciated."},
+  openloop:{t:"Don't run your projects open-loop", by:"P2P No. 134", url:"https://path2phd.substack.com/p/dont-run-your-projects-open-loop", n:"The postmortem checklist: self, communication, project hygiene; then feed it forward."},
+  deadline:{t:"What's better than a deadline?", by:"P2P No. 114", url:"https://path2phd.substack.com/p/whats-better-than-a-deadline", n:"A collaborator: a tight feedback loop, and you will not let a colleague down."},
+  meetings:{t:"Tools for better meetings", by:"P2P No. 101", url:"https://path2phd.substack.com/p/tips-for-better-meetings", n:"Agenda as questions, a note-taker, buffers, no “we should”, who does what by when."},
+  contingency:{t:"The price of not having contingency plans", by:"P2P No. 51", url:"https://path2phd.substack.com/p/p2p-no-51-the-price-of-not-having", n:"Just-in-time plans break; write the minimum you would be satisfied with and pay the premium of slack."},
+  planning:{t:"On planning", by:"P2P No. 125", url:"https://path2phd.substack.com/p/on-planning", n:"Actionable, timed, owned steps; wiggle room; pre-mortem and pre-victorem."},
+  stopfinish:{t:"Stop or finish?", by:"P2P No. 16", url:"https://path2phd.substack.com/p/p2p-no-16-stop-or-finish", n:"You cannot finish a project, only stop working on it; a deadline can be an ally."},
+  conflict:{t:"Can this conflict deepen the relationship?", by:"P2P No. 117", url:"https://path2phd.substack.com/p/can-this-conflict-deepen-the-relationship", n:"Enter the conflict out of respect, not to be right."},
+  convictions:{t:"Strong convictions, loosely held", by:"P2P No. 14", url:"https://path2phd.substack.com/p/p2p-no-14-strong-convictions-loosely", n:"State claims without hedging, then treat them as falsifiable."},
+  changeopinion:{t:"What would it take to change your opinion?", by:"P2P No. 98", url:"https://path2phd.substack.com/p/what-would-it-take-to-change-your", n:"If you cannot answer, the belief is not a belief about evidence."},
+  angry:{t:"Angry, lonely, tired?", by:"P2P No. 57", url:"https://path2phd.substack.com/p/p2p-no-57-angry-lonely-tired", n:"Never decide or say yes on the spot; delay, decide twice, average."},
+  overhead:{t:"Dose-dependent effects of overhead", by:"P2P No. 28", url:"https://path2phd.substack.com/p/p2p-no-28-dose-dependent-merits-of", n:"Overhead is an inverted U: a few projects, not one, not many."},
+  worksmart:{t:"Don't work hard, work smart", by:"P2P No. 8", url:"https://path2phd.substack.com/p/p2p-no-8-work-smart-not-hard", n:"The hustle does not stop by itself; marginal gains diminish."},
+  rest:{t:"Be world-class in rest too", by:"P2P No. 9", url:"https://path2phd.substack.com/p/p2p-no-9-be-world-class-in-rest-too", n:"Stress plus rest is growth; if everything is a priority, nothing is."},
+  restmastery:{t:"Rest is part of mastery", by:"P2P No. 122", url:"https://path2phd.substack.com/p/rest-is-part-of-mastery", n:"Rest is not opposed to excellence; fight the action bias."},
+  hardeasy:{t:"It's hard to take it easy", by:"P2P No. 36", n:"Easy days most of the time are what let you go hard when it counts; no email at night."},
+  failure:{t:"On Failure", by:"P2P No. 13", url:"https://path2phd.substack.com/p/p2p-no-13-on-failure", n:"Failure is feedback, not a stigma or a badge; do a postmortem."},
+  allostasis:{t:"An allostasis theory of failure", by:"P2P No. 84", url:"https://path2phd.substack.com/p/an-allostasis-theory-of-failure", n:"Order, disorder, reorder: something must change after a failure."},
+  letfail:{t:"Let them fail safely", by:"P2P No. 80", url:"https://path2phd.substack.com/p/managing-failure-as-a-mentor", n:"Mentors create the environment for safe failure and step back."},
+  twofast:{t:"Two kinds of fast", by:"P2P No. 133", url:"https://path2phd.substack.com/p/two-kinds-of-fast", n:"Earned versus delegated speed; would you put your name on it?"},
+  revisitfast:{t:"Revisiting what is fast", by:"P2P No. 129", url:"https://path2phd.substack.com/p/revisiting-what-is-fast", n:"Delegating, to juniors or to AI, means guardrails, verification and expected mistakes."},
+  coxswain:{t:"Coxswain, not in vain", by:"P2P No. 18", url:"https://path2phd.substack.com/p/p2p-no-18-coxswain-not-in-vain", n:"On a team, not giving your best can sink the whole boat; a team keeps your guard up."},
+  agefeedback:{t:"The Age of Feedback", by:"P2P (draft)", n:"Waiting for results before talking wastes more time than it saves; tighten the loop."},
+  threefb:{t:"Thanks for the Feedback", by:"Douglas Stone and Sheila Heen", url:"https://www.stoneandheen.com/thanks-feedback", n:"Appreciation, coaching, evaluation: know which one you are giving or asking for."},
+  nrr:{t:"No Rules Rules", by:"Reed Hastings and Erin Meyer", url:"https://www.norulesrules.com/", n:"“Can I give you some feedback?”; start/stop/continue; the boss asks first and thanks the giver."},
+  kindnice:{t:"Kind vs nice", by:"Farnam Street", n:"A kind person tells you about the spinach on your teeth; being clear is kind."},
+  premortem:{t:"Performing a project premortem", by:"Gary Klein, Harvard Business Review", url:"https://hbr.org/2007/09/performing-a-project-premortem", n:"Imagine the project has failed and write down why, before it starts."},
+  postmortem_sre:{t:"Postmortem culture: learning from failure", by:"Google SRE book", url:"https://sre.google/sre-book/postmortem-culture/", n:"Blameless postmortems, written, shared, acted on."},
+  icmje:{t:"Defining the role of authors and contributors", by:"ICMJE (the Vancouver criteria)", url:"https://www.icmje.org/recommendations/browse/roles-and-responsibilities/defining-the-role-of-authors-and-contributors.html", n:"Substantial contribution, drafting or revising, final approval, accountability."},
+  authorship:{t:"Authorship: who gets credit for what", by:"Nature news, 2018", url:"https://www.nature.com/articles/d41586-018-06185-8", n:"How authorship criteria are applied, and often not."},
+  tetris:{t:"Maker's schedule, manager's schedule", by:"Paul Graham", url:"http://www.paulgraham.com/makersschedule.html", n:"Makers need half-days; managers run on hours. Sync your deep work with the boss's busy slots."},
+  cosuper:{t:"Thoughts on co-supervision", by:"P2P No. 112", url:"https://path2phd.substack.com/p/thoughts-on-co-supervision", n:"Reconcile opinions and check explicitly that everyone was told the same thing."},
+  questions:{t:"Never stop asking questions", by:"P2P No. 6", url:"https://path2phd.substack.com/p/p2p-no-6-never-stop-asking-questions", n:"Head-nodding is dangerous; end with “is it clear what you need to do?”"},
+  spectrum:{t:"The spectrum of details in communication", by:"P2P No. 92", url:"https://path2phd.substack.com/p/the-spectrum-of-details-in-communication", n:"Signpost, then let the reader choose the depth."},
+  perfectionism:{t:"On Perfectionism", by:"P2P No. 37", n:"The goalpost moves; find the one priority."},
+  killdarlings:{t:"Kill your darlings", by:"P2P No. 25", url:"https://path2phd.substack.com/p/p2p-no-25-kill-your-darlings", n:"Sunk cost protects your own ideas; cut for clarity."},
+  adviceask:{t:"Ask for advice, not feedback", by:"Adam Grant", url:"https://adamgrant.net/book/hidden-potential/", n:"Feedback says what you did wrong yesterday; advice says how to improve tomorrow."},
+  nothingtolose:{t:"Nothing to lose", by:"P2P (draft)", n:"Sharing an idea yields confirmation, improvement, or an early kill; all three are wins."},
+  sixmn:{t:"6-Minute Networking", by:"Jordan Harbinger", n:"Small, regular, generous touches; the sixty-second cold email with one question."},
+  quitgrit:{t:"The quit and grit test", by:"P2P No. 63", url:"https://path2phd.substack.com/p/when-to-quit-and-when-to-grit", n:"Persist if it brings joy, matters, and you learn; quit if you cannot learn."},
+  mentorship:{t:"My give and take on mentorship", by:"P2P No. 58", url:"https://path2phd.substack.com/p/p2p-no-58-my-give-and-take-on-mentorship", n:"Your mentors want you to succeed; ask before the catastrophe."},
+  supervisor:{t:"How to select a supervisor", by:"P2P No. 2", url:"https://path2phd.substack.com/p/p2p-no-2-the-superbvisor-checklist", n:"Who you work with matters more than what you work on."},
+  timemgmt:{t:"On time management", by:"P2P No. 106", url:"https://path2phd.substack.com/p/on-practical-time-management", n:"Protect focus time, buffers, seasonality, multi-scale plans."},
+  compare:{t:"The ReLU illusion of progress", by:"P2P No. 130", url:"https://path2phd.substack.com/p/the-relu-illusion-of-progress", n:"Papers are a flat signal early; make your rewards dense."},
+  crucial:{t:"Crucial Conversations", by:"Patterson, Grenny, McMillan and Switzler", n:"Tools for talking when stakes are high."},
+  labwork:{t:"Labwork to Leadership", by:"Jen Heemstra", n:"Feedback that is specific and frequent; expectations stated; celebrate during the day."}
+};
+const RES_GROUPS = [
+  {name:"Expectations, alignment and meetings", ids:["expectations", "cosuper", "questions", "meetings", "tetris", "spectrum", "supervisor"]},
+  {name:"Time, planning and load", ids:["contingency", "planning", "stopfinish", "deadline", "overhead", "worksmart", "angry", "timemgmt", "perfectionism", "killdarlings", "compare"]},
+  {name:"Feedback, conflict and credit", ids:["conflict", "convictions", "changeopinion", "threefb", "nrr", "kindnice", "adviceask", "crucial", "labwork", "icmje", "authorship"]},
+  {name:"Failure, rest and sustainability", ids:["failure", "allostasis", "letfail", "rest", "restmastery", "hardeasy", "quitgrit", "mentorship"]},
+  {name:"Loops, speed and postmortems", ids:["openloop", "agefeedback", "twofast", "revisitfast", "coxswain", "premortem", "postmortem_sre", "nothingtolose", "sixmn"]}
+];
+const GLOSSARY = [
+  ["pre-mortem", "Before a project starts, imagine it has failed and write down why; the causes become the risks to manage.", ["pre-mortem", "premortem"]],
+  ["pre-victorem", "The mirror of a pre-mortem: imagine the project succeeded and describe how it got there.", ["pre-victorem"]],
+  ["postmortem", "A structured look back after a project: what happened, why, and what to change. Blameless by design.", ["postmortem", "postmortems", "post-mortem"]],
+  ["start/stop/continue", "A feedback format: what the other person should start doing, stop doing, and keep doing.", ["start/stop/continue", "start, stop, continue"]],
+  ["situation, behavior, impact", "A feedback format: the situation, the observed behavior, and its impact; then the next step. No adjectives about character.", ["situation, behavior, impact", "situation-behavior-impact"]],
+  ["contingency minimum", "The smallest outcome you would still be satisfied with if things go wrong, written down before they do.", ["contingency minimum", "written minimum", "the minimum you wrote down"]],
+  ["margin of safety", "Slack in the plan for the cluster going down, a colleague falling ill, or a result dying; the buffer nobody may spend.", ["margin of safety"]],
+  ["buffer", "Weeks between now and the deadline that are not yet promised to anything.", ["buffer"]],
+  ["forcing function", "An external constraint, such as a deadline, that makes people act; useful in doses, harmful as the only motivation.", ["forcing function"]],
+  ["executive sponsor", "The senior person who has authority over a project and cares about its delivery, even when not working on it day to day.", ["executive sponsor"]],
+  ["levers", "What makes a collaborator act: the output that helps their own goals, another paper, a cleared deck.", ["levers"]],
+  ["manager's schedule", "A day cut into hour-long slots for meetings, as most PIs run; makers need half-days of uninterrupted time.", ["manager's schedule", "manager's calendar"]],
+  ["Vancouver criteria", "The ICMJE definition of authorship: substantial contribution, drafting or revising, final approval, accountability.", ["Vancouver criteria", "the venue's criteria"]],
+  ["open loop", "A task or decision that is waiting on someone and visible to no one; also a project that ends without a postmortem.", ["open loop", "open loops", "open-loop"]],
+  ["feedback loop", "How fast you find out that something is off: a weekly message is a tight loop, a monthly meeting is a loose one.", ["feedback loop", "loop"]],
+  ["async", "Communication that does not need both people present, such as a message with full context read later.", ["async", "asynchronous"]],
+  ["standing slot", "A recurring meeting time that exists whether or not there is something to discuss; cancelling it is the exception.", ["standing slot"]],
+  ["scope freeze", "The point, some weeks before a deadline, after which nothing is added to the paper; only cuts.", ["scope freeze", "freeze scope", "frozen scope"]],
+  ["delegated speed", "Speed that comes from someone or something else doing the work; it needs verification before it is yours.", ["delegated speed"]],
+  ["seeds", "Random initializations of an experiment; a result that holds for one seed and not five is noise.", ["seeds", "seed"]],
+  ["ablation", "Removing one component at a time to see which produced the gain.", ["ablation", "ablations"]],
+  ["baseline", "The simpler or existing method a new one is compared against.", ["baseline", "baselines"]],
+  ["workshop paper", "A short paper at a conference workshop: lower stakes, less scope, often a stepping stone to the main venue.", ["workshop paper", "the workshop"]],
+  ["one-to-one", "A regular private meeting between a student and their supervisor.", ["one-to-one", "one-on-one"]],
+  ["working with me", "A short note describing how you prefer to work: hours, channels, what annoys you. Useful, and not a substitute for asking others.", ["working with me", "“working with me” note", "“working with me” manual"]],
+  ["ways of working", "The team's agreed habits: meetings, channels, response times, who decides what.", ["ways of working"]],
+  ["pilot", "A small, short experiment whose failure would stop or redirect the larger plan.", ["pilot"]],
+  ["rebuttal", "The authors' written reply to reviewers before the final decision.", ["rebuttal"]],
+  ["curse of knowledge", "Once you know something you cannot imagine not knowing it, so you skip the sentence the reader needed.", ["curse of knowledge"]],
+  ["sunk cost", "Effort already spent that should not affect the next decision, and does.", ["sunk cost"]],
+  ["barbell", "A portfolio of one safe project and one risky one, and nothing in the middle.", ["barbell"]],
+  ["periodize", "Alternate hard and easy periods on purpose, as athletes do, instead of running every week at full effort.", ["periodize", "periodized", "seasonality"]],
+  ["psychological safety", "A team where saying a hard thing, a failure or a disagreement, does not cost you; the precondition for feedback.", ["psychological safety"]],
+  ["kind vs nice", "Nice avoids the uncomfortable truth; kind tells it, because you respect the person.", ["kind vs nice"]],
+  ["Pyrrhic victory", "A win whose cost is too high; a paper saved by all-nighters.", ["Pyrrhic victory"]],
+  ["counterfactual", "The question “what would happen otherwise”; for burnout: if you burn out, how many people can you not help?", ["counterfactual"]],
+  ["agent", "A model that runs a multi-step task on its own, such as writing and executing a pipeline overnight.", ["AI agent", "agent"]],
+  ["pipeline", "The chain of scripts from raw data to reported numbers.", ["pipeline"]],
+  ["metric", "The number a result is measured by; if it double-counts, everything downstream is wrong.", ["metric"]],
+  ["spot check", "Checking a handful of examples by hand against what the code reports.", ["spot check"]],
+  ["stop time", "An hour after which nobody works, decided before the crunch, not during it.", ["stop time"]]
+];
+/* ============================================================================
+   ENGINE. Research Projects · The Management Game. One project, nine months, six dials, problems that follow from decisions.
+   ========================================================================== */
+const STORE_KEY = "rpm_v1";
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
+const icon = (id, cls) => `<svg class="ic ${cls || ""}" aria-hidden="true"><use href="#${id}"/></svg>`;
+
+function loadStore() {
+  const base = {runs:0, hits:{}, prevented:{}, fixed:{}, axes:{}, seen:{}, seenAt:{}, drills:{n:0, correct:0}, rounds:0, best:null, last:null};
+  try { return Object.assign(base, JSON.parse(localStorage.getItem(STORE_KEY) || "{}")); } catch (e) { return base; }
+}
+function saveStore() { try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) { /* private mode */ } }
+let store = loadStore();
+
+const SCREENS = ["home","run","debrief","drills","drillres","profile","manual"];
+let current = "home";
+function show(id) {
+  SCREENS.forEach(s => $("screen-" + s).classList.toggle("hidden", s !== id));
+  current = id; window.scrollTo({top:0, behavior:"instant"});
+  const h = $("screen-" + id).querySelector("h1, h2"); if (h) { h.setAttribute("tabindex", "-1"); h.focus({preventScroll:true}); }
+}
+function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 1800); }
+function readsHTML(ids) {
+  const seen = new Set();
+  return ids.filter(id => RESOURCES[id] && !seen.has(id) && seen.add(id)).map(id => { const r = RESOURCES[id];
+    return `<li><a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.t)}</a> <span class="by">— ${esc(r.by)}</span>${r.n ? ` <span class="muted">· ${esc(r.n)}</span>` : ""}</li>`; }).join("");
+}
+
+/* ---- glossary tooltips: first occurrence of a term on a card gets a hover tip and a chip ---- */
+const rxEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const TERM_INDEX = (() => {
+  const list = []; const taken = new Set();
+  const add = (i, f) => { const k = f.toLowerCase(); if (!f || taken.has(k)) return; taken.add(k); list.push({i, f}); };
+  GLOSSARY.forEach((g, i) => { const [t, d, al] = g; if (al) al.forEach(f => add(i, f)); else add(i, t.replace(/\s*\(.*?\)\s*/g, "").trim()); });
+  const pStart = GLOSSARY.length;
+  Object.values(PROBLEMS).forEach((p, j) => { GLOSSARY.push([p.name, p.what, [p.name], "prob"]); add(pStart + j, p.name); });
+  list.sort((x, y) => y.f.length - x.f.length);
+  const rx = new RegExp("(?<![\\w-])(" + list.map(x => rxEsc(esc(x.f))).join("|") + ")(?![\\w-])", "gi");
+  const byForm = {}; list.forEach(x => { byForm[esc(x.f).toLowerCase()] = x.i; });
+  return {rx, byForm};
+})();
+function annotate(text, found, seen) {
+  found = found || new Set(); seen = seen || new Set();
+  const html = esc(text).replace(TERM_INDEX.rx, m => { const i = TERM_INDEX.byForm[m.toLowerCase()]; if (i === undefined || seen.has(i)) return m; seen.add(i); found.add(i); return `<span class="term" data-tip="${esc(GLOSSARY[i][1])}">${m}</span>`; });
+  return {html, found};
+}
+function termStripHTML(found) {
+  const ids = Array.from(found); if (!ids.length) return "";
+  return `<div class="termstrip"><span class="small muted">Terms on this card:</span> ${ids.map(i => `<button type="button" class="tchip" data-i="${i}" aria-expanded="false">${esc(GLOSSARY[i][0])}</button>`).join("")}<div class="tdef hidden"></div></div>`;
+}
+function wireTermStrip(host) {
+  host.querySelectorAll(".tchip").forEach(b => b.addEventListener("click", () => {
+    const def = host.querySelector(".tdef"); const i = Number(b.dataset.i); const open = b.getAttribute("aria-expanded") === "true";
+    host.querySelectorAll(".tchip").forEach(x => x.setAttribute("aria-expanded", "false"));
+    if (open) { def.classList.add("hidden"); return; }
+    b.setAttribute("aria-expanded", "true"); def.innerHTML = `<b>${esc(GLOSSARY[i][0])}</b> ${esc(GLOSSARY[i][1])}`; def.classList.remove("hidden");
+  }));
+}
+document.addEventListener("mouseover", e => { const t = e.target.closest && e.target.closest(".term"); if (t) t.classList.toggle("r", t.getBoundingClientRect().left > window.innerWidth / 2); });
+
+/* ============================================================================
+   RUN
+   ========================================================================== */
+let run = null;
+const meterName = id => METERS.find(m => m.id === id).name;
+function startRun() {
+  run = {month:0, meters:Object.assign({}, START), rel:{}, progress:0, seeds:{}, log:[], hist:[], queue:[], item:null, answered:false, ax:{}, fired:[], prevented:[], reads:[], n:0};
+  CAST.forEach(c => { run.rel[c.id] = c.rel; });
+  run.hist.push({month:0, meters:Object.assign({}, run.meters)});
+  nextMonth();
+}
+/* a month = the problems that are due now, rolled against the odds the past decisions set, then this month's decisions */
+function nextMonth() {
+  run.month++;
+  if (run.month > MONTHS) { finishRun(); return; }
+  const cards = shuffle(CARDS.filter(c => c.month === run.month));
+  const chosen = cards.filter(c => c.always).concat(shuffle(cards.filter(c => !c.always)).slice(0, Math.max(0, PER_MONTH - cards.filter(c => c.always).length)));
+  const incs = INCIDENTS.filter(i => i.months.includes(run.month) && !run.fired.some(f => f.id === i.id) && !run.prevented.some(f => f.id === i.id));
+  run.queue = [];
+  incs.forEach(i => {
+    const risk = clamp(i.risk(runState()), 0, 0.97); const roll = Math.random();
+    if (roll < risk) run.queue.push({kind:"incident", item:i, risk});
+    else if (risk < i.base) { run.prevented.push({id:i.id, month:run.month, risk, causes:i.cause(runState(), true)}); }
+    else if (i.months[i.months.length - 1] === run.month) { /* last chance passed without firing; nothing to log */ }
+  });
+  chosen.forEach(c => run.queue.push({kind:"card", item:c}));
+  if (!run.queue.length) { nextMonth(); return; }
+  renderItem();
+}
+function runState() { return {m:run.meters, rel:run.rel, seeds:run.seeds, progress:run.progress, month:run.month}; }
+const has = s => !!run.seeds[s];
+function renderMonths() {
+  $("months").innerHTML = Array.from({length:MONTHS}, (_, i) => `<span class="${i + 1 < run.month ? "done" : i + 1 === run.month ? "now" : ""}${i + 1 === DEADLINE ? " dl" : ""}" title="Month ${i + 1}${i + 1 === DEADLINE ? " · deadline" : ""}"></span>`).join("");
+}
+function renderMeters() {
+  $("meters").innerHTML = METERS.map(m => `<div class="meter" title="${esc(m.desc)}"><div class="lab"><span>${esc(m.name)}</span><span>${Math.round(run.meters[m.id])}</span></div><div class="bar"><i style="width:${clamp(run.meters[m.id], 0, 100)}%; background:${run.meters[m.id] < 30 ? "var(--bad)" : run.meters[m.id] < 55 ? "var(--warn, #b8860b)" : "var(--good)"}"></i></div></div>`).join("")
+    + `<div class="meter" title="How much of the paper exists"><div class="lab"><span>Progress</span><span>${Math.round(run.progress)}</span></div><div class="bar"><i style="width:${clamp(run.progress, 0, 100)}%"></i></div></div>`;
+  $("cast").innerHTML = CAST.map(c => `<div class="who"><b>${esc(c.name)}</b><span class="small muted">${esc(c.role)}</span><div class="rel" title="Relationship: ${Math.round(run.rel[c.id])}"><i style="width:${clamp(run.rel[c.id], 0, 100)}%"></i></div></div>`).join("");
+}
+function renderItem() {
+  const q = run.queue[0]; run.item = q; run.answered = false;
+  if (current !== "run") show("run");
+  renderMonths(); renderMeters();
+  $("run-left").textContent = `Month ${run.month} of ${MONTHS}${run.month === DEADLINE ? " · deadline month" : run.month > DEADLINE ? " · after submission" : ` · ${DEADLINE - run.month} to the deadline`}`;
+  $("run-right").textContent = `${run.n + 1}. decision`;
+  const found = new Set(), seen = new Set();
+  const it = q.item;
+  if (q.kind === "incident") {
+    const P = PROBLEMS[it.p];
+    $("run-phase").textContent = "A problem fires";
+    $("run-banner").innerHTML = `<div class="incident"><div class="ih">${icon("i-warn")} ${esc(P.name)}</div><div class="cause"><b>Why now:</b> ${it.cause(runState(), false).map(esc).join(" ")} <span class="muted">(odds this month: ${Math.round(q.risk * 100)}%)</span></div></div>`;
+  } else {
+    $("run-phase").textContent = it.phase || `Month ${run.month}`;
+    $("run-banner").innerHTML = "";
+  }
+  $("run-title").textContent = it.title; $("run-situation").innerHTML = annotate(it.sit, found, seen).html;
+  const order = shuffle(it.opts.map((_, k) => k)); run.order = order;
+  $("run-opts").innerHTML = ""; $("run-verdict").innerHTML = ""; $("run-next").classList.add("hidden");
+  order.forEach((k, idx) => { const o = it.opts[k]; const b = document.createElement("button"); b.className = "opt"; b.dataset.k = k;
+    b.innerHTML = `<span class="ltr">${"ABCD"[idx]}</span><span class="txt">${annotate(o.t, found, seen).html}</span>`; b.addEventListener("click", () => answer(k)); $("run-opts").appendChild(b); });
+  $("run-terms").innerHTML = termStripHTML(found); wireTermStrip($("run-terms"));
+  $("run-title").focus({preventScroll:true});
+}
+const fxLabel = (id, v) => `<span class="${v > 0 ? "up" : "down"}">${id === "prog" || id === "progress" ? "progress" : id.startsWith("rel:") ? CAST.find(c => c.id === id.slice(4)).name : meterName(id)} ${v > 0 ? "+" : ""}${v}</span>`;
+function applyFx(o) {
+  const chips = [];
+  Object.entries(o.fx || {}).forEach(([k, v]) => { if (k === "prog" || k === "progress") run.progress = clamp(run.progress + v, 0, 100); else run.meters[k] = clamp(run.meters[k] + v, 0, 100); chips.push(fxLabel(k, v)); });
+  Object.entries(o.rel || {}).forEach(([k, v]) => { run.rel[k] = clamp(run.rel[k] + v, 0, 100); chips.push(fxLabel("rel:" + k, v)); });
+  (o.seeds || []).forEach(s => { run.seeds[s] = run.month; });
+  (o.clear || []).forEach(s => { delete run.seeds[s]; });
+  if (o.ax) { const [axis, pole] = Object.entries(o.ax)[0]; run.ax[axis] = run.ax[axis] || {L:0, R:0}; run.ax[axis][pole]++; }
+  return chips;
+}
+function answer(k) {
+  if (!run || run.answered) return; run.answered = true;
+  const q = run.item; const it = q.item; const o = it.opts[k];
+  const chips = applyFx(o);
+  /* time passes with every decision, and the deadline eats the buffer faster as it nears */
+  if (q.kind === "card" && run.month <= DEADLINE) {
+    run.meters.buffer = clamp(run.meters.buffer - (run.month >= DEADLINE - 1 ? 2.5 : 1.2), 0, 100);
+    /* the paper grows with every month of work; a tight loop and an aligned team make each month count, an empty buffer or an empty tank halves it */
+    let gain = 5 + 3 * (run.meters.loop + run.meters.align) / 200; if (run.meters.buffer < 15) gain *= 0.5; if (run.meters.energy < 30) gain *= 0.6;
+    run.progress = clamp(run.progress + gain, 0, 100);
+  }
+  run.n++;
+  const entry = {month:run.month, kind:q.kind, id:it.id, title:it.title, k:o.k, pick:o.t, p:o.p || it.p, why:o.why, fixed:q.kind === "incident" && o.k === "sound"};
+  run.log.push(entry);
+  if (q.kind === "incident") { run.fired.push({id:it.id, month:run.month, risk:q.risk, causes:it.cause(runState(), false), fixed:o.k === "sound", entry}); }
+  (o.res || (o.p && PROBLEMS[o.p] ? PROBLEMS[o.p].res : []) || []).forEach(r => run.reads.push(r));
+  document.querySelectorAll("#run-opts .opt").forEach(b => { const kk = Number(b.dataset.k); const oo = it.opts[kk]; b.setAttribute("aria-disabled", "true");
+    if (kk === k) b.classList.add(o.k === "sound" ? "sound" : o.k === "pit" ? "pit" : "meh"); else b.classList.add("dim");
+    b.insertAdjacentHTML("beforeend", `<span class="badge">${oo.k === "sound" ? "sound" : oo.k === "pit" ? "the trap" : "defensible, costly"}${kk === k ? " · your pick" : ""}</span>`); });
+  const head = o.k === "sound" ? "Sound." : o.k === "pit" ? `The trap${o.p ? `: ${esc(PROBLEMS[o.p].name)}` : ""}.` : "Defensible, and it costs you.";
+  let html = `<div class="verdict ${o.k === "sound" ? "sound" : o.k === "pit" ? "pit" : "meh"}"><div class="vic">${icon(o.k === "sound" ? "i-check" : o.k === "pit" ? "i-x" : "i-tilde")}</div><div><div class="vt">${head}</div><div style="margin-top:6px">${annotate(o.why).html}</div>`;
+  if (chips.length) html += `<div class="fx">${chips.join("")}</div>`;
+  if (o.later) html += `<div class="small muted" style="margin-top:6px">${icon("i-flag")} ${esc(o.later)}</div>`;
+  if (o.k !== "sound") { const best = it.opts.find(x => x.k === "sound"); if (best) html += `<div class="contrast" style="margin-top:8px"><b>The sound move</b> was ${quoteOpt(best.t)} ${esc(best.f || "")}</div>`; }
+  if (o.p && PROBLEMS[o.p]) html += `<details class="lesson" style="margin-top:10px"><summary>${icon("i-book")} About “${esc(PROBLEMS[o.p].name)}”</summary><div class="inner">${probHTML(o.p)}</div></details>`;
+  html += `</div></div>`;
+  $("run-verdict").innerHTML = html;
+  renderMeters();
+  $("run-next").textContent = run.queue.length > 1 ? "Next →" : run.month < MONTHS ? `On to month ${run.month + 1} →` : "See the debrief →";
+  $("run-next").classList.remove("hidden"); $("run-next").focus({preventScroll:true});
+}
+const quoteOpt = t => /^[“"]/.test(t) ? esc(t) : `“${esc(t)}”`;
+function nextItem() {
+  if (!run || !run.answered) return;
+  run.queue.shift();
+  if (run.queue.length) { renderItem(); return; }
+  run.hist.push({month:run.month, meters:Object.assign({}, run.meters), progress:run.progress});
+  if (run.month === DEADLINE) run.submitted = run.progress >= PROG_NEED && run.meters.buffer > 0;
+  nextMonth();
+}
+function probHTML(pid) {
+  const P = PROBLEMS[pid];
+  return `<div class="pitbox"><div><span class="k">Looks like</span><span>${esc(P.looks)}</span></div><div><span class="k">Causes</span><span>${esc(P.causes)}</span></div><div><span class="k">Prevent</span><span>${esc(P.prevent)}</span></div><div><span class="k">Repair</span><span>${esc(P.repair)}</span></div><div><span class="k">Read</span><span>${P.res.map(r => `<a href="${esc(RESOURCES[r].url)}" target="_blank" rel="noopener noreferrer">${esc(RESOURCES[r].t)}</a> <span class="muted small">(${esc(RESOURCES[r].by)})</span>`).join("<br>")}</span></div></div>`;
+}
+
+/* ---- debrief ---- */
+function outcomes() {
+  const m = run.meters;
+  const quality = clamp(Math.round(0.6 * run.progress + 0.4 * m.loop), 0, 100);
+  const team = Math.round((m.trust + m.align + Object.values(run.rel).reduce((s, v) => s + v, 0) / CAST.length) / 3);
+  return {submitted:run.submitted, quality, team, energy:Math.round(m.energy), credit:Math.round(m.credit)};
+}
+function verdictFor(o) {
+  const score = (o.submitted ? 30 : o.quality >= 50 ? 10 : 0) + 0.2 * o.quality + 0.25 * o.team + 0.15 * o.energy + 0.1 * o.credit;
+  const v = VERDICTS.find(x => score >= x.min) || VERDICTS[VERDICTS.length - 1]; return {v, score:Math.round(score)};
+}
+function meterChart() {
+  const W = 760, H = 260, L = 34, R = 12, T = 12, B = 30; const n = run.hist.length;
+  const x = i => L + (W - L - R) * (i / Math.max(1, n - 1)); const y = v => T + (H - T - B) * (1 - v / 100);
+  const cols = ["#2563eb", "#059669", "#d97706", "#7c3aed", "#db2777", "#0891b2"];
+  const lines = METERS.map((m, j) => `<polyline fill="none" stroke="${cols[j]}" stroke-width="2" points="${run.hist.map((h, i) => `${x(i)},${y(h.meters[m.id])}`).join(" ")}"><title>${esc(m.name)}</title></polyline>`).join("");
+  const prog = `<polyline fill="none" stroke="var(--fg)" stroke-width="2" stroke-dasharray="4 3" points="${run.hist.map((h, i) => `${x(i)},${y(h.progress || 0)}`).join(" ")}"><title>Progress</title></polyline>`;
+  const marks = run.fired.map(f => `<line x1="${x(f.month)}" x2="${x(f.month)}" y1="${T}" y2="${H - B}" stroke="var(--bad)" stroke-dasharray="3 3"/><title>${esc(PROBLEMS[INCIDENTS.find(i => i.id === f.id).p].name)}</title>`).join("");
+  const ticks = run.hist.map((h, i) => `<text x="${x(i)}" y="${H - 8}" font-size="10" text-anchor="middle" fill="var(--muted)">${i === 0 ? "start" : "M" + h.month}</text>`).join("");
+  const dl = `<line x1="${x(DEADLINE)}" x2="${x(DEADLINE)}" y1="${T}" y2="${H - B}" stroke="var(--muted)" stroke-width="1"/><text x="${x(DEADLINE) + 3}" y="${T + 10}" font-size="9" fill="var(--muted)">deadline</text>`;
+  const legend = METERS.map((m, j) => `<span><i style="display:inline-block;width:14px;height:3px;background:${cols[j]};vertical-align:middle;margin-right:4px"></i>${esc(m.name)}</span>`).join(" ") + ` <span><i style="display:inline-block;width:14px;height:0;border-top:2px dashed var(--fg);vertical-align:middle;margin-right:4px"></i>Progress</span>`;
+  return {svg:`<svg class="mchart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Dials over the year"><rect x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" fill="var(--soft)" rx="6"/>${[0, 50, 100].map(v => `<text x="${L - 5}" y="${y(v) + 3}" font-size="9" text-anchor="end" fill="var(--muted)">${v}</text>`).join("")}${dl}${marks}${lines}${prog}${ticks}</svg>`, legend};
+}
+function renderProfile(host, axesNow) {
+  const rows = AXES.map(ax => {
+    const now = axesNow[ax.id] || {L:0, R:0}; const all = store.axes[ax.id] || {L:0, R:0};
+    const nAll = all.L + all.R; if (!nAll) return "";
+    const pos = v => 50 + 50 * (v.R - v.L) / Math.max(1, v.L + v.R);
+    const lean = all.R > all.L ? ax.R : all.L > all.R ? ax.L : null; const strength = Math.abs(all.R - all.L) / Math.max(1, nAll);
+    const read = !lean ? "balanced so far" : `${strength >= .6 ? "clearly" : "slightly"} ${lean.name.toLowerCase()}: ${lean.v}. The vice to watch: ${lean.x}.`;
+    return `<div class="axis"><div class="axlab"><span>${esc(ax.L.name)}</span><span>${esc(ax.R.name)}</span></div><div class="axbar"><i class="mark all" style="left:${pos(all).toFixed(0)}%" title="all runs: ${all.L} vs ${all.R}"></i>${now.L + now.R ? `<i class="mark now" style="left:${pos(now).toFixed(0)}%" title="this run: ${now.L} vs ${now.R}"></i>` : ""}</div><div class="small muted">${esc(read)} <span class="muted">(${nAll} pick${nAll === 1 ? "" : "s"})</span></div></div>`;
+  }).join("");
+  host.innerHTML = rows || `<p class="muted">No profile yet.</p>`;
+}
+function finishRun() {
+  const o = outcomes(); const {v, score} = verdictFor(o);
+  store.runs++; store.last = {score, verdict:v.name};
+  if (!store.best || score > store.best.score) store.best = {score, verdict:v.name};
+  run.fired.forEach(f => { const p = INCIDENTS.find(i => i.id === f.id).p; store.hits[p] = (store.hits[p] || 0) + 1; if (f.fixed) store.fixed[p] = (store.fixed[p] || 0) + 1; });
+  run.prevented.forEach(f => { const p = INCIDENTS.find(i => i.id === f.id).p; store.prevented[p] = (store.prevented[p] || 0) + 1; });
+  run.log.filter(e => e.kind === "card" && e.k === "pit" && e.p).forEach(e => { store.hits[e.p] = (store.hits[e.p] || 0) + 1; });
+  Object.entries(run.ax).forEach(([a, c]) => { store.axes[a] = store.axes[a] || {L:0, R:0}; store.axes[a].L += c.L; store.axes[a].R += c.R; });
+  saveStore();
+  $("db-sub").textContent = o.submitted ? `Submitted at the deadline. ${run.fired.length} problem${run.fired.length === 1 ? "" : "s"} fired${run.fired.length ? `, ${run.fired.filter(f => f.fixed).length} repaired well` : ""}, ${run.prevented.length} prevented before they could.` : `The deadline passed without a submission. ${run.fired.length} problem${run.fired.length === 1 ? "" : "s"} fired, ${run.prevented.length} prevented.`;
+  $("db-verdict").textContent = v.name; $("db-verdict-note").textContent = v.note;
+  $("db-outcomes").innerHTML = [["Submitted", o.submitted ? "yes" : "no", "on time, with enough of a paper"], ["Paper quality", o.quality, "progress and how fast you found out what was wrong"], ["Team health", o.team, "trust, alignment, relationships"], ["Your energy", o.energy, "what is left of you"], ["Credit clarity", o.credit, "roles and authorship, agreed or assumed"]].map(([k, val, d]) => `<div class="stat"><b>${val}</b><span>${k}</span><span class="small muted">${d}</span></div>`).join("");
+  const ch = meterChart(); $("db-chart").innerHTML = ch.svg; $("db-legend").innerHTML = ch.legend;
+  const events = [];
+  run.fired.forEach(f => { const inc = INCIDENTS.find(i => i.id === f.id); events.push({month:f.month, cls:"inc", html:`<b>${esc(PROBLEMS[inc.p].name)}</b> fired (odds ${Math.round(f.risk * 100)}%). ${f.fixed ? "You repaired it well." : `Your repair: ${quoteOpt(f.entry.pick)}, which ${f.entry.k === "pit" ? "made it worse" : "cost you"}.`}<div class="link-cause">Traces back to: ${f.causes.map(esc).join(" ")}</div>`}); });
+  run.prevented.forEach(f => { const inc = INCIDENTS.find(i => i.id === f.id); events.push({month:f.month, cls:"avoid", html:`<b>${esc(PROBLEMS[inc.p].name)}</b> did not fire (odds down to ${Math.round(f.risk * 100)}%).<div class="link-cause">Because: ${f.causes.map(esc).join(" ")}</div>`}); });
+  run.log.filter(e => e.kind === "card" && e.k !== "sound").forEach(e => events.push({month:e.month, cls:e.k, html:`<span class="muted">${esc(e.title)}:</span> ${quoteOpt(e.pick)} <span class="small muted">(${e.k === "pit" ? "the trap" : "defensible, costly"}${e.p ? `, seeds ${esc(PROBLEMS[e.p].name)}` : ""})</span>`}));
+  events.sort((a, b) => a.month - b.month);
+  $("db-timeline").innerHTML = events.length ? events.map(e => `<div class="ev ${e.cls}"><div class="m">Month ${e.month}</div><div>${e.html}</div></div>`).join("") : `<p class="muted">A clean run: nothing fired and nothing needed preventing. Play again; the odds are not zero.</p>`;
+  renderProfile($("db-profile"), run.ax);
+  /* lessons: the fired problems first, then the weakest dials */
+  const lessons = [];
+  run.fired.forEach(f => { const P = PROBLEMS[INCIDENTS.find(i => i.id === f.id).p]; lessons.push({t:P.name, d:P.prevent, res:P.res}); });
+  METERS.slice().sort((a, b) => run.meters[a.id] - run.meters[b.id]).forEach(m => { if (lessons.length < 3 && run.meters[m.id] < 50) lessons.push({t:`${m.name} ended low (${Math.round(run.meters[m.id])})`, d:m.low, res:m.res}); });
+  const seenL = new Set();
+  $("db-lessons").innerHTML = lessons.filter(l => !seenL.has(l.t) && seenL.add(l.t)).slice(0, 3).map((l, i) => `<div class="verdict ${i === 0 ? "pit" : "meh"}" style="margin:8px 0"><div class="vic">${i + 1}</div><div><div class="vt">${esc(l.t)}</div><div>${esc(l.d)}</div></div></div>`).join("") || `<p class="muted">Nothing stands out. Try a run where you take the risky options on purpose, to see what they seed.</p>`;
+  const reads = []; lessons.forEach(l => reads.push(...(l.res || []))); run.reads.forEach(r => reads.push(r)); if (!reads.length) reads.push("openloop", "expectations", "conflict");
+  $("db-reads").innerHTML = readsHTML(reads);
+  show("debrief");
+}
+function summaryText() {
+  const o = outcomes(); const {v} = verdictFor(o);
+  return [`Research Projects · The Management Game`, `${v.name}: ${o.submitted ? "submitted" : "not submitted"}, quality ${o.quality}, team ${o.team}, energy ${o.energy}, credit ${o.credit}.`,
+    ...run.fired.map(f => `- fired: ${PROBLEMS[INCIDENTS.find(i => i.id === f.id).p].name} (month ${f.month})${f.fixed ? ", repaired" : ""}`),
+    ...run.prevented.map(f => `- prevented: ${PROBLEMS[INCIDENTS.find(i => i.id === f.id).p].name}`), location.origin + location.pathname].join("\n");
+}
+
+/* ============================================================================
+   DRILLS: two messages for the same moment
+   ========================================================================== */
+let drill = null;
+const DRILL_ROUND = 8;
+const fresh = arr => shuffle(arr).sort((x, y) => (store.seenAt[x.id] || 0) - (store.seenAt[y.id] || 0));
+function startDrills() {
+  store.rounds++; drill = {items:fresh(DRILLS).slice(0, DRILL_ROUND), i:0, picked:null, results:[]}; saveStore();
+  show("drills"); renderDrill();
+}
+function renderDrill() {
+  const it = drill.items[drill.i]; drill.picked = null; drill.flip = Math.random() < 0.5;
+  $("d-left").textContent = `Message ${drill.i + 1} of ${drill.items.length}`; $("d-right").textContent = "";
+  $("d-bar").style.width = (drill.i / drill.items.length * 100) + "%";
+  const found = new Set(), seen = new Set();
+  $("d-q").innerHTML = annotate(it.q, found, seen).html;
+  if (it.ctx) { $("d-context").innerHTML = annotate(it.ctx, found, seen).html; $("d-context").classList.remove("hidden"); } else $("d-context").classList.add("hidden");
+  const host = $("d-opts"); host.innerHTML = "";
+  (drill.flip ? ["b", "a"] : ["a", "b"]).forEach((side, idx) => { const b = document.createElement("button"); b.className = "opt"; b.dataset.side = side;
+    b.innerHTML = `<span class="ltr">${"AB"[idx]}</span><span class="txt">${annotate(it[side], found, seen).html}</span>`; b.addEventListener("click", () => pickDrill(side)); host.appendChild(b); });
+  $("d-verdict").innerHTML = ""; $("d-next").classList.add("hidden"); $("d-terms").innerHTML = termStripHTML(found); wireTermStrip($("d-terms"));
+  $("d-q").focus({preventScroll:true});
+}
+function relabel(text, flip) { return flip ? text.replace(/\b([AB])(?=['’]s\b|\b)/g, m => (m === "A" ? "B" : "A")) : text; }
+function pickDrill(side) {
+  if (!drill || drill.picked) return; drill.picked = side;
+  const it = drill.items[drill.i]; const correct = side === it.better;
+  drill.results.push({it, correct, first:!store.seen[it.id]}); store.seen[it.id] = true; store.seenAt[it.id] = store.rounds; store.drills.n++; if (correct) store.drills.correct++; saveStore();
+  document.querySelectorAll("#d-opts .opt").forEach(b => { b.setAttribute("aria-disabled", "true"); const isAns = b.dataset.side === it.better; const mine = b.dataset.side === side; if (isAns) b.classList.add("sound"); else if (mine) b.classList.add("pit"); else b.classList.add("dim"); b.insertAdjacentHTML("beforeend", `<span class="badge">${isAns ? "the better message" : ""}${mine ? (isAns ? " · your pick" : "your pick") : ""}</span>`); });
+  $("d-verdict").innerHTML = `<div class="verdict ${correct ? "sound" : "pit"}"><div class="vic">${icon(correct ? "i-check" : "i-x")}</div><div><div class="vt">${correct ? "Right." : "Not this one."}</div><div><span class="feat">${esc(it.feat)}</span></div><div style="margin-top:6px">${annotate(relabel(it.why, drill.flip)).html}</div><div class="principle">${icon("i-flag")} <b>Principle.</b> ${annotate(it.principle).html}</div><details style="margin-top:8px"><summary class="small" style="cursor:pointer;color:var(--accent-dark)">${icon("i-book")} Read (${it.res.length})</summary><ul class="reads">${readsHTML(it.res)}</ul></details></div></div>`;
+  $("d-next").textContent = drill.i + 1 < drill.items.length ? "Next →" : "See your score →"; $("d-next").classList.remove("hidden"); $("d-next").focus({preventScroll:true});
+}
+function nextDrill() {
+  if (!drill || !drill.picked) return; drill.i++;
+  if (drill.i < drill.items.length) renderDrill(); else finishDrills();
+}
+function finishDrills() {
+  const n = drill.results.length, c = drill.results.filter(r => r.correct).length;
+  const seenN = DRILLS.filter(d => store.seen[d.id]).length;
+  $("dr-stats").innerHTML = `<div class="stat"><b>${c}/${n}</b><span>this round</span></div><div class="stat"><b>${store.drills.n ? Math.round(100 * store.drills.correct / store.drills.n) : 0}%</b><span>all rounds on this device</span></div><div class="stat"><b>${seenN}/${DRILLS.length}</b><span>messages seen</span></div>`;
+  const missed = drill.results.filter(r => !r.correct);
+  $("dr-missed").innerHTML = missed.length ? `<h3 style="margin:8px 0 4px">Features you missed</h3>` + missed.map(r => `<details class="pm"><summary><span class="sw" style="background:var(--bad)"></span><b>${esc(r.it.feat)}</b><span class="chev">▾</span></summary><div class="inner">${esc(r.it.principle)}</div></details>`).join("") : `<p class="muted">All eight. Run a project and see whether the same instincts hold when the dials are moving.</p>`;
+  show("drillres");
+}
+
+/* ============================================================================
+   PROFILE and MANUAL
+   ========================================================================== */
+function renderProfileScreen() {
+  const rows = Object.keys(PROBLEMS).map(p => ({p, hit:store.hits[p] || 0, prev:store.prevented[p] || 0, fixed:store.fixed[p] || 0})).filter(r => r.hit || r.prev);
+  let html = `<div class="card"><h3 style="margin-bottom:2px">Five spectra</h3><p class="small muted" style="margin:0 0 8px">${store.runs} run${store.runs === 1 ? "" : "s"} on this device.</p><div id="pf-axes"></div></div>`;
+  html += `<div class="card" style="margin-top:16px"><h3 style="margin-bottom:2px">Problems, across runs</h3><p class="small muted" style="margin:0 0 8px">Hit means the problem fired or you walked into its trap on a decision; prevented means its odds were pushed down by something you did; repaired means it fired and your repair was the sound one.</p>${rows.length ? `<table class="list" style="width:100%;border-collapse:collapse;font-size:.92rem">${rows.sort((a, b) => b.hit - a.hit).map(r => `<tr style="border-top:1px solid var(--line)"><td style="padding:6px 4px"><b>${esc(PROBLEMS[r.p].name)}</b></td><td style="padding:6px 4px;color:var(--bad)">hit ${r.hit}</td><td style="padding:6px 4px;color:var(--good)">prevented ${r.prev}</td><td style="padding:6px 4px">repaired ${r.fixed}</td></tr>`).join("")}</table>` : `<p class="muted">Nothing yet. Play a run.</p>`}</div>`;
+  html += `<div class="card" style="margin-top:16px"><h3 style="margin-bottom:2px">Messages</h3><p class="small muted" style="margin:0">${store.drills.n ? `${store.drills.correct} of ${store.drills.n} messages picked right (${Math.round(100 * store.drills.correct / store.drills.n)}%).` : "No drills yet."}</p></div>`;
+  $("pf-body").innerHTML = html; renderProfile($("pf-axes"), {});
+}
+function renderManual() {
+  const groups = [...new Set(Object.values(PROBLEMS).map(p => p.group))];
+  $("man-jumps").innerHTML = groups.map(g => `<a href="#man-${esc(g.replace(/\W+/g, "-"))}">${esc(g)}</a>`).join("") + `<a href="#man-glossary">Glossary</a><a href="#man-reading">Reading</a>`;
+  $("man-body").innerHTML = groups.map(g => `<h2 id="man-${esc(g.replace(/\W+/g, "-"))}" style="margin-top:18px">${esc(g)}</h2>` + Object.entries(PROBLEMS).filter(([id, p]) => p.group === g).map(([id, p]) => { const h = store.hits[id] || 0, pr = store.prevented[id] || 0;
+    return `<details class="pm tile"><summary><span class="sw" style="background:${h ? "var(--bad)" : pr ? "var(--good)" : "var(--line)"}"></span><b>${esc(p.name)}</b><span class="small muted">${h ? `hit ${h}` : ""}${h && pr ? " · " : ""}${pr ? `prevented ${pr}` : ""}</span><span class="chev">▾</span></summary><div class="inner">${probHTML(id)}</div></details>`; }).join("")).join("");
+  const key = s => s.replace(/^[“"'‘]+/, "");
+  $("man-gloss").innerHTML = GLOSSARY.filter(g => g[3] !== "prob").sort((x, y) => key(x[0]).localeCompare(key(y[0]), "en", {sensitivity:"base"})).map(([t, d]) => `<div class="gl"><b>${esc(t)}</b><span>${esc(d)}</span></div>`).join("");
+  $("man-reads").innerHTML = RES_GROUPS.map(g => `<details class="pm ggroup"><summary><span class="sw" style="background:var(--good)"></span><b>${esc(g.name)}</b><span class="count">${g.ids.length}</span><span class="chev">▾</span></summary><div class="inner"><ul class="reads">${readsHTML(g.ids)}</ul></div></details>`).join("");
+}
+function renderHome() {
+  $("home-progress").textContent = store.runs ? `${store.runs} run${store.runs === 1 ? "" : "s"} · best: ${store.best.verdict}${store.drills.n ? ` · messages: ${Math.round(100 * store.drills.correct / store.drills.n)}% right` : ""}` : "";
+}
+function copyText(t) { (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast("Copied"), () => { const ta = document.createElement("textarea"); ta.value = t; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); toast("Copied"); } catch (e) { toast("Copy failed"); } ta.remove(); }); }
+
+/* ---- wiring ---- */
+$("go-run").addEventListener("click", startRun); $("db-again").addEventListener("click", startRun); $("pf-run").addEventListener("click", startRun); $("man-run").addEventListener("click", startRun); $("dr-run").addEventListener("click", startRun);
+$("go-drills").addEventListener("click", startDrills); $("db-drills").addEventListener("click", startDrills); $("dr-again").addEventListener("click", startDrills);
+$("go-debrief").addEventListener("click", () => { renderProfileScreen(); show("profile"); });
+$("go-manual").addEventListener("click", () => { renderManual(); show("manual"); }); $("db-manual").addEventListener("click", () => { renderManual(); show("manual"); }); $("nav-manual").addEventListener("click", () => { renderManual(); show("manual"); });
+$("nav-home").addEventListener("click", () => { renderHome(); show("home"); });
+$("run-next").addEventListener("click", nextItem); $("d-next").addEventListener("click", nextDrill);
+$("db-copy").addEventListener("click", () => copyText(summaryText()));
+$("man-filter").addEventListener("input", e => { const q = e.target.value.trim().toLowerCase(); document.querySelectorAll("#man-gloss .gl").forEach(el => el.classList.toggle("hidden", !!q && !el.textContent.toLowerCase().includes(q))); });
+$("man-reset").addEventListener("click", () => { if (!confirm("Reset runs, problems, profile and drill scores on this device?")) return; localStorage.removeItem(STORE_KEY); store = loadStore(); renderManual(); toast("Progress reset"); });
+document.addEventListener("keydown", e => {
+  if (e.target.matches("input, textarea")) return;
+  const k = e.key.toUpperCase();
+  if (current === "run") { if (k === "ENTER") { if (e.target.closest && e.target.closest("button, a, summary")) return; e.preventDefault(); nextItem(); return; } const idx = "ABCD".indexOf(k); if (idx >= 0 && run && !run.answered && idx < run.order.length) { e.preventDefault(); answer(run.order[idx]); } }
+  else if (current === "drills") { if (k === "ENTER") { if (e.target.closest && e.target.closest("button, a, summary")) return; e.preventDefault(); nextDrill(); return; } const idx = "AB".indexOf(k); if (idx >= 0 && drill && !drill.picked) { e.preventDefault(); pickDrill((drill.flip ? ["b", "a"] : ["a", "b"])[idx]); } }
+});
+(function init() {
+  renderHome();
+  const q = new URLSearchParams(location.search); const m = q.get("mode");
+  if (m === "run") startRun(); else if (m === "drills") startDrills(); else if (m === "manual") { renderManual(); show("manual"); } else if (m === "profile") { renderProfileScreen(); show("profile"); }
+})();
+</script>
+</body></html>
