@@ -1262,7 +1262,7 @@ const CARDS = [
    o:[
     {t:"Sensible: stop when it's significant, save the budget, and don't expose more participants than needed.", k:"pit", p:"d_optional_stopping", w:0, r:-9,
      f:"Peeking and stopping on significance inflates false positives badly; with enough peeks a null effect reaches p < 0.05 with certainty. The stopping rule is part of the test."},
-    {t:"Fix n in advance, or a sequential design that budgets for the planned looks.", k:"sound", w:1, r:8,
+    {t:"Fix n in advance, or use a sequential design that budgets for the planned looks.", k:"sound", w:1, r:8,
      f:"Planned looks with a correction are legitimate and can save budget. Unplanned looks are the problem."}
    ]},
   {id:"D_vv", ph:"D", dom:["comp"], title:"Verification and validation",
@@ -1721,7 +1721,7 @@ const FLAWS = [
    plan:"“We'll test after every 20 participants and stop recruiting as soon as the effect is significant.”",
    opts:["Optional stopping","Underpowered study","Batch effects","Pseudoreplication"], ans:0,
    why:"Stopping on significance with unplanned looks inflates false positives; the stopping rule is part of the test.",
-   repair:"Fix n in advance, or a sequential design that budgets for the planned looks.", p:"d_optional_stopping", res:["simmons","nosek"]},
+   repair:"Fix n in advance, or use a sequential design that budgets for the planned looks.", p:"d_optional_stopping", res:["simmons","nosek"]},
   {id:"F_look", dom:["ml_exp","comp"],
    plan:"“We downloaded the dataset, wrote the training loop (or set up the simulation), and launched a 200-GPU-hour run the same day, without opening a single example.”",
    opts:["Never looked at the data","Weak or copied baselines","Leakage","Single-seed conclusions"], ans:0,
