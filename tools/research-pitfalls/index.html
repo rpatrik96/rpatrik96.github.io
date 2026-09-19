@@ -605,7 +605,7 @@
   <section id="screen-scope" class="hidden">
     <h1>Scope an idea</h1>
     <p class="sub">Five questions a supervisor, a reviewer and a funder all ask, with anchored scales. Score a sample idea
-      first and compare with three other scorers, or score your own and get a one-paragraph scope statement.</p>
+      first and compare with the student who proposed it and two reviewers, or score your own and get a one-paragraph scope statement.</p>
     <div class="card" style="margin-top:16px">
       <h3 style="margin-bottom:2px">The idea</h3>
       <p class="small muted" style="margin:0 0 6px">Sample ideas for your domain first, then the others.</p>
@@ -617,12 +617,13 @@
       <div id="scope-dims"></div>
       <div class="scopeside">
         <div class="card"><h3 style="margin-bottom:2px">Idea shape</h3><div id="scope-radar"></div><div id="scope-map"></div><div id="scope-shape"></div>
-          <button class="btn hidden" id="scope-reveal-btn" style="margin-top:8px">How did others score it? →</button></div>
+          <button class="btn hidden" id="scope-reveal-btn" style="margin-top:8px">How did the author and two reviewers score it? →</button></div>
       </div>
     </div>
     <div class="card hidden" id="scope-reveal-card" style="margin-top:16px">
       <h3 style="margin-bottom:2px">Three scorers, one idea</h3>
-      <p class="small muted" style="margin:0 0 8px">Your shape in blue; the author (green), reviewer 1 (amber) and reviewer 2 (red). Disagreement of a point or two on novelty and impact is normal; wide disagreement usually means the kind of novelty was never named.</p>
+      <div id="scope-reveal-who"></div>
+      <p class="small muted" style="margin:0 0 8px">Disagreement of a point or two on novelty and impact is normal; wide disagreement usually means the kind of novelty was never named, so each scorer judged a different thing.</p>
       <div class="resgrid" style="margin-top:0"><div id="scope-reveal-radar"></div><div id="scope-reveal-map"></div></div>
       <div id="scope-reveal-dots" class="dotplot"></div>
       <div id="scope-reveal-kinds" style="margin-top:10px"></div>
@@ -2229,6 +2230,12 @@ function scopeShape(s) {
   return {name:"Balanced, not yet sharp", text:"No dimension is a problem, and none is a strength. Pick one to push: usually novelty (name a sharper kind) or killability (a smaller, earlier pilot).", res:["greatideas","heilmeier"]};
 }
 
+/* who the three scorers are; the same three people score every sample idea */
+const SCOPE_SCORERS = [
+  {who:"Author", role:"the student who proposed the idea, scoring it the way you just did"},
+  {who:"Reviewer 1", role:"a specialist from the same subfield who has read many similar proposals"},
+  {who:"Reviewer 2", role:"a reviewer from a neighboring field who judges by whether the result would change what people do"}
+];
 /* sample ideas with three scorers; scores in dimension order [novelty, impact, feasibility, killability, fit] */
 const SCOPE_SAMPLES = [
   {id:"S_contam", dom:["ml_exp","any"], title:"A contamination check plus a fresh test set for a public reasoning benchmark",
@@ -2359,15 +2366,16 @@ function renderScopeReveal(smp) {
   const sets = smp.scorers.map((sc, i) => ({s: sc.s, color: colors[i], fill: .06, dash: i ? "4 3" : ""}));
   sets.unshift({s: SCOPE_DIMS.map(d => scope.scores[d.id]), color:"var(--accent)"});
   $("scope-reveal-radar").innerHTML = scopeRadarSVG(sets);
-  $("scope-reveal-map").innerHTML = scopeMapSVG(scope.scores.novelty, scope.scores.feasibility, smp.scorers.map((sc, i) => ({n: sc.s[0], f: sc.s[2], color: colors[i], label: sc.who})));
+  $("scope-reveal-map").innerHTML = scopeMapSVG(scope.scores.novelty, scope.scores.feasibility, smp.scorers.map((sc, i) => ({n: sc.s[0], f: sc.s[2], color: colors[i], label: SCOPE_SCORERS[i].who})));
   /* dot plot: per dimension, the four scores */
   const rows = SCOPE_DIMS.map((d, i) => {
     const mine = scope.scores[d.id]; const vals = smp.scorers.map(sc => sc.s[i]);
     const spread = Math.max(...vals) - Math.min(...vals);
-    return `<div class="dotrow"><span class="dl">${esc(d.name)}</span><span class="dots5">${[0,1,2,3].map(v => `<span class="cell${v === mine ? " me" : ""}">${smp.scorers.map((sc, j) => sc.s[i] === v ? `<i style="background:${colors[j]}" title="${esc(sc.who)}"></i>` : "").join("")}${v === mine ? `<b>you</b>` : ""}</span>`).join("")}</span><span class="small muted">${spread >= 2 ? "wide disagreement" : spread === 1 ? "one point apart" : "agreement"}</span></div>`;
+    return `<div class="dotrow"><span class="dl">${esc(d.name)}</span><span class="dots5">${[0,1,2,3].map(v => `<span class="cell${v === mine ? " me" : ""}">${smp.scorers.map((sc, j) => sc.s[i] === v ? `<i style="background:${colors[j]}" title="${esc(SCOPE_SCORERS[j].who)}"></i>` : "").join("")}${v === mine ? `<b>you</b>` : ""}</span>`).join("")}</span><span class="small muted">${spread >= 2 ? "wide disagreement" : spread === 1 ? "one point apart" : "agreement"}</span></div>`;
   }).join("");
   $("scope-reveal-dots").innerHTML = `<div class="dotrow head"><span class="dl"></span><span class="dots5">${[0,1,2,3].map(v => `<span class="cell hd">${v}</span>`).join("")}</span><span></span></div>${rows}`;
-  $("scope-reveal-why").innerHTML = smp.scorers.map((sc, i) => `<div class="verdict" style="border-left-color:${colors[i]}; background:var(--soft); margin:8px 0"><div class="vic" style="background:${colors[i]}">${i === 0 ? icon("i-flag") : icon("i-nose")}</div><div><div class="vt">${esc(sc.who)} <span class="small muted" style="font-weight:400">${sc.s.join(" · ")}</span></div><div class="small">${esc(sc.why)}</div></div></div>`).join("");
+  $("scope-reveal-who").innerHTML = `<p class="small" style="margin:0 0 8px">Three people scored this same idea: ${SCOPE_SCORERS.map((r, i) => `<b style="color:${colors[i]}">${esc(r.who)}</b>, ${esc(r.role)}`).join("; ")}. Your scores are in blue.</p>`;
+  $("scope-reveal-why").innerHTML = smp.scorers.map((sc, i) => `<div class="verdict" style="border-left-color:${colors[i]}; background:var(--soft); margin:8px 0"><div class="vic" style="background:${colors[i]}">${i === 0 ? icon("i-flag") : icon("i-nose")}</div><div><div class="vt">${esc(SCOPE_SCORERS[i].who)} <span class="small muted" style="font-weight:400">(${esc(SCOPE_SCORERS[i].role)})</span></div><div class="small muted" style="margin:2px 0 4px">${SCOPE_DIMS.map((d, k) => `${esc(d.name.toLowerCase())} ${sc.s[k]}`).join(" · ")}</div><div class="small">${esc(sc.why)}</div></div></div>`).join("");
   const kinds = smp.kinds; const mineK = scope.kinds;
   $("scope-reveal-kinds").innerHTML = `<div class="small">The author called the novelty <b>${esc(kinds.novelty)}</b>${mineK.novelty ? (mineK.novelty === kinds.novelty ? ", as you did." : `; you called it <b>${esc(mineK.novelty)}</b>. Both can be right: the same idea is a new measurement to one reader and a new question to another, and naming the kind is what lets them argue about the same thing.`) : "."} Impact: <b>${esc(kinds.impact)}</b>.</div>`;
   $("scope-reveal-card").classList.remove("hidden");
