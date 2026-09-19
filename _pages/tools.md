@@ -38,3 +38,20 @@ sources, and every technical term has a hover tooltip. Everything runs in your b
 nothing is sent anywhere.
 
 [**Open the game →**](/tools/research-pitfalls/){: .btn .btn--primary}
+
+## Research Projects — *The Management Game*
+
+The sister game, for the year you first lead a project. **Run a project**: nine months, a
+supervisor with no time, a senior collaborator with many projects, a master's student you are
+responsible for, and a deadline. Every decision moves six hidden dials (alignment, trust, buffer,
+credit, energy, loop) and seeds the classic problems: misaligned expectations, silence, scope
+creep, late feedback, hero mode, the authorship fight, the dropped ball, burnout. Most can be
+prevented or repaired, and the **debrief** traces every problem that fired, and every one that did
+not, back to the decision behind it, then places you on five management spectra. **Say it
+better** drills the hard messages: the collaborator who went quiet, the authorship opener, the
+reminder, feedback on a late section, disagreeing with your PI. A **field manual** lists every
+problem with what it looks like, what causes it, how to prevent and repair it, and what to read,
+drawn from lab-culture discussions and the Path to PhD newsletter. Everything runs in your
+browser; nothing is sent anywhere.
+
+[**Open the game →**](/tools/research-projects/){: .btn .btn--primary}
