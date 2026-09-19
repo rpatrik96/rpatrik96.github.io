@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Principles for (agentic) research</title>
+<meta name="description" content="Principles for doing research with AI agents, in five parts: why do research, how taste is trained, what an agent is, how to run one as a supervisor, and an audit for the next task you delegate. With complete examples of a CLAUDE.md, a hook, a rule, a test and a skill.">
+<style>
+  :root{
+    --accent:#4A8FE3; --accent-dark:#2f6fbf; --ink:#1c2430; --muted:#525c6b;
+    --bg:#ffffff; --soft:#f4f7fb; --line:#e3e9f1; --b:#fbfdff; --chip:#ffffff; --kbd:#eef2f7;
+    --good:#2e8b57; --good-bg:rgba(46,139,87,.10); --bad:#c0392b; --bad-bg:rgba(192,57,43,.09);
+    --meh:#b8860b; --meh-bg:rgba(184,134,11,.10);
+    --on-accent:#ffffff; --on-status:#ffffff; --btn:#2f6fbf; --meh-badge:#8a6508;
+    --radius:16px; --shadow:0 6px 24px rgba(31,52,84,.10); --maxw:880px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --accent:#6ea6ee; --accent-dark:#9cc1f5; --ink:#e8edf4; --muted:#a4afbe;
+      --bg:#161b24; --soft:#0f131a; --line:#2a3342; --b:#1a2130; --chip:#1a2130; --kbd:#232b38;
+      --good:#5fc48a; --good-bg:rgba(95,196,138,.14); --bad:#f08a7c; --bad-bg:rgba(240,138,124,.12);
+      --meh:#e0b74a; --meh-bg:rgba(224,183,74,.14); --shadow:0 6px 24px rgba(0,0,0,.35);
+      --on-accent:#0f131a; --on-status:#0f131a; --btn:#8fbaf3; --meh-badge:#e0b74a;
+    }
+  }
+  :root[data-theme="dark"]{
+    --accent:#6ea6ee; --accent-dark:#9cc1f5; --ink:#e8edf4; --muted:#a4afbe;
+    --bg:#161b24; --soft:#0f131a; --line:#2a3342; --b:#1a2130; --chip:#1a2130; --kbd:#232b38;
+    --good:#5fc48a; --good-bg:rgba(95,196,138,.14); --bad:#f08a7c; --bad-bg:rgba(240,138,124,.12);
+    --meh:#e0b74a; --meh-bg:rgba(224,183,74,.14); --shadow:0 6px 24px rgba(0,0,0,.35);
+    --on-accent:#0f131a; --on-status:#0f131a; --btn:#8fbaf3; --meh-badge:#e0b74a;
+  }
+  *{box-sizing:border-box}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important} html{scroll-behavior:auto} }
+  html,body{margin:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       color:var(--ink); background:var(--soft); line-height:1.5; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:24px 16px 64px}
+  a{color:var(--accent-dark)}
+  h1,h2,h3{line-height:1.2; margin:0 0 .4em}
+  h1{font-size:1.9rem; letter-spacing:-.01em}
+  h2{font-size:1.35rem}
+  h3{font-size:1.1rem}
+  p{margin:.4em 0}
+  .sub{color:var(--muted); font-size:1.02rem; margin:.2em 0 0}
+  .muted{color:var(--muted)} .small{font-size:.86rem} .center{text-align:center}
+  button{font:inherit; cursor:pointer; border:0; background:none; color:inherit}
+  :focus-visible{outline:2px solid var(--accent-dark); outline-offset:2px; border-radius:8px}
+  .btn{display:inline-block; background:var(--btn); color:var(--on-accent); padding:.65em 1.15em; border-radius:999px;
+       font-weight:600; box-shadow:0 4px 12px rgba(74,143,227,.28); transition:transform .08s, box-shadow .15s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.ghost{background:var(--chip); color:var(--accent-dark); border:1.5px solid var(--accent); box-shadow:none}
+  .btn.gray{background:var(--kbd); color:var(--ink); box-shadow:none}
+  .btn.sm{padding:.4em .85em; font-size:.86rem}
+  .card{background:var(--bg); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px}
+  .hidden{display:none !important}
+  .row{display:flex; gap:12px; flex-wrap:wrap; align-items:center}
+  .spread{justify-content:space-between}
+  .link{color:var(--accent-dark); font-size:.92rem; text-decoration:underline; text-underline-offset:2px}
+  .link.gray{color:var(--muted)}
+  kbd{font:.8em ui-monospace,Menlo,monospace; background:var(--kbd); border:1px solid var(--line);
+      border-bottom-width:2px; border-radius:5px; padding:.1em .45em}
+
+  header.top{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:18px; flex-wrap:wrap}
+  .brandmark{font-weight:700}
+  .topnav{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .dompill{font-size:.8rem; background:var(--kbd); border:1px solid var(--line); border-radius:999px; padding:.2em .7em; color:var(--muted)}
+
+  .modegrid{display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:14px; margin-top:20px}
+  @media(max-width:900px){.modegrid{grid-template-columns:1fr 1fr}}
+  @media(max-width:520px){.modegrid{grid-template-columns:1fr}}
+  .mode{cursor:pointer; text-align:left; transition:transform .1s, box-shadow .15s; display:block}
+  .mode:hover{transform:translateY(-2px)}
+  .tag{display:inline-block; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em;
+       color:var(--accent-dark); background:rgba(74,143,227,.12); padding:.25em .7em; border-radius:999px; margin-bottom:8px}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 0}
+  .chip{border:1.5px solid var(--line); background:var(--chip); padding:.45em .95em; border-radius:999px; font-size:.9rem; transition:all .12s}
+  @media(max-width:520px){.chip{padding:.3em .75em; font-size:.84rem}}
+  .chip:hover{border-color:var(--accent)}
+  .chip[aria-pressed="true"]{background:var(--btn); color:var(--on-accent); border-color:var(--btn)}
+
+  .progress{height:6px; background:var(--kbd); border-radius:999px; overflow:hidden; margin:4px 0 16px}
+  .progress>i{display:block; height:100%; background:var(--accent); width:0; transition:width .3s}
+  .counter{font-size:.85rem; color:var(--muted); display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:6px}
+
+  .meters{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:0 0 14px}
+  @media(max-width:520px){.meters{grid-template-columns:1fr}}
+  .meter{background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:10px 14px}
+  .meter .lab{font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); display:flex; justify-content:space-between}
+  .meter .bar{height:8px; background:var(--kbd); border-radius:999px; overflow:hidden; margin-top:6px}
+  .meter .bar>i{display:block; height:100%; width:0; background:var(--accent); transition:width .35s}
+  .meter.warn .bar>i{background:var(--bad)}
+
+  .phasehead{font-size:.82rem; color:var(--muted); margin:0 0 4px}
+  .phasehead b{text-transform:uppercase; letter-spacing:.06em; font-size:.76rem; color:var(--accent-dark)}
+  .situation{font-size:1.08rem; margin:.3em 0 14px}
+  .opts{display:grid; gap:10px}
+  .opt{position:relative; text-align:left; border:2px solid var(--line); background:var(--b); border-radius:12px;
+       padding:14px 14px 14px 46px; transition:border-color .12s, transform .08s; font-size:.98rem}
+  .opt:hover:not([aria-disabled="true"]){border-color:var(--accent); transform:translateY(-1px); z-index:2}
+  .opt[aria-disabled="true"]{cursor:default}
+  .opt .badge{display:block; margin-top:6px; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--muted)}
+  .opt.sound .badge{color:var(--good)} .opt.pit .badge{color:var(--bad)} .opt.meh .badge{color:var(--meh-badge)}
+  .opt.picked{outline:2px solid var(--btn); outline-offset:1px}
+  .opt .ltr{position:absolute; top:12px; left:12px; width:24px; height:24px; border-radius:50%; background:var(--btn);
+       color:var(--on-accent); font-weight:700; font-size:.8rem; display:flex; align-items:center; justify-content:center}
+  .opt.picked{border-color:var(--accent)}
+  .opt.sound{border-color:var(--good); background:var(--good-bg)} .opt.sound .ltr{background:var(--good); color:var(--on-status)}
+  .opt.pit{border-color:var(--bad); background:var(--bad-bg)} .opt.pit .ltr{background:var(--bad); color:var(--on-status)}
+  .opt.meh{border-color:var(--meh); background:var(--meh-bg)} .opt.meh .ltr{background:var(--meh); color:var(--on-status)}
+  .opt.dim{opacity:.55}
+
+  .verdict{margin-top:16px; border-radius:12px; padding:14px 16px; border-left:4px solid var(--line); background:var(--soft)}
+  .verdict.sound{border-left-color:var(--good); background:var(--good-bg)}
+  .verdict.pit{border-left-color:var(--bad); background:var(--bad-bg)}
+  .verdict.meh{border-left-color:var(--meh); background:var(--meh-bg)}
+  .verdict .vt{font-weight:700; margin-bottom:4px}
+  .pitbox{margin-top:12px; border:1px dashed var(--line); border-radius:12px; padding:12px 14px; background:var(--bg)}
+  .pitbox .pn{font-weight:700}
+  .pitbox dl{margin:6px 0 0; display:grid; grid-template-columns:auto 1fr; gap:4px 12px; font-size:.93rem}
+  .pitbox dt{color:var(--muted); font-weight:600} .pitbox dd{margin:0}
+  .reads{margin:6px 0 0; padding-left:1.1em; font-size:.92rem} .reads li{margin:2px 0}
+  .reads .by{color:var(--muted)}
+  .underbar{display:flex; gap:10px; align-items:center; justify-content:space-between; margin-top:16px; flex-wrap:wrap}
+
+  .why textarea{width:100%; resize:vertical; min-height:40px; border:1.5px solid var(--line); border-radius:10px;
+       padding:9px 12px; font:inherit; margin-top:6px; background:var(--bg); color:var(--ink)}
+  .confrow{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:14px}
+  .conf{border:1.5px solid var(--line); background:var(--chip); border-radius:999px; padding:.4em .9em; font-size:.9rem}
+  .conf:hover{border-color:var(--accent)}
+  .conf[aria-pressed="true"]{background:var(--btn); color:var(--on-accent); border-color:var(--btn)}
+  .conf[aria-disabled="true"]{cursor:default}
+  .streak{font-size:.85rem; color:var(--muted)}
+  .pair{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  @media(max-width:620px){.pair{grid-template-columns:1fr}}
+  .pair .opt{padding:38px 14px 14px 14px; min-height:110px}
+  .pair .opt .ltr{top:10px; left:12px}
+  .plan{font-size:1.05rem; background:var(--soft); border-radius:10px; padding:12px 14px; margin:8px 0 12px; border:1px solid var(--line)}
+  .feat{display:inline-block; font-size:.78rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--accent-dark);
+        background:rgba(74,143,227,.12); padding:.2em .6em; border-radius:999px}
+
+  .stat{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; margin:12px 0}
+  .stat .s{background:var(--soft); border:1px solid var(--line); border-radius:12px; padding:12px 14px}
+  .stat .s b{font-size:1.5rem; display:block; line-height:1.1}
+  .stat .s span{font-size:.82rem; color:var(--muted)}
+  .verdict-big{font-size:1.4rem; font-weight:700; letter-spacing:-.01em}
+  .list{margin:6px 0 0; padding-left:1.1em} .list li{margin:4px 0}
+  details.expander{margin-top:14px; border:1px solid var(--line); border-radius:12px; background:var(--bg)}
+  details.expander>summary{cursor:pointer; padding:12px 16px; font-weight:600; list-style:none}
+  details.expander>summary::-webkit-details-marker{display:none}
+  details.expander>summary::before{content:"▸ "; color:var(--accent-dark)}
+  details.expander[open]>summary::before{content:"▾ "}
+  details.expander .inner{padding:0 16px 16px; font-size:.94rem; color:var(--muted)}
+
+  .guide .ph{margin-top:18px}
+  .guide table{width:100%; border-collapse:collapse; font-size:.92rem}
+  .guide th,.guide td{text-align:left; vertical-align:top; padding:8px 8px; border-top:1px solid var(--line)}
+  .guide th{color:var(--muted); font-weight:600; font-size:.8rem; text-transform:uppercase; letter-spacing:.04em; border-top:0}
+  .guide td.nm{font-weight:600; white-space:nowrap}
+  .guide .mark{font-size:.78rem; color:var(--muted); white-space:nowrap}
+  .guide .mark.hit{color:var(--bad)} .guide .mark.dodged{color:var(--good)}
+  @media(max-width:620px){.guide td.nm{white-space:normal} .guide th:nth-child(3),.guide td:nth-child(3){display:none}}
+  .toast{position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(20px); background:var(--ink); color:var(--bg);
+         padding:.7em 1.2em; border-radius:999px; font-size:.9rem; opacity:0; transition:all .2s; pointer-events:none; z-index:50}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+
+  /* ---- icons ---- */
+  .ic{width:1.05em; height:1.05em; vertical-align:-.18em; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
+  .ic.big{width:1.6em; height:1.6em}
+  .mode .icon{width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    background:rgba(74,143,227,.12); color:var(--accent-dark); margin-bottom:10px}
+  .mode .icon .ic{width:24px; height:24px}
+
+  /* ---- phase stepper ---- */
+  .stepper{display:flex; align-items:flex-start; gap:0; margin:6px 0 14px; position:relative}
+  .stepper::before{content:""; position:absolute; left:8%; right:8%; top:15px; height:2px; background:var(--line)}
+  .step{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; position:relative; min-width:0}
+  .step .node{width:30px; height:30px; border-radius:50%; background:var(--bg); border:2px solid var(--line); display:flex;
+    align-items:center; justify-content:center; font-size:.78rem; font-weight:700; color:var(--muted)}
+  .step.now .node{border-color:var(--accent); color:var(--accent-dark); box-shadow:0 0 0 4px rgba(74,143,227,.18)}
+  .step.done .node{background:var(--btn); border-color:var(--btn); color:var(--on-accent)}
+  .step .nm{font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); white-space:nowrap}
+  .step.now .nm{color:var(--accent-dark); font-weight:700}
+  .step .dots{display:flex; gap:4px; height:8px}
+  .step .dots i{width:8px; height:8px; border-radius:50%; background:var(--line); display:block}
+  .step .dots i.sound{background:var(--good)} .step .dots i.pit{background:var(--bad)} .step .dots i.meh{background:var(--meh)}
+  @media(max-width:520px){.step .nm{font-size:.7rem} .step:not(.now) .nm{display:none} .step .node{width:26px; height:26px; font-size:.7rem} .stepper::before{top:13px}}
+
+  /* ---- verdict with icon ---- */
+  .verdict{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:start}
+  .verdict .vic{width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--on-status); flex:none}
+  .verdict.sound .vic{background:var(--good)} .verdict.pit .vic{background:var(--bad)} .verdict.meh .vic{background:var(--meh)}
+  .verdict .vic .ic{width:20px; height:20px; stroke-width:2.6}
+
+  /* ---- pitfall box as three tiles ---- */
+  .pitbox dl{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin:10px 0 0}
+  @media(max-width:620px){.pitbox dl{grid-template-columns:1fr}}
+  .pitbox dt{display:flex; gap:6px; align-items:center; font-size:.76rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:700}
+  .pitbox dd{margin:4px 0 0; font-size:.92rem}
+  .pitbox .tile{background:var(--soft); border-radius:10px; padding:10px 12px}
+  .pitbox .tile.what dt{color:var(--bad)} .pitbox .tile.fix dt{color:var(--good)}
+  .pitbox details{margin-top:8px}
+  .pitbox details summary{cursor:pointer; font-size:.86rem; color:var(--accent-dark)}
+
+  /* ---- postmortem visuals ---- */
+  svg.traj{width:100%; max-width:640px; height:auto; display:block; margin:0 auto}
+  .bingo{display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-top:10px}
+  @media(max-width:620px){.bingo{grid-template-columns:repeat(2,1fr)}}
+  .bingo .col h4{margin:0 0 6px; font-size:.74rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted)}
+  .bingo .cell{font-size:.78rem; padding:5px 8px; border-radius:7px; margin:3px 0; border:1px solid var(--line); background:var(--bg); color:var(--muted); line-height:1.25}
+  .bingo .cell.hit{background:var(--bad-bg); border-color:var(--bad); color:var(--ink)}
+  .bingo .cell.dodged{background:var(--good-bg); border-color:var(--good); color:var(--ink)}
+  .bingo .cell.meh{background:var(--meh-bg); border-color:var(--meh); color:var(--ink)}
+  .legend{display:flex; gap:14px; flex-wrap:wrap; font-size:.8rem; color:var(--muted); margin-top:8px}
+  .legend i{display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; vertical-align:-1px}
+  .legend i.sound{background:var(--good)} .legend i.pit{background:var(--bad)} .legend i.meh{background:var(--meh)} .legend i.none{background:var(--line)}
+  details.pm{border:1px solid var(--line); border-radius:12px; background:var(--bg); margin:8px 0}
+  details.pm>summary{cursor:pointer; padding:10px 14px; list-style:none; display:flex; gap:10px; align-items:center}
+  details.pm>summary::-webkit-details-marker{display:none}
+  details.pm>summary .sw{width:10px; height:10px; border-radius:50%; flex:none}
+  details.pm>summary .ph{font-size:.74rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; flex:none}
+  details.pm>summary b{flex:1; min-width:0}
+  details.pm>summary .chev{color:var(--muted); font-size:.8rem}
+  details.pm .inner{padding:0 14px 12px}
+  details.ggroup>summary .count{font-size:.78rem; color:var(--muted); background:var(--soft); border-radius:999px; padding:1px 8px; flex:none}
+  details.ggroup .gloss .gl:first-child{border-top:none}
+  details.ggroup .reads{margin:0; padding-left:1.1em} details.ggroup .reads li{margin:5px 0; line-height:1.45}
+  .resgrid{display:grid; grid-template-columns:1.1fr 1fr; gap:16px; margin-top:16px}
+  @media(max-width:700px){.resgrid{grid-template-columns:1fr}}
+
+  /* ---- taste visuals ---- */
+  svg.rel{width:100%; max-width:300px; height:auto; display:block; margin:0 auto}
+  .lvlbar{height:10px; background:var(--kbd); border-radius:999px; overflow:hidden; margin-top:8px}
+  .lvlbar>i{display:block; height:100%; background:var(--accent); width:0}
+  .ganloop{width:100%; max-width:420px; height:auto; display:block; margin:6px auto 0}
+  .tastehud{display:flex; gap:14px; align-items:center; font-size:.85rem; color:var(--muted); flex-wrap:wrap}
+  .tastehud .pts{font-weight:700; color:var(--ink)}
+  .flame{color:var(--meh)}
+
+  /* ---- field guide as tiles ---- */
+  .guide .tiles{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px}
+  @media(max-width:620px){.guide .tiles{grid-template-columns:1fr}}
+  .guide details.tile{border:1px solid var(--line); border-radius:12px; background:var(--bg)}
+  .guide details.tile>summary{cursor:pointer; padding:10px 12px; list-style:none; display:flex; gap:8px; align-items:center; font-weight:600; font-size:.95rem}
+  .guide details.tile>summary::-webkit-details-marker{display:none}
+  .guide details.tile>summary .sw{width:9px; height:9px; border-radius:50%; background:var(--line); flex:none}
+  .guide details.tile>summary .sw.hit{background:var(--bad)} .guide details.tile>summary .sw.dodged{background:var(--good)}
+  .guide details.tile>summary .cnt{margin-left:auto; font-size:.76rem; color:var(--muted); font-weight:400; white-space:nowrap}
+  .guide details.tile .inner{padding:0 12px 12px; font-size:.9rem}
+  .guide details.tile .inner .tri{display:grid; gap:6px}
+  .guide details.tile .inner .tri div{display:flex; gap:6px; align-items:flex-start}
+  .guide details.tile .inner .tri .k{font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; font-weight:700; color:var(--muted); min-width:64px; padding-top:2px}
+  /* ---- lessons (collapsed by default) ---- */
+  details.lesson{margin-top:10px; border:1px solid var(--line); border-radius:10px; background:var(--bg)}
+  details.lesson>summary{cursor:pointer; padding:9px 12px; list-style:none; font-size:.9rem; font-weight:600; color:var(--accent-dark)}
+  details.lesson>summary::-webkit-details-marker{display:none}
+  details.lesson .inner{padding:0 12px 10px; font-size:.92rem}
+  details.lesson .inner p{margin:.35em 0}
+  details.lesson .lh{font-size:.74rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:700; margin:10px 0 2px; display:flex; gap:6px; align-items:center}
+  details.lesson code{font:.88em ui-monospace,Menlo,monospace; background:var(--kbd); padding:.05em .3em; border-radius:4px}
+  .gloss{display:grid; grid-template-columns:1fr 1fr; gap:6px 14px; font-size:.88rem}
+  @media(max-width:620px){.gloss{grid-template-columns:1fr}}
+  .gloss .gl{display:grid; grid-template-columns:auto 1fr; gap:8px; padding:5px 0; border-top:1px solid var(--line)}
+  .gloss .gl b{white-space:nowrap} .gloss .gl span{color:var(--muted)}
+  /* ---- term tooltips ---- */
+  .term{border-bottom:1px dotted var(--accent-dark); cursor:help; position:relative; text-decoration:none}
+  .term::after{content:attr(data-tip); position:absolute; left:0; bottom:calc(100% + 8px); background:var(--ink); color:var(--bg);
+    padding:8px 10px; border-radius:8px; font-size:.8rem; line-height:1.35; font-weight:400; text-transform:none; letter-spacing:0;
+    width:max-content; max-width:min(300px, 80vw); z-index:30; display:none; pointer-events:none; box-shadow:var(--shadow)}
+  .term.r::after{left:auto; right:0}
+  @media (hover:hover){ .term:hover::after{display:block} }
+  @media (hover:none){ .term{border-bottom:0; cursor:auto} .kbdhint, #run-keys{display:none !important} }
+  .termstrip{margin-top:12px; padding-top:10px; border-top:1px dashed var(--line); display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+  .tchip{border:1px dotted var(--accent-dark); color:var(--accent-dark); border-radius:999px; padding:.15em .6em; font-size:.8rem; background:var(--chip)}
+  .tchip[aria-expanded="true"]{background:var(--btn); color:var(--on-accent); border-style:solid}
+  .tdef{flex-basis:100%; font-size:.88rem; background:var(--soft); border-radius:8px; padding:8px 10px; margin-top:4px}
+  .contrast{margin-top:8px; padding:8px 10px; border-radius:8px; background:var(--good-bg); border-left:3px solid var(--good); font-size:.93rem}
+  .bingo .cell.na{opacity:.45; border-style:dashed}
+  #tr-notes .verdict, #guide-notes .verdict{display:block}
+  .jumps{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.86rem; margin:8px 0 4px}
+  .filter{width:100%; border:1.5px solid var(--line); border-radius:10px; padding:8px 12px; font:inherit; background:var(--bg); color:var(--ink); margin:6px 0 8px}
+  /* ---- pictograms ---- */
+  svg.diag{display:block; fill:none; stroke-width:1.5; color:var(--ink); flex:none}
+  .pithead{display:flex; gap:14px; align-items:flex-start}
+  .pithead .pwhat{font-size:.93rem; margin-top:4px}
+  .diagf{margin:0; flex:none; width:132px}
+  .diagf figcaption{font-size:.72rem; color:var(--muted); text-align:center; margin-top:2px; line-height:1.2}
+  @media(max-width:520px){.pithead{flex-direction:column} .diagf{width:110px}}
+  .guide details.tile>summary svg.diag{margin-right:4px}
+  details.pm>summary svg.diag{flex:none; margin-right:2px}
+  .scalewrap{margin:-4px 0 4px}
+  svg.scale{display:block}
+  .hero{display:block; width:100%; max-width:720px; height:auto; margin:10px auto 4px}
+  /* ---- scope screen ---- */
+  .scopegrid{display:grid; grid-template-columns:1fr 300px; gap:16px; margin-top:16px; align-items:start}
+  @media(max-width:760px){.scopegrid{grid-template-columns:1fr}}
+  .scopeside{position:sticky; top:12px}
+  @media(max-width:760px){.scopeside{position:static}}
+  .card.dim{margin-bottom:12px}
+  .dimscore{font-size:1.4rem; font-weight:700; color:var(--accent-dark)}
+  .chip.sm{padding:.3em .7em; font-size:.82rem}
+  .kindex{margin-top:8px; font-size:.9rem; background:var(--soft); border-radius:8px; padding:8px 10px}
+  .anchors{display:grid; gap:6px; margin-top:6px}
+  .anchor{display:flex; gap:10px; align-items:center; text-align:left; border:1.5px solid var(--line); border-radius:10px; padding:7px 10px; background:var(--chip); font-size:.9rem}
+  .anchor .an{width:22px; height:22px; border-radius:50%; background:var(--kbd); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.8rem; flex:none}
+  .anchor:hover{border-color:var(--accent)}
+  .anchor[aria-pressed="true"]{border-color:var(--btn); background:var(--good-bg)} .anchor[aria-pressed="true"] .an{background:var(--btn); color:var(--on-accent)}
+  svg.radar{width:100%; height:auto; display:block}
+  .dotplot{margin-top:12px; border-top:1px solid var(--line); padding-top:8px}
+  .dotrow{display:grid; grid-template-columns:100px 1fr 130px; gap:8px; align-items:center; padding:5px 0; border-bottom:1px solid var(--line); font-size:.88rem}
+  .dotrow.head{border-bottom:2px solid var(--line)} .dotrow .dl{font-weight:600}
+  .dots5{display:grid; grid-template-columns:repeat(4,1fr); gap:4px}
+  .dots5 .cell{min-height:26px; display:flex; gap:3px; align-items:center; justify-content:center; border-radius:6px; background:var(--soft); position:relative; flex-wrap:wrap}
+  .dots5 .cell.hd{background:none; color:var(--muted); font-weight:700}
+  .dots5 .cell.me{outline:2px solid var(--accent)} .dots5 .cell b{font-size:.68rem; color:var(--accent-dark); text-transform:uppercase; letter-spacing:.04em}
+  .dots5 .cell i{width:10px; height:10px; border-radius:50%; display:inline-block}
+  @media(max-width:520px){.dotrow{grid-template-columns:80px 1fr} .dotrow > :last-child{display:none}}
+  .scopeform{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:10px}
+  .scopeform label{display:flex; flex-direction:column; gap:4px; font-size:.85rem; color:var(--muted); flex:1; min-width:140px}
+  .scopeform input{border:1.5px solid var(--line); border-radius:8px; padding:7px 10px; font:inherit; background:var(--bg); color:var(--ink)}
+  pre.statement{white-space:pre-wrap; font:inherit; background:var(--soft); border-radius:10px; padding:12px 14px; margin:6px 0 10px; border-left:3px solid var(--accent)}
+  .principle{margin-top:8px; padding:8px 10px; border-radius:8px; background:var(--soft); border-left:3px solid var(--accent); font-size:.93rem}
+  .pair.long{grid-template-columns:1fr}
+  .pair.long .opt{padding:38px 16px 16px 16px; font-size:.95rem; line-height:1.5}
+  ol.rankl{margin:6px 0 0; padding-left:1.3em} ol.rankl li{margin:6px 0}
+  .axis{margin:10px 0 14px}
+  .axlab{display:flex; justify-content:space-between; font-size:.82rem; font-weight:600; color:var(--muted)}
+  .axbar{position:relative; height:10px; background:var(--kbd); border-radius:999px; margin:4px 0}
+  .axbar::after{content:""; position:absolute; left:50%; top:-3px; width:1px; height:16px; background:var(--line)}
+  .axbar .mark{position:absolute; top:-3px; width:16px; height:16px; border-radius:50%; transform:translateX(-50%); box-sizing:border-box}
+  .axbar .mark.all{background:var(--btn); border:2px solid var(--bg)}
+  .axbar .mark.now{background:transparent; border:2px solid var(--accent-dark)}
+  .callout{border-left:3px solid var(--accent); background:rgba(74,143,227,.08); padding:10px 14px; border-radius:8px; margin:10px 0; font-size:.94rem}
+</style>
+</head>
+<body>
+<noscript><p style="padding:16px;font-family:sans-serif">This game needs JavaScript; nothing is loaded from elsewhere and nothing is sent anywhere.</p></noscript>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-tilde" viewBox="0 0 24 24"><path d="M4 13c2-4 5-4 8 0s6 4 8 0"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 3v16"/></symbol>
+  <symbol id="i-path" viewBox="0 0 24 24"><path d="M4 18c4 0 4-12 8-12s4 12 8 12"/><circle cx="4" cy="18" r="1.6"/><circle cx="20" cy="18" r="1.6"/><path d="M11 9l2 0M11 15l2 0"/></symbol>
+  <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 4v16M6 20h12M12 6l-6 2M12 6l6 2M6 8l-3 6h6zM18 8l-3 6h6z"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17v.5"/></symbol>
+  <symbol id="i-nose" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5L20 20"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14 4a4 4 0 0 0-4 6L4 16l4 4 6-6a4 4 0 0 0 6-4l-3 1-2-2 1-3z"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 21V4h11l-2 4 2 4H6"/></symbol>
+  <symbol id="i-question" viewBox="0 0 24 24"><path d="M9 9a3 3 0 1 1 4.5 2.6c-1 .6-1.5 1.4-1.5 2.4M12 18v.5"/></symbol>
+  <symbol id="i-blueprint" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 10v10M14 4v6"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16M8 16v-5M12 16V8M16 16v-3"/></symbol>
+  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></symbol>
+</svg>
+<style>
+  .secnav{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 4px}
+  .secnav a{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); border-radius:999px; padding:5px 12px; text-decoration:none; color:var(--fg); background:var(--bg); font-size:.9rem}
+  .secnav a .n{background:var(--accent); color:var(--on-accent); border-radius:50%; width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; font-size:.72rem; font-weight:700}
+  .secnav a .cnt{color:var(--muted); font-size:.78rem}
+  .sec{margin-top:26px} .sec h2 .num{display:inline-flex; width:28px; height:28px; border-radius:50%; background:var(--accent); color:var(--on-accent); align-items:center; justify-content:center; font-size:.9rem; vertical-align:middle; margin-right:4px}
+  .prompt label{display:block; margin-bottom:6px} .prompt textarea{width:100%; box-sizing:border-box; border:1px solid var(--line); border-radius:10px; padding:8px 10px; font:inherit; background:var(--bg); color:var(--fg); resize:vertical}
+  details.principle{margin:8px 0} details.principle .inner p{margin:6px 0}
+  .stmt{font-weight:600; font-size:1.02rem}
+  blockquote.q{margin:6px 0; padding:6px 12px; border-left:3px solid var(--accent); background:var(--soft); border-radius:8px}
+  .ex{margin:12px 0; border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--bg)}
+  .exh{display:flex; align-items:center; gap:8px; padding:8px 12px; border-bottom:1px solid var(--line); background:var(--soft)} .exh b{flex:1} .exh .lang{font-size:.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em}
+  pre.code{margin:0; padding:12px 14px; overflow:auto; font-size:.82rem; line-height:1.45; background:var(--bg); color:var(--fg); tab-size:2}
+  .exc{padding:8px 12px; margin:0; border-top:1px solid var(--line)}
+  .diagwrap{margin:10px 0} svg.diag{width:100%; max-width:560px; height:auto; display:block; color:var(--fg)}
+  .ladder{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:6px; margin:8px 0}
+  .rung{border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:8px 10px; text-align:left; cursor:pointer; font:inherit; color:var(--fg); display:flex; gap:8px; align-items:center}
+  .rung[aria-pressed=true]{border-color:var(--accent); background:var(--soft)} .rung .n{background:var(--accent); color:var(--on-accent); border-radius:50%; width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; flex:none}
+  .rungbox{margin:8px 0}
+  .terms4{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px; margin-top:8px} .terms4 div{border:1px solid var(--line); border-radius:10px; padding:8px 10px; font-size:.9rem} .terms4 b{display:block}
+  .calc{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px} .calc label{display:flex; flex-direction:column; gap:3px; font-size:.9rem} .calc input[type=number], .calc input[type=text]{border:1px solid var(--line); border-radius:8px; padding:6px 8px; font:inherit; background:var(--bg); color:var(--fg)} .calc label.chk{flex-direction:row; align-items:center; gap:8px}
+  .sorter{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:6px} .sitem{display:flex; gap:8px; align-items:flex-start; border:1px solid var(--line); border-radius:10px; padding:8px 10px; font-size:.92rem; cursor:pointer}
+  .aq{margin:10px 0} .aq .opts{display:flex; flex-direction:column; gap:4px; margin-top:4px} .aq label.chk{display:flex; gap:8px; align-items:center}
+  .got{display:flex; gap:8px; align-items:center; font-size:.88rem; color:var(--muted); margin-top:10px}
+  .tool{margin:10px 0; padding:10px 12px; border:1px dashed var(--line); border-radius:12px}
+  .tool::before{content:"Try it"; display:block; font-size:.74rem; color:var(--accent-dark); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px}
+</style>
+<div class="wrap">
+  <header class="top">
+    <div><div class="brandmark">Principles for (agentic) research</div></div>
+    <nav class="topnav"><a class="link" href="/tools/">Tools</a></nav>
+  </header>
+  <section>
+    <h1>Principles for (agentic) research</h1>
+    <p class="sub">A session in five parts: why do research at all, how taste is trained, what an agent actually is, how to run one as a supervisor, and an audit for the next task you think of delegating. The tools will be renamed next year; the principles were written for people.</p>
+    <p class="small muted" style="margin:6px 0 0">Pitched at principles, not tools. Where a tool appears (a hook, a rule, a skill, a test), it is an example of a principle, shown in full so you can see what one looks like and copy it. Your answers and read marks stay in this browser; nothing is sent anywhere.</p>
+    <div class="progress" style="margin-top:12px"><i id="pbar"></i></div>
+    <div class="row" style="justify-content:space-between"><span class="small muted" id="progress"></span><span class="row"><button class="link" id="expand-all">Expand all</button><button class="link" id="collapse-all">Collapse all</button><button class="link gray" id="reset">Clear my answers</button></span></div>
+    <div class="secnav" id="secnav"></div>
+  </section>
+  <div id="body"></div>
+  <section class="sec" id="s-refs"><h2>References</h2><p class="sub">Posts are from The Path to PhD unless noted.</p><div class="card" id="refs"></div></section>
+  <footer class="small muted" style="margin:28px 0 10px">Runs entirely in your browser. Part of <a href="/tools/">Tools</a>. Related: <a href="/tools/research-pitfalls/">Research Pitfalls</a> and <a href="/tools/research-projects/">Research Projects</a>.</footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+/* ============================================================================
+   CONTENT. Principles for (agentic) research. Principles only; examples are written for the site.
+   ========================================================================== */
+const SECTIONS = [
+  {id:"why", num:1, name:"Why do research at all?", lead:"Everything downstream is judged against this, and it is the part an agent cannot take from you.",
+   prompt:{q:"What do you want to get out of doing research?", hint:"One line. Not a paper: a paper is what these are for."}},
+  {id:"taste", num:2, name:"Taste, and how it is trained", lead:"Every agent practice later is a use of the same skill: telling good from bad. Train it before you hand anything over.",
+   prompt:{q:"What is something only you could do?", hint:"The agent can be the best at many things and the only at none."}},
+  {id:"agents", num:3, name:"What an agent is", lead:"The same model, reached differently. The hierarchy is about access and permission, not intelligence, and it ends on one question: is your speed earned or borrowed?",
+   prompt:{q:"So what? Which rung do you actually use, and what checks it?", hint:"Pick one from the ladder below and answer for that one."}},
+  {id:"run", num:4, name:"Running agents as a supervisor", lead:"Each practice is a research principle applied to a new collaborator that lacks your context and never tires. The caveat opens and closes it: if you don't know, how do you check?",
+   prompt:{q:"What would you not automate?", hint:"Sort by whether you could check the result."}},
+  {id:"audit", num:5, name:"Your audit", lead:"The principles as five questions to ask of one task before you delegate it.", prompt:null}
+];
+
+/* code examples, referenced by id from principles */
+const EXAMPLES = {
+  claudemd:{title:"A CLAUDE.md for a research repository", lang:"markdown", caption:"The same things you would tell a new student on day one, read by the agent on every day one. Note what it contains: how to run the checks, what never to touch, what done looks like, and how to behave when a check fails.",
+   code:`# Project: contrastive-ident
+
+## What this is
+Identifiability experiments for contrastive learning. Results in \`results/\`, figures in \`figures/\`, raw data in \`data/raw/\` (never edited by hand or by you).
+
+## How to run the checks
+- Tests: \`uv run pytest -q\`
+- Lint and format: \`uv run ruff check . && uv run ruff format .\`
+- Regenerate all figures: \`make figures\` (deterministic; seeds are fixed in \`configs/\`)
+
+## Rules
+- Never modify \`data/raw/\`. Derived data goes to \`data/derived/\` with the script that made it.
+- Every change to a metric in \`src/metrics.py\` needs a test in \`tests/test_metrics.py\` with a hand-computed expected value.
+- Report every number with the seed count and the spread. A single-seed number is not a result.
+- When a check fails, read the whole error, fix it, re-run the check, then continue. Do not skip or silence a failing test.
+
+## What done looks like
+A change is done when the tests pass, the figure regenerates from \`make figures\`, and the commit message says what changed and why.
+
+## How to talk to me
+Be direct; skip preamble. If you are unsure which of two things I meant, ask one question instead of guessing.`},
+  hook:{title:"A hook: your script, on every action", lang:"json", caption:"A hook is a script the harness runs on every matching action, whether or not anyone remembers. This one runs before every file write and blocks writes under data/raw; exit code 2 means blocked, and the message goes back to the agent. The second hook formats every file the agent edits. Neither is a model judging a model.",
+   code:`// .claude/settings.json
+{
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "Write|Edit",
+        "hooks": [ { "type": "command", "command": "bash .claude/hooks/protect-raw.sh" } ] }
+    ],
+    "PostToolUse": [
+      { "matcher": "Write|Edit",
+        "hooks": [ { "type": "command", "command": "uv run ruff format \\"$CLAUDE_FILE_PATHS\\"" } ] }
+    ]
+  }
+}`},
+  hookscript:{title:"The hook script", lang:"bash", caption:"The harness passes the tool call as JSON on standard input. The script reads the path, decides, and exits 2 to block. It does not tire, forget, or agree with the model.",
+   code:`#!/usr/bin/env bash
+# .claude/hooks/protect-raw.sh: block any write under data/raw/
+set -euo pipefail
+path=$(jq -r '.tool_input.file_path // empty')
+case "$path" in
+  */data/raw/*|data/raw/*)
+    echo "blocked: data/raw is read-only; write derived data to data/derived/ with the script that made it" >&2
+    exit 2 ;;
+esac
+exit 0`},
+  rules:{title:"Rules: permissions decided in advance", lang:"json", caption:"A permission rule is a decision written down once so it outlives the session. Unlike a sentence in a prompt, which the model may ignore, a rule is enforced by the program: the deny list wins, the allow list runs without asking, everything else asks you.",
+   code:`// .claude/settings.json
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Bash(uv run pytest*)",
+      "Bash(uv run ruff*)",
+      "Bash(make figures)"
+    ],
+    "deny": [
+      "Bash(rm -rf*)",
+      "Bash(git push*)",
+      "Write(data/raw/**)",
+      "Edit(data/raw/**)"
+    ]
+  }
+}`},
+  test:{title:"A test the output must pass", lang:"python", caption:"The gate before your attention. The expected value is computed by hand on a case small enough to check on paper, so the test is not the model grading itself. The second test is differential: a new implementation against a trusted one on random inputs, which catches the double-count that a plausible number hides.",
+   code:`# tests/test_metrics.py
+import numpy as np
+from src.metrics import mean_corr_coef, mean_corr_coef_reference
+
+def test_mcc_hand_computed():
+    # two latents, two recovered; recovered = permuted and scaled latents
+    z = np.array([[1.0, 0.0], [0.0, 2.0], [1.0, 2.0]])
+    z_hat = np.array([[0.0, 3.0], [4.0, 0.0], [4.0, 3.0]])   # columns swapped, scaled
+    assert abs(mean_corr_coef(z, z_hat) - 1.0) < 1e-9          # by hand: perfect after matching
+
+def test_mcc_matches_reference_on_random_inputs():
+    rng = np.random.default_rng(0)
+    for _ in range(50):
+        z = rng.normal(size=(200, 5)); z_hat = z @ rng.normal(size=(5, 5)) + 0.1 * rng.normal(size=(200, 5))
+        assert abs(mean_corr_coef(z, z_hat) - mean_corr_coef_reference(z, z_hat)) < 1e-6
+
+def test_mcc_does_not_double_count():
+    # a recovered dimension may be matched to at most one latent
+    z = np.eye(3); z_hat = np.stack([z[:, 0], z[:, 0], z[:, 0]], axis=1)
+    assert mean_corr_coef(z, z_hat) < 0.5`},
+  skill:{title:"A skill: a decision frozen in time", lang:"markdown", caption:"A skill is a written procedure the agent reads when the task matches, so the correction goes into the file rather than into the next prompt. It carries the checks and what done looks like. Its failure is silent, because it still runs; that is why the last section exists.",
+   code:`---
+name: reproduce-figure
+description: Use when asked to regenerate, fix, or restyle a paper figure from saved results. Triggers: "regenerate figure 3", "the plot is wrong", "update the ablation figure".
+---
+
+# Reproduce a figure
+
+## Steps
+1. Find the figure's script in \`figures/scripts/\` (named after the figure) and the results it reads in \`results/\`.
+2. Run \`make figures FIG=<name>\`. Never edit a results file to make a plot look right.
+3. Compare the new PDF against the committed one: same axes, same seed count in the caption, same numbers within seed spread.
+
+## Checks before you report done
+- The caption states the number of seeds and what the error bars are.
+- No number in the figure differs from \`results/summary.json\` by more than the spread.
+- The script ran from a clean shell with \`make\`, not from a notebook.
+
+## What done looks like
+A one-paragraph note: what changed, the command that regenerated it, and the diff of the summary numbers.
+
+## When this skill was wrong before
+- It once restyled a figure whose underlying results were stale. Now step 1 checks the results timestamp against the last training run.`},
+  subagents:{title:"Emulate your research group", lang:"text", caption:"Three readers with different questions, asked to disagree. Their agreement is weak evidence, because they share one model and one framing; their disagreement is where to look. The caveat carries the weight: a reviewer emulated in a field you do not know is a checker you cannot check.",
+   code:`Read the attached draft three times, as three different people, and report each separately.
+
+1. The reviewer: you have twenty minutes and a checklist. Which claim would you ask for evidence on first? Which baseline is missing? Where does the abstract claim more than Section 4 shows?
+2. The devil's advocate: assume the main result is an artifact. What is the most likely artifact, and which single experiment would expose it?
+3. The reader who was not in the room: where did you lose the thread? Which term was used before it was defined? What is the one sentence you would tell a colleague this paper shows?
+
+Rules: disagree with each other where you can; do not soften; do not summarize the paper back to me.`},
+  script:{title:"Script what you can", lang:"makefile", caption:"An agent that is 95 percent reliable per step is about 60 percent reliable over ten. A script is 100 percent at the steps you gave it. Every deterministic step lives in a script the agent calls, not in a prompt the agent follows.",
+   code:`# Makefile
+figures: results/summary.json
+	uv run python figures/scripts/all.py --summary results/summary.json --out figures/
+
+results/summary.json: $(wildcard results/runs/*.json)
+	uv run python scripts/summarize.py --runs results/runs --out $@ --min-seeds 5
+
+check-refs:
+	uv run bibtexupdater --check paper/references.bib   # every reference resolves, or the build fails
+
+paper: figures check-refs
+	latexmk -pdf paper/main.tex`},
+  postmortem:{title:"Loop and reiterate: the postmortem", lang:"markdown", caption:"A project without a postmortem is an open-loop controller. Rested, one hour, questions written in advance; then feed it forward. For an agent workflow, the last line goes into the skill or the CLAUDE.md, not into your memory.",
+   code:`# Postmortem: <project>, <date>
+
+## Self
+- What did I do well? What did I do that I would not do again?
+- Which "annoying but let's get it done" did I dismiss that turned out to matter?
+
+## Communication
+- Was the intent of each message achieved? Did anyone summarize it back?
+- Where did I assume a collaborator (human or agent) had context it did not have?
+
+## Hygiene
+- Who did what by when? Where was the margin of safety thin?
+- What would need to change to make this easy next time?
+
+## Feed forward
+- Assume the next project has already failed. Why?
+- The one line that goes into CLAUDE.md or the skill file now: ...`},
+  delegation:{title:"The delegation sum", lang:"text", caption:"Compare your own time with ask + wait + check, divided by the probability of success, because every miss costs the whole process again. Researchers forget the checking segment, which is largest exactly when they cannot check.",
+   code:`yourself:    T_you
+delegated:   (T_ask + T_wait + T_check) / p_success
+
+1-hour task, 5 min to ask, 5 min to wait, 30 min to check, p = 0.9  ->  44 min   (delegate, barely)
+1-hour task, same, p = 0.5                                          ->  80 min   (do it yourself)
+10-hour task, 20 min ask, 1 h wait, 2 h check, p = 0.6              ->  5.6 h    (delegate)
+any task where you cannot check                                      ->  T_check is unbounded`}
+};
+
+const PRINCIPLES = [
+  /* ---- 1 why ---- */
+  {id:"question-first", sec:"why", name:"Start from the question, not the practices", stmt:"Ask what you want out of research before choosing how to do it.",
+   why:"In science, if you know what you are doing you should not be doing it; in engineering, the reverse. That is a mindset, not a job title. Much of machine learning research is engineering, which is a different thing, not a lesser one. Research means accepting, even embracing, not knowing.",
+   practice:"Write one line: what do I want out of this? Keep it where you plan.", refs:["hamming", "schwartz"]},
+  {id:"what-is-left", sec:"why", name:"What is left: learning, curiosity, better questions, meaning, helping others", stmt:"None of the five is a paper; all five are what a paper is for.",
+   why:"Learning skills, not changing the world, is the goal, and learning is what an agent can take from you unnoticed. Better questions means asking what should be answered in the first place. Meaning means always articulating why something works or fails; a why you can articulate is a why you can check.",
+   practice:"After each project: what did I learn, which question is better now, what did I explain that I could not before?", refs:["important"]},
+  {id:"only", sec:"why", name:"Be the only, not the best", stmt:"Look for something only you could do. The agent can be the best at many things and the only at none.",
+   why:"Bridging fields is where “only” usually lives, and that needs a network. This makes “better questions” personal: the question you are placed to ask is the one worth a year.",
+   practice:"Name the two fields you stand between and the question that lives in the gap.", refs:["kelly"], quote:{t:"Don't be the best. Be the only.", by:"Kevin Kelly"}},
+  {id:"process", sec:"why", name:"Process, not outcome", stmt:"Focus on learning skills; every outcome is somebody else's decision, the process is what you own.",
+   why:"The process is also what an agent can hollow out while outcomes keep arriving. The skill that matters most is taste: telling great ideas from bad. Counter-case: process alone never ships; the outcome is still the test.",
+   practice:"Track a dense reward: time to understand a paper, time to a working pilot, not paper count.", refs:["taste", "relu"]},
+  {id:"heroic", sec:"why", name:"Almost nothing is worth a heroic effort; almost everyone is", stmt:"Periodize. Be world-class in rest too; recovery is part of the job, in working hours.",
+   why:"The hustle does not stop by itself. Easy days most of the time are what let you go hard when it counts, and the deadline is a forcing function only in doses.",
+   practice:"Plan the rest week after the deadline before the deadline.", refs:["rest", "hardeasy"]},
+  {id:"fail-small", sec:"why", name:"Failure is inevitable; diversify and fail small", stmt:"Run a barbell of safe and risky projects, prototype to fail early on purpose, compare only with your past self.",
+   why:"Setbacks are survivable: grant applicants who narrowly missed and stayed published more hits later. You are not alone; about one in four doctoral researchers screens positive for depression and a majority has considered quitting. Ask for help.",
+   practice:"For every risky bet, name the safe project running beside it.", refs:["barbell", "failure", "phdnet"]},
+  {id:"identity", sec:"why", name:"Diversify your sense of self", stmt:"Have another pursuit you care about, aiming at mastery rather than performance. Caring is the whole thing.",
+   why:"Less successful scientists in the Root-Bernstein study had as many activities as successful ones but no unifying focus; the sample is small and old, so take it as a hint, not a law. Sport, reading and the rest are part of the job.",
+   practice:"One pursuit outside research with a goal you would be sad to drop.", refs:["rootbernstein"]},
+  {id:"finding-out", sec:"why", name:"Keep your identity in the finding out, not the producing", stmt:"If what made you a scientist was doing the thing, supervising an agent feels like losing it; the yield of science is what is found out, and no agent takes that.",
+   why:"Doubt about what a scientist is now is the symptom of having learned something about the tools. The finding still has to be true, so the checking stays yours.",
+   practice:"When a tool does the part you loved, ask what was found out, and whether you can defend it.", refs:["feynman"]},
+
+  /* ---- 2 taste ---- */
+  {id:"two-skills", sec:"taste", name:"Two kinds of skill: taste is the discriminator", stmt:"Generative skill is making; discriminative skill is telling good from bad. Taste is the second.",
+   why:"The analogy to a generative adversarial network is exact: a sharper discriminator is developing taste. The trap is generative skill without the discriminative one: you mistake your output for good output because your judgment is uncalibrated and you are attached to your ideas.",
+   practice:"For your next piece of work, write the verdict before you ask anyone; then compare.", refs:["taste"], diagram:"gan"},
+  {id:"feedback-trains", sec:"taste", name:"Feedback trains the discriminator", stmt:"Copy someone's taste, produce something with it, bring it back for feedback, repeat.",
+   why:"This is alternating between estimating the taste and improving the output against the estimate. The common mistake is refusing to talk to a supervisor until you have something in hand: sparse feedback, late. Dense and frequent beats big and rare; mentors a little ahead of you give the densest.",
+   practice:"Praise specific and public; criticism specific, kind and private. Ask others to summarize what you said.", refs:["agefeedback", "expectations"]},
+  {id:"judge-dozen", sec:"taste", name:"Taste does not require producing the thing judged", stmt:"Judging a dozen things trains the discriminator faster than shipping one.",
+   why:"Producing is slow, so feedback from it is sparse; an agent produces by the dozen. Counter-case: judging is cheap to train, guiding someone through a process is not, and benefits from having done the thing.",
+   practice:"Review side by side: two abstracts, two plans, two proofs. Say which is better and why, then check.", refs:["taste"]},
+  {id:"three-routes", sec:"taste", name:"Optimize the discriminator; the generator is one route", stmt:"Three routes: generate and seek explicit feedback; judge others' work side by side; teach, since explaining “good” forces the implicit out.",
+   why:"The agent is a generator. Everything in section 4 is about your discriminator.", practice:"Pick the route you use least and use it this month.", refs:["taste"]},
+  {id:"not-care", sec:"taste", name:"Decide what you do not care about", stmt:"Information filtering is mostly naming the skills you have chosen not to care about. Losing a generative skill is not always bad.",
+   why:"Keep a generative skill when it is the only way to get something you can judge, when you want to teach it, or when it gives you fulfillment; otherwise focus on the discriminative side. Assisted performance stays high while capability erodes, so make it a decision, not a drift.",
+   practice:"The keep/drop test below.", refs:["filtering"], tool:"keepdrop"},
+  {id:"can-should", sec:"taste", name:"Can do is not should do", stmt:"When making is free, choosing what is worth making is the taste that matters.",
+   why:"Agents collapsed the cost of “can do”, so the scarce judgment is “should do”. Weeks on a correct but pointless proof is the old version of this mistake; a night in a rabbit hole is the new one.",
+   practice:"Before starting, write what changes if it works. If nothing, stop.", refs:["expectations"]},
+  {id:"not-optimal", sec:"taste", name:"Never assume your way is optimal, but be selective", stmt:"Re-examine how you have always done research, now that something that does not know how you did it is about to; questioning everything is not effective either.",
+   why:"Traditions in things you control (another meeting? this notebook?) are the cheapest to question. The rest, leave.", practice:"One habit per month, questioned and either kept on purpose or dropped.", refs:["alwaysdone"]},
+  {id:"network", sec:"taste", name:"Never work alone; science needs a network", stmt:"You will not have all the expertise; assume you are not alone in thinking about a problem; bridging fields needs connections.",
+   why:"Simultaneous discovery happens. Technical work can still be done alone; the judgment cannot.",
+   practice:"The cold email: a specific technical question only a reader of the paper could ask, then what you work on, then one concrete ask answerable in a line.", refs:["emulate"]},
+  {id:"communication", sec:"taste", name:"Most problems are communication problems", stmt:"Communicate more than you think necessary; write down and say the trivial; think with the mind of the audience.",
+   why:"The channel is lossy and the receiver lacks your decoder. Think with your supervisor's brain: what would make their life easier; you are allowed to ask what is expected. Reused for agents in section 4.",
+   practice:"Say the obvious. If you feel embarrassed stating it, you are doing it right.", refs:["curse", "expectations"]},
+  {id:"know-yourself", sec:"taste", name:"Know yourself", stmt:"Find what you find easy that others find hard; learn when you focus and when you are creative; know your biases; kill your darlings.",
+   why:"Fix boundary conditions rather than willpower: the simplest system that works for you, deep work when the boss is busy, and the question “what if this were easy?”",
+   practice:"Two lines: when am I sharp, and what makes me weird.", refs:["makers", "killdarlings"]},
+
+  /* ---- 3 agents ---- */
+  {id:"same-model", sec:"agents", name:"Same model, different API", stmt:"Every rung of the tool hierarchy changes what the model can reach, may do, and how its work is checked. What the model is never changes.",
+   why:"The same model families are served through a chat app, a desktop app, a terminal and the raw interface; what differs is the system prompt, the attached tools and the permissions. The tools will be renamed next year; the sentence will not.",
+   practice:"Use the ladder below. For the rung you use, say what checks the output.", tool:"ladder"},
+  {id:"reach", sec:"agents", name:"The hierarchy is about reach and permission, not intelligence", stmt:"Chatbot, plus files, plus a container and connectors, a local app with permissions, a terminal with permissions, plus skills and a harness: each rung adds access or permission and has its own first failure.",
+   why:"A chatbot with a good question beats an agent with a bad one. The top rung adds no access at all, only procedure (skills) and enforcement (hooks, harness): verification.", practice:"Learn the four words: container, connector, skill, harness. They are in the ladder.", refs:["glossary"]},
+  {id:"verifier", sec:"agents", name:"Below the harness, the only verifier is you", stmt:"Reliability grows with context and checks; only at the harness does something other than you check an action, and it is a script.",
+   why:"You read the output at every rung; you approve each action from the permission prompt on; a script checks each action only at the harness. Scripts check what you told them to, so the whole is still bounded by the judge.", practice:"Count how many of your agent's actions today were checked by anything but your eyes."},
+  {id:"verification", sec:"agents", name:"Verification is not validation", stmt:"A harness verifies: test passed, rule held, hook ran. Whether the result is true or the question worth asking is validation, and no tool does it.",
+   why:"Built it right versus built the right thing. Engineers hear “verified” and stop; the missing half is taste. A claim that fails verification never reaches validation, so the order matters.", practice:"After “the tests pass”, ask the second question out loud."},
+  {id:"accountable", sec:"agents", name:"Stay accountable: vibe engineering, not vibe coding", stmt:"Accepting everything without reading the changes is fine for a throwaway script. For anything with your name on it, add the tests and specs the output must meet, and read the diffs.",
+   why:"Tests and specs turn open-loop generation into a closed loop. If the model writes the tests, you must check they test what you want; you cannot escape judgment, only move it.", practice:"Read the diff. If it is too long to read, the task was too big to delegate in one piece.", refs:["willison", "karpathy"]},
+  {id:"frontier", sec:"agents", name:"Research sits at the frontier", stmt:"Coding is within the frontier of what these systems do reliably; reliable knowledge management, most of research, is at its edge.",
+   why:"Vibe engineering is a solved shape for code because code has tests; research mostly does not, so the checking practices in section 4 must substitute.", practice:"For a research task, write the test before delegating. If you cannot, see the caveat."},
+  {id:"earned", sec:"agents", name:"Is your speed earned or borrowed?", stmt:"Earned speed is a byproduct of expertise. Delegated speed substitutes for it unless verified, or unless you trust whom you delegated to.",
+   why:"Nothing on the ladder made you an expert; it made you fast. The audit: if the output is subtly wrong in a way that crashes nothing, will you catch it on first read, second, ever? Would you put your name on it?", practice:"Two questions on every delegated piece: did I verify, or did I trust? Would I sign it?", refs:["twofast", "revisitfast"]},
+
+  /* ---- 4 run ---- */
+  {id:"caveat", sec:"run", name:"The caveat: if you don't know, how do you check?", stmt:"An agent will hand you an answer in a field where you have not trained the judge. Every practice below is one way of not being fooled.",
+   why:"Judging output can be trained cheaply and without generative skill; that is what tests, feedback and the emulated group are for. Guiding others through a process cannot. Where you cannot judge, do not delegate, or delegate only as a safe-to-fail experiment. The practices do not remove the question; they make it cheaper to answer and say when to stop asking.",
+   practice:"Before delegating, name the check. No check, no delegation, or a sandbox where failure costs nothing."},
+  {id:"management", sec:"run", name:"Management is the AI superpower", stmt:"Delegate, set up guardrails and safe-to-fail experiments, expect mistakes, including your own.",
+   why:"All three need guidance, verification, and accepting that collaborators, human or otherwise, lack the context you take for granted. What is scarce is knowing what to ask for, and knowing what good looks like when it comes back: that is taste.", practice:"Treat the agent like a capable new student: brief, guard, check, debrief.", refs:["mollick"]},
+  {id:"supervising", sec:"run", name:"Supervising is a different expertise from doing", stmt:"The specialist knows how to do the thing; the supervisor knows what to ask for, what good looks like when it returns, and which dots the work connects.",
+   why:"A “working with me” page for students and a CLAUDE.md for the agent say the same things because the job is the same: supervision, written once and handed over. Counter-case: where the field is one you do not know, the check is one you cannot make; supervision moves the specialist, it does not remove the need for one.", practice:"Write the CLAUDE.md as you would brief a new student.", example:"claudemd"},
+  {id:"context", sec:"run", name:"Context: write down the trivial, every session", stmt:"Everything you would tell a new student on day one, the agent needs on every day one, which is every session.",
+   why:"The channel to an agent is the same lossy channel as to a colleague, and it lacks your decoder too. Context has a cost; the filter is whether someone who was not in the room needs it, which here is always.", practice:"How to run the checks, what never to touch, what done looks like, how to behave when a check fails. See the CLAUDE.md above.", refs:["curse"]},
+  {id:"delegation", sec:"run", name:"Delegation is a per-task calculation", stmt:"Compare your own time with ask plus wait plus check, divided by the probability of success, and redo the sum for every task.",
+   why:"Every miss costs the whole process again. A one-hour task with a thirty-minute check is worth delegating only if success is very likely; a ten-hour task is worth several hours with the agent. The checking segment is largest exactly when you cannot check.", practice:"The calculator below.", example:"delegation", tool:"calc"},
+  {id:"jagged", sec:"run", name:"The frontier is jagged, so delegation is a judgment call every time", stmt:"Tasks of equal perceived difficulty fall on either side of what the model does reliably. Decide per task, not by policy.",
+   why:"People draw one line and delegate everything left of it; the real edge is ragged, so an easy-looking task fails and a hard-looking one works. In the consultant study, tasks inside the frontier were finished faster and better; outside it, people with the tool were nineteen points less likely to be correct. The frontier moves but stays jagged.", practice:"The sorter below: which of these would you delegate?", refs:["jagged"], tool:"sorter"},
+  {id:"rabbit", sec:"run", name:"The rabbit-hole tax: strategic friction, not more discipline", stmt:"The agent lowers the activation energy of starting; volume goes up, and the cost moves from starting to choosing.",
+   why:"Procrastination is an energy barrier, not laziness; lowering it is why postponed good things finally happen and why “it's so easy, I'll do it today” ends at midnight. The guardrail against yourself is friction you choose.", practice:"A budget: agent sessions per day, or a question you must answer before starting one (what changes if this works?)."},
+  {id:"guardrails", sec:"run", name:"Guardrails: tests, rules, hooks, and who guards the guardians", stmt:"Put the agent's work through gates before you spend attention: tests the output must pass, rules for what it must never do, hooks that run your script on every action.",
+   why:"Not the safety sense; these are the checks engineers already run, moved to where the constrained thing is an agent. The objection: if the model writes the tests, you must check they test what you want; verification regresses upward and your taste is the last guardian. The part that does not depend on taste: none of the three is a model judging a model. A prompt instruction is advice the model reads; a rule or a hook is enforced by the program.", practice:"One test, one rule, one hook. The examples below are complete and copyable.", example:"test", examples:["rules", "hook", "hookscript"], refs:["hooksdoc", "permsdoc"]},
+  {id:"script", sec:"run", name:"Script what you can", stmt:"If a step is deterministic, do not ask a model; write it down and let it run.",
+   why:"An agent 95 percent reliable per step is about 60 percent reliable over ten steps. A script is 100 percent at the steps you gave it. The guards that need no guarding are the ones you wrote. Start with the simplest thing that works.", practice:"Every pipeline step the agent repeats twice becomes a Makefile target or a script it calls.", example:"script"},
+  {id:"coach", sec:"run", name:"Use the agent as coach, or as a generator you judge; never generate-and-ship", stmt:"Either you generate and the agent critiques, or the agent generates by the dozen and you judge.",
+   why:"Generate-and-ship is open loop. Bad feedback is still useful: it shows where a reader can go wrong. Accept whatever the model says and the generator is you, the discriminator the model, and your taste is outsourced. The skill you need is to assess the feedback critically, exactly as with human feedback.", practice:"Ask it to summarize what you wrote before it critiques; if the summary is wrong, the writing was.", refs:["agefeedback"], diagram:"loops"},
+  {id:"emulate", sec:"run", name:"Emulate your research group, with the caveat carrying the weight", stmt:"Read your draft as a reviewer, a devil's advocate and a reader who was not in the room; then treat their agreement as weak evidence.",
+   why:"A group reads with different questions where one model asked once does not. Three readers from one model with one framing share ancestry; people disagree for reasons, agents disagree when told to, so prompt the disagreement. The pattern pays where checking is cheaper than doing: much of code, less of research.", practice:"The prompt below, with the disagreement rule in it.", example:"subagents", refs:["emulate"]},
+  {id:"loop", sec:"run", name:"Loop and reiterate: skills are reuse plus reiterate", stmt:"A project without a postmortem is an open-loop controller; a skill never corrected is the same run repeated.",
+   why:"Steering blind is open loop; control is feedback. A skill is the objective function written down so the loop can run without the person who gave it to you: a copy of somebody's taste, wrong the first time, and the correction goes into the skill, not the next prompt. A skill is a decision frozen in time and its failure is silent because it still runs.", practice:"A skill file with a “when this was wrong before” section, and a postmortem template you actually use.", example:"skill", examples:["postmortem"], refs:["openloop"]},
+  {id:"automate", sec:"run", name:"What would you (not) automate?", stmt:"Sort candidate tasks by whether you could check the result. Just because you can does not mean you should.",
+   why:"The better question is what would need to change to make things easy. The tasks people name first (reimbursements, formatting, reference checks) are checkable and boring; the ones they name last are the ones where the check is the expertise.", practice:"The sorter in the jagged-frontier card, and the audit in section 5."}
+];
+
+/* the ladder: six rungs of the tool hierarchy */
+const LADDER = [
+  {name:"Chatbot", access:"What you paste", perm:"Says; you copy out", checker:"You read the output", fail:"Plausibly wrong where you cannot tell: the failure mode of every rung, unmixed."},
+  {name:"+ files", access:"Your files", perm:"Reads the paper instead of your description of it", checker:"You read the output", fail:"The figures never arrived: a long PDF processed as text only, images in a document never read, a stale draft reading like the current one."},
+  {name:"+ container + connectors", access:"Your accounts and a throwaway computer", perm:"Runs code; acts, not only says", checker:"You read the output; the box protects your machine", fail:"It acts while you look away: the container protects your machine, not your inbox, and a connector allowed to write will write."},
+  {name:"Local app with permissions", access:"Your machine", perm:"Each action asks you first", checker:"You approve each action", fail:"You approve without reading: first hour reading prompts, tenth hour clicking through."},
+  {name:"Terminal with permissions", access:"Your machine, your cluster", perm:"Can be left running; your answers written in advance as rules", checker:"Rules, then you", fail:"Nobody was watching."},
+  {name:"+ skills, hooks, harness", access:"Nothing new", perm:"Procedure (skills) and enforcement (hooks); checks run whether or not anyone remembers", checker:"A script checks each action; then you", fail:"A wrong procedure runs reliably. A skill is a decision frozen in time and its failure is silent."}
+];
+const LADDER_TERMS = [
+  ["container", "A computer for one task, thrown away after, so nothing it breaks is yours. A clean bench."],
+  ["connector", "The access you already have to one account, no more. A library card."],
+  ["skill", "A written procedure the model reads when the task matches, outliving the conversation. A protocol sheet."],
+  ["harness", "Which instruments it has, what it may touch, what it remembers between days, which checks run whether or not anyone remembers. The lab around the scientist."]
+];
+
+/* the sorter: tasks of similar apparent difficulty on either side of the frontier */
+const SORTER = [
+  {t:"Reformat 40 references into the venue's style and check each resolves", delegate:true, why:"Checkable by a script and by you in minutes: a reference either resolves or it does not. Boring, deterministic, inside the frontier."},
+  {t:"Write the related-work section from twelve papers you have read", delegate:false, why:"Looks easy, is not: the model will produce fluent claims about papers it summarizes wrongly, and you catch the errors only if you re-read all twelve. If you have read them, writing it is faster than checking it."},
+  {t:"Port a plotting script from matplotlib to plotly", delegate:true, why:"Looks tedious, is inside the frontier: the output is a picture you can compare against the old one in seconds."},
+  {t:"Decide which of three research directions to pursue next", delegate:false, why:"The check is the expertise. Use the agent as devil's advocate on each, then decide yourself."},
+  {t:"Find the bug that makes the metric drift after a refactor", delegate:true, why:"Delegate with a test: the hand-computed case that must pass. Without the test, you cannot tell a fix from a plausible edit."},
+  {t:"Summarize a 60-page appendix into what matters for your claim", delegate:false, why:"Looks like reading, is judgment: “what matters for your claim” is the part the model does not know, and its summary will be confident either way. Read it with the agent as a question-answering tool instead."},
+  {t:"Set up the experiment configs for a five-seed sweep from one working config", delegate:true, why:"Deterministic and checkable by diff. Add a rule: never change the model config, only the seed."},
+  {t:"Write the abstract that claims exactly what Section 4 supports", delegate:false, why:"Sizing claims to evidence is taste. Have it draft three, judge them against the table, and write the fourth yourself."}
+];
+
+const REFS = {
+  hamming:{t:"The Art of Doing Science and Engineering", by:"Richard Hamming", url:"https://press.stripe.com/the-art-of-doing-science-and-engineering"},
+  schwartz:{t:"The importance of stupidity in scientific research", by:"Martin Schwartz, J. Cell Sci. 2008", url:"https://journals.biologists.com/jcs/article/121/11/1771/30038"},
+  important:{t:"Are you working on important problems?", by:"P2P No. 91", url:"https://path2phd.substack.com/"},
+  kelly:{t:"Excellent Advice for Living", by:"Kevin Kelly", url:"https://kk.org/books/excellent-advice-for-living"},
+  taste:{t:"Developing taste", by:"P2P No. 135", url:"https://path2phd.substack.com/p/developing-taste"},
+  relu:{t:"The ReLU illusion of progress", by:"P2P No. 130", url:"https://path2phd.substack.com/p/the-relu-illusion-of-progress"},
+  rest:{t:"Be world-class in rest too", by:"P2P No. 9", url:"https://path2phd.substack.com/p/p2p-no-9-be-world-class-in-rest-too"},
+  hardeasy:{t:"Rest is part of mastery", by:"P2P No. 122", url:"https://path2phd.substack.com/p/rest-is-part-of-mastery"},
+  barbell:{t:"The barbell strategy of research", by:"P2P No. 5", url:"https://path2phd.substack.com/p/p2p-no-5-the-barbell-strategy-of"},
+  failure:{t:"On Failure", by:"P2P No. 13", url:"https://path2phd.substack.com/p/p2p-no-13-on-failure"},
+  phdnet:{t:"PhDnet Survey Report 2023", by:"Max Planck PhDnet", url:"https://www.phdnet.mpg.de/226762/2_PhdNet_Survey_Report_2023.pdf"},
+  rootbernstein:{t:"Correlations between avocations, scientific style, work habits, and professional impact of scientists", by:"Root-Bernstein et al. 1995"},
+  feynman:{t:"The Meaning of It All", by:"Richard Feynman"},
+  agefeedback:{t:"Don't run your projects open-loop", by:"P2P No. 134", url:"https://path2phd.substack.com/p/dont-run-your-projects-open-loop"},
+  expectations:{t:"A PhD expectations guide", by:"P2P No. 132", url:"https://path2phd.substack.com/p/a-phd-expectations-guide"},
+  filtering:{t:"Information filtering is what you need", by:"P2P No. 128", url:"https://path2phd.substack.com/p/information-does-not-equal-knowledge"},
+  alwaysdone:{t:"The danger of “we have always done it this way”", by:"P2P No. 46", url:"https://path2phd.substack.com/p/p2p-no-46-the-danger-of-we-have-always"},
+  emulate:{t:"Emulate your own research group", by:"P2P No. 100", url:"https://path2phd.substack.com/p/emulate-your-own-research-group"},
+  curse:{t:"On communication and the curse of knowledge", by:"P2P No. 131", url:"https://path2phd.substack.com/p/the-downside-of-expertise"},
+  makers:{t:"Maker's schedule, manager's schedule", by:"Paul Graham", url:"http://www.paulgraham.com/makersschedule.html"},
+  killdarlings:{t:"Kill your darlings", by:"P2P No. 25", url:"https://path2phd.substack.com/p/p2p-no-25-kill-your-darlings"},
+  glossary:{t:"Claude Code glossary", by:"Anthropic docs", url:"https://code.claude.com/docs/en/glossary"},
+  willison:{t:"Vibe engineering", by:"Simon Willison, 2025", url:"https://simonwillison.net/2025/Oct/7/vibe-engineering/"},
+  karpathy:{t:"The vibe-coding post", by:"Andrej Karpathy, 2025", url:"https://x.com/karpathy/status/1886192184808149383"},
+  twofast:{t:"Two kinds of fast", by:"P2P No. 133", url:"https://path2phd.substack.com/p/two-kinds-of-fast"},
+  revisitfast:{t:"Revisiting what is fast", by:"P2P No. 129", url:"https://path2phd.substack.com/p/revisiting-what-is-fast"},
+  mollick:{t:"Management as AI superpower", by:"Ethan Mollick, 2026", url:"https://www.oneusefulthing.org/p/management-as-ai-superpower"},
+  jagged:{t:"Navigating the Jagged Technological Frontier", by:"Dell'Acqua et al. 2023", url:"https://ssrn.com/abstract=4573321"},
+  hooksdoc:{t:"Hooks", by:"Claude Code docs", url:"https://code.claude.com/docs/en/hooks"},
+  permsdoc:{t:"Permissions", by:"Claude Code docs", url:"https://code.claude.com/docs/en/permissions"},
+  openloop:{t:"Don't run your projects open-loop", by:"P2P No. 134", url:"https://path2phd.substack.com/p/dont-run-your-projects-open-loop"},
+  slop:{t:"AI slop isn't an AI problem", by:"P2P No. 136", url:"https://path2phd.substack.com/p/ai-slop-isnt-an-ai-problem"},
+  agora:{t:"Research Agora: research skills for coding agents", by:"GitHub", url:"https://github.com/rpatrik96/research-agora"},
+  bibtexupdater:{t:"bibtexupdater: checks every reference in a .bib", by:"GitHub", url:"https://github.com/rpatrik96/bibtexupdater"}
+};
+
+/* audit questions */
+const AUDIT = [
+  {q:"Can I check the result?", opts:[["A script or test can check it", 3], ["I can check it by reading, in less time than doing it", 2], ["I can check it, but it takes as long as doing it", 1], ["I cannot check it", 0]]},
+  {q:"Which rung will do it?", opts:[["Terminal or harness with rules and hooks", 3], ["Local app, I approve each action", 2], ["Chat with my files attached", 1], ["Chat, from my description", 0]]},
+  {q:"Is the speed earned or borrowed?", opts:[["I could do it myself and will read every diff", 3], ["I could do it and will spot-check", 2], ["I could not do it, but a test decides", 1], ["I could not do it and nothing decides", 0]]},
+  {q:"The delegation sum: ask, wait, check, over success", opts:[["Clearly less than doing it myself", 3], ["About the same", 1], ["More, or I do not know the success rate", 0]]},
+  {q:"What friction have I set against the rabbit hole?", opts:[["A stated outcome that ends the session", 2], ["A time box", 1], ["None", 0]]}
+];
+/* ============================================================================
+   Principles for (agentic) research: one page, five sections, interactive where a question or a calculation earns it.
+   ========================================================================== */
+const STORE_KEY = "agr_v1";
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const icon = (id, cls) => `<svg class="ic ${cls || ""}" aria-hidden="true"><use href="#${id}"/></svg>`;
+function loadStore() { const base = {got:{}, answers:{}, sorter:{}, keep:{}, audit:{}}; try { return Object.assign(base, JSON.parse(localStorage.getItem(STORE_KEY) || "{}")); } catch (e) { return base; } }
+function saveStore() { try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) { /* private mode */ } }
+let store = loadStore();
+function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 1800); }
+function copyText(t) { (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast("Copied"), () => { const ta = document.createElement("textarea"); ta.value = t; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); toast("Copied"); } catch (e) { toast("Copy failed"); } ta.remove(); }); }
+
+const refHTML = ids => (ids || []).filter(r => REFS[r]).map(r => { const x = REFS[r]; return `<li>${x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">${esc(x.t)}</a>` : esc(x.t)} <span class="by">— ${esc(x.by)}</span></li>`; }).join("");
+function codeHTML(id) {
+  const ex = EXAMPLES[id]; if (!ex) return "";
+  return `<div class="ex"><div class="exh"><b>${esc(ex.title)}</b><span class="lang">${esc(ex.lang)}</span><button type="button" class="btn sm ghost copy" data-ex="${id}">Copy</button></div><pre class="code"><code>${esc(ex.code)}</code></pre><p class="small muted exc">${esc(ex.caption)}</p></div>`;
+}
+
+/* ---- diagrams ---- */
+function ganSVG() {
+  return `<svg class="diag" viewBox="0 0 520 190" role="img" aria-label="Generator and discriminator: taste is the discriminator">
+    <rect x="20" y="50" width="150" height="70" rx="10" fill="var(--soft)" stroke="var(--line)"/><text x="95" y="80" text-anchor="middle" font-size="13" font-weight="700" fill="var(--fg)">Generator</text><text x="95" y="100" text-anchor="middle" font-size="11" fill="var(--muted)">makes the thing</text>
+    <rect x="350" y="50" width="150" height="70" rx="10" fill="var(--soft)" stroke="var(--accent)" stroke-width="2"/><text x="425" y="80" text-anchor="middle" font-size="13" font-weight="700" fill="var(--fg)">Discriminator</text><text x="425" y="100" text-anchor="middle" font-size="11" fill="var(--muted)">tells good from bad: taste</text>
+    <path d="M170 75 H345" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#ah)"/><text x="258" y="68" text-anchor="middle" font-size="11" fill="var(--muted)">work</text>
+    <path d="M350 100 H175" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)" stroke-dasharray="4 3"/><text x="262" y="118" text-anchor="middle" font-size="11" fill="var(--accent-dark)">verdict, and why</text>
+    <path d="M425 50 V22 H300" stroke="var(--muted)" stroke-width="1.2" fill="none" stroke-dasharray="3 3"/><text x="290" y="26" text-anchor="end" font-size="11" fill="var(--muted)">someone whose taste you copy</text>
+    <text x="95" y="150" text-anchor="middle" font-size="11" fill="var(--muted)">an agent produces by the dozen</text><text x="425" y="150" text-anchor="middle" font-size="11" fill="var(--muted)">the part that stays yours</text>
+    <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs></svg>`;
+}
+function loopsSVG() {
+  const box = (x, y, w, t, sub, hot) => `<rect x="${x}" y="${y}" width="${w}" height="46" rx="8" fill="var(--soft)" stroke="${hot ? "var(--accent)" : "var(--line)"}" stroke-width="${hot ? 2 : 1}"/><text x="${x + w / 2}" y="${y + 20}" text-anchor="middle" font-size="12" font-weight="700" fill="var(--fg)">${t}</text><text x="${x + w / 2}" y="${y + 36}" text-anchor="middle" font-size="10" fill="var(--muted)">${sub}</text>`;
+  return `<svg class="diag" viewBox="0 0 560 200" role="img" aria-label="Three arrangements: open loop, agent as coach, judge by the dozen">
+    <text x="90" y="16" text-anchor="middle" font-size="11" fill="var(--bad)">open loop (avoid)</text>${box(20, 30, 140, "agent generates", "you ship", false)}<path d="M90 76 V110" stroke="var(--bad)" stroke-width="1.5" marker-end="url(#ah)"/><text x="90" y="130" text-anchor="middle" font-size="11" fill="var(--muted)">nobody judged</text>
+    <text x="280" y="16" text-anchor="middle" font-size="11" fill="var(--accent-dark)">agent as coach</text>${box(210, 30, 140, "you generate", "draft, plan, proof", true)}<path d="M280 76 V110" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>${box(210, 116, 140, "agent judges", "and summarizes it back", false)}<path d="M350 139 H380 V53 H355" stroke="var(--accent)" stroke-width="1.2" fill="none" stroke-dasharray="4 3" marker-end="url(#ah)"/>
+    <text x="470" y="16" text-anchor="middle" font-size="11" fill="var(--accent-dark)">judge by the dozen</text>${box(400, 30, 140, "agent generates", "a dozen candidates", false)}<path d="M470 76 V110" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/>${box(400, 116, 140, "you judge", "tick, cross, and why", true)}
+    <text x="280" y="190" text-anchor="middle" font-size="11" fill="var(--muted)">in both closed loops the discriminator is you</text></svg>`;
+}
+
+/* ---- tools ---- */
+function ladderHTML() {
+  return `<div class="ladder">${LADDER.map((r, i) => `<button type="button" class="rung" data-i="${i}" aria-pressed="false"><span class="n">${i + 1}</span><span>${esc(r.name)}</span></button>`).join("")}</div><div class="rungbox" id="rungbox"><p class="muted small">Pick a rung.</p></div>
+    <div class="terms4">${LADDER_TERMS.map(([t, d]) => `<div><b>${esc(t)}</b><span>${esc(d)}</span></div>`).join("")}</div>`;
+}
+function wireLadder(host) {
+  host.querySelectorAll(".rung").forEach(b => b.addEventListener("click", () => {
+    const r = LADDER[Number(b.dataset.i)]; host.querySelectorAll(".rung").forEach(x => x.setAttribute("aria-pressed", "false")); b.setAttribute("aria-pressed", "true");
+    host.querySelector("#rungbox").innerHTML = `<div class="pitbox"><div><span class="k">Access</span><span>${esc(r.access)}</span></div><div><span class="k">May do</span><span>${esc(r.perm)}</span></div><div><span class="k">Who checks</span><span>${esc(r.checker)}</span></div><div><span class="k">Goes wrong first</span><span>${esc(r.fail)}</span></div></div>`;
+  }));
+}
+function calcHTML() {
+  return `<div class="calc"><label>Doing it yourself (minutes) <input type="number" id="c-you" value="60" min="1"></label><label>Asking (minutes) <input type="number" id="c-ask" value="5" min="0"></label><label>Waiting (minutes) <input type="number" id="c-wait" value="5" min="0"></label><label>Checking (minutes) <input type="number" id="c-check" value="30" min="0"></label><label>Probability it succeeds first time <input type="number" id="c-p" value="0.8" min="0.05" max="1" step="0.05"></label><label class="chk"><input type="checkbox" id="c-nocheck"> I cannot check the result</label></div><div class="verdict meh" id="c-out" style="margin-top:8px"></div>`;
+}
+function wireCalc(host) {
+  const upd = () => {
+    const you = +$("c-you").value || 0, ask = +$("c-ask").value || 0, wait = +$("c-wait").value || 0, check = +$("c-check").value || 0, p = Math.min(1, Math.max(0.05, +$("c-p").value || 0.05)); const no = $("c-nocheck").checked;
+    const out = $("c-out");
+    if (no) { out.className = "verdict pit"; out.innerHTML = `<div class="vic">${icon("i-x")}</div><div><div class="vt">Do not delegate this one, or only as a safe-to-fail experiment.</div><div>If you cannot check the result, the checking term is unbounded and the sum has no answer. That is the caveat, not a number.</div></div>`; return; }
+    const d = (ask + wait + check) / p; const ratio = d / Math.max(1, you);
+    out.className = "verdict " + (ratio < 0.7 ? "sound" : ratio < 1.1 ? "meh" : "pit");
+    out.innerHTML = `<div class="vic">${icon(ratio < 0.7 ? "i-check" : ratio < 1.1 ? "i-tilde" : "i-x")}</div><div><div class="vt">Delegated: about ${Math.round(d)} minutes against ${you} yourself.</div><div>${ratio < 0.7 ? "Delegate. Keep the check; it is the part that makes the number real." : ratio < 1.1 ? "A coin flip. Delegate only if you learn something from the check, or if the task repeats and the check can become a test." : "Do it yourself. The checking term or the miss rate eats the gain; a lower-risk piece of the task might still be worth handing over."} <span class="small muted">Every miss costs the whole process again, which is what dividing by the success rate means.</span></div></div>`;
+  };
+  host.querySelectorAll("input").forEach(i => i.addEventListener("input", upd)); upd();
+}
+function sorterHTML() {
+  return `<p class="small muted" style="margin:0 0 6px">Eight tasks of similar apparent difficulty. Mark the ones you would delegate to an agent, then reveal.</p><div class="sorter">${SORTER.map((s, i) => `<label class="sitem"><input type="checkbox" data-i="${i}" ${store.sorter[i] ? "checked" : ""}> <span>${esc(s.t)}</span></label>`).join("")}</div><div class="row" style="margin-top:8px"><button type="button" class="btn sm" id="s-reveal">Reveal</button><span class="small muted" id="s-score"></span></div><div id="s-out"></div>`;
+}
+function wireSorter(host) {
+  host.querySelectorAll("input[type=checkbox]").forEach(c => c.addEventListener("change", () => { store.sorter[c.dataset.i] = c.checked; saveStore(); }));
+  host.querySelector("#s-reveal").addEventListener("click", () => {
+    let right = 0;
+    host.querySelector("#s-out").innerHTML = SORTER.map((s, i) => { const mine = !!store.sorter[i]; const ok = mine === s.delegate; if (ok) right++;
+      return `<div class="verdict ${ok ? "sound" : "pit"}" style="margin:6px 0"><div class="vic">${icon(ok ? "i-check" : "i-x")}</div><div><div class="vt">${esc(s.t)} <span class="small muted" style="font-weight:400">· ${s.delegate ? "delegate, with the check" : "keep"}</span></div><div class="small">${esc(s.why)}</div></div></div>`; }).join("");
+    host.querySelector("#s-score").textContent = `${right} of ${SORTER.length} match the sort by checkability. The point is the reasons, not the score.`;
+  });
+}
+function keepdropHTML() {
+  return `<p class="small muted" style="margin:0 0 6px">Name a generative skill an agent now does for you (writing TikZ by hand, a for-loop without autocomplete, a first draft) and answer three questions.</p>
+    <div class="calc"><label>The skill <input type="text" id="k-name" placeholder="e.g. writing the plotting code by hand" value="${esc(store.keep.name || "")}"></label>
+    <label class="chk"><input type="checkbox" id="k-judge" ${store.keep.judge ? "checked" : ""}> Doing it myself is the only way I get something I can judge</label>
+    <label class="chk"><input type="checkbox" id="k-teach" ${store.keep.teach ? "checked" : ""}> I want to teach it</label>
+    <label class="chk"><input type="checkbox" id="k-joy" ${store.keep.joy ? "checked" : ""}> It gives me fulfillment</label></div><div class="verdict meh" id="k-out" style="margin-top:8px"></div>`;
+}
+function wireKeep(host) {
+  const upd = () => { store.keep = {name:$("k-name").value, judge:$("k-judge").checked, teach:$("k-teach").checked, joy:$("k-joy").checked}; saveStore();
+    const any = store.keep.judge || store.keep.teach || store.keep.joy; const out = $("k-out"); out.className = "verdict " + (any ? "sound" : "meh");
+    out.innerHTML = `<div class="vic">${icon(any ? "i-check" : "i-tilde")}</div><div><div class="vt">${any ? "Keep it, on purpose." : "Let it go, on purpose."}</div><div>${any ? "Practice it without the agent sometimes, so the discriminator stays calibrated against your own work." : "Spend the freed attention on judging: review, compare, teach. Revisit if you stop being able to tell good output from bad."} <span class="small muted">The decision matters more than the answer; drift is the failure mode.</span></div></div>`; };
+  host.querySelectorAll("input").forEach(i => i.addEventListener("input", upd)); upd();
+}
+function auditHTML() {
+  return `<div class="calc"><label>The task <input type="text" id="a-task" placeholder="e.g. write the evaluation pipeline for the new metric" value="${esc(store.audit.task || "")}"></label></div>
+    ${AUDIT.map((a, i) => `<div class="aq"><b>${esc(a.q)}</b><div class="opts small">${a.opts.map(([t, v], j) => `<label class="chk"><input type="radio" name="a${i}" value="${v}" data-i="${i}" data-j="${j}" ${store.audit["q" + i] === j ? "checked" : ""}> ${esc(t)}</label>`).join("")}</div></div>`).join("")}
+    <div class="verdict meh" id="a-out" style="margin-top:8px"></div><div class="row" style="margin-top:8px"><button type="button" class="btn sm ghost" id="a-copy">Copy the audit</button></div>`;
+}
+function auditText() {
+  const lines = [`Delegation audit: ${store.audit.task || "(task)"}`];
+  AUDIT.forEach((a, i) => { const j = store.audit["q" + i]; lines.push(`- ${a.q} ${j === undefined ? "(not answered)" : a.opts[j][0]}`); });
+  lines.push($("a-out").textContent.trim()); return lines.join("\n");
+}
+function wireAudit(host) {
+  const upd = () => {
+    store.audit.task = $("a-task").value; let total = 0, n = 0, blocked = false;
+    AUDIT.forEach((a, i) => { const r = host.querySelector(`input[name=a${i}]:checked`); if (r) { store.audit["q" + i] = Number(r.dataset.j); total += Number(r.value); n++; if (i === 0 && Number(r.value) === 0) blocked = true; } });
+    saveStore(); const out = $("a-out"); const max = 14;
+    if (!n) { out.className = "verdict meh"; out.innerHTML = `<div class="vic">${icon("i-tilde")}</div><div><div class="vt">Answer the five questions.</div></div>`; return; }
+    if (blocked) { out.className = "verdict pit"; out.innerHTML = `<div class="vic">${icon("i-x")}</div><div><div class="vt">Do not delegate this, or only where failure costs nothing.</div><div>You cannot check the result. Either find the check first (a test, a reference implementation, a colleague who can judge) or use the agent as a coach on your own attempt.</div></div>`; return; }
+    const r = total / max; out.className = "verdict " + (r >= 0.65 ? "sound" : r >= 0.4 ? "meh" : "pit");
+    out.innerHTML = `<div class="vic">${icon(r >= 0.65 ? "i-check" : r >= 0.4 ? "i-tilde" : "i-x")}</div><div><div class="vt">${r >= 0.65 ? "Delegate, with the gates you named." : r >= 0.4 ? "Delegate a smaller piece, or add a gate first." : "Keep it, or turn it into something checkable before you hand it over."}</div><div class="small">${n < AUDIT.length ? "Answer the remaining questions for the full picture." : "Score " + total + " of " + max + ". The audit is a checklist, not a verdict; the reasons on the cards above are what it points at."}</div></div>`;
+  };
+  host.querySelectorAll("input").forEach(i => i.addEventListener("input", upd)); host.querySelector("#a-copy").addEventListener("click", () => copyText(auditText())); upd();
+}
+
+/* ---- render ---- */
+function render() {
+  const nav = $("secnav"); nav.innerHTML = SECTIONS.map(s => `<a href="#s-${s.id}" data-sec="${s.id}"><span class="n">${s.num}</span>${esc(s.name)}<span class="cnt" id="cnt-${s.id}"></span></a>`).join("");
+  $("body").innerHTML = SECTIONS.map(s => {
+    const ps = PRINCIPLES.filter(p => p.sec === s.id);
+    return `<section class="sec" id="s-${s.id}"><h2><span class="num">${s.num}</span> ${esc(s.name)}</h2><p class="sub">${esc(s.lead)}</p>
+      ${s.prompt ? `<div class="card prompt"><label for="pr-${s.id}"><b>${esc(s.prompt.q)}</b> <span class="small muted">${esc(s.prompt.hint)}</span></label><textarea id="pr-${s.id}" data-sec="${s.id}" rows="2" placeholder="Your answer stays on this device.">${esc(store.answers[s.id] || "")}</textarea></div>` : ""}
+      ${s.id === "audit" ? `<div class="card"><div id="tool-audit"></div></div>` : ""}
+      ${ps.map(p => `<details class="pm principle" id="p-${p.id}"><summary><span class="sw" style="background:${store.got[p.id] ? "var(--good)" : "var(--line)"}"></span><b>${esc(p.name)}</b><span class="chev">▾</span></summary><div class="inner">
+        <p class="stmt">${esc(p.stmt)}</p>
+        ${p.quote ? `<blockquote class="q">“${esc(p.quote.t)}” <span class="muted">— ${esc(p.quote.by)}</span></blockquote>` : ""}
+        <p>${esc(p.why)}</p>
+        ${p.practice ? `<div class="principle"><b>Practice.</b> ${esc(p.practice)}</div>` : ""}
+        ${p.diagram === "gan" ? `<div class="diagwrap">${ganSVG()}</div>` : p.diagram === "loops" ? `<div class="diagwrap">${loopsSVG()}</div>` : ""}
+        ${p.tool ? `<div class="tool" data-tool="${p.tool}"></div>` : ""}
+        ${p.example ? codeHTML(p.example) : ""}${(p.examples || []).map(codeHTML).join("")}
+        ${p.refs && p.refs.length ? `<details class="expander small"><summary>Read (${p.refs.filter(r => REFS[r]).length})</summary><ul class="reads">${refHTML(p.refs)}</ul></details>` : ""}
+        <label class="got"><input type="checkbox" data-p="${p.id}" ${store.got[p.id] ? "checked" : ""}> Got it; mark as read</label>
+      </div></details>`).join("")}</section>`;
+  }).join("");
+  document.querySelectorAll(".tool").forEach(t => { const k = t.dataset.tool; if (k === "ladder") { t.innerHTML = ladderHTML(); wireLadder(t); } else if (k === "calc") { t.innerHTML = calcHTML(); wireCalc(t); } else if (k === "sorter") { t.innerHTML = sorterHTML(); wireSorter(t); } else if (k === "keepdrop") { t.innerHTML = keepdropHTML(); wireKeep(t); } });
+  const au = $("tool-audit"); if (au) { au.innerHTML = auditHTML(); wireAudit(au); }
+  document.querySelectorAll("textarea[data-sec]").forEach(t => t.addEventListener("input", () => { store.answers[t.dataset.sec] = t.value; saveStore(); }));
+  document.querySelectorAll("input[data-p]").forEach(c => c.addEventListener("change", () => { store.got[c.dataset.p] = c.checked; saveStore(); c.closest("details").querySelector(".sw").style.background = c.checked ? "var(--good)" : "var(--line)"; counts(); }));
+  document.querySelectorAll(".copy").forEach(b => b.addEventListener("click", () => copyText(EXAMPLES[b.dataset.ex].code)));
+  $("refs").innerHTML = `<ul class="reads">${refHTML(Object.keys(REFS))}</ul>`;
+  counts();
+}
+function counts() {
+  let all = 0, got = 0;
+  SECTIONS.forEach(s => { const ps = PRINCIPLES.filter(p => p.sec === s.id); const g = ps.filter(p => store.got[p.id]).length; all += ps.length; got += g; const c = $("cnt-" + s.id); if (c) c.textContent = ps.length ? `${g}/${ps.length}` : ""; });
+  $("progress").textContent = `${got} of ${all} principles marked read`; $("pbar").style.width = (all ? 100 * got / all : 0) + "%";
+}
+$("expand-all").addEventListener("click", () => document.querySelectorAll("details.principle").forEach(d => { d.open = true; }));
+$("collapse-all").addEventListener("click", () => document.querySelectorAll("details.principle").forEach(d => { d.open = false; }));
+$("reset").addEventListener("click", () => { if (!confirm("Clear your answers and read marks on this device?")) return; localStorage.removeItem(STORE_KEY); store = loadStore(); render(); toast("Cleared"); });
+render();
+if (location.hash) { const el = document.querySelector(location.hash); if (el) { if (el.tagName === "DETAILS") el.open = true; el.scrollIntoView(); } }
+</script>
+</body></html>

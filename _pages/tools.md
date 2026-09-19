@@ -55,3 +55,17 @@ drawn from lab-culture discussions and the Path to PhD newsletter. Everything ru
 browser; nothing is sent anywhere.
 
 [**Open the game →**](/tools/research-projects/){: .btn .btn--primary}
+
+## Principles for (agentic) research
+
+The talk as an interactive page, principles only. Five parts: why do research at all, how
+taste is trained, what an agent actually is (the same model, reached through six rungs of access
+and permission), how to run one as a supervisor, and an audit for the next task you think of
+delegating. Every agent practice is attached to the research principle it applies, and the
+tools appear as complete, copyable examples: a CLAUDE.md for a research repository, a hook and
+its script, a permissions rules block, a test file, a skill file, a sub-agent prompt that
+emulates a research group, a Makefile, a postmortem template. Interactive where it earns it: a
+ladder explorer, a keep/drop test for skills, a delegation calculator, a jagged-frontier sorter,
+and the audit. Your answers stay in your browser.
+
+[**Open the page →**](/tools/agentic-research/){: .btn .btn--primary}
