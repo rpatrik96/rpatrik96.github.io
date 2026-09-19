@@ -49,7 +49,12 @@ convergence studies). "General" shows only the domain-neutral cards.
      box showing what the pitfall looks like); and the short paper pairs.
 
    The long-form pitches and abstracts are written for machine learning (experimental and
-   theory); other domains get the short items only, and the track picker says so. Every pair
+   theory); other domains get the short items only, and the track picker says so. Pools per
+   ML domain are about 35 to 40 items per track (20 idea pairs, 12 grow items, 7 triage
+   batches, 12 abstract pairs, 12 preference items, plus the short pairs and flaws), and a
+   round draws **unseen items first**, then the least recently seen, so replaying a track
+   samples new items until the pool is used up; the results screen says how many of the
+   pool have been seen and how many are left in the other track. Every pair
    is like-for-like (two empirical ideas or two theory ideas, never one of each) and the reveal
    names the feature and a stated **principle**. Sides are shown in random order and the
    explanation's A/B letters (and the grow items' move numbers) are relabelled to match.
@@ -61,7 +66,10 @@ convergence studies). "General" shows only the domain-neutral cards.
    beats leaning above 80%, the midpoints between the stated probabilities).
 
    Two **preference items** per round have no right answer: both sides are sound and the pick
-   is a reading on one spectrum (no points, no confidence step). The result screen reports
+   is a reading on one spectrum (no points, no confidence step). Abstract pairs ask which
+   abstract makes the sounder claim, never which paper is better, since only the abstract is
+   shown; abstracts do not cite figures. When a preference item comes round again and the pick
+   flips, the reveal says so: a mind that moves is the point. The result screen reports
    accuracy, points, average stated confidence, a **calibration** verdict with a reliability
    diagram (per-confidence-bin accuracy against stated probability; the weighted gap is an
    expected calibration error), the discriminating features missed, the player's own notes, a
