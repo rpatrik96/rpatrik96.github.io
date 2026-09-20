@@ -23,11 +23,13 @@ deck and its source post, pitched at principles rather than tools.
   the three guardrails, the emulated group, the loop) keep their steps behind a small stepper
   with a caption per step. The four term icons (container, connector, skill, harness) sit next
   to their definitions in the ladder explorer.
-- **Every principle is open and explained.** A statement, the figure, a 120-to-220-word
-  explanation carrying the argument a listener would have heard (claim, why, counter-case,
-  what changes in practice), a concrete example (the deck's where it has one, marked as new
-  otherwise), and an "in practice" line. Long explanations are split at a sentence boundary
-  near the middle. Each section opens with a short introduction from the chapter notes.
+- **Key points, not prose.** A statement, the figure, two to five bullets in the deck's own
+  words (slide text and speaker notes, without the personal remarks and without invented
+  one-liners), an "in practice" line, and an example: the talk's own shown in full, an
+  invented illustration folded behind a toggle and labeled as invented. An earlier version
+  carried a 200-word explanation per card and read as a wall of text; the bullets replaced
+  it. Code examples fold under their titles. Each section opens with a three-sentence
+  introduction.
 - **Examples are complete.** The feedback on the talk asked for concrete examples and for
   what hooks, tests and rules actually look like. The page shows ten copyable artifacts in
   full: a CLAUDE.md for a research repository, a hook configuration and the script it runs, a

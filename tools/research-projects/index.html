@@ -357,7 +357,8 @@
 <style>
   .cast{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin:10px 0}
   .cast .who{border:1px solid var(--line); border-radius:12px; padding:10px 12px; background:var(--bg)}
-  .cast .who b{display:block} .cast .who .small{display:block; margin-top:2px}
+  .cast .who b{display:block} .cast .who .small{display:block; margin-top:2px} .cast .who .rolehead{display:block; color:var(--accent-dark); font-weight:600; font-size:.85rem; margin-bottom:4px}
+  .card.intro p{margin:6px 0; line-height:1.55} .whois{margin:4px 0 8px} .whois b{font-weight:600}
   .cast .who .rel{height:6px; background:var(--soft); border-radius:999px; margin-top:8px; overflow:hidden} .cast .who .rel i{display:block; height:100%; background:var(--accent); border-radius:999px; transition:width .4s}
   .who .trait{margin-top:8px; display:flex; flex-direction:column; gap:4px} .who .trait .tag{align-self:flex-start}
   .people{margin-top:10px; padding:8px 12px; border-left:3px solid var(--accent); background:var(--soft); border-radius:8px; font-size:.92rem}
@@ -428,8 +429,14 @@
 
   <!-- TEAM -->
   <section id="screen-team" class="hidden">
-    <h1>Meet the team</h1>
-    <p class="sub">The same four people, but not the same every run. Who they are changes which move is sound: a supervisor who wants to be asked and one who trusts you to decide need different messages, and a student who hides being stuck needs a different kind of attention from one who asks. When a decision depends on the person, the reveal says so, and says what would change with the other kind.</p>
+    <h1>Before month 1</h1>
+    <div class="card intro">
+      <h2 style="margin-top:0">Your situation</h2>
+      <p>You are a second-year PhD student, and for the first time the project is yours to run. The idea came out of a workshop conversation: a method your lab has been circling for a while, with a theory part and an experimental part. Your supervisor likes it, a professor at another institute wants in, and the target is a conference deadline in <b>month 8</b>. Nobody has written down who does what.</p>
+      <p>Nine months, two or three decisions a month. Each decision moves six dials you cannot see directly (alignment, trust, buffer, credit, energy, feedback loop), and the classic problems fire when the dials say so: a collaborator goes quiet, an authorship question surfaces late, a deadline lands on a week with no slack. Most can be prevented, and most can be repaired if you notice in time. At the end, a debrief traces every problem back to the decision that seeded it.</p>
+      <p>Four people matter, and they are introduced below with what they are to you. Their personalities are drawn fresh each run, and they change which move is sound: a supervisor who wants to be asked and one who trusts you to decide need different messages; a student who hides being stuck needs a different kind of attention from one who asks. When a decision depends on the person, the reveal says so, and says what would change with the other kind.</p>
+    </div>
+    <h2>The people, this run</h2>
     <div class="cast" id="team-cast"></div>
     <p class="small muted">A game can only carry two versions of each person. Real people are more than a trait; the point is that reading them is part of the job, and the reveals model how to reason about it.</p>
     <div class="row" style="margin-top:12px"><button class="btn" id="team-start">Start month 1 →</button></div>
@@ -438,6 +445,7 @@
   <!-- RUN -->
   <section id="screen-run" class="hidden">
     <div class="counter"><span id="run-left"></span><span id="run-right"></span></div>
+    <p class="small muted whois" id="run-who"></p>
     <div class="months" id="months" aria-label="Months"></div>
     <div class="meters" id="meters"></div>
     <details class="expander" id="cast-box" style="margin:8px 0"><summary>The team and how each relationship stands</summary><div class="inner"><div class="cast" id="cast"></div></div></details>
@@ -1217,10 +1225,10 @@ const GLOSSARY = [
    ========================================================================== */
 
 CAST.splice(0, CAST.length,
-  {id:"pi", name:"Nadia", role:"Your supervisor: the PI, the professor who runs the lab and signs off on what you do. Sharp, on three projects, a calendar cut into half-hour slots, cancels sometimes. She wants you to succeed and does not always show it.", rel:60},
-  {id:"senior", name:"Tomasz", role:"A professor at another institute who joined after a chance conversation at a workshop. Tenured, many projects, no deadline pressure, happy to think about the problem for a year.", rel:55},
-  {id:"peer", name:"Lea", role:"A PhD student in your lab, a year ahead of you. On the paper for the theory part. Same incentives as you, and two other deadlines this year.", rel:60},
-  {id:"junior", name:"Ben", role:"The master's student you co-supervise; his thesis project is the experiments for this paper. First research project, eager, goes quiet when stuck.", rel:60}
+  {id:"pi", name:"Nadia", short:"your supervisor, the PI", role:"Your supervisor: the PI, the professor who runs the lab and signs off on what you do. Sharp, on three projects, a calendar cut into half-hour slots, cancels sometimes. She wants you to succeed and does not always show it.", rel:60},
+  {id:"senior", name:"Tomasz", short:"collaborator, professor elsewhere", role:"A professor at another institute who joined after a chance conversation at a workshop. Tenured, many projects, no deadline pressure, happy to think about the problem for a year.", rel:55},
+  {id:"peer", name:"Lea", short:"PhD student in your lab, theory", role:"A PhD student in your lab, a year ahead of you. On the paper for the theory part. Same incentives as you, and two other deadlines this year.", rel:60},
+  {id:"junior", name:"Ben", short:"your master's student, experiments", role:"The master's student you co-supervise; his thesis project is the experiments for this paper. First research project, eager, goes quiet when stuck.", rel:60}
 );
 
 CARDS.splice(0, CARDS.length,
@@ -1746,7 +1754,7 @@ function startRun() {
 const traitOf = who => TRAITS[who].find(t => t.id === run.traits[who]);
 const otherTrait = who => TRAITS[who].find(t => t.id !== run.traits[who]);
 function renderTeam() {
-  $("team-cast").innerHTML = CAST.map(c => { const t = traitOf(c.id); return `<div class="who"><b>${esc(c.name)}</b><span class="small muted">${esc(c.role)}</span><div class="trait"><span class="tag">${esc(t.name)}</span><span class="small">${esc(t.d)}</span></div></div>`; }).join("");
+  $("team-cast").innerHTML = CAST.map(c => { const t = traitOf(c.id); return `<div class="who"><b>${esc(c.name)}</b><span class="rolehead">${esc(c.short)}</span><span class="small muted">${esc(c.role)}</span><div class="trait"><span class="tag">${esc(t.name)}</span><span class="small">${esc(t.d)}</span></div></div>`; }).join("");
 }
 /* options as they apply to this run's people: overrides by trait, plus options that only make sense once you know who they are */
 function effectiveOpts(card) {
@@ -1783,7 +1791,7 @@ function renderMonths() {
 function renderMeters() {
   $("meters").innerHTML = METERS.map(m => `<div class="meter" title="${esc(m.desc)}"><div class="lab"><span>${esc(m.name)}</span><span>${Math.round(run.meters[m.id])}</span></div><div class="bar"><i style="width:${clamp(run.meters[m.id], 0, 100)}%; background:${run.meters[m.id] < 30 ? "var(--bad)" : run.meters[m.id] < 55 ? "var(--warn, #b8860b)" : "var(--good)"}"></i></div></div>`).join("")
     + `<div class="meter" title="How much of the paper exists"><div class="lab"><span>Progress</span><span>${Math.round(run.progress)}</span></div><div class="bar"><i style="width:${clamp(run.progress, 0, 100)}%"></i></div></div>`;
-  $("cast").innerHTML = CAST.map(c => `<div class="who"><b>${esc(c.name)}</b> <span class="tag">${esc(traitOf(c.id).name)}</span><span class="small muted">${esc(c.role)}</span><div class="rel" title="Relationship: ${Math.round(run.rel[c.id])}"><i style="width:${clamp(run.rel[c.id], 0, 100)}%"></i></div></div>`).join("");
+  $("cast").innerHTML = CAST.map(c => `<div class="who"><b>${esc(c.name)}</b> <span class="tag">${esc(traitOf(c.id).name)}</span><span class="rolehead">${esc(c.short)}</span><span class="small muted">${esc(c.role)}</span><div class="rel" title="Relationship: ${Math.round(run.rel[c.id])}"><i style="width:${clamp(run.rel[c.id], 0, 100)}%"></i></div></div>`).join("");
 }
 function renderItem() {
   const q = run.queue[0]; run.item = q; run.answered = false;
@@ -1791,6 +1799,7 @@ function renderItem() {
   renderMonths(); renderMeters();
   $("run-left").textContent = `Month ${run.month} of ${MONTHS}${run.month === DEADLINE ? " · deadline month" : run.month > DEADLINE ? " · after submission" : ` · ${DEADLINE - run.month} to the deadline`}`;
   $("run-right").textContent = `${run.n + 1}. decision`;
+  $("run-who").innerHTML = CAST.map(c => `<b>${esc(c.name)}</b>, ${esc(c.short)}`).join(" · ");
   const found = new Set(), seen = new Set();
   const it = q.item;
   if (q.kind === "incident") {

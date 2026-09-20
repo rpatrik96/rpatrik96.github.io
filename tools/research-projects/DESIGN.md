@@ -30,7 +30,12 @@ Tomasz (a tenured professor at another institute who joined after a chance conve
 (a PhD student in your lab, a year ahead), Ben (the master's student you co-supervise). Every
 card and message names them, with the role glossed on first mention.
 
-Each run also gives each of them one of two personalities, shown on a "meet the team" screen
+A run opens with an intro screen ("Before month 1"): who you are (a second-year PhD student
+running a project for the first time), what the project is, the deadline in month 8, and how
+the game works, followed by the four people with a one-line role under each name ("your
+supervisor, the PI"); the same role line sits under the month counter throughout the run, so a
+junior player never has to remember who Nadia is.
+Each run also gives each of them one of two personalities, shown on that intro screen
 before month one: Nadia wants to be asked or trusts you to decide; Tomasz keeps opening doors
 or wants the paper out; Lea says it straight or goes quiet; Ben asks early or hides being
 stuck. This is the answer to a fair objection, that the "sound" move often depends on who the
