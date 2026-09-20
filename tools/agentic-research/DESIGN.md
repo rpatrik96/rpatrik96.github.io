@@ -73,3 +73,9 @@ deck and its source post, pitched at principles rather than tools.
 Peer address, sentence case, American English, typographic quotes, no emoji, no first person.
 The caveat ("if you don't know, how do you check?") opens and closes the agent section, as the
 talk plan asked.
+
+## Prose gate
+
+`tools/.limpid/check.sh agentic-research` lifts the reader-facing prose out of `index.html` and
+runs the limpid CLI over it; `tools/.limpid/trace.py` maps a finding back to the line that
+produced it. See `tools/.limpid/README.md`.
