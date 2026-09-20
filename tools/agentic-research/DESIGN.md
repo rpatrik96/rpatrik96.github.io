@@ -40,7 +40,10 @@ deck and its source post, pitched at principles rather than tools.
 - **Reviewed twice.** An audience check (a first-year with a chatbot only, a fourth-year who
   runs terminal agents daily, a phone skimmer) and a devil's advocate (factual and technical
   claims checked against the Claude Code docs, missing counter-cases, debatable sorter
-  verdicts, the tools' thresholds) fed a fix pass; see the commit history.
+  verdicts, the tools' thresholds) fed a fix pass. A second round checked every finding
+  against the rendered page and caught what the first pass broke (a sentence pasted twice,
+  three-versus-four counts, a skill asserting a rule the rules block did not have); the
+  copyable blocks parse as strict JSON, Python, Make and bash.
 - **Interactive where a question or a calculation earns it.** A prompt per section with a
   saved answer; a ladder explorer for the six rungs (access, what it may do, who checks, what
   goes wrong first) with the four terms defined; a keep/drop test for generative skills; a
