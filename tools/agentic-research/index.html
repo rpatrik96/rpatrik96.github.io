@@ -387,7 +387,7 @@ A one-paragraph note: what changed, the command that regenerated it, and the dif
 
 ## When this skill was wrong before
 - It once restyled a figure whose underlying results were stale. Now step 1 checks the results timestamp against the last training run.`},
-  subagents:{title:"Emulate your research group: three sub-agent prompts", lang:"text", caption:"A sub-agent is a fresh copy of the model given one prompt and none of your conversation. Run each reader as its own sub-agent or fresh session, with only its own paragraph and no sight of the others' reports; one prompt with three roles is the weakest form of this, one vote heard three times. Their agreement is weak evidence, because they share one model; their disagreement is where to look. The caveat carries the weight: a reviewer emulated in a field you do not know is a checker you cannot check. The copy button gives you all three; paste them into three separate sessions, not one.",
+  subagents:{title:"Emulate your research group: three sub-agent prompts", lang:"text", caption:"A sub-agent is a fresh copy of the model given one prompt and none of your conversation. Run each reader as its own sub-agent or fresh session, with only its own paragraph and no sight of the others' reports; one prompt with three roles is the weakest form of this, one vote heard three times. Their agreement is weak evidence, because they share one model; their disagreement is where to look. The caveat carries the weight: a reviewer emulated in a field you do not know is a checker you cannot check. The copy button gives you all three; paste them into three separate sessions.",
    code:`Sub-agent 1, the reviewer. You have twenty minutes and a checklist. Read the attached draft. Which claim would you ask for evidence on first? Which baseline is missing? Where does the abstract claim more than Section 4 shows? Do not soften, and do not summarize the paper back to me.
 
 Sub-agent 2, the devil's advocate. Read the attached draft and assume the main result is an artifact. What is the most likely artifact, and which single experiment would expose it? One artifact, one experiment, and no summary of the paper.
@@ -408,7 +408,7 @@ check-refs:
 
 paper: figures check-refs
 	latexmk -pdf -cd paper/main.tex`},
-  postmortem:{title:"Loop and reiterate: the postmortem", lang:"markdown", caption:"A project without a postmortem is an open-loop controller. Rested, one hour, questions written in advance; then feed it forward. For an agent workflow, the last line goes into the skill or the CLAUDE.md, not into your memory.",
+  postmortem:{title:"Loop and reiterate: the postmortem", lang:"markdown", caption:"A project without a postmortem is an open-loop controller. Rested, one hour, questions written in advance; then feed it forward. For an agent workflow, the last line goes into the skill or the CLAUDE.md, where the next session reads it.",
    code:`# Postmortem: <project>, <date>
 
 ## Self
@@ -518,7 +518,7 @@ const LADDER_TERMS = [
   ["connector", "The access you already have to one account, no more. A library card."],
   ["skill", "A written procedure the model reads when the task matches, outliving the conversation. A protocol sheet."],
   ["harness", "Which instruments it has, what it may touch, what it remembers between days, which checks run whether or not anyone remembers. The lab around the scientist."],
-  ["rule", "A permission decided once and enforced by the program that runs the agent, not by the model reading a request. A lab safety rule."],
+  ["rule", "A permission decided once and enforced by the program that runs the agent; the model never sees it as a request. A lab safety rule."],
   ["hook", "Your own script that the program runs on every matching action, whether or not anyone remembers. A checklist bolted to the door."]
 ];
 
@@ -602,15 +602,15 @@ const POINTS = {
   only:{pts:[
     "Kevin Kelly's line turns “asking better questions” into a personal one: what is something only you could do?",
     "An agent can be the best at a great many things and the only at none. Competing on “best” means competing on the axis where the tools improve fastest.",
-    "“Only” usually lives between fields: the combination you know, the data you can reach, the people you can ask. Ask for the answer, not the justification, and do not rank answers by how important they sound."]},
+    "“Only” usually lives between fields: the combination you know, the data you can reach, the people you can ask. Ask for the answer and let the justification wait, and do not rank answers by how important they sound."]},
   process:{pts:[
     "Focus on learning skills. Every outcome (accept, reject, funding) is somebody else's decision; the process is the part you own.",
     "The process is also the part an agent can hollow out while the outcomes keep arriving: papers still appear, the skill underneath stops growing.",
     "Counter-case: process alone is a way of never shipping. The test is whether it produces something you submit."]},
   heroic:{pts:[
     "Almost nothing is worth a heroic effort; almost everyone is. Periodize: hard blocks and recovery blocks, planned, like an athlete's season.",
-    "Recovery is part of the job and belongs in working hours, not in the leftovers.",
-    "Plan the recovery block before the deadline, not after it; afterwards there is always a reason not to."]},
+    "Doing sports and reading (and other things) is part of your job: do it in working hours.",
+    "That assumes a job with autonomy over its hours; it does not transfer as it stands to a lab with fixed bench time."]},
   "fail-small":{pts:[
     "Failure is inevitable, so arrange to fail small: a barbell of safe projects and risky bets, never only one kind.",
     "Prototype to fail early on purpose; a cheap failure in week two beats an expensive one in month nine.",
@@ -641,7 +641,7 @@ const POINTS = {
   "not-care":{pts:[
     "Information filtering is mostly the discipline of naming the skills you have decided not to care about.",
     "Keep a generative skill when it is the only way to get something you can judge, when you want to teach it, when you enjoy it, or when you will have to guide someone through it. When none holds, let it go.",
-    "The worry is that assisted performance stays high while the capability underneath erodes, so the decay is invisible from the outside. That is a worry, not a measured effect; the answer to it is to make the list a decision rather than a drift."]},
+    "The worry is that assisted performance stays high while the capability underneath erodes, so the decay is invisible from the outside. That is a worry with no measurement behind it; the answer to it is to make the list a decision rather than a drift."]},
   "can-should":{pts:[
     "Agents took the cost of “can do” to nearly nothing. The scarce judgment is now “should do”.",
     "Before starting, write what changes if it works. If nothing, do not start."]},
@@ -685,7 +685,7 @@ const POINTS = {
   earned:{pts:[
     "One route to being fast goes through expertise, and the speed is a byproduct of the climb. The agent offers a second route, around the climb.",
     "Nothing on that route made you an expert. It made you fast. Earned speed is a byproduct of expertise; delegated speed is a substitute for it.",
-    "Delegated speed can be trusted speed, with verification or with trust in whom you delegated to. The pair is a verdict on delegation without a check, not on delegation.",
+    "Delegated speed can be trusted speed, with verification or with trust in whom you delegated to. The pair is a verdict on delegation without a check.",
     "The audit: if the output is subtly wrong in a way that crashes nothing, will you catch it on first read? Second? Ever? Would you put your name on it?"]},
   caveat:{pts:[
     "If you do not know, how do you check? An agent will hand you an answer in a field where you have not trained the judge, and it will be fluent.",
@@ -713,12 +713,12 @@ const POINTS = {
   rabbit:{pts:[
     "Procrastination is an energy barrier: getting started is the hard part. The agent lowers the barrier, and everything rolls.",
     "You can now do a lot of stuff, most of which is not worth doing. The cost moved from starting to choosing.",
-    "The guardrail against the rabbit-hole tax is not more discipline but strategic friction: friction you choose, pointed at yourself."]},
+    "The guardrail against the rabbit-hole tax is strategic friction: friction you choose, pointed at yourself."]},
   guardrails:{pts:[
     "Three gates the agent's work passes before you spend attention: a test the output must pass; a rule for what it must never do, enforced by the program, not by the model reading a request; a hook, your script, run on every matching action.",
     "Who guards the guardians? If you let the agent write the tests, you have to check that they test for what you want. Verification regresses upward, and at some level your taste is the last guardian.",
     "None of the three is a model judging a model, as long as the hook runs a script rather than a prompt. Rules and hooks limit what the agent may do; they do not tell you the answer was right.",
-    "Upgrade a gate when something gets through it, not before."]},
+    "Upgrade a gate when something gets through it."]},
   script:{pts:[
     "A hook is a script; a test is a script; a Makefile target is a script the agent calls.",
     "An agent that is 95% reliable per step is about 60% reliable over ten steps. Take 95% as a placeholder; the point is that per-step reliability compounds, and it compounds fastest where no later step would catch the error. A script fails the same way every time, loudly, which is what makes it checkable once.",
