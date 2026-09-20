@@ -54,8 +54,13 @@ Every situation is a short scene (who, what happened, what you are looking at, w
 stake) rather than a prompt, and every drill message reads like an email or a Slack message a
 person would send: greetings, natural sentences, no meta-labels such as "one question, fifteen
 seconds". The better message still carries context, a concrete ask, a date and a way to answer
-briefly, in the way a considerate person writes. Reveals refer to "the first message" and "the
-second"; the engine swaps the ordinals when the pair is shown in the other order.
+briefly, in the way a considerate person writes, without announcing the technique: a good
+message does not say "you can answer in a line", "a one-word answer is fine" or "one
+disagreement, with the evidence"; it asks the question, states the disagreement and points at
+the table. The weaker message in each pair is one a well-meaning person actually sends (polite,
+a little vague, missing the date or the ask), not a caricature of apologies, so the choice
+teaches something. Reveals refer to "the first message" and "the second"; the engine swaps the
+ordinals when the pair is shown in the other order.
 
 ## Four parts
 
