@@ -41,7 +41,7 @@ or wants the paper out; Lea says it straight or goes quiet; Ben asks early or hi
 stuck. This is the answer to a fair objection, that the "sound" move often depends on who the
 people are. On a few cards the personality changes which option is sound (with a supervisor
 who trusts you to decide, deciding and telling her beats reminding her; with a student who asks
-early, a Friday note beats an hour of pairing; with a colleague who goes quiet, asking in
+early, a Friday note is sound as well as the hour of pairing; with a colleague who goes quiet, asking in
 private whether the plan still makes sense to her comes before any request), on more cards it
 changes the reason, and the reveal on every people-dependent card says so and says what the
 other kind of person would need. A few problems are more or less likely with some people. The
@@ -69,7 +69,24 @@ ordinals when the pair is shown in the other order.
    plus the problems that fire. Six dials, 0 to 100: alignment, trust, buffer, credit, energy,
    loop; a progress bar; and a relationship bar per character. Every option is sound, the trap,
    or defensible-but-costly; the reveal names the effect on the dials, the reason, the sound
-   move if missed, and the problem the option seeds.
+   move if missed, and the problem the option seeds. A card may carry two sound options (the
+   reveal then says "a sound move" rather than "the sound move"), and a defensible option
+   carries `costIf`, the condition under which its cost starts ("it runs past a week, or someone
+   is writing toward the claim"), printed in the reveal's header. A defensible option without a
+   `costIf` carries a standing gloss instead: what turns a defensible call into the trap is
+   usually how long you leave it. This is the answer to the objection that the game scores
+   ordinary diligence as a trap: checking a vanished effect for a few days is sound when the
+   team hears the same day that the claim is under review and by when the check ends, and
+   defensible-with-a-date when it is done in silence; only the open-ended silent rescue is the
+   trap. The same shape applies to deferring to the supervisor on framing after the doubt has
+   been raised once, and to waiting on a supervisor when nobody downstream is blocked.
+   - **A senior person who does not yield.** A card can require a seed and a personality to be
+     drawn (`req`, `reqTrait`). With a Tomasz who keeps opening doors, a player who asked the
+     scoping question in month four draws, in month five, a Tomasz who answered it his way and
+     still wants the direction in. The sound move is to take the trade-off to Nadia and let the
+     seniors settle the scope; the reveal says in so many words that the month-four message was
+     right and the game does not charge for it. This answers the objection that the game
+     rewards every well-phrased request as if persuasion always lands.
    - **Seeds.** Options set named seeds (`auth_unspoken`, `expect_written`, `hero`, …). At
      the start of each month the game evaluates the problems due that month: each has a base
      risk and a `risk(state)` function that adds for the seeds that cause it and subtracts for
@@ -94,18 +111,26 @@ ordinals when the pair is shown in the other order.
    filled, each pole with a virtue and a vice; three things to do differently (the problems
    that fired first, then the lowest dials); a reading list; a copyable summary. A cumulative
    profile screen shows, across runs, which problems were hit, prevented and repaired.
-3. **Say it better (the drills).** Fourteen pairs of messages for the hard moments: the
+3. **Say it better (the drills).** Fifteen pairs of messages for the hard moments: the
    collaborator who went quiet, the authorship opener, the reminder to a silent PI, feedback on
    a late section, asking for advice rather than feedback, declining a request, the weekly
    update, reporting a dead result, a meeting invite, disagreeing with the PI's framing, a cold
-   email, checking the target venue, inviting a postmortem, telling the PI about burnout. The
-   weaker message is written long on purpose (apologies, hedges, over-explanation), so length is
-   not the tell; the better one carries context, a concrete ask, a date, and a way for the other
-   person to answer in one line. Rounds of eight, unseen items first.
+   email, checking the target venue, inviting a postmortem, telling the PI about burnout, and
+   one written from Ben's side (a stuck master's student asking for help), so the junior is a
+   person with his own messages and not only someone the player manages. In
+   some pairs the weaker message is the longer one (apologies, context pasted in, a six-point
+   agenda), in others the shorter, so length does not predict the answer; the better one carries
+   context, a concrete ask, a date, and a way for the other person to answer in one line. A
+   weaker pick is shown as the defensible kind ("The other one does more"), not as a trap,
+   because it is a message a considerate person sends. Rounds of eight, unseen items first.
 4. **Field manual.** Sixteen problems in three groups (alignment and communication; time and
    load; credit and trust), each with what it looks like, what causes it, how to prevent it, how
    to repair it once it has fired, and what to read; hit and prevented counts from this device;
-   a glossary with hover tooltips on every card; the readings in five groups.
+   a glossary with hover tooltips on every card (a tap opens the same tooltip on a phone, where
+   there is no hover; the "terms on this card" strip under each card is the second route); the
+   readings in five groups. The manual uses
+   roles (the PI, the collaborator, the master's student) rather than the run's names, so it
+   reads without a run; its subtitle says so.
 
 ## Didactic choices
 
