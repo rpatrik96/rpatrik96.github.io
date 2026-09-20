@@ -22,6 +22,36 @@ leading projects as the most junior member, where the coaches' answer was "you t
 you work; have you asked how they work?"), and the Path to PhD posts on expectations, deadlines,
 planning, contingency, open-loop projects, meetings, rest, failure, conflict and delegated speed.
 
+## The people
+
+The four characters have names and plain-language roles, because a junior player may not know
+what a PI is or how a master's student ends up on a paper: Nadia (your supervisor, the PI),
+Tomasz (a tenured professor at another institute who joined after a chance conversation), Lea
+(a PhD student in your lab, a year ahead), Ben (the master's student you co-supervise). Every
+card and message names them, with the role glossed on first mention.
+
+Each run also gives each of them one of two personalities, shown on a "meet the team" screen
+before month one: Nadia wants to be asked or trusts you to decide; Tomasz keeps opening doors
+or wants the paper out; Lea says it straight or goes quiet; Ben asks early or hides being
+stuck. This is the answer to a fair objection, that the "sound" move often depends on who the
+people are. On a few cards the personality changes which option is sound (with a supervisor
+who trusts you to decide, deciding and telling her beats reminding her; with a student who asks
+early, a Friday note beats an hour of pairing; with a colleague who goes quiet, asking in
+private whether the plan still makes sense to her comes before any request), on more cards it
+changes the reason, and the reveal on every people-dependent card says so and says what the
+other kind of person would need. A few problems are more or less likely with some people. The
+screen says plainly that a game can carry only two versions of a person and that reading them
+is part of the job.
+
+## Voice
+
+Every situation is a short scene (who, what happened, what you are looking at, what is at
+stake) rather than a prompt, and every drill message reads like an email or a Slack message a
+person would send: greetings, natural sentences, no meta-labels such as "one question, fifteen
+seconds". The better message still carries context, a concrete ask, a date and a way to answer
+briefly, in the way a considerate person writes. Reveals refer to "the first message" and "the
+second"; the engine swaps the ordinals when the pair is shown in the other order.
+
 ## Four parts
 
 1. **Run a project.** Nine months, two decisions per month drawn from a pool of about three
