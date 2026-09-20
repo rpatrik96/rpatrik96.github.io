@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>Research Projects — The Management Game</title>
+<title>Research Projects · The Management Game</title>
 <meta name="description" content="A game for the year you first lead a research project: nine months, a supervisor with no time, a senior collaborator, a junior, and a deadline. Six hidden dials, the classic problems, and a debrief that traces each one back to a decision. Runs in your browser; nothing is sent anywhere.">
 <style>
   :root{
@@ -398,7 +398,7 @@
       a junior you are responsible for, and a deadline. Every decision moves six hidden dials; the classic problems (time pressure,
       authorship fights, silent collaborators, dropped balls, burnout) fire when the dials say so, and most can be prevented or repaired.
       The debrief traces every problem back to the decision that seeded it.</p>
-    <p class="small muted" style="margin:6px 0 0">A disclaimer: the situations are drawn from real lab-culture discussions and from the Path to PhD newsletter, but which move is “sound” is one researcher's judgment, and every reveal gives its reasons.</p>
+    <p class="small muted" style="margin:6px 0 0">The situations are drawn from lab-culture discussions and from the Path to PhD newsletter; which move is “sound” is one researcher's judgment, and every reveal gives its reasons.</p>
     <p class="small muted" id="home-progress" style="margin:6px 0 0"></p>
     <div class="modegrid">
       <button class="card mode" id="go-run">
@@ -434,12 +434,12 @@
     <div class="card intro">
       <h2 style="margin-top:0">Your situation</h2>
       <p>You are a second-year PhD student, and for the first time the project is yours to run. The idea came out of a workshop conversation: a method your lab has been circling for a while, with a theory part and an experimental part. Your supervisor likes it, a professor at another institute wants in, and the target is a conference deadline in <b>month 8</b>. Nobody has written down who does what.</p>
-      <p>Nine months, two or three decisions a month. Each decision moves six dials you cannot see directly (alignment, trust, buffer, credit, energy, feedback loop), and the classic problems fire when the dials say so: a collaborator goes quiet, an authorship question surfaces late, a deadline lands on a week with no slack. Most can be prevented, and most can be repaired if you notice in time. At the end, a debrief traces every problem back to the decision that seeded it.</p>
-      <p>Four people matter, and they are introduced below with what they are to you. Their personalities are drawn fresh each run, and they change which move is sound: a supervisor who wants to be asked and one who trusts you to decide need different messages; a student who hides being stuck needs a different kind of attention from one who asks. When a decision depends on the person, the reveal says so, and says what would change with the other kind.</p>
+      <p>Nine months, two or three decisions a month. Each decision moves six dials you cannot see directly (alignment, trust, buffer, credit, energy, feedback loop), and the classic problems fire when the dials say so: a collaborator goes quiet, an authorship question comes up late, a deadline lands on a week with no slack. Most can be prevented, and most can be repaired if you notice in time. At the end, a debrief traces every problem back to the decision that seeded it.</p>
+      <p>Four people matter. Their personalities are drawn fresh each run, and they change which move is sound: a supervisor who wants to be asked and one who trusts you to decide need different messages; a student who hides being stuck needs a different kind of attention from one who asks. When a decision depends on the person, the reveal says so, and says what would change with the other kind.</p>
     </div>
     <h2>The people, this run</h2>
     <div class="cast" id="team-cast"></div>
-    <p class="small muted">A game can only carry two versions of each person. Real people are more than a trait; reading them is part of the job.</p>
+    <p class="small muted">The game carries two versions of each person; real people are more than a trait, and reading them is part of the job.</p>
     <div class="row" style="margin-top:12px"><button class="btn" id="team-start">Start month 1 →</button></div>
   </section>
 
@@ -501,7 +501,7 @@
       <p><b>Outcome.</b> Submitted on time needs buffer above zero and enough progress; the quality of the paper follows progress and loop; team health follows trust and alignment; sustainability follows energy. The verdict weighs the submission (30 points), then quality, team health, your energy and credit clarity, so a paper shipped over a broken team or an empty tank does not read as a success.</p>
       <p><b>People.</b> Each run gives the four characters one of two personalities. On a few cards the personality changes which option is sound (a supervisor who trusts you to decide versus one who wants to be asked), and on more of them it changes the reason; the reveal names the dependence and what the other kind of person would need. Some problems are also more or less likely with some people.</p>
       <p><b>Profile.</b> Each option carries a lean on one of five spectra; the profile counts where your picks sat. Neither pole is the goal.</p>
-      <p><b>Subjective.</b> Which option is sound is one researcher's judgment, grounded in the readings in the field manual. The reveal always gives the reason.</p>
+      <p><b>Subjective.</b> Which option is sound is one researcher's judgment, grounded in the readings in the field manual. The reveal gives the reason.</p>
     </div></details>
     <div class="row" style="margin-top:16px">
       <button class="btn" id="db-again">Play again</button>
@@ -555,7 +555,7 @@
   <!-- MANUAL -->
   <section id="screen-manual" class="hidden guide">
     <h1>Field manual</h1>
-    <p class="sub">Every problem in the game. Open one for what it looks like, what causes it, how to prevent it, how to repair it once it has fired, and what to read. The manual uses roles; a run gives the same four people names.</p>
+    <p class="sub">Every problem in the game. Open one for what it looks like, what causes it, how to prevent it, how to repair it once it has fired, and what to read. The manual uses roles (the PI, the principal investigator, is your supervisor, the professor who runs the lab); a run gives the same four people names.</p>
     <div class="jumps" id="man-jumps"></div>
     <div id="man-body"></div>
     <div class="card" style="margin-top:18px">
@@ -585,7 +585,7 @@
    ========================================================================== */
 const MONTHS = 9, DEADLINE = 8, PER_MONTH = 2, PROG_NEED = 55;
 const METERS = [
-  {id:"align", name:"Alignment", desc:"Does everyone share the goal, the milestones and the expectations, or only think they do?", low:"Expectations were never written down, so each person worked toward a different paper. Check explicitly, top-down, and send the note back.", res:["expectations", "cosuper", "openloop"]},
+  {id:"align", name:"Alignment", desc:"Does everyone share the goal, the milestones and the expectations, or only think they do?", low:"Expectations were never written down, so each person worked toward a different paper. Check explicitly, from the target venue down, and send the note back.", res:["expectations", "cosuper", "openloop"]},
   {id:"trust", name:"Trust", desc:"How safe it is in this team to say a hard thing: a failure, a disagreement, a request.", low:"Hard things were said late or not at all. Trust is built by the first honest message about a failure, not by the celebration.", res:["conflict", "nrr", "letfail"]},
   {id:"buffer", name:"Buffer", desc:"Slack between now and the deadline. Every decision spends some; a few buy it back.", low:"The plan had no margin, so every surprise became a crisis. Write the contingency minimum and keep two weeks nobody may spend.", res:["contingency", "planning", "stopfinish"]},
   {id:"credit", name:"Credit", desc:"How clear roles and authorship are, in writing, to everyone on the paper.", low:"Nobody said the word authorship until the submission form. Say it in month one and revisit it when contributions change.", res:["expectations", "icmje", "authorship"]},
@@ -779,7 +779,7 @@ const GLOSSARY = [
   ["buffer", "Weeks between now and the deadline that are not yet promised to anything.", ["buffer"]],
   ["forcing function", "An external constraint, such as a deadline, that makes people act; useful in doses, harmful as the only motivation.", ["forcing function"]],
   ["manager's schedule", "A day cut into hour-long slots for meetings, as most PIs run; makers need half-days of uninterrupted time.", ["manager's schedule", "manager's calendar"]],
-  ["Vancouver criteria", "The ICMJE definition of authorship: substantial contribution, drafting or revising, final approval, accountability.", ["Vancouver criteria", "the venue's criteria"]],
+  ["Vancouver criteria", "The International Committee of Medical Journal Editors (ICMJE) definition of authorship: substantial contribution, drafting or revising, final approval, accountability.", ["Vancouver criteria", "the venue's criteria"]],
   ["open loop", "A task or decision that is waiting on someone and visible to no one; also a project that ends without a postmortem.", ["open loop", "open loops", "open-loop"]],
   ["feedback loop", "How fast you find out that something is off: a weekly message is a tight loop, a monthly meeting is a loose one.", ["feedback loop", "loop"]],
   ["async", "Communication that does not need both people present, such as a message with full context read later.", ["async", "asynchronous"]],
@@ -816,7 +816,7 @@ const CAST = [
   {id:"pi", name:"Nadia", short:"your supervisor, the PI", role:"Your supervisor: the PI, the professor who runs the lab and signs off on what you do. Sharp, on three projects, a calendar cut into half-hour slots, cancels sometimes. She wants you to succeed and does not always show it.", rel:60},
   {id:"senior", name:"Tomasz", short:"collaborator, professor elsewhere", role:"A professor at another institute who joined after a chance conversation at a workshop. Tenured, many projects, no deadline pressure, happy to think about the problem for a year.", rel:55},
   {id:"peer", name:"Lea", short:"PhD student in your lab, theory", role:"A PhD student in your lab, a year ahead of you. On the paper for the theory part. Same incentives as you, and two other deadlines this year.", rel:60},
-  {id:"junior", name:"Ben", short:"your master's student, experiments", role:"The master's student you co-supervise; his thesis project is the experiments for this paper. First research project, eager, goes quiet when stuck.", rel:60}
+  {id:"junior", name:"Ben", short:"your master's student, experiments", role:"The master's student you co-supervise; his thesis project is the experiments for this paper. First research project, works hard, goes quiet when stuck.", rel:60}
 ];
 
 /* ---------------------------------------------------------------------------
@@ -826,7 +826,7 @@ const CARDS = [
   {id:"K_expect", month:1, always:true, phase:"Kickoff", title:"Twenty minutes with Nadia",
    sit:"Nadia, your supervisor, has squeezed you in between two calls. So far the project is a whiteboard sketch and a rough plan that lives in three people's heads: yours, hers, and Tomasz's. This is the meeting where the project either gets a shared definition or stays an impression. You have twenty minutes.",
    opts:[
-     {t:"Bring three questions instead of results: what “enough progress” looks like to her, who decides what goes into the paper and what stays out, and how she wants to be reminded when an email goes unanswered. Afterwards, write the answers into a one-page note and send it to everyone on the project.", k:"sound", fx:{align:12, loop:6, trust:3}, seeds:["expect_written"], ax:{comms:"R"}, f:"Expectations now live in a note everyone can read, not in two heads.", why:"You do not need results to justify a meeting; good questions are enough, and they are what a first meeting is for. The note is the real point. It turns a twenty-minute conversation into a document you can hold up against the plan at the midpoint, and it tells Nadia in writing what she has agreed to."},
+     {t:"Bring three questions instead of results: what “enough progress” looks like to her, who decides what goes into the paper and what stays out, and how she wants to be reminded when an email goes unanswered. Afterwards, write the answers into a one-page note and send it to everyone on the project.", k:"sound", fx:{align:12, loop:6, trust:3}, seeds:["expect_written"], ax:{comms:"R"}, f:"Expectations now live in a note everyone can read, not in two heads.", why:"You do not need results to justify a meeting; good questions are enough, and they are what a first meeting is for. The note is the point. It turns a twenty-minute conversation into a document you can hold up against the plan at the midpoint, and it tells Nadia in writing what she has agreed to."},
      {t:"Present the plan and the first results you have. The questions can wait until there is something concrete to discuss.", k:"pit", fx:{align:2, energy:-3}, seeds:["expect_unspoken"], p:"misaligned_expectations", ax:{comms:"L"}, why:"Showing results is not the mistake; a supervisor with twenty minutes is entitled to see where the project is. The cost is that all twenty went to showing, so Nadia has an impression of the project and you have no idea whether it matches hers. Five of those minutes would have bought you the answers, and the gap widens quietly until she says “the workshop paper” in passing and you realize you have been writing a different paper."},
      {t:"Ask Nadia what she expects, nod along, and keep the answers in your head.", k:"meh", fx:{align:5}, seeds:["expect_unspoken"], ax:{comms:"L"}, costIf:"it is month six and you are arguing about what was agreed", why:"Better than not asking. But nodding is a poor record. Two people remember the same conversation differently within a week, and when you disagree later there will be nothing to check against."}
    ]},
@@ -841,7 +841,7 @@ const CARDS = [
    sit:"The submission deadline is at the end of month eight. Everyone agrees on the rough shape: explore first, then run the experiments, then write. Nobody has said who does what by when, or what happens if something goes wrong. You are looking at a blank planning document.",
    opts:[
      {t:"Plan backwards from the deadline: named owners and dates for each piece, a two-week buffer nobody is allowed to spend, and a written minimum, the smallest paper you would still be satisfied with if things go wrong.", k:"sound", fx:{buffer:10, align:8, loop:4}, seeds:["contingency"], ax:{pace:"R"}, f:"Plans are useless, planning is helpful; the written minimum is the insurance.", why:"Just-in-time plans work only when nothing goes wrong, and something always does. Two questions are worth writing down now: what is the minimum you would be satisfied with, and what price are you willing to pay for it? The two-week buffer is the premium on that insurance."},
-     {t:"Start with the experiments. Plans are useless for exploratory work, and the deadline will focus everyone when it gets close.", k:"pit", fx:{buffer:-5, progress:3}, seeds:["no_plan"], p:"deadline_crunch", ax:{pace:"L"}, later:"The deadline will do the prioritizing, and it prioritizes all-nighters.", why:"A deadline is a useful forcing function, but if it is the only thing that sets priorities, everything happens in the last two weeks. That is exactly when compute is scarce, Nadia is traveling, and everyone else in the field is rushing toward the same date."},
+     {t:"Start with the experiments. Plans are useless for exploratory work, and the deadline will focus everyone when it gets close.", k:"pit", fx:{buffer:-5, progress:3}, seeds:["no_plan"], p:"deadline_crunch", ax:{pace:"L"}, later:"The deadline will do the prioritizing, and it prioritizes all-nighters.", why:"A deadline is a useful forcing function, but if it is the only thing that sets priorities, everything happens in the last two weeks. That is when compute is scarce, Nadia is traveling, and everyone else in the field is rushing toward the same date."},
      {t:"Build a detailed weekly task board for the whole team and ask everyone to keep it updated.", k:"meh", fx:{buffer:4, align:3, energy:-4}, seeds:["control_board"], ax:{control:"L"}, later:"Boards nobody asked for get ignored by month three.", costIf:"you are the only one updating it by month three", why:"Planning, yes. But a board imposed by the most junior person on the team needs a team that meets daily and updates it, and academic teams do not work that way. Lea and Tomasz will not touch it. It will be yours to maintain, and it will be out of date."}
    ]},
   {id:"M2_ways", month:2, phase:"Setting up", title:"The first meeting with everyone in the room",
@@ -877,13 +877,13 @@ const CARDS = [
    opts:[
      {t:"Share it half-formed at the group meeting. The possible outcomes are confirmation, an improvement, or an early kill, and all three are wins.", k:"sound", fx:{loop:6, align:5, trust:4}, ax:{comms:"R"}, f:"Nothing to lose: every outcome of sharing beats two weeks of polishing.", why:"An idea kept private for polishing costs two weeks and gains nothing the room could not have given you tomorrow. The fear is looking wrong in front of Nadia and Lea; the real risk is being wrong for longer."},
      {t:"Polish it for two more weeks before showing anyone.", k:"pit", fx:{buffer:-5, loop:-3, energy:-3}, p:"late_feedback", ax:{comms:"L"}, why:"Two weeks of buffer spent making presentable an idea the room would have improved or killed in ten minutes. Waiting until you have results before talking wastes more time than it saves."},
-     {t:"Spend two days on the two objections you cannot answer, then bring it to the next group meeting.", k:"meh", fx:{loop:3, align:2, buffer:-1}, ax:{comms:"L"}, costIf:"two days become two weeks", why:"Defensible; two days is not two weeks, and you will arrive with a sharper question. The cost is one meeting's worth of feedback, and the two objections are exactly what the room would have answered fastest."},
+     {t:"Spend two days on the two objections you cannot answer, then bring it to the next group meeting.", k:"meh", fx:{loop:3, align:2, buffer:-1}, ax:{comms:"L"}, costIf:"two days become two weeks", why:"Defensible; two days is not two weeks, and you will arrive with a sharper question. The cost is one meeting's worth of feedback, and the two objections are what the room would have answered fastest."},
      {t:"Tell only Nadia, in your one-to-one.", k:"meh", fx:{loop:2, align:2}, ax:{comms:"L"}, costIf:"Lea's objection reaches you in month seven instead of tomorrow", why:"One reader instead of five. Lea, who does the theory, is the one whose objection you needed to hear."}
    ]},
   {id:"M3_side", month:3, phase:"Early work", title:"A request at the coffee machine",
    sit:"A postdoc from the group down the hall stops you by the coffee machine. She is building a benchmark for her paper and could use your help with the evaluation code. It sounds interesting, and she is someone worth knowing. She is waiting for an answer.",
    opts:[
-     {t:"Do not say yes on the spot. Say you will check your calendar and answer tomorrow, and if the hours fit, name exactly how many you can give.", k:"sound", fx:{energy:2, buffer:2}, seeds:["says_no"], ax:{load:"R"}, f:"Decide twice with a night between; the calendar tells you whether it fits.", why:"Never say yes on the spot. If the hours do not fit on the calendar you cannot do it, however interesting it is. Answering tomorrow with a number of hours keeps both the connection and your project."},
+     {t:"Do not say yes on the spot. Say you will check your calendar and answer tomorrow, and if the hours fit, say how many hours you can give.", k:"sound", fx:{energy:2, buffer:2}, seeds:["says_no"], ax:{load:"R"}, f:"Decide twice with a night between; the calendar tells you whether it fits.", why:"Never say yes on the spot. If the hours do not fit on the calendar you cannot do it, however interesting it is. Answering tomorrow with a number of hours keeps both the connection and your project."},
      {t:"Say yes. It is a good connection and it will only take a few days.", k:"pit", fx:{buffer:-8, energy:-8}, seeds:["overcommit"], p:"overcommitment", ax:{load:"L"}, later:"“A few days” is what every side project says in month three.", why:"It rarely takes a few days, and the calendar is the only way to know. The extra work does not stop by itself, and every yes here is hours taken from this paper in month seven, when they are scarcest."},
      {t:"Say no on the spot. There is no time for anything else this year.", k:"meh", fx:{energy:2}, ax:{load:"R"}, later:"A flat no to everything costs you the network that saves you later.", costIf:"the postdoc turns out to be the reader you needed in month eight", why:"It protects the project and costs the connection, the kind that later gives you feedback nobody in your own lab can. A day's delay and a smaller yes would have kept both."}
    ]},
@@ -891,7 +891,7 @@ const CARDS = [
    sit:"A long email from Tomasz, the collaborator from the other institute. He has been thinking, and there is a direction that “would make the paper much more interesting.” It is a real idea and it is a lot of work. You are two months in, with a plan everyone agreed on, and the deadline does not move.",
    opts:[
      {t:"Thank him, and ask the scoping question: what is the best version of this paper we can finish by month eight, and does the new direction fit inside it, or is it the next paper?", k:"sound", fx:{align:8, buffer:3}, rel:{senior:3}, seeds:["scope_agreed"], ax:{conflict:"R"}, f:"A senior person's idea gets scoped, not absorbed or ignored.", why:"Tomasz has tenure and no deadline pressure; he is happy to think about a problem for a year. You are not. Naming the best version of the paper by the deadline lets you say yes to the idea and no to the timing, and it surfaces the mismatch in time horizons before it costs you a month."},
-     {t:"Take it on. Tomasz knows the field better than you, so add the direction to the plan.", k:"pit", fx:{buffer:-12, align:-6}, seeds:["scope_creep"], p:"scope_creep", ax:{conflict:"L"}, later:"The paper now has two questions; by month six it will have three.", why:"Two research questions in one paper, and the plan just lost a month. Seniority is not scope. Tomasz will happily suggest a third direction in month six, because for him there is no cost."},
+     {t:"Take it on. Tomasz knows the field better than you, so add the direction to the plan.", k:"pit", fx:{buffer:-12, align:-6}, seeds:["scope_creep"], p:"scope_creep", ax:{conflict:"L"}, later:"The paper now has two questions; by month six it will have three.", why:"Two research questions in one paper, and the plan has lost a month. Seniority is not scope. Tomasz will happily suggest a third direction in month six, because for him there is no cost."},
      {t:"Ignore the email politely and keep to the plan.", k:"meh", fx:{align:-2}, rel:{senior:-6}, ax:{conflict:"L"}, costIf:"Tomasz's first reply to the idea is his review of the draft", why:"The plan survives; the relationship does not. When Tomasz reads the draft in month seven, his review will be the disagreement you avoided now."}
    ]},
   {id:"M4_cancel", month:4, phase:"Early work", title:"Canceled again, at short notice",
@@ -912,7 +912,7 @@ const CARDS = [
    sit:"Three weeks without a word from Lea, the PhD student from your lab who is doing the theory part. You know her other project has a deadline in two weeks. The experiments section of the draft needs her lemma to refer to.",
    opts:[
      {t:"Write to Lea with context and a clear ask: what you need, by when, why it matters for the deadline, and an offer to take a piece off her plate. Ask what would make it easier.", k:"sound", fx:{loop:6, trust:4}, rel:{peer:5}, seeds:["peer_engaged"], ax:{comms:"R"}, f:"Context, ask, date, and a way for her to say what she needs.", why:"Silence from a colleague is usually a deadline, not disinterest. A message with the reason and an offer treats Lea as a collaborator with her own constraints, and it makes “I can do the lemma but not the proof until the 20th” an easy reply."},
-     {t:"Do the theory part yourself. It is faster than waiting on her.", k:"pit", fx:{progress:6, energy:-12, credit:-8}, rel:{peer:-5}, seeds:["hero"], p:"hero_mode", ax:{load:"L"}, later:"Lea's name is on the paper for the part you now do.", why:"You just took over a second person's work. The credit question this creates is worse than the delay, and Lea will still be on the paper for a part she did not do."},
+     {t:"Do the theory part yourself. It is faster than waiting on her.", k:"pit", fx:{progress:6, energy:-12, credit:-8}, rel:{peer:-5}, seeds:["hero"], p:"hero_mode", ax:{load:"L"}, later:"Lea's name is on the paper for the part you now do.", why:"You took over a second person's work. The credit question this creates is worse than the delay, and Lea will still be on the paper for a part she did not do."},
      {t:"Ask Nadia to have a word with Lea.", k:"meh", fx:{loop:2}, rel:{peer:-6, pi:1}, ax:{conflict:"L"}, costIf:"Lea starts telling Nadia things instead of you", why:"It works once and costs the relationship. Colleagues who get managed through the supervisor stop telling you things."}
    ]},
   {id:"M5_energy", month:5, phase:"Mid-project", title:"Every weekend for a month",
@@ -954,7 +954,7 @@ const CARDS = [
   {id:"M7_freeze", month:7, phase:"The run-in", title:"Five weeks out",
    sit:"The compute cluster queue is full because every group has the same deadline. Nadia is traveling for two of the remaining five weeks. Tomasz has written to say that one more experiment would round the paper off nicely.",
    opts:[
-     {t:"Freeze the scope: write down what is in, what is cut, and who does what by when. Book Nadia's reading slots now, before she leaves. Move Tomasz's extra experiment to the appendix or the next paper.", k:"sound", fx:{buffer:8, align:8, loop:4}, seeds:["scope_frozen"], ax:{pace:"R"}, f:"Everything that is not frozen now gets decided at 3 a.m. on the last day.", why:"Everyone rushes at the same time, so compute and supervisor attention are scarcest exactly now. A frozen scope with owners is the difference between a run-in and a crunch."},
+     {t:"Freeze the scope: write down what is in, what is cut, and who does what by when. Book Nadia's reading slots now, before she leaves. Move Tomasz's extra experiment to the appendix or the next paper.", k:"sound", fx:{buffer:8, align:8, loop:4}, seeds:["scope_frozen"], ax:{pace:"R"}, f:"Everything that is not frozen now gets decided at 3 a.m. on the last day.", why:"Everyone rushes at the same time, so compute and supervisor attention are scarcest now. A frozen scope with owners is the difference between a run-in and a crunch."},
      {t:"Run everything in parallel and decide what fits at the end.", k:"pit", fx:{buffer:-12, energy:-8}, seeds:["no_freeze"], p:"deadline_crunch", ax:{pace:"L"}, later:"“Decide at the end” means decide with no time left.", why:"Parallel runs with no decision is a plan to have three half-finished experiments and one all-nighter."},
      {t:"Cut the extra experiment and do not tell Tomasz.", k:"meh", fx:{buffer:4, trust:-4}, rel:{senior:-8}, ax:{conflict:"L"}, costIf:"he reads the cut in the draft", why:"The cut is right and the silence is expensive. He will find out from the draft."}
    ]},
@@ -962,7 +962,7 @@ const CARDS = [
    sit:"Ben used an AI coding agent to write the evaluation pipeline overnight, the chain of scripts that turns raw model outputs into the numbers in the paper. The numbers look great, better than expected. Nobody, including Ben, has read the code.",
    opts:[
      {t:"Verify before trusting: write unit tests for the metric, check ten examples by hand against what the code reports, and ask Ben whether he would put his name on it.", k:"sound", fx:{loop:6, progress:4}, seeds:["verified"], f:"Delegated speed needs guardrails, verification and expected mistakes.", why:"Speed that was delegated is not speed you earned. Ten hand-checked examples and a test on the metric cost an afternoon; a reviewer finding a double-count costs the paper."},
-     {t:"Ship it. The deadline is close and the numbers make sense.", k:"pit", fx:{progress:8, buffer:2}, seeds:["unverified"], p:"delegated_speed", later:"This comes back at the reviews.", why:"Numbers that make sense are exactly the ones that get shipped unverified. Did you verify, or did you trust?"},
+     {t:"Ship it. The deadline is close and the numbers make sense.", k:"pit", fx:{progress:8, buffer:2}, seeds:["unverified"], p:"delegated_speed", later:"This comes back at the reviews.", why:"Numbers that make sense are the ones that get shipped unverified. Did you verify, or did you trust?"},
      {t:"Rewrite the pipeline yourself.", k:"meh", fx:{energy:-10, buffer:-6, progress:3}, seeds:["hero"], ax:{load:"L"}, costIf:"Ben writes the next pipeline the same way", why:"Verification would have taken an afternoon. Rewriting takes a week of buffer and teaches Ben nothing about testing."}
    ]},
   {id:"M7_frame", month:7, phase:"The run-in", title:"Nadia rewrites the framing",
@@ -1001,9 +1001,9 @@ const CARDS = [
      {t:"Start the next project on Monday and rest at the next holiday.", k:"meh", fx:{energy:-4}, ax:{pace:"L"}, costIf:"the next holiday is months away", why:"Starting Monday is what most people do, and the project will not suffer for it. The cost is that the next holiday is three months out, and the tank you are running on is the one month eight emptied."}
    ]},
   {id:"M9_reviews", month:9, phase:"After", title:"The reviews are in",
-   sit:"Months later, the reviews come back. One is dismissive (“a trivial extension”), one is careful and fair, and one asks for exactly the baseline you cut in month seven. Nadia has forwarded them without comment. You have a week to write the rebuttal.",
+   sit:"Months later, the reviews come back. One is dismissive (“a trivial extension”), one is careful and fair, and one asks for the baseline you cut in month seven. Nadia has forwarded them without comment. You have a week to write the rebuttal.",
    opts:[
-     {t:"Separate the work from your worth. Check whether the dismissive reviewer misread something you wrote unclearly, and answer the baseline request with numbers.", k:"sound", fx:{energy:3, loop:4}, ax:{conflict:"R"}, f:"Maybe they missed it; maybe it was not clearly written.", why:"Reviews can be unfair and still useful. The dismissive one often points at a paragraph the curse of knowledge made you skip. Detach your worth from the verdict and read it for the sentence you can fix."},
+     {t:"Separate the work from your worth. Check whether the dismissive reviewer misread something you wrote unclearly, and answer the baseline request with numbers.", k:"sound", fx:{energy:3, loop:4}, ax:{conflict:"R"}, f:"Maybe they missed it; maybe the paragraph was unclear.", why:"Reviews can be unfair and still useful. The dismissive one often points at a paragraph the curse of knowledge made you skip. Detach your worth from the verdict and read it for the sentence you can fix."},
      {t:"Reply the same evening.", k:"pit", fx:{energy:-6, trust:-2}, rel:{pi:-2}, ax:{conflict:"L"}, why:"Anger pushes you to act; the remedy is delay. The rebuttal written tomorrow is the one you would sign."},
      {t:"Let Nadia handle the rebuttal.", k:"meh", fx:{credit:-4}, rel:{pi:-2}, ax:{load:"L"}, costIf:"a reviewer's question turns on a detail only you have", why:"It is your paper. Draft it, then ask her for the read."}
    ]},
@@ -1011,7 +1011,7 @@ const CARDS = [
    sit:"In month four you asked Tomasz the scoping question, and he answered it: yes, his direction fits inside the best version of the paper, and he would like it in. Now a second email, longer, with a sketch of the experiments. He is a tenured professor at another institute, he means it as a gift, and he does not have a deadline. The plan you agreed in month one does not have room for it.",
    opts:[
      {t:"Take it to Nadia. Put the trade-off in front of her with the weeks it costs, and let the two seniors settle the scope; you report back to Tomasz whatever they decide.", k:"sound", fx:{align:6, buffer:2}, rel:{pi:2, senior:-1}, ax:{conflict:"R"}, f:"Some people cannot be managed from the junior seat; then the scope is a decision between the seniors.", why:"You asked the right question in month four and the answer came back his way. A tenured collaborator who wants his idea in is not moved by deadline arithmetic from the most junior person on the team, and that is not a failure of your message. What you can do is stop being the one who says no: put the trade-off to Nadia with the weeks attached, and let the two of them settle it. None of this is a cost you brought on yourself."},
-     {t:"Give in. He outranks you, and he did answer your question.", k:"pit", fx:{buffer:-10, align:-5}, seeds:["scope_creep"], p:"scope_creep", ax:{conflict:"L"}, later:"The paper has two questions again; by month six it will have three.", why:"He answered it his way, and the plan just lost the month it had. Being outranked is a reason to escalate, not to absorb."},
+     {t:"Give in. He outranks you, and he did answer your question.", k:"pit", fx:{buffer:-10, align:-5}, seeds:["scope_creep"], p:"scope_creep", ax:{conflict:"L"}, later:"The paper has two questions again; by month six it will have three.", why:"He answered it his way, and the plan has lost the month it had. Being outranked is a reason to escalate, not to absorb."},
      {t:"Offer a two-week pilot of his direction with a pass or fail agreed in advance, then decide.", k:"meh", fx:{buffer:-6, loop:2}, rel:{senior:2}, ax:{pace:"L"}, costIf:"the two weeks end without anyone calling it a pass or a fail", why:"Evidence sometimes moves him where arithmetic did not, and two weeks is a real price. Write the pass or fail down before you start, or the pilot becomes the thing it was meant to test."}
    ]}
 ];
@@ -1073,7 +1073,7 @@ const INCIDENTS = [
    opts:[
      {t:"Own it in writing to Nadia, list every open task with its owner, and add a weekly ten-minute “what is waiting on whom” round to the team meeting.", k:"sound", fx:{loop:8, trust:5, align:3}, ax:{comms:"R"}, f:"A dropped ball owned in writing costs an afternoon; a hidden one costs trust.", why:"A dropped ball owned in writing costs a bad afternoon. The round you add is the reason there is not a second one."},
      {t:"Hide it and hope the paperwork comes through.", k:"pit", fx:{trust:-10, loop:-4}, ax:{conflict:"L"}, why:"It arrives, late, addressed to Nadia. Trust that took months is gone in one message."},
-     {t:"Blame the licensing office in the team channel.", k:"meh", fx:{trust:-6}, rel:{pi:-3}, ax:{conflict:"L"}, costIf:"Nadia reads it in the channel", why:"Partly true and entirely unhelpful. The office did not run the experiments."}
+     {t:"Blame the licensing office in the team channel.", k:"meh", fx:{trust:-6}, rel:{pi:-3}, ax:{conflict:"L"}, costIf:"Nadia reads it in the channel", why:"Partly true and unhelpful. The office did not run the experiments."}
    ]},
   {id:"I_hidden", p:"hidden_failure", months:[7], base:0.05, title:"The rescue did not work",
    sit:"Two weeks of variants, and the effect still does not replicate. The draft's headline claim rests on it, and Lea and Tomasz are still writing toward it. Nobody has changed the plan.",
@@ -1121,7 +1121,7 @@ const INCIDENTS = [
      {t:"Add everyone and order by seniority to avoid a fight.", k:"meh", fx:{credit:-5, trust:-3}, ax:{conflict:"L"}, costIf:"nobody explains the order to Ben before he reads it", why:"It avoids this fight and creates the next one, with Ben, who did the experiments and is now last."}
    ]},
   {id:"I_review", p:"delegated_speed", months:[9], base:0.05, title:"A reviewer reran the pipeline",
-   sit:"One reviewer downloaded the code and reran the evaluation. The metric double-counts, and the headline number drops by half. The review is polite and completely right. Nadia has seen it.",
+   sit:"One reviewer downloaded the code and reran the evaluation. The metric double-counts, and the headline number drops by half. The review is polite and right. Nadia has seen it.",
    risk:s => 0.05 + (S(s, "unverified") ? 0.6 : 0) - (S(s, "verified") ? 0.04 : 0),
    cause:(s, prev) => prev ? ["The pipeline was tested and spot-checked in month seven."] : [S(s, "unverified") ? "The overnight pipeline shipped unverified in month seven." : "Even tested code has bugs; the reviewer found one."],
    opts:[
@@ -1135,8 +1135,8 @@ const INCIDENTS = [
    cause:(s, prev) => prev ? ["Disagreements were argued with evidence when they arose, so none went underground."] : [S(s, "avoided_conflict") ? "In month seven you did not argue the framing with Nadia, and Lea disagreed silently too." : "Half-joking disagreements at celebrations are the ones nobody raised in the meeting."],
    opts:[
      {t:"Take it seriously, in private. Ask Lea what she would have said, and what she needs now to stand behind the work.", k:"sound", fx:{trust:8}, rel:{peer:6}, ax:{conflict:"R"}, f:"A joke about a disagreement is a disagreement; treat it as one.", why:"Conflict entered out of respect deepens the relationship. The question “what would you need to stand behind this?” usually has a small answer."},
-     {t:"Laugh it off.", k:"pit", fx:{trust:-5}, rel:{peer:-6}, ax:{conflict:"L"}, why:"She was not entirely joking, and now she knows you would rather not hear it."},
-     {t:"Offer Lea the presentation anyway; it would be good for her profile.", k:"meh", rel:{peer:-2}, ax:{conflict:"L"}, costIf:"she presents a paper she does not stand behind", why:"Generous and beside the point. She just told you she does not stand behind it."}
+     {t:"Laugh it off.", k:"pit", fx:{trust:-5}, rel:{peer:-6}, ax:{conflict:"L"}, why:"She was only half joking, and now she knows you would rather not hear it."},
+     {t:"Offer Lea the presentation anyway; it would be good for her profile.", k:"meh", rel:{peer:-2}, ax:{conflict:"L"}, costIf:"she presents a paper she does not stand behind", why:"Generous and beside the point. She has told you she does not stand behind it."}
    ]}
 ];
 
@@ -1192,7 +1192,7 @@ const DRILLS = [
    b:"Hi both, this week's figure attached. The effect holds at three model sizes but shrinks at the largest: 0.8 points, within seed noise. That changes the story. Either we present it as a result up to medium scale, or we lead with the mechanism and treat the scaling as a limitation. I lean toward the mechanism and would start writing that way on Monday. Let me know by Wednesday if you disagree. Have a good weekend!",
    better:"b", feat:"The result, the fork it opens, a lean and a date",
    principle:"A weekly update is for getting a decision, not for showing activity. Show the result, name the choice it forces, say which way you lean and when you will act.",
-   why:"The first keeps the check private and asks nothing, so the writing starts Monday on a story nobody has looked at. Looking into the largest size is right; not saying what the fork is, is the problem. The second shows the number, names the two options, states a preference and a date, and a one-word reply is enough to change course.", res:["agefeedback", "deadline", "spectrum"]},
+   why:"The first keeps the check private and asks nothing, so the writing starts Monday on a story nobody has looked at. Looking into the largest size is right; the problem is not saying what the fork is. The second shows the number, names the two options, states a preference and a date, and a one-word reply is enough to change course.", res:["agefeedback", "deadline", "spectrum"]},
   {id:"D_fail", q:"The main effect vanished with more seeds. What do you write to the team?",
    ctx:"Ben reran the main experiment with five seeds instead of one, and the effect is inside the noise. The headline claim of the paper depends on it, and Lea and Tomasz are writing toward that claim right now. You are writing to the team channel, where Nadia will read it too.",
    a:"Hi all, update on the main experiment: with five seeds the effect is smaller than in the single-seed runs and currently within the noise. I'm looking into it (learning rate, eval protocol) and will report back once I know more. The rest of the plan is unchanged for now.",
@@ -1231,7 +1231,7 @@ const DRILLS = [
   {id:"D_post", q:"You want the team to do a postmortem two weeks after the deadline. What invite do you send?",
    ctx:"The paper went in on Friday. Everyone is tired, Lea has another deadline in ten weeks, and Nadia is already on to the next thing. You believe the team should look back at how the project ran, and you know that if nobody puts a date on it, it will not happen.",
    a:"Hi all, congrats on getting it in, and thank you all for the last few weeks, I know it was a lot. Now that it's off our desks, I think it would be really valuable to do a short retrospective at some point: what went well, what we'd do differently, what we learned about working together, that kind of thing. Nothing formal, maybe over lunch or coffee sometime in the next few weeks once everyone has caught their breath. Let me know what works and we'll find a slot.",
-   b:"Hi all, congrats again. I've put an hour in the calendar for Thursday the 24th to look back at how the project went: no blame, just what to keep and what to change. Three questions: what should we start, stop and keep doing; where was the margin thin; what would have made this easy. I'll send my own answers on Monday so you can react rather than start from scratch.",
+   b:"Hi all, congrats again. I've put an hour in the calendar for Thursday the 24th to look back at how the project went: no blame, only what to keep and what to change. Three questions: what should we start, stop and keep doing; where was the margin thin; what would have made this easy. I'll send my own answers on Monday so you can react rather than start from scratch.",
    better:"b", feat:"A slot, three questions, no blame, and the organizer goes first",
    principle:"A postmortem needs a date, a structure, a no-blame rule and someone who goes first. “At some point over lunch” is how it never happens.",
    why:"The first is an intention with no date. The second has a slot, a three-question structure, a rule that makes it safe, and the organizer's answers sent ahead of the meeting.", res:["openloop", "postmortem_sre", "nrr"]},
@@ -1274,7 +1274,7 @@ const TRAITS = {
 };
 /* per card: notes shown on the reveal for the active trait (and the other one), plus overrides of an option's kind and reason, plus added options */
 const TRAIT_CARDS = {
-  M2_silence:{who:"pi", note:{pi_asks:"Nadia wants to be asked, so a reminder with the decision and a date is exactly right; deciding for her would cost trust.", pi_trusts:"Nadia trusts you to decide and reads a reminder for a delegated decision as a nudge to do your own job. With her, the sound move is to decide, say so in one line, and move on."},
+  M2_silence:{who:"pi", note:{pi_asks:"Nadia wants to be asked, so a reminder with the decision and a date is right; deciding for her would cost trust.", pi_trusts:"Nadia trusts you to decide and reads a reminder for a delegated decision as a nudge to do your own job. With her, the sound move is to decide, say so in one line, and move on."},
     over:{pi_trusts:{0:{k:"meh", rel:{pi:-1}, costIf:"you hand the next one back to her as well", why:"With Nadia, this dataset decision was yours. The reminder gets you an answer and a small sigh; she wanted to see you decide and tell her."}}},
     add:[{t:"Decide it yourself: dataset B, for the reasons already in the plan, and tell Nadia in one line what you chose and why.", fx:{loop:5, align:2}, ax:{load:"R"}, kBy:{pi_asks:"meh", pi_trusts:"sound"}, costIf:"you keep deciding alone instead of asking with a date", whyBy:{pi_asks:"Nadia wants decisions to pass through her. Deciding alone gets the project moving and costs a little trust each time; with her, ask, with a date.", pi_trusts:"This is what Nadia hired you for. One line tells her what happened; she replies only if she disagrees, and the student starts today."}, f:"Know which supervisor you have."}]},
   M3_junior:{who:"junior", note:{ben_asks:"Ben asks when he is stuck, so three weeks of “almost working” with him means he thinks it is nearly there; a short pairing session confirms it without taking over.", ben_hides:"Ben hides being stuck. “Almost working” for three weeks is the signal; only sitting down together finds the problem."},
@@ -1417,7 +1417,7 @@ function renderItem() {
   if (current !== "run") show("run");
   renderMonths(); renderMeters();
   $("run-left").textContent = `Month ${run.month} of ${MONTHS}${run.month === DEADLINE ? " · deadline month" : run.month > DEADLINE ? " · after submission" : ` · ${DEADLINE - run.month} to the deadline`}`;
-  $("run-right").textContent = `${run.n + 1}. decision`;
+  $("run-right").textContent = `Decision ${run.n + 1}`;
   $("run-who").innerHTML = CAST.map(c => `<b>${esc(c.name)}</b>, ${esc(c.short)}`).join(" · ");
   const found = new Set(), seen = new Set();
   const it = q.item;
@@ -1525,7 +1525,7 @@ function renderProfile(host, axesNow) {
     const nAll = all.L + all.R; if (!nAll) return "";
     const pos = v => 50 + 50 * (v.R - v.L) / Math.max(1, v.L + v.R);
     const lean = all.R > all.L ? ax.R : all.L > all.R ? ax.L : null; const strength = Math.abs(all.R - all.L) / Math.max(1, nAll);
-    const read = !lean ? "balanced so far" : `${strength >= .6 ? "clearly" : "slightly"} ${lean.name.toLowerCase()}: ${lean.v}. The vice to watch: ${lean.x}.`;
+    const read = !lean ? "balanced so far" : `${strength >= .6 ? "mostly" : "slightly"} ${lean.name.toLowerCase()}: ${lean.v}. The vice to watch: ${lean.x}.`;
     return `<div class="axis"><div class="axlab"><span>${esc(ax.L.name)}</span><span>${esc(ax.R.name)}</span></div><div class="axbar"><i class="mark all" style="left:${pos(all).toFixed(0)}%" title="all runs: ${all.L} vs ${all.R}"></i>${now.L + now.R ? `<i class="mark now" style="left:${pos(now).toFixed(0)}%" title="this run: ${now.L} vs ${now.R}"></i>` : ""}</div><div class="small muted">${esc(read)} <span class="muted">(${nAll} pick${nAll === 1 ? "" : "s"})</span></div></div>`;
   }).join("");
   host.innerHTML = rows || `<p class="muted">No profile yet.</p>`;
