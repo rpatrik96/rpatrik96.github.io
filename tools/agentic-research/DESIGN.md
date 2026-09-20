@@ -21,14 +21,14 @@ deck and its source post, pitched at principles rather than tools.
   the labels read. Drawings that were built over several slides (the access-and-permissions
   ladder, the earned-or-borrowed speed routes, the jagged frontier, the activation barrier,
   the three guardrails, the emulated group, the loop) keep their steps behind a small stepper
-  with a caption per step. The four term icons (container, connector, skill, harness) sit next
-  to their definitions in the ladder explorer.
+  with a caption per step. The six terms (container, connector, skill, harness, rule, hook) sit next
+  to their definitions in the ladder explorer, four with the deck's icons and two drawn for the page.
 - **Key points, not prose.** A statement, the figure, two to five bullets in the deck's own
   words (slide text and speaker notes, without the personal remarks and without invented
   one-liners), an "in practice" line, and an example: the talk's own shown in full, an
   invented illustration folded behind a toggle and labeled as invented. An earlier version
   carried a 200-word explanation per card and read as a wall of text; the bullets replaced
-  it. Code examples fold under their titles. Each section opens with a three-sentence
+  it. Code examples fold under their titles. Each section opens with a short
   introduction.
 - **Examples are complete.** The feedback on the talk asked for concrete examples and for
   what hooks, tests and rules actually look like. The page shows ten copyable artifacts in
@@ -45,15 +45,26 @@ deck and its source post, pitched at principles rather than tools.
   verdicts, the tools' thresholds) fed a fix pass. A second round checked every finding
   against the rendered page and caught what the first pass broke (a sentence pasted twice,
   three-versus-four counts, a skill asserting a rule the rules block did not have); the
-  copyable blocks parse as strict JSON, Python, Make and bash.
+  copyable blocks parse as strict JSON, Python, Make and bash. A later pass (devil's advocate,
+  audience check, and a voice audit against the author's register) found the artifacts
+  contradicting one another (a skill calling results read-only while its Makefile rewrote
+  them; a CLAUDE.md ordering the agent into a denied write; a command that does not exist in
+  the author's own tool) and the page's own frontier claim contradicting its jagged-frontier
+  card; those are fixed, and the sorter, keep/drop test and audit now say where a verdict is a
+  judgment call.
 - **Interactive where a question or a calculation earns it.** A prompt per section with a
   saved answer; a ladder explorer for the six rungs (access, what it may do, who checks, what
-  goes wrong first) with the four terms defined; a keep/drop test for generative skills; a
+  goes wrong first) with the six terms defined; a keep/drop test for generative skills; a
   delegation calculator (ask + wait + check over the success rate, with the "I cannot check
-  it" case handled as the caveat rather than a number); a jagged-frontier sorter (eight tasks
+  it" case handled as the caveat rather than a number); a jagged-frontier sorter (ten tasks
   of similar apparent difficulty, mark what you would delegate, reveal the sort by
-  checkability with reasons); a five-question audit for one task with a copyable result; read
-  marks per principle with a progress bar.
+  checkability with reasons; five of the ten are marked arguable and show amber whichever way
+  the reader sorted them, because their verdict is conditional on a check the reason names); a
+  five-question audit for one task with a copyable result (an unanswerable check still vetoes,
+  and the veto says why the other answers do not change it); read marks per principle with a
+  progress bar. The keep/drop test grades by how many of its four reasons hold: two or more
+  keeps, one keeps with a revisit, none lets go. None of the tools scores ordinary diligence
+  as a mistake; where a verdict is a judgment call the reveal says so.
 - **Two diagrams** redrawn as inline SVG: generator and discriminator, and the three loop
   arrangements (open loop, agent as coach, judge by the dozen).
 
