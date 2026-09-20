@@ -399,6 +399,8 @@
       authorship fights, silent collaborators, dropped balls, burnout) fire when the dials say so, and most can be prevented or repaired.
       The debrief traces every problem back to the decision that seeded it.</p>
     <p class="small muted" style="margin:6px 0 0">The situations are drawn from lab-culture discussions and from the Path to PhD newsletter; which move is “sound” is one researcher's judgment, and every reveal gives its reasons.</p>
+    <p class="small muted" style="margin:6px 0 0">It assumes no experience of running anything, and no vocabulary either: the principal investigator (PI), author order, what counts as noise.
+      Every term the game uses has a definition on hover and a chip under the card it appeared on, and the field manual carries the whole glossary and the reading behind each problem.</p>
     <p class="small muted" id="home-progress" style="margin:6px 0 0"></p>
     <div class="modegrid">
       <button class="card mode" id="go-run">
@@ -440,6 +442,7 @@
     <h2>The people, this run</h2>
     <div class="cast" id="team-cast"></div>
     <p class="small muted">The game carries two versions of each person; real people are more than a trait, and reading them is part of the job.</p>
+    <p class="small muted">Nothing here assumes you already know the vocabulary. A term with a dotted underline has a definition on hover, and the chips under each card repeat the ones that card used; the field manual, in the top bar, carries all of them.</p>
     <div class="row" style="margin-top:12px"><button class="btn" id="team-start">Start month 1 →</button></div>
   </section>
 
@@ -511,6 +514,21 @@
     </div>
   </section>
 
+  <!-- DRILL INTRO -->
+  <section id="screen-drillintro" class="hidden">
+    <h1>Before you write</h1>
+    <div class="card intro">
+      <h2 style="margin-top:0">What you are practicing</h2>
+      <p>The hard moments of the same project the run puts you in: the collaborator who has gone quiet, the authorship conversation nobody opens, the reminder to a supervisor who has not replied, the result that died the week before the deadline. Each one gives you two messages and asks which you would send.</p>
+      <p>Neither is a caricature. The weaker message is polite and well meant and leaves out something the other person needs: the reason, the date, the ask, or a way to answer in one line. Length does not predict the answer, so read for what the message carries rather than for how long it is. After you pick, the reveal names the feature that made the difference and the principle behind it.</p>
+      <p>A round is eight messages, the ones you have not seen first. You are the same person you are in the run: a second-year PhD student running a project for the first time, with a deadline in month eight.</p>
+    </div>
+    <h2>The people you are writing to</h2>
+    <div class="cast" id="drill-cast"></div>
+    <p class="small muted">A few messages go to people outside the project: a postdoc down the hall, a professor visiting for two days. Each of those says who they are.</p>
+    <div class="row" style="margin-top:12px"><button class="btn" id="drill-start">Start the first message →</button></div>
+  </section>
+
   <!-- DRILLS -->
   <section id="screen-drills" class="hidden">
     <div class="counter"><span id="d-left"></span><span id="d-right"></span></div>
@@ -555,7 +573,7 @@
   <!-- MANUAL -->
   <section id="screen-manual" class="hidden guide">
     <h1>Field manual</h1>
-    <p class="sub">Every problem in the game. Open one for what it looks like, what causes it, how to prevent it, how to repair it once it has fired, and what to read. The manual uses roles (the PI, the principal investigator, is your supervisor, the professor who runs the lab); a run gives the same four people names.</p>
+    <p class="sub">Every problem in the game. Open one for what it looks like, what causes it, how to prevent it, how to repair it once it has fired, and what to read. The manual uses roles rather than names: your supervisor is the principal investigator (PI), the professor who runs the lab. A run gives the same four people names. Every term with a dotted underline has a definition on hover, and the glossary at the foot of this page carries all of them.</p>
     <div class="jumps" id="man-jumps"></div>
     <div id="man-body"></div>
     <div class="card" style="margin-top:18px">
@@ -743,7 +761,7 @@ const RESOURCES = {
   kindnice:{t:"Kind vs nice", by:"Farnam Street", n:"A kind person tells you about the spinach on your teeth; being clear is kind."},
   premortem:{t:"Performing a project premortem", by:"Gary Klein, Harvard Business Review", url:"https://hbr.org/2007/09/performing-a-project-premortem", n:"Imagine the project has failed and write down why, before it starts."},
   postmortem_sre:{t:"Postmortem culture: learning from failure", by:"Google SRE book", url:"https://sre.google/sre-book/postmortem-culture/", n:"Blameless postmortems, written, shared, acted on."},
-  icmje:{t:"Defining the role of authors and contributors", by:"ICMJE (the Vancouver criteria)", url:"https://www.icmje.org/recommendations/browse/roles-and-responsibilities/defining-the-role-of-authors-and-contributors.html", n:"Substantial contribution, drafting or revising, final approval, accountability."},
+  icmje:{t:"Defining the role of authors and contributors", by:"International Committee of Medical Journal Editors (ICMJE), the Vancouver criteria", url:"https://www.icmje.org/recommendations/browse/roles-and-responsibilities/defining-the-role-of-authors-and-contributors.html", n:"Substantial contribution, drafting or revising, final approval, accountability."},
   authorship:{t:"Authorship: who gets credit for what", by:"Nature news, 2018", url:"https://www.nature.com/articles/d41586-018-06185-8", n:"How authorship criteria are applied, and often not."},
   tetris:{t:"Maker's schedule, manager's schedule", by:"Paul Graham", url:"http://www.paulgraham.com/makersschedule.html", n:"Makers need half-days; managers run on hours. Sync your deep work with the boss's busy slots."},
   cosuper:{t:"Thoughts on co-supervision", by:"P2P No. 112", url:"https://path2phd.substack.com/p/thoughts-on-co-supervision", n:"Reconcile opinions and check explicitly that everyone was told the same thing."},
@@ -770,6 +788,19 @@ const RES_GROUPS = [
   {name:"Loops, speed and postmortems", ids:["openloop", "agefeedback", "twofast", "revisitfast", "coxswain", "premortem", "postmortem_sre", "nothingtolose", "sixmn"]}
 ];
 const GLOSSARY = [
+  ["PI", "Principal investigator: the professor who runs the lab and holds the grant. Your supervisor, and usually the last author on the paper.", ["PI", "PIs", "principal investigator"]],
+  ["postdoc", "A researcher who already has a PhD, on a fixed-term contract. A few years ahead of you, and not your supervisor.", ["postdoc", "postdocs"]],
+  ["tenured", "Holding a permanent professorship. No contract running out and no thesis to finish, which is why a tenured collaborator can afford to think about a problem for a year.", ["tenured", "tenure"]],
+  ["master's student", "A student doing the degree before a PhD, usually on a first research project and supervised day to day by a PhD student rather than by the PI.", ["master's student", "master's students"]],
+  ["authorship", "Who is named on the paper and in what order. Decided by contribution, and cheapest to agree in writing before the work starts.", ["authorship"]],
+  ["author order", "First author did most of the work, the last author usually supervised, the middle authors contributed in between. Joint first authors share the front position; senior authors sit at the end.", ["provisional author order", "joint first authors", "senior authors", "author order", "senior author", "first author"]],
+  ["target venue", "The conference or journal the paper is aimed at. It fixes the deadline, the page limit and the kind of result that counts.", ["target venue", "the venue", "venue"]],
+  ["submission form", "The web form where the paper, the abstract and the author list go in. Whoever fills it in decides the order, unless it was agreed months earlier.", ["submission form"]],
+  ["reviewer", "An anonymous researcher the venue asks to judge the paper. The one reader you have to convince and cannot talk to.", ["hostile reviewer", "reviewers", "reviewer"]],
+  ["lemma", "A small proved result that a bigger theorem leans on. A theory section is usually a chain of them.", ["lemma", "lemmas"]],
+  ["cluster", "The shared machines a lab runs experiments on. Jobs wait in a queue, and the queue is longest in the week before a deadline.", ["cluster queue", "cluster"]],
+  ["noise", "The spread in a number across random seeds. A difference smaller than the spread is not a result.", ["within the noise", "inside the noise", "seed noise", "noise"]],
+  ["group meeting", "The lab's weekly meeting where everyone presents. Public, which is why criticism of one person's work does not belong in it.", ["group meeting", "group meetings"]],
   ["pre-mortem", "Before a project starts, imagine it has failed and write down why; the causes become the risks to manage.", ["pre-mortem", "premortem"]],
   ["postmortem", "A structured look back after a project: what happened, why, and what to change. Blameless by design.", ["postmortem", "postmortems", "post-mortem"]],
   ["start/stop/continue", "A feedback format: what the other person should start doing, stop doing, and keep doing.", ["start/stop/continue", "start, stop, continue"]],
@@ -813,7 +844,7 @@ const GLOSSARY = [
    CAST: the four people, named; a one-line role under each name.
    ------------------------------------------------------------------------- */
 const CAST = [
-  {id:"pi", name:"Nadia", short:"your supervisor, the PI", role:"Your supervisor: the PI, the professor who runs the lab and signs off on what you do. Sharp, on three projects, a calendar cut into half-hour slots, cancels sometimes. She wants you to succeed and does not always show it.", rel:60},
+  {id:"pi", name:"Nadia", short:"your supervisor, the PI", role:"Your supervisor, the principal investigator (PI): the professor who runs the lab and signs off on what you do. Sharp, on three projects, a calendar cut into half-hour slots, cancels sometimes. She wants you to succeed and does not always show it.", rel:60},
   {id:"senior", name:"Tomasz", short:"collaborator, professor elsewhere", role:"A professor at another institute who joined after a chance conversation at a workshop. Tenured, many projects, no deadline pressure, happy to think about the problem for a year.", rel:55},
   {id:"peer", name:"Lea", short:"PhD student in your lab, theory", role:"A PhD student in your lab, a year ahead of you. On the paper for the theory part. Same incentives as you, and two other deadlines this year.", rel:60},
   {id:"junior", name:"Ben", short:"your master's student, experiments", role:"The master's student you co-supervise; his thesis project is the experiments for this paper. First research project, works hard, goes quiet when stuck.", rel:60}
@@ -1308,7 +1339,7 @@ function loadStore() {
 function saveStore() { try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) { /* private mode */ } }
 let store = loadStore();
 
-const SCREENS = ["home","team","run","debrief","drills","drillres","profile","manual"];
+const SCREENS = ["home","team","run","debrief","drillintro","drills","drillres","profile","manual"];
 let current = "home";
 function show(id) {
   SCREENS.forEach(s => $("screen-" + s).classList.toggle("hidden", s !== id));
@@ -1573,7 +1604,13 @@ function summaryText() {
 let drill = null;
 const DRILL_ROUND = 8;
 const fresh = arr => shuffle(arr).sort((x, y) => (store.seenAt[x.id] || 0) - (store.seenAt[y.id] || 0));
+/* the drills are reachable without ever playing a run, so they open on the setting and the cast;
+   a player arriving from the debrief or asking for another round has both already */
 function startDrills() {
+  $("drill-cast").innerHTML = CAST.map(c => `<div class="who"><b>${esc(c.name)}</b><span class="rolehead">${esc(c.short)}</span><span class="small muted">${esc(c.role)}</span></div>`).join("");
+  show("drillintro");
+}
+function beginDrillRound() {
   store.rounds++; drill = {items:fresh(DRILLS).slice(0, DRILL_ROUND), i:0, picked:null, results:[]}; saveStore();
   show("drills"); renderDrill();
 }
@@ -1639,7 +1676,8 @@ function copyText(t) { (navigator.clipboard ? navigator.clipboard.writeText(t) :
 
 /* ---- wiring ---- */
 $("go-run").addEventListener("click", startRun); $("db-again").addEventListener("click", startRun); $("pf-run").addEventListener("click", startRun); $("man-run").addEventListener("click", startRun); $("dr-run").addEventListener("click", startRun);
-$("go-drills").addEventListener("click", startDrills); $("db-drills").addEventListener("click", startDrills); $("dr-again").addEventListener("click", startDrills);
+$("go-drills").addEventListener("click", startDrills); $("drill-start").addEventListener("click", beginDrillRound);
+$("db-drills").addEventListener("click", beginDrillRound); $("dr-again").addEventListener("click", beginDrillRound);
 $("go-debrief").addEventListener("click", () => { renderProfileScreen(); show("profile"); });
 $("go-manual").addEventListener("click", () => { renderManual(); show("manual"); }); $("db-manual").addEventListener("click", () => { renderManual(); show("manual"); }); $("nav-manual").addEventListener("click", () => { renderManual(); show("manual"); });
 $("nav-home").addEventListener("click", () => { renderHome(); show("home"); });

@@ -13,7 +13,7 @@ fights, silent collaborators, dropped balls, late feedback, burnout) are not tau
 expected. The game makes them consequences of decisions, so the player can see which decision
 seeded which problem and what would have prevented it.
 
-Sources: lab-culture discussions (roles only, no names: the PI, a student, a postdoc, a senior
+Sources: lab-culture discussions (roles only, no names: the principal investigator (PI), a student, a postdoc, a senior
 collaborator), the crisis-management and feedback notes behind them (three components of
 feedback, situation-behavior-impact, "can I give you some feedback?", start/stop/continue,
 kind versus nice, ask for advice not feedback, "can this conflict deepen the relationship?"),
@@ -147,7 +147,26 @@ ordinals when the pair is shown in the other order.
   pole has a virtue.
 - **Voice.** Peer address, sentence case, American English, typographic quotes, no emoji, no
   first person outside quoted messages. Terms get a tooltip on first use per card.
+- **No vocabulary assumed.** The audience is a student who has never run anything, so the
+  glossary covers the words the game itself uses without ceremony — the principal investigator
+  (PI), postdoc, tenured, master's student, authorship and author order, target venue,
+  submission form, reviewer, lemma, cluster, noise, group meeting — and each of them carries a
+  tooltip and a chip wherever it appears. The home screen, the run's intro and the manual's
+  subtitle each say that the tooltips are there, because a definition nobody knows to hover
+  over is not a definition.
+- **Every mode opens on its setting.** The drills and the manual are reachable from the top
+  bar and from a deep link without ever playing a run, so each says who the people are before
+  it asks anything. "Before you write" carries the cast with their roles, what the pairs are
+  testing, and the warning that length does not predict the answer; a player arriving from the
+  debrief or asking for another round already has all of it and goes straight to a message.
 
 ## Deep links
 
-`?mode=run|drills|manual|profile`.
+`?mode=run|drills|manual|profile`. `drills` opens on the cast, not on the first message.
+
+## Prose gate
+
+`tools/.limpid/check.sh research-projects` lifts the player-facing prose out of `index.html`
+and runs the limpid CLI over it; `tools/.limpid/trace.py` maps a finding back to the line that
+produced it. The quoted drill messages are excluded, because one of each pair is written to be
+the weaker one. See `tools/.limpid/README.md`.
