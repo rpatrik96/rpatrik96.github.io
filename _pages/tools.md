@@ -60,7 +60,8 @@ browser; nothing is sent anywhere.
 
 ## Principles for (agentic) research
 
-The talk as an interactive page, with the talk's own drawings and the argument behind each
+The talk, given at the 50th Machine Learning Summer School on 8 September 2026, as an
+interactive page, with the talk's own drawings and the argument behind each
 principle, not only the headline. Five parts: why do research at all, how
 taste is trained, what an agent actually is (the same model, reached through six rungs of access
 and permission), how to run one as a supervisor, and an audit for the next task you think of
