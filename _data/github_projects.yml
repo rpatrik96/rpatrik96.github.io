@@ -1,34 +1,14 @@
-last_updated: '2026-09-14 11:11:38'
+last_updated: '2026-09-21 11:22:59'
 github_url: https://github.com/rpatrik96
 repos:
-- name: hallmark
-  description: 'HALLMARK: Citation hallucination detection benchmark for ML papers
-    — 2,525 entries, 14 hallucination types, 3 difficulty tiers, 10 baselines including
-    LLMs and verification tools'
-  url: https://github.com/rpatrik96/hallmark
-  stars: 13
-  forks: 1
-  language: Python
-  updated_at: '2026-09-11'
-  topics:
-  - academic-integrity
-  - benchmark
-  - bibtex
-  - citation-verification
-  - dataset
-  - hallucination-detection
-  - llm-evaluation
-  - machine-learning
-  - nlp
-  - reproducibility
 - name: research-agora
   description: 'Research Agora: Claude Code skills, benchmarks & tools for ML researchers
     — paper writing, citation verification, experiment tracking, LaTeX automation'
   url: https://github.com/rpatrik96/research-agora
-  stars: 17
+  stars: 16
   forks: 4
   language: Python
-  updated_at: '2026-09-08'
+  updated_at: '2026-09-20'
   topics:
   - academic-writing
   - benchmarks
@@ -40,14 +20,62 @@ repos:
   - paper-writing
   - research-tools
   - skills
+- name: limpid
+  description: An educational writing coach for academic prose (VS Code + CLI). Scores
+    LaTeX/Markdown against good writing — Orwell, Strunk, the Economist, Gopen & Swan,
+    Pinker — and teaches why a passage fails.
+  url: https://github.com/rpatrik96/limpid
+  stars: 1
+  forks: 1
+  language: TypeScript
+  updated_at: '2026-09-20'
+  topics:
+  - academic-writing
+  - cli
+  - latex
+  - linter
+  - llm
+  - markdown
+  - pre-commit
+  - proofreading
+  - prose
+  - readability
+  - research-tool
+  - scientific-writing
+  - style-checker
+  - typescript
+  - vscode
+  - vscode-extension
+  - writing-assistant
+  - writing-tools
 - name: rpatrik96.github.io
   description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
   url: https://github.com/rpatrik96/rpatrik96.github.io
   stars: 0
   forks: 1
   language: HTML
-  updated_at: '2026-09-07'
+  updated_at: '2026-09-20'
   topics: []
+- name: hallmark
+  description: 'HALLMARK: Citation hallucination detection benchmark for ML papers
+    — 2,525 entries, 14 hallucination types, 3 difficulty tiers, 10 baselines including
+    LLMs and verification tools'
+  url: https://github.com/rpatrik96/hallmark
+  stars: 13
+  forks: 1
+  language: Python
+  updated_at: '2026-09-14'
+  topics:
+  - academic-integrity
+  - benchmark
+  - bibtex
+  - citation-verification
+  - dataset
+  - hallucination-detection
+  - llm-evaluation
+  - machine-learning
+  - nlp
+  - reproducibility
 - name: bibtexupdater
   description: 'Tools for managing BibTeX bibliographies: automatically update preprints
     to published versions and filter to only cited references.'
@@ -68,12 +96,4 @@ repos:
   forks: 0
   language: TeX
   updated_at: '2026-09-03'
-  topics: []
-- name: adcs-simulation
-  description: ''
-  url: https://github.com/rpatrik96/adcs-simulation
-  stars: 1
-  forks: 0
-  language: Jupyter Notebook
-  updated_at: '2026-08-28'
   topics: []
