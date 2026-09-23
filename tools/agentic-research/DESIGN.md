@@ -67,6 +67,13 @@ deck and its source post, pitched at principles rather than tools.
   as a mistake; where a verdict is a judgment call the reveal says so.
 - **Two diagrams** redrawn as inline SVG: generator and discriminator, and the three loop
   arrangements (open loop, agent as coach, judge by the dozen).
+- **The games' visual identity around the deck's drawings.** The page uses the same base
+  stylesheet as Research Pitfalls and Research Projects (tokens stated in the Pitfalls design
+  note): system serif headings over Helvetica Neue, hairline rules instead of cards, navy ink
+  `#0E1B2E` on paper `#FBFAF7`, and a navy dark mode on `#08111E`. The deck's drawings keep their
+  navy `#0E1B2E` panels and their own colours; at phone width they scroll sideways inside the
+  panel behind a thin scrollbar and a faded right edge. The section list is a two-column table of
+  contents, the tools sit between hairlines under a "Try it" label, and the sorter's marks are ink.
 
 ## Voice
 
