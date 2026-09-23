@@ -4,6 +4,16 @@ A single self-contained HTML page (`index.html`), no dependencies, no network, s
 `localStorage` (`rpm_v1`). Sister of the Research Pitfalls game and built on the same
 stylesheet and engine helpers (tooltips, term chips, verdict boxes, profile spectra).
 
+It shares that page's visual identity (its design note states the tokens under *Visual elements*):
+system serif headings over Helvetica Neue, hairline rules instead of cards, navy ink `#0E1B2E` on
+paper `#FBFAF7`, blue `#2B63AD` for sound, coral `#C23B22` for the trap, ochre `#8F6100` for
+defensible, and a navy dark mode. On the run screen the month strip sits at the top, and the six
+dials and progress sit in one row as 1 px tracks with an ink fill that turns coral below 30. The
+debrief draws the dials as grey lines named at their right end, with progress as the one ink line
+and coral marks for the months a problem fired; its timeline marks a fired problem with a filled
+square and a prevented one with a hollow square. The cast on the setting screens is a two-column
+grid with each personality as a bold run-in.
+
 ## What it is for
 
 The year a PhD student first leads a project: a supervisor with no time, a senior collaborator
