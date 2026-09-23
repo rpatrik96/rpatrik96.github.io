@@ -1544,6 +1544,7 @@ function renderItem() {
   $("run-opts").innerHTML = ""; $("run-verdict").innerHTML = ""; $("run-next").classList.add("hidden");
   order.forEach((k, idx) => { const o = run.curOpts[k]; const b = document.createElement("button"); b.className = "opt"; b.dataset.k = k;
     b.innerHTML = `<span class="ltr">${"ABCD"[idx]}</span><span class="txt">${annotate(o.t, found, seen).html}</span>`; b.addEventListener("click", () => answer(k)); $("run-opts").appendChild(b); });
+  $("run-keys").innerHTML = `Keys: ${order.map((_, i) => `<kbd>${"ABCD"[i]}</kbd>`).join(" ")} · <kbd>Enter</kbd> next`;
   $("run-terms").innerHTML = termStripHTML(found); wireTermStrip($("run-terms"));
   $("run-title").focus({preventScroll:true});
 }
