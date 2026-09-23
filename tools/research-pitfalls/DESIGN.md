@@ -162,10 +162,29 @@ token; field guide has jump links and a glossary filter; "Your taste, measured" 
 Fourteen template pictograms (target, story, scope, clock, loop, check, fork, noise, shortcut,
 leak, weights, confound, cluster, bound, select) drawn as inline SVG with theme tokens; every
 pitfall maps to one, shown in the pitfall box with a caption, in the guide tiles, in the
-postmortem entries and next to "one thing to do tomorrow". Phase icons replace numbers in the
-stepper and guide. The home screen opens with a path-with-pits illustration. The taste reveal
-tips a balance scale toward the stronger side. Charts: rigor trajectory, reliability diagram,
-idea-shape radar, novelty × feasibility map, scorer dot plot.
+postmortem entries and next to "one thing to do tomorrow". Phase icons mark the phases in the
+guide; the stepper shows a filled node for a finished phase, a ringed node for the current one
+and an empty node for the rest. The home screen opens with a path-with-pits illustration drawn as
+a 1.5 px ink line, followed by the four modes as rows and the domain picker as radio rows. The
+taste reveal tips a balance scale toward the stronger side. Charts: rigor trajectory, reliability
+diagram, idea-shape radar, novelty × feasibility map, scorer dot plot.
+
+The page shares one visual identity and one base stylesheet with Research Projects and the
+agentic-research page. Headings, verdict lines and disclosure summaries are set in a system serif
+(`"Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Charter, Georgia, serif`),
+everything else in Helvetica Neue (`"Helvetica Neue", Helvetica, Arial, sans-serif`); small caps
+appear only on the phase label above a card title and on the page name above a result verdict.
+Hairline rules separate sections instead of cards, corners are 2 px and nothing casts a shadow.
+The ink is the talk decks' navy `#0E1B2E` on paper `#FBFAF7`, and the verdict is the only colour
+on a screen: blue `#2B63AD` for sound, coral `#C23B22` for a pitfall, ochre `#8F6100` for
+defensible but costly, each carried by a letter box and a text label. Small verdict markers carry
+shape as well as colour (sound a disc, costly a ring, pitfall a diamond). Dodged pitfalls in the
+postmortem map and the field guide are green `#2E7D4F`, because their legends say green. Dark mode
+is a navy ground `#08111E` with ink `#EDF1F6`, blue `#7FB0F0`, coral `#FF7A66`, ochre `#E0B74A`
+and green `#5FC48A`. Meters and progress bars are 1 px tracks with a 3 px ink fill. Primary
+actions are filled navy buttons (light ink in dark mode) and secondary actions on the result
+screens are text links. Every token lives in `:root` and is redefined for dark mode under
+`prefers-color-scheme` and again under `[data-theme="dark"]`.
 
 ## Voice (after an audit against the author's newsletter)
 
