@@ -1,13 +1,23 @@
-last_updated: '2026-09-21 11:47:47'
+last_updated: '2026-09-28 12:42:58'
 papers:
 - title: A unifying framework from neural superposition to sparse interpretable codes
-  authors: David Klindt and Charles O’Neill and Patrik Reizinger and Harald Maurer
+  authors: David Klindt and Charles A. O’neill and Patrik Reizinger and Harald Maurer
     and Nina Miolane
   year: 2026
   venue: Nature Machine Intelligence
   citations: 0
   url: https://openalex.org/W7168278967
   paper_url: https://doi.org/10.1038/s42256-026-01259-z
+- title: 'From Isolation to Entanglement: When Do Interpretability Methods Identify
+    and Disentangle Known Concepts?'
+  authors: Association for Computational Linguistics 2026 and Shruti Joshi and Andrew
+    Lee and Ekdeep Singh Lubana and Aaron Mueller and Patrik Reizinger and Dhanya
+    Sridhar
+  year: 2026
+  venue: ACL
+  citations: 0
+  url: https://openalex.org/W7168425109
+  paper_url: https://doi.org/10.48448/xsp7-7077
 - title: Who Guards the Guardians? The Challenges of Evaluating Identifiability of
     Learned Representations
   authors: Shruti Joshi and Théo Saulus and Wieland Brendel and Philippe Brouillard
@@ -18,22 +28,13 @@ papers:
   url: https://openalex.org/W7133197095
   paper_url: https://arxiv.org/abs/2602.24278
 - title: Causality is Key for Interpretability Claims to Generalise
-  authors: Shruti Joshi and Aaron Mueller and David Klindt and Wieland Brendel and
-    Patrik Reizinger and Dhanya Sridhar
+  authors: Shruti Joshi and Aaron Mueller and David Alexander Klindt and Wieland Brendel
+    and Patrik Reizinger and Dhanya Sridhar
   year: 2026
   venue: ICML Position Paper Track
   citations: 0
   url: https://openalex.org/W7130538568
   paper_url: https://arxiv.org/abs/2602.16698
-- title: 'From Isolation to Entanglement: When Do Interpretability Methods Identify
-    and Disentangle Known Concepts?'
-  authors: Aaron Mueller and Andrew Lee and Shruti Joshi and Ekdeep Singh Lubana and
-    Dhanya Sridhar and Patrik Reizinger
-  year: 2026
-  venue: ACL
-  citations: 0
-  url: https://openalex.org/W7166827055
-  paper_url: https://doi.org/10.18653/v1/2026.acl-long.782
 - title: Out-of-distribution Tests Reveal Compositionality in Chess Transformers
   authors: Anna Mészáros and Patrik Reizinger and Ferenc Huszár
   year: 2026
