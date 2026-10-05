@@ -1,13 +1,21 @@
-last_updated: '2026-09-28 12:42:58'
+last_updated: '2026-10-05 13:24:14'
 papers:
 - title: A unifying framework from neural superposition to sparse interpretable codes
-  authors: David Klindt and Charles A. O’neill and Patrik Reizinger and Harald Maurer
+  authors: David Klindt and Charles O’Neill and Patrik Reizinger and Harald Maurer
     and Nina Miolane
   year: 2026
   venue: Nature Machine Intelligence
   citations: 0
   url: https://openalex.org/W7168278967
   paper_url: https://doi.org/10.1038/s42256-026-01259-z
+- title: Stabilizing Extrapolation in Looped Transformers via Learned Stochastic Stopping
+  authors: Hsun-Yu Kuo and El Mahdi Chayti and Patrik Reizinger and Wieland Brendel
+    and Martin Jaggi
+  year: 2026
+  venue: NeurIPS
+  citations: 0
+  url: https://openalex.org/W7166728111
+  paper_url: https://arxiv.org/abs/2606.29983
 - title: 'From Isolation to Entanglement: When Do Interpretability Methods Identify
     and Disentangle Known Concepts?'
   authors: Association for Computational Linguistics 2026 and Shruti Joshi and Andrew
@@ -36,16 +44,9 @@ papers:
   url: https://openalex.org/W7130538568
   paper_url: https://arxiv.org/abs/2602.16698
 - title: Out-of-distribution Tests Reveal Compositionality in Chess Transformers
-  authors: Anna Mészáros and Patrik Reizinger and Ferenc Huszár
+  authors: Mészáros, Anna and Patrik Reizinger and Ferenc Huszár
   year: 2026
   venue: ICML
   citations: 0
   url: https://openalex.org/W4416621834
   paper_url: https://arxiv.org/abs/2510.20783
-- title: Skills, Benchmarks, and Verification Are What AI-Assisted Research Needs
-  authors: Patrik Reizinger and Wieland Brendel
-  year: 2026
-  venue: Post-AGI Science and Society Workshop
-  citations: 0
-  url: https://openreview.net/forum?id=svFHXBd2wq
-  paper_url: https://openreview.net/forum?id=svFHXBd2wq
