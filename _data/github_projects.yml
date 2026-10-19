@@ -1,14 +1,6 @@
-last_updated: '2026-10-12 13:49:50'
+last_updated: '2026-10-19 11:30:12'
 github_url: https://github.com/rpatrik96
 repos:
-- name: rpatrik96.github.io
-  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
-  url: https://github.com/rpatrik96/rpatrik96.github.io
-  stars: 0
-  forks: 1
-  language: HTML
-  updated_at: '2026-10-05'
-  topics: []
 - name: hallmark
   description: 'HALLMARK: Citation hallucination detection benchmark for ML papers
     — 2,525 entries, 14 hallucination types, 3 difficulty tiers, 10 baselines including
@@ -17,7 +9,7 @@ repos:
   stars: 13
   forks: 1
   language: Python
-  updated_at: '2026-10-05'
+  updated_at: '2026-10-16'
   topics:
   - academic-integrity
   - benchmark
@@ -29,6 +21,14 @@ repos:
   - machine-learning
   - nlp
   - reproducibility
+- name: rpatrik96.github.io
+  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
+  url: https://github.com/rpatrik96/rpatrik96.github.io
+  stars: 0
+  forks: 1
+  language: HTML
+  updated_at: '2026-10-12'
+  topics: []
 - name: CV
   description: ''
   url: https://github.com/rpatrik96/CV
@@ -42,7 +42,7 @@ repos:
     — paper writing, citation verification, experiment tracking, LaTeX automation'
   url: https://github.com/rpatrik96/research-agora
   stars: 16
-  forks: 4
+  forks: 5
   language: Python
   updated_at: '2026-09-20'
   topics:
