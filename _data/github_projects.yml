@@ -1,50 +1,22 @@
-last_updated: '2026-10-19 11:30:12'
+last_updated: '2026-10-26 11:49:26'
 github_url: https://github.com/rpatrik96
 repos:
-- name: hallmark
-  description: 'HALLMARK: Citation hallucination detection benchmark for ML papers
-    — 2,525 entries, 14 hallucination types, 3 difficulty tiers, 10 baselines including
-    LLMs and verification tools'
-  url: https://github.com/rpatrik96/hallmark
-  stars: 13
-  forks: 1
-  language: Python
-  updated_at: '2026-10-16'
-  topics:
-  - academic-integrity
-  - benchmark
-  - bibtex
-  - citation-verification
-  - dataset
-  - hallucination-detection
-  - llm-evaluation
-  - machine-learning
-  - nlp
-  - reproducibility
-- name: rpatrik96.github.io
-  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
-  url: https://github.com/rpatrik96/rpatrik96.github.io
-  stars: 0
-  forks: 1
-  language: HTML
-  updated_at: '2026-10-12'
-  topics: []
 - name: CV
   description: ''
   url: https://github.com/rpatrik96/CV
   stars: 0
   forks: 0
   language: TeX
-  updated_at: '2026-10-01'
+  updated_at: '2026-10-26'
   topics: []
 - name: research-agora
   description: 'Research Agora: Claude Code skills, benchmarks & tools for ML researchers
     — paper writing, citation verification, experiment tracking, LaTeX automation'
   url: https://github.com/rpatrik96/research-agora
-  stars: 16
+  stars: 17
   forks: 5
   language: Python
-  updated_at: '2026-09-20'
+  updated_at: '2026-10-24'
   topics:
   - academic-writing
   - benchmarks
@@ -56,6 +28,47 @@ repos:
   - paper-writing
   - research-tools
   - skills
+- name: hallmark
+  description: 'HALLMARK: Citation hallucination detection benchmark for ML papers
+    — 2,525 entries, 14 hallucination types, 3 difficulty tiers, 10 baselines including
+    LLMs and verification tools'
+  url: https://github.com/rpatrik96/hallmark
+  stars: 14
+  forks: 1
+  language: Python
+  updated_at: '2026-10-23'
+  topics:
+  - academic-integrity
+  - benchmark
+  - bibtex
+  - citation-verification
+  - dataset
+  - hallucination-detection
+  - llm-evaluation
+  - machine-learning
+  - nlp
+  - reproducibility
+- name: bibtexupdater
+  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
+    to published versions and filter to only cited references.'
+  url: https://github.com/rpatrik96/bibtexupdater
+  stars: 120
+  forks: 8
+  language: Python
+  updated_at: '2026-10-22'
+  topics:
+  - bibtex
+  - bibtex-references
+  - bibtexparser
+  - latex
+- name: rpatrik96.github.io
+  description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
+  url: https://github.com/rpatrik96/rpatrik96.github.io
+  stars: 0
+  forks: 1
+  language: HTML
+  updated_at: '2026-10-19'
+  topics: []
 - name: limpid
   description: An educational writing coach for academic prose (VS Code + CLI). Scores
     LaTeX/Markdown against good writing — Orwell, Strunk, the Economist, Gopen & Swan,
@@ -84,16 +97,3 @@ repos:
   - vscode-extension
   - writing-assistant
   - writing-tools
-- name: bibtexupdater
-  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
-    to published versions and filter to only cited references.'
-  url: https://github.com/rpatrik96/bibtexupdater
-  stars: 116
-  forks: 8
-  language: Python
-  updated_at: '2026-09-07'
-  topics:
-  - bibtex
-  - bibtex-references
-  - bibtexparser
-  - latex
