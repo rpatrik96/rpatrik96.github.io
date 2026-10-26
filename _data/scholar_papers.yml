@@ -1,4 +1,4 @@
-last_updated: '2026-10-19 11:54:19'
+last_updated: '2026-10-26 12:07:38'
 papers:
 - title: A unifying framework from neural superposition to sparse interpretable codes
   authors: David Alexander Klindt and Charles O’Neill and Patrik Reizinger and Harald
@@ -43,10 +43,12 @@ papers:
   citations: 0
   url: https://openalex.org/W7130538568
   paper_url: https://arxiv.org/abs/2602.16698
-- title: Out-of-distribution Tests Reveal Compositionality in Chess Transformers
-  authors: Mészáros, Anna and Patrik Reizinger and Ferenc Huszár
+- title: Skill Learning via Policy Diversity Yields Identifiable Representations for
+    Reinforcement Learning
+  authors: Patrik Reizinger and Bálint Mucsányi and Siyuan Guo and Benjamin Eysenbach
+    and Bernhard Schölkopf and Wieland Brendel
   year: 2026
-  venue: ICML
+  venue: ICLR
   citations: 0
-  url: https://openalex.org/W4416621834
-  paper_url: https://arxiv.org/abs/2510.20783
+  url: https://openalex.org/W4416838970
+  paper_url: http://arxiv.org/abs/2507.14748
