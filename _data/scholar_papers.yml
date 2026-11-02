@@ -1,4 +1,4 @@
-last_updated: '2026-10-26 12:07:38'
+last_updated: '2026-11-02 14:35:16'
 papers:
 - title: A unifying framework from neural superposition to sparse interpretable codes
   authors: David Alexander Klindt and Charles O’Neill and Patrik Reizinger and Harald
@@ -43,12 +43,11 @@ papers:
   citations: 0
   url: https://openalex.org/W7130538568
   paper_url: https://arxiv.org/abs/2602.16698
-- title: Skill Learning via Policy Diversity Yields Identifiable Representations for
-    Reinforcement Learning
-  authors: Patrik Reizinger and Bálint Mucsányi and Siyuan Guo and Benjamin Eysenbach
-    and Bernhard Schölkopf and Wieland Brendel
+- title: 'Causal Foundations for Interpretability: What Your Methods Actually Identify'
+  authors: Shruti Joshi and Aaron Mueller and Patrik Reizinger and Dhanya Sridhar
   year: 2026
-  venue: ICLR
+  venue: 'Proceedings of the 2026 Conference on Empirical Methods in Natural Language
+    Processing: Tutorial Abstracts'
   citations: 0
-  url: https://openalex.org/W4416838970
-  paper_url: http://arxiv.org/abs/2507.14748
+  url: https://openalex.org/W7224341932
+  paper_url: https://doi.org/10.18653/2026.emnlp-tutorials.5
