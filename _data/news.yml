@@ -13,6 +13,12 @@
 limit: 5
 
 items:
+  - date: 2026-10-28
+    text: >-
+      We gave our tutorial *Causal Foundations for Interpretability: What Your Methods Actually
+      Identify* at **EMNLP 2026** in Budapest. The slides, interactive demos and worksheets are
+      shared on the [tutorial website](https://causality4mechinterp.github.io/).
+
   - date: 2026-09-01
     text: >-
       Started as an [IVADO](https://ivado.ca/en/) postdoctoral fellow at
