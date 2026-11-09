@@ -1,20 +1,60 @@
-last_updated: '2026-11-02 14:07:51'
+last_updated: '2026-11-09 14:38:57'
 github_url: https://github.com/rpatrik96
 repos:
-- name: CV
+- name: running-analyzer
   description: ''
-  url: https://github.com/rpatrik96/CV
-  stars: 0
+  url: https://github.com/rpatrik96/running-analyzer
+  stars: 1
   forks: 0
-  language: TeX
-  updated_at: '2026-11-02'
+  language: TypeScript
+  updated_at: '2026-11-08'
   topics: []
+- name: research-agora
+  description: 'Research Agora: Claude Code skills, benchmarks & tools for ML researchers
+    — paper writing, citation verification, experiment tracking, LaTeX automation'
+  url: https://github.com/rpatrik96/research-agora
+  stars: 18
+  forks: 5
+  language: Python
+  updated_at: '2026-11-08'
+  topics:
+  - academic-writing
+  - benchmarks
+  - citation-verification
+  - claude-code
+  - latex
+  - machine-learning
+  - ml-research
+  - paper-writing
+  - research-tools
+  - skills
+- name: bibtexupdater
+  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
+    to published versions and filter to only cited references.'
+  url: https://github.com/rpatrik96/bibtexupdater
+  stars: 122
+  forks: 8
+  language: Python
+  updated_at: '2026-11-08'
+  topics:
+  - bibtex
+  - bibtex-references
+  - bibtexparser
+  - latex
 - name: rpatrik96.github.io
   description: A personal website for Patrik Reizinger. Template is courtesy of academicpages.
   url: https://github.com/rpatrik96/rpatrik96.github.io
   stars: 0
   forks: 1
   language: HTML
+  updated_at: '2026-11-02'
+  topics: []
+- name: CV
+  description: ''
+  url: https://github.com/rpatrik96/CV
+  stars: 0
+  forks: 0
+  language: TeX
   updated_at: '2026-11-02'
   topics: []
 - name: hallmark
@@ -37,63 +77,3 @@ repos:
   - machine-learning
   - nlp
   - reproducibility
-- name: bibtexupdater
-  description: 'Tools for managing BibTeX bibliographies: automatically update preprints
-    to published versions and filter to only cited references.'
-  url: https://github.com/rpatrik96/bibtexupdater
-  stars: 121
-  forks: 8
-  language: Python
-  updated_at: '2026-10-28'
-  topics:
-  - bibtex
-  - bibtex-references
-  - bibtexparser
-  - latex
-- name: research-agora
-  description: 'Research Agora: Claude Code skills, benchmarks & tools for ML researchers
-    — paper writing, citation verification, experiment tracking, LaTeX automation'
-  url: https://github.com/rpatrik96/research-agora
-  stars: 17
-  forks: 5
-  language: Python
-  updated_at: '2026-10-24'
-  topics:
-  - academic-writing
-  - benchmarks
-  - citation-verification
-  - claude-code
-  - latex
-  - machine-learning
-  - ml-research
-  - paper-writing
-  - research-tools
-  - skills
-- name: limpid
-  description: An educational writing coach for academic prose (VS Code + CLI). Scores
-    LaTeX/Markdown against good writing — Orwell, Strunk, the Economist, Gopen & Swan,
-    Pinker — and teaches why a passage fails.
-  url: https://github.com/rpatrik96/limpid
-  stars: 1
-  forks: 1
-  language: TypeScript
-  updated_at: '2026-09-20'
-  topics:
-  - academic-writing
-  - cli
-  - latex
-  - linter
-  - llm
-  - markdown
-  - pre-commit
-  - proofreading
-  - prose
-  - readability
-  - research-tool
-  - scientific-writing
-  - style-checker
-  - typescript
-  - vscode
-  - vscode-extension
-  - writing-assistant
-  - writing-tools
